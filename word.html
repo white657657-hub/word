@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1330 - Audit Compliant</title>
+    <title>Word Hero V1340 - UI Aligned</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@800&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -16,61 +16,43 @@
         .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(circle at top, #0f172a, #020617); padding: 4px; }
         .view-section { display: none; flex-direction: column; flex: 1; padding: 4px; overflow-y: auto; }
 
-        /* Letter Boxes - Large (iPad/Large Screen) */
+        /* 字母框：1px 邊框, Montserrat 粗體, 絕對置中 */
         .box-input-container { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
         .letter-box { 
-            width: 58px; height: 85px; 
-            /* RE-INTRODUCE defined thin blue border as requested */
-            border: 1px solid var(--accent) !important; 
-            border-radius: 8px; 
-            background: rgba(0,0,0,0.85); /* Darker background for contrast with border */
-            color: #fff; 
-            text-align: center; /* PERFECTLY CENTERED */
-            /* New font style: bold, clear, condensed-like sans-serif */
-            font-family: 'Montserrat', sans-serif !important;
-            font-size: 2.8rem; font-weight: 800 !important;
-            line-height: 85px; display: inline-block; -webkit-appearance: none;
-            padding: 0 !important; /* ZERO padding to guarantee no clipping */
+            width: 58px; height: 85px; border: 1px solid var(--accent) !important; border-radius: 8px; 
+            background: rgba(0,0,0,0.85); color: #fff; text-align: center; 
+            font-family: 'Montserrat', sans-serif !important; font-size: 2.2rem; font-weight: 800 !important; 
+            line-height: 85px; display: inline-block; -webkit-appearance: none; padding: 0 !important;
         }
 
-        /* MOBILE OPTIMIZATION (max-width: 600px) */
         @media screen and (max-width: 600px) {
-            .box-input-container { gap: 2px; } /* Shrink gap */
-            .letter-box { 
-                /* Condensed boxes to fit long words */
-                width: 37px; height: 62px; /* Slightly wider and taller for bold font on mobile */
-                font-size: 1.8rem; /* Font size increased slightly from thin for boldness */
-                line-height: 62px; 
-            }
+            .box-input-container { gap: 2px; }
+            .letter-box { width: 35px; height: 60px; font-size: 1.6rem; line-height: 60px; }
             #display-cn { font-size: 2.8rem !important; }
         }
 
         .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
-        /* Combat UI */
+        /* 核心修正：血條雙邊向上貼齊 */
         #combat-arena { height: 150px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 12px; position: relative; border: 1px solid #334155; margin-bottom: 5px; flex-shrink: 0; }
-        .hp-container { position: absolute; width: 100px; height: 18px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.3); border-radius: 9px; overflow: hidden; z-index: 10; }
+        .hp-container { position: absolute; top: 10px; width: 100px; height: 18px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.3); border-radius: 9px; overflow: hidden; z-index: 10; }
         .hp-bar { height: 100%; width: 100%; background: var(--success); transition: 0.4s; }
-        #player-hp-box { bottom: 85px; left: 8px; }
-        #opp-hp-box { top: 8px; right: 8px; }
+        #player-hp-box { left: 10px; }
+        #opp-hp-box { right: 10px; }
 
-        /* Pokemon Sprites - Confirmed locked at 85px */
         .sprite { position: absolute; bottom: 8px; width: 85px !important; height: 85px !important; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
-        #player-sprite { left: 8px; transform: scaleX(-1); }
-        #opp-sprite { right: 8px; }
+        #player-sprite { left: 10px; transform: scaleX(-1); }
+        #opp-sprite { right: 10px; }
         @keyframes flash-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.6) sepia(1) hue-rotate(-50deg); } 100% { filter: brightness(1); } }
         .take-damage { animation: flash-red 0.1s linear 4; }
 
-        /* Grids and Pokedex: Locked Sizing and Grayscale */
+        /* 圖格一致性 */
         .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 4px; }
         .grid-item { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 5px 2px; text-align: center; border: 1px solid transparent; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .grid-item img { width: 85px !important; height: 85px !important; object-fit: contain !important; transition: 0.3s; }
-        
-        /* Grayscale Filter LOCKED */
         .grid-item.locked img { filter: grayscale(100%) brightness(0.3) !important; opacity: 0.4; }
         .grid-item.collected img { filter: none !important; opacity: 1; }
         .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); }
-        
         .name-zh { font-size: 0.75rem; font-weight: 600; color: #fff; margin-top: 2px; line-height: 1.1; }
         .lv-tag { color: var(--gold); font-size: 0.65rem; font-weight: 800; }
 
@@ -106,8 +88,8 @@
         <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.08); padding:10px 40px; font-size:1rem; border:1px solid #475569;" onclick="playVoice()">🔊 再唸一次</button>
     </div>
 
-    <div id="view-team" class="view-section"><h2 style="text-align:center;">出戰夥伴選擇</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認出陣</button></div>
-    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">圖鑑冒險紀錄</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回選單</button></div>
+    <div id="view-team" class="view-section"><h2 style="text-align:center;">夥伴選擇</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認</button></div>
+    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">151 冒險紀錄</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button></div>
 </div>
 
 <script>
@@ -159,10 +141,8 @@
         document.getElementById('player-hp-bar').style.width = (state.playerHP/5 * 100) + "%";
         document.getElementById('opp-hp-bar').style.width = (state.oppHP/5 * 100) + "%";
         const info = getEvoInfo(state.activePokeId);
-        const ps = document.getElementById('player-sprite'); ps.src = getGif(info.displayId);
-        if(info.isMega) ps.classList.add('mega-glow'); else ps.classList.remove('mega-glow');
+        document.getElementById('player-sprite').src = getGif(info.displayId);
         document.getElementById('opp-sprite').src = getGif(state.currentOppId);
-        // Hide HP bars in priority mode
         const v = (state.mode === 'priority') ? 'hidden' : 'visible';
         document.getElementById('player-hp-box').style.visibility = v;
         document.getElementById('opp-hp-box').style.visibility = v;
@@ -184,28 +164,9 @@
                 sep.style.cssText = "width:10px; font-size:1.2rem; text-align:center; line-height:65px; color:var(--accent);";
                 area.appendChild(sep); 
             } else {
-                const inp = document.createElement('input'); 
-                inp.className = 'letter-box'; 
-                inp.maxLength = 1; 
-                inp.dataset.idx = inputIdx++;
-                
-                // --- Audit Compliance: Core Nav Logic ---
-                inp.onkeydown = (e) => { 
-                    // Handle Backspace: jump to previous box if empty
-                    if (e.key === "Backspace" && e.target.value === "") { 
-                        const p = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) - 1}"]`); 
-                        if (p) p.focus(); 
-                    } 
-                };
-                inp.oninput = (e) => { 
-                    // Handle Input: jump to next box immediately
-                    if (e.target.value.length === 1) { 
-                        const n = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) + 1}"]`); 
-                        if (n) n.focus(); 
-                        // Auto-check if all boxes full
-                        if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150); 
-                    } 
-                };
+                const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
+                inp.onkeydown = (e) => { if (e.key === "Backspace" && e.target.value === "") { const p = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) - 1}"]`); if (p) p.focus(); } };
+                inp.oninput = (e) => { if (e.target.value.length === 1) { const n = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) + 1}"]`); if (n) n.focus(); if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150); } };
                 area.appendChild(inp);
             }
         });
@@ -237,10 +198,9 @@
         }
     }
 
-    function handleVictory() { if(state.mode !== 'priority') { let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; setHeroData('hero_pokedex_bits', p.join('')); confetti({ particleCount: 200, spread: 100 }); alert("收服成功！已點亮圖鑑。"); } switchView('view-main'); }
+    function handleVictory() { if(state.mode !== 'priority') { let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; setHeroData('hero_pokedex_bits', p.join('')); confetti({ particleCount: 200, spread: 100 }); alert("收服成功！已更新圖鑑。"); } switchView('view-main'); }
     function startSession(m) { state.unit = document.getElementById('unit-selector').value; state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5); state.mode = m; state.index = 0; state.playerHP = 5; state.oppHP = 5; switchView('view-game'); initArena(); }
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); }
-    
     function renderTeam() {
         const grid = document.getElementById('team-grid'); grid.innerHTML = "";
         let ids = [384, 150, 992]; for(let i=1; i<=151; i++) if(state.pokedex[i-1] === "1" && !ids.includes(i)) ids.push(i);
@@ -251,7 +211,6 @@
             it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
         });
     }
-
     function renderDex() {
         const grid = document.getElementById('dex-grid'); grid.innerHTML = "";
         for(let i=1; i<=151; i++) {
