@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1250 - API Integrated</title>
+    <title>Word Hero V1260 - Focus Control</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
@@ -76,28 +76,13 @@
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
-    
-    // --- 已翻譯字典 ---
-    const localDict = {
-        "bell": "鈴", "busy": "忙碌", "first name": "名字", "last name": "姓氏", "bus driver": "公車司機",
-        "market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末",
-        "birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎",
-        "bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船", "transportation":"交通工具","town":"城鎮","wheel":"輪子"
-    };
+    const localDict = { "bell":"鈴","busy":"忙碌","first name":"名字","last name":"姓氏","bus driver":"公車司機","market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末","birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎","bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船","transportation":"交通工具","town":"城鎮","wheel":"輪子" };
 
     let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1 };
 
     function setHeroData(n, v) { localStorage.setItem(n, v); document.cookie = `${n}=${v};path=/;SameSite=Lax`; }
     function getHeroData(n) { const v = `; ${document.cookie}`; const p = v.split(`; ${n}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(n); }
-
-    // --- 核心新增：自動翻譯 API 函數 ---
-    async function fetchTranslation(text) {
-        try {
-            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(text)}`);
-            const data = await res.json();
-            return data[0][0][0];
-        } catch (e) { return "..."; }
-    }
+    async function fetchTranslation(text) { try { const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(text)}`); const data = await res.json(); return data[0][0][0]; } catch (e) { return "..."; } }
 
     async function initSystem() {
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
@@ -133,21 +118,37 @@
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         const word = state.currentList[state.index];
         const display = document.getElementById('display-cn');
-        
-        // --- 翻譯連鎖邏輯 ---
         let tip = localDict[word.en.toLowerCase()] || word.cn;
-        if (!tip) {
-            display.innerText = "..."; 
-            tip = await fetchTranslation(word.en);
-        }
+        if (!tip) { display.innerText = "..."; tip = await fetchTranslation(word.en); }
         display.innerText = tip;
         
         const area = document.getElementById('letter-area'); area.innerHTML = "";
-        word.en.split('').forEach((char, i) => {
-            if(char === " ") area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%;height:5px"}));
-            else {
-                const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1;
-                inp.oninput = (e) => { if(e.target.value.length === 1) { const next = inp.nextElementSibling; if(next && next.tagName === 'INPUT') next.focus(); if([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150); }};
+        let inputIdx = 0;
+        word.en.split('').forEach((char) => {
+            if(char === " ") {
+                area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%;height:5px"}));
+            } else {
+                const inp = document.createElement('input'); 
+                inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
+                
+                // --- 核心修正：Backspace 直接回上一格 ---
+                inp.onkeydown = (e) => {
+                    if (e.key === "Backspace" && e.target.value === "") {
+                        const prev = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) - 1}"]`);
+                        if (prev) prev.focus();
+                    }
+                };
+
+                // --- 核心修正：打完直接跳下一格 ---
+                inp.oninput = (e) => {
+                    if (e.target.value.length === 1) {
+                        const next = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) + 1}"]`);
+                        if (next) next.focus();
+                        if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) {
+                            setTimeout(checkFinalAnswer, 150);
+                        }
+                    }
+                };
                 area.appendChild(inp);
             }
         });
@@ -177,13 +178,7 @@
         }
     }
 
-    function handleVictory() { 
-        if(state.mode !== 'priority') {
-            let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; setHeroData('hero_pokedex_bits', p.join('')); 
-            confetti({ particleCount: 200, spread: 100 }); alert("收服成功！"); 
-        }
-        switchView('view-main'); 
-    }
+    function handleVictory() { if(state.mode !== 'priority') { let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; setHeroData('hero_pokedex_bits', p.join('')); confetti({ particleCount: 200, spread: 100 }); alert("收服成功！"); } switchView('view-main'); }
     function startSession(m) { state.unit = document.getElementById('unit-selector').value; state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5); state.mode = m; state.index = 0; state.playerHP = 5; state.oppHP = 5; switchView('view-game'); initArena(); }
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); }
     function renderTeam() {
@@ -196,10 +191,7 @@
             it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
         });
     }
-    function renderDex() {
-        const grid = document.getElementById('dex-grid'); grid.innerHTML = "";
-        for(let i=1; i<=151; i++) { const status = state.pokedex[i-1]; grid.innerHTML += `<div class="grid-item ${status !== "0" ? 'collected' : 'locked'}"><img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div></div>`; }
-    }
+    function renderDex() { const grid = document.getElementById('dex-grid'); grid.innerHTML = ""; for(let i=1; i<=151; i++) { const s = state.pokedex[i-1]; grid.innerHTML += `<div class="grid-item ${s !== "0" ? 'collected' : 'locked'}"><img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div></div>`; } }
     function playVoice() { window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(state.currentList[state.index].en); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
     function toggleStar() { const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref); setHeroData('hero_priority', JSON.stringify(p)); document.getElementById('star-icon').innerText = p.includes(word.ref) ? "★" : "☆"; }
     function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena(); }
