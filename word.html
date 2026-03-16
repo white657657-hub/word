@@ -3,95 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1270 - Anson Edition</title>
+    <title>Word Hero V1300</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #020617; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; }
-        .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #1e293b, #020617); }
-        .view-section { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #020617; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        
+        /* 容器邊界縮小 */
+        .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #0f172a, #020617); padding: 5px; }
+        .view-section { display: none; flex-direction: column; flex: 1; padding: 5px; overflow-y: auto; }
 
-        /* 字母框 (60x90) */
-        .box-input-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; position: relative; z-index: 50; }
+        /* 字母框優化：邊框 1px, 間距 3-4px */
+        .box-input-container { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; z-index: 50; }
         .letter-box { 
-            width: 60px; height: 90px; border: 1.5px solid var(--accent) !important; border-radius: 12px; 
-            background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-size: 3.2rem; font-weight: 900; 
-            line-height: 90px; display: inline-block; flex-shrink: 0; -webkit-appearance: none;
+            width: 58px; height: 88px; border: 1px solid var(--accent) !important; border-radius: 10px; 
+            background: rgba(0,0,0,0.6); color: #fff; text-align: center; 
+            font-size: 3rem; font-weight: 500; letter-spacing: -1px;
+            line-height: 88px; display: inline-block; -webkit-appearance: none;
+            box-shadow: 0 0 5px rgba(56, 189, 248, 0.2);
         }
-        .letter-box.correct { border-color: var(--success) !important; }
+
+        /* 手機端更細緻縮放 */
+        @media screen and (max-width: 600px) {
+            .letter-box { width: 42px; height: 68px; font-size: 2.1rem; line-height: 68px; border-radius: 6px; }
+            .box-input-container { gap: 3px; }
+            #display-cn { font-size: 2.8rem !important; }
+        }
+
+        .letter-box.correct { border-color: var(--success) !important; box-shadow: 0 0 10px rgba(74, 222, 128, 0.3); }
         .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
-        /* HP 與對戰 */
-        #combat-arena { height: 160px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
-        .hp-container { position: absolute; width: 115px; height: 24px; background: rgba(0,0,0,0.7); border: 2px solid #fff; border-radius: 12px; overflow: hidden; }
+        /* HP 系統 */
+        #combat-arena { height: 150px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 15px; position: relative; border: 1px solid #334155; margin-bottom: 8px; flex-shrink: 0; }
+        .hp-container { position: absolute; width: 100px; height: 20px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.4); border-radius: 10px; overflow: hidden; }
         .hp-bar { height: 100%; width: 100%; background: var(--success); transition: 0.4s; }
-        .hp-text { position: absolute; width: 100%; text-align: center; font-size: 0.8rem; font-weight: 900; line-height: 20px; color: #fff; z-index: 10; }
-        #player-hp-box { bottom: 95px; left: 15px; }
-        #opp-hp-box { top: 15px; right: 15px; }
+        .hp-text { position: absolute; width: 100%; text-align: center; font-size: 0.7rem; font-weight: 800; line-height: 18px; color: #fff; z-index: 10; text-shadow: 1px 1px 1px #000; }
+        #player-hp-box { bottom: 85px; left: 10px; }
+        #opp-hp-box { top: 10px; right: 10px; }
 
-        /* 寶可夢精靈 - 這裡也強制大小一致 */
-        .sprite { position: absolute; bottom: 8px; width: 85px; height: 85px; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
-        #player-sprite { left: 15px; transform: scaleX(-1); }
-        #opp-sprite { right: 15px; }
-        @keyframes flash-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.5) sepia(1) hue-rotate(-50deg); } 100% { filter: brightness(1); } }
+        .sprite { position: absolute; bottom: 8px; width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
+        #player-sprite { left: 10px; transform: scaleX(-1); }
+        #opp-sprite { right: 10px; }
+        @keyframes flash-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.6) sepia(1) hue-rotate(-50deg); } 100% { filter: brightness(1); } }
         .take-damage { animation: flash-red 0.1s linear 4; }
 
-        /* 列表網格：嚴格統一圖片大小 */
-        .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
-        .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .grid-item img { width: 85px; height: 85px; object-fit: contain; margin-bottom: 5px; transition: 0.3s; }
-        
-        /* 核心需求：未收服顯示灰色 */
-        .grid-item.locked img { filter: grayscale(100%) brightness(0.4) !important; opacity: 0.5; }
+        /* 圖鑑：絕對統一尺寸 */
+        .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 5px; }
+        .grid-item { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 8px 4px; text-align: center; border: 1px solid transparent; min-height: 155px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .grid-item img { width: 75px !important; height: 75px !important; object-fit: contain !important; margin-bottom: 5px; transition: 0.3s; }
+        .grid-item.locked img { filter: grayscale(100%) brightness(0.3) !important; opacity: 0.4; }
         .grid-item.collected img { filter: none !important; opacity: 1; }
-        
-        .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.2); }
-        .name-zh { font-size: 0.85rem; font-weight: 800; color: #fff; line-height: 1.2; }
-        .lv-tag { color: var(--gold); font-size: 0.7rem; font-weight: 900; }
+        .name-zh { font-size: 0.8rem; font-weight: 700; color: #cbd5e1; line-height: 1.1; }
 
-        #display-cn { font-size: 3.2rem; font-weight: 900; color: var(--gold); text-shadow: 2px 2px 4px #000; text-align: center; }
-        .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; color: white; margin-bottom: 10px; text-align: center; cursor: pointer; }
+        #display-cn { font-size: 3.2rem; font-weight: 800; color: var(--gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); text-align: center; margin-bottom: 5px; }
+        .mode-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.2rem; color: white; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+        .mode-btn:active { transform: scale(0.98); opacity: 0.9; }
     </style>
 </head>
 <body onload="initSystem()">
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h1 style="text-align:center; color:var(--accent);">ANSON MASTER</h1>
+        <h2 style="text-align:center; color:var(--accent); margin:10px 0;">ANSON MASTER</h2>
         <div style="flex:1;">
-            <select id="unit-selector" style="width:100%; padding:18px; border-radius:16px; background:#1e293b; color:var(--gold); border:2.5px solid #334155; font-weight:900; font-size:1.6rem; margin-bottom:15px;"></select>
-            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (可進化)</button>
-            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式</button>
-            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號複習 (不扣血)</button>
+            <select id="unit-selector" style="width:100%; padding:15px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.4rem; margin-bottom:12px;"></select>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰</button>
+            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 練習模式</button>
+            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號複習</button>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴隊伍</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 151 圖鑑</button></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 圖鑑</button></div>
     </div>
 
     <div id="view-game" class="view-section">
-        <div style="display:flex; justify-content:space-between;"><button class="mode-btn" style="width:auto; padding:8px 15px; background:#334155; font-size:0.9rem;" onclick="switchView('view-main')">🏠 撤退</button></div>
+        <div style="display:flex; justify-content:space-between;"><button class="mode-btn" style="width:auto; padding:6px 12px; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 離開</button></div>
         <div id="combat-arena">
-            <div id="player-hp-box" class="hp-container"><div id="player-hp-bar" class="hp-bar"></div><div id="player-hp-text" class="hp-text">Anson: 5/5</div></div>
+            <div id="player-hp-box" class="hp-container"><div id="player-hp-bar" class="hp-bar"></div><div id="player-hp-text" class="hp-text">Anson</div></div>
             <img id="player-sprite" class="sprite" src="">
-            <div id="opp-hp-box" class="hp-container"><div id="opp-hp-bar" class="hp-bar" style="background:var(--danger);"></div><div id="opp-hp-text" class="hp-text">魔王: 5/5</div></div>
+            <div id="opp-hp-box" class="hp-container"><div id="opp-hp-bar" class="hp-bar" style="background:var(--danger);"></div><div id="opp-hp-text" class="hp-text">魔王</div></div>
             <img id="opp-sprite" class="sprite" src="">
         </div>
-        <div style="text-align:center; min-height:80px;">
-            <span id="display-cn">...</span>
-            <span id="star-icon" style="font-size:2.6rem; cursor:pointer; color:#475569; margin-left:15px;" onclick="toggleStar()">☆</span>
-        </div>
-        <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:900; font-size:1.8rem; height:35px;"></div>
+        <div style="text-align:center; min-height:70px;"><span id="display-cn">...</span><span id="star-icon" style="font-size:2.2rem; cursor:pointer; color:#475569; margin-left:10px;" onclick="toggleStar()">☆</span></div>
+        <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:800; font-size:1.6rem; height:28px;"></div>
         <div id="letter-area" class="box-input-container"></div>
-        <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.12); padding:12px 50px;" onclick="playVoice()">🔊 再唸一次</button>
+        <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.08); padding:10px 40px; font-size:1rem; border:1px solid #475569;" onclick="playVoice()">🔊 再唸一次</button>
     </div>
 
-    <div id="view-team" class="view-section"><h2 style="text-align:center;">出戰夥伴選擇</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認出陣</button></div>
-    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">151 冒險紀錄</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回選單</button></div>
+    <div id="view-team" class="view-section"><h2 style="text-align:center;">夥伴隊伍</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認</button></div>
+    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">151冒險紀錄</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button></div>
 </div>
 
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
     const localDict = { "bell":"鈴","busy":"忙碌","first name":"名字","last name":"姓氏","bus driver":"公車司機","market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末","birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎","bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船","transportation":"交通工具","town":"城鎮","wheel":"輪子" };
     const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
 
@@ -99,12 +103,12 @@
 
     function setHeroData(n, v) { localStorage.setItem(n, v); document.cookie = `${n}=${v};path=/;SameSite=Lax`; }
     function getHeroData(n) { const v = `; ${document.cookie}`; const p = v.split(`; ${n}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(n); }
-    async function fetchTranslation(t) { try { const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(t)}`); const d = await r.json(); return d[0][0][0]; } catch (e) { return "..."; } }
+    async function fetchTranslation(t) { try { const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(t)}`); const d = await r.json(); return d[0][0][0]; } catch (e) { return ""; } }
 
     function getEvoInfo(id) {
         const exp = parseInt(getHeroData(`exp_id_${id}`)) || 0;
         const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
-        let curId = id; let name = PK_NAMES[id] || "No."+id;
+        let curId = id, name = PK_NAMES[id] || "No."+id;
         if(id === 384 && lv === 3) { curId = 10079; name = "超級烈空坐"; }
         else if(id === 150 && lv === 3) { curId = 10044; name = "超級超夢Y"; }
         else {
@@ -136,9 +140,7 @@
 
     function updateHPUI() {
         document.getElementById('player-hp-bar').style.width = (state.playerHP/5 * 100) + "%";
-        document.getElementById('player-hp-text').innerText = `Anson: ${state.playerHP}/5`;
         document.getElementById('opp-hp-bar').style.width = (state.oppHP/5 * 100) + "%";
-        document.getElementById('opp-hp-text').innerText = `魔王: ${state.oppHP}/5`;
         const info = getEvoInfo(state.activePokeId);
         const ps = document.getElementById('player-sprite'); ps.src = getGif(info.displayId);
         if(info.isMega) ps.classList.add('mega-glow'); else ps.classList.remove('mega-glow');
@@ -152,14 +154,16 @@
         const word = state.currentList[state.index];
         const display = document.getElementById('display-cn');
         let tip = localDict[word.en.toLowerCase()] || word.cn;
-        if (!tip) { display.innerText = "..."; tip = await fetchTranslation(word.en); }
+        if (!tip) { display.innerText = ""; tip = await fetchTranslation(word.en); }
         display.innerText = tip;
-        
         const area = document.getElementById('letter-area'); area.innerHTML = "";
         let inputIdx = 0;
         word.en.split('').forEach((char) => {
-            if(char === " ") { area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%;height:5px"})); }
-            else {
+            if(char === " " || char === "/" || char === "-") { 
+                const sep = document.createElement('div'); sep.innerText = (char === " ") ? "" : char;
+                sep.style.cssText = "width:10px; font-size:1.5rem; text-align:center; line-height:68px; color:var(--accent);";
+                area.appendChild(sep); 
+            } else {
                 const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
                 inp.onkeydown = (e) => { if (e.key === "Backspace" && e.target.value === "") { const p = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) - 1}"]`); if (p) p.focus(); } };
                 inp.oninput = (e) => { if (e.target.value.length === 1) { const n = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) + 1}"]`); if (n) n.focus(); if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150); } };
@@ -171,10 +175,10 @@
     }
 
     function checkFinalAnswer() {
-        const word = state.currentList[state.index]; const boxes = document.querySelectorAll('.letter-box');
+        const word = state.currentList[state.index], boxes = document.querySelectorAll('.letter-box');
         let ui = ""; boxes.forEach(b => ui += b.value);
-        if (ui.toLowerCase() === word.en.replace(/[\s\/]/g, '').toLowerCase()) {
-            confetti({ particleCount: 35, spread: 50 });
+        if (ui.toLowerCase() === word.en.replace(/[\s\/-]/g, '').toLowerCase()) {
+            confetti({ particleCount: 30, spread: 50 });
             if(state.mode !== 'priority') {
                 state.oppHP--; document.getElementById('opp-sprite').classList.add('take-damage');
                 const expK = `exp_id_${state.activePokeId}`;
@@ -189,7 +193,7 @@
                 state.playerHP--; document.getElementById('player-sprite').classList.add('take-damage');
                 setTimeout(()=>document.getElementById('player-sprite').classList.remove('take-damage'), 450);
             }
-            if(state.playerHP <= 0) { alert("能量耗盡，先去休息吧！"); switchView('view-main'); return; }
+            if(state.playerHP <= 0) { alert("Anson 先休息一下吧！"); switchView('view-main'); return; }
             updateHPUI();
         }
     }
@@ -200,11 +204,10 @@
     
     function renderTeam() {
         const grid = document.getElementById('team-grid'); grid.innerHTML = "";
-        let teamIds = [384, 150, 992];
-        for(let i=1; i<=151; i++) { if(state.pokedex[i-1] === "1" && !teamIds.includes(i)) teamIds.push(i); }
-        teamIds.forEach(id => {
+        let ids = [384, 150, 992]; for(let i=1; i<=151; i++) if(state.pokedex[i-1] === "1" && !ids.includes(i)) ids.push(i);
+        ids.forEach(id => {
             const info = getEvoInfo(id);
-            const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
+            const it = document.createElement('div'); it.className = `grid-item collected ${state.activePokeId == id?'active':''}`;
             it.innerHTML = `<img src="${getGif(info.displayId)}"><div class="name-zh">${info.name}</div><div class="lv-tag">LV.${info.lv}</div>`;
             it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
         });
@@ -213,16 +216,15 @@
     function renderDex() {
         const grid = document.getElementById('dex-grid'); grid.innerHTML = "";
         for(let i=1; i<=151; i++) {
-            const isCaptured = state.pokedex[i-1] === "1";
-            const it = document.createElement('div');
-            it.className = `grid-item ${isCaptured ? 'collected' : 'locked'}`;
+            const captured = state.pokedex[i-1] === "1", it = document.createElement('div');
+            it.className = `grid-item ${captured ? 'collected' : 'locked'}`;
             it.innerHTML = `<img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div>`;
             grid.appendChild(it);
         }
     }
-    function playVoice() { window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(state.currentList[state.index].en); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
-    function toggleStar() { const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref); setHeroData('hero_priority', JSON.stringify(p)); document.getElementById('star-icon').innerText = p.includes(word.ref) ? "★" : "☆"; }
-    function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena(); }
+    function playVoice() { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(state.currentList[state.index].en); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
+    function toggleStar() { const w = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(w.ref)) p = p.filter(r => r !== w.ref); else p.push(w.ref); setHeroData('hero_priority', JSON.stringify(p)); document.getElementById('star-icon').innerText = p.includes(w.ref) ? "★" : "☆"; }
+    function startPrioritySession() { const p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(p.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena(); }
 </script>
 </body>
 </html>
