@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Challenge</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { 
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --math-font: 'Courier New', Courier, monospace;
+            --success: #2ecc71;
+            --accent: #f39c12;
+            --subtraction: #e67e22; 
+            --addition: #3498db;    
+            --error: #e74c3c;
+        }
+
+        html, body { height: 100%; margin: 0; background-color: var(--bg-color); font-family: 'PingFang TC', sans-serif; overflow: hidden; }
+        .page { display: none; width: 100%; max-width: 600px; min-height: 100vh; padding: 15px; flex-direction: column; align-items: center; box-sizing: border-box; margin: 0 auto; position: relative;}
+        .page.active { display: flex; }
+
+        #menu-list { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 40px; }
+        .btn-menu { padding: 15px 5px; font-size: 1.1rem; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; color: white; }
+        .btn-add { background: var(--addition); box-shadow: 0 4px 0 #2980b9; }
+        .btn-sub { background: var(--subtraction); box-shadow: 0 4px 0 #d35400; }
+        
+        .info-bar { display: flex; justify-content: space-between; width: 90%; margin-bottom: 5px; font-weight: bold; color: #555; }
+        .progress-container { width: 90%; height: 12px; background: #e0e0e0; border-radius: 6px; margin-bottom: 15px; overflow: hidden; }
+        #p-bar { height: 100%; background: var(--success); width: 0%; transition: 0.4s; }
+        
+        .q-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .q-text { font-size: 2.2rem; font-weight: bold; color: #333; }
+        
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        
+        #final-ans { width: 100px; height: 55px; font-size: 2rem; text-align: center; border: 3px solid #333; border-radius: 10px; outline: none; background: #fff; }
+        
+        .math-card { background: var(--card-bg); padding: 15px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 15px; width: 95%; justify-content: center; }
+        .vertical-math { display: grid; grid-template-columns: 35px 50px 50px 50px; gap: 5px; align-items: center; }
+        .cell { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; font-family: var(--math-font); }
+        .cell-input { width: 45px; height: 45px; border-radius: 8px; border: 2px solid #ccc; text-align: center; font-size: 1.8rem; font-weight: bold; box-sizing: border-box; padding: 0; line-height: 45px; }
+        .mark-input { width: 35px !important; height: 35px !important; font-size: 1rem !important; border: 1.5px dashed #aaa !important; color: var(--error); line-height: 35px !important; }
+        .v-line { grid-column: 1 / span 4; border-bottom: 3px solid #333; margin: 2px 0; }
+
+        .btn-main { padding: 10px 20px; font-size: 1.2rem; font-weight: bold; color: white; background: var(--success); border: none; border-radius: 12px; box-shadow: 0 4px 0 #27ae60; cursor: pointer; }
+        .btn-move { width: 60px; height: 60px; border-radius: 50%; border: none; background: var(--accent); color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #d35400; }
+
+        #result-box { text-align: center; padding: 25px; background: white; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 85%; }
+        .praise-text { font-size: 1.4rem; color: #2c3e50; font-weight: bold; margin: 20px 0; line-height: 1.5; }
+
+        .balloon { position: absolute; bottom: -100px; width: 40px; height: 50px; border-radius: 50%; z-index: 1000; animation: floatUp 6s linear forwards; }
+        @keyframes floatUp { to { transform: translateY(-120vh); } }
+    </style>
+</head>
+<body>
+
+<div class="page active" id="page-home">
+    <div id="menu-list"></div>
+</div>
+
+<div class="page" id="page-game">
+    <div class="info-bar">
+        <span>題次: <span id="q-count">1</span>/10</span>
+        <span style="color:var(--accent)">得分: <span id="current-score">0</span></span>
+    </div>
+    <div class="progress-container"><div id="p-bar"></div></div>
+    
+    <div class="q-row">
+        <div class="q-text"><span id="q-n1"></span><span id="q-op" style="color:var(--error)"></span><span id="q-n2"></span>=</div>
+        <input type="number" id="final-ans" inputmode="numeric">
+        <button class="btn-main" onclick="check()">送出</button>
+    </div>
+
+    <div class="math-card">
+        <div class="vertical-math" id="interact-grid"></div>
+        <button class="btn-move" onclick="moveAndSubmit()">➔</button>
+    </div>
+    <div id="feedback-msg" style="height:35px; font-size:1.3rem; font-weight:bold; margin-top:15px; text-align:center;"></div>
+    <button onclick="goHome()" style="background:none; border:none; color:#999; cursor:pointer; margin-top:10px;">↩ 返回選單</button>
+</div>
+
+<div class="page" id="page-result">
+    <div id="result-box">
+        <h2 id="result-title"></h2>
+        <div id="result-score-text" style="font-size: 1.8rem; margin: 10px 0; color: var(--accent);"></div>
+        <div class="praise-text" id="praise-content"></div>
+        <button class="btn-main" onclick="goHome()">再挑戰一次 🚀</button>
+    </div>
+</div>
+
+<script>
+    let n1, n2, op, correctVal, currentQ = 1, totalPoints = 0, currentQPoints = 10;
+    
+    const perfectPraises = ["宇宙最強數學天神！你的智慧光芒蓋過了太陽！", "這簡直是數學藝術的巔峰之作！", "看哪！一位數學傳奇誕生了！", "大腦運算速度比光速還快，數學之神都要向你低頭！", "這場完美的表演簡直是視覺饗宴，你是數字的主宰！", "震撼人心！每一題都在你指尖化解，無可爭議的冠軍！", "不可思議！你的智慧如滔滔江水，連綿不絕！", "數學界的愛因斯坦在你面前也要感嘆：太神了！", "你的邏輯完美無瑕，簡直是計算機轉世！", "這種神級表現，如果不頒個金獎，全世界都會哭泣！", "簡直是數學界的莫札特，每一題都像完美的交響樂！", "你大腦裡的細胞一定在歡呼，完成了偉大的壯舉！", "這已經不是算術，這是藝術！做得如此優雅動人！", "你的智慧電波已經把所有難題都瞬間瓦解了！", "全對！全對！全對！你就是無敵的化身！", "你是數字的魔術師，難題都找到了正確的歸宿！", "看著你的紀錄，我感受到了靈魂的戰慄，太強了！", "你的專注力如同雷射，精確切割開每個關卡！", "這簡直是跨時代的智慧結晶，未來不可限量！", "你完成了一個不可能的任務，你是超級英雄！", "你對數字的掌控力已出神入化，太令人震驚了！", "你的每一次點擊都充滿自信，真正的數學之王！", "卓越表現應寫入教材，讓後人瞻仰你的英姿！", "解決問題的速度讓秒錶都來不及反應，極速傳奇！", "華麗的數字之舞，你跳出了最完美震撼的舞步！", "你是萬中無一的奇才，世上已無能難倒你的題目！", "你的智慧之火正在燃燒，照亮了整個數學迷宮！", "這不是巧合，是實力的極致展現！你已經封神了！", "聽！全世界的數學家都在為你的全對而歡呼！", "你是宇宙間最強大的運算核心，舉世無雙！"];
+    const encouragement = ["差一點點！你已觸摸到王冠了，再加把勁！", "太可惜了，你的智慧已發揮99%，加油！", "你的計算過程非常專業，多練習必成大器！", "你是明日之星，這次經驗會讓你下次更強！", "看你認真思考的樣子，離數學之王不遠了！", "失敗是成功的墊腳石，下次你一定震驚全場！", "雖然有小失誤，但邏輯感很棒，繼續努力！", "差一點達成完美成就！再挑戰一次看看？", "你的進步我看在眼裡，離巔峰只剩一小段路！", "不要氣餒，英雄也有失手時，再練習一下吧！", "你的數學天分正在覺醒，再挑戰幾次就無敵！", "就差那麼一點！專注力再提高一點就完美了！", "你是勇於挑戰的英雄，下場一定迎來滿分！", "表現已經很優秀了，下次目標全對，我相信你！", "數學之路需要耐心，你已走在正確的道路上！", "運算速度很快，只要再仔細檢查，就是滿分！", "很棒的嘗試！再練習一組讓大腦更靈活吧！", "雖然沒全對，但勇於面對難題的精神值得肯定！", "你是聰明的學習者，下次一定能找出陷阱！", "別停下來，離數學巔峰只有一步之遙，衝啊！", "這場挑戰讓你更強大了，下次輕鬆拿下一百！", "手感越來越好了，下一局說不定就是全對喔！", "每道錯題都是寶貴功課，多練習就是王者！", "加油！數學之神的位子正空著等你坐上去呢！", "你的思維很清晰，只要再專注一點就完美了！", "這次沒拿到100分沒關係，努力絕對沒白費！", "這只是暖身，下場才是發揮真正神力的時刻！", "你的數字感很強，小挫折擋不住前進的步伐！", "差點就變數學之王了！再給自己一次機會吧！", "再試一次，滿分彩帶正在終點線等著你呢！"];
+
+    function initMenu() {
+        const types = [
+            {id:1, n:'十位加減', sub:false}, {id:2, n:'百+個位', sub:false}, 
+            {id:3, n:'百+十位', sub:false}, {id:4, n:'百+百位', sub:false}, 
+            {id:5, n:'百-個位', sub:true}, {id:6, n:'百-十位', sub:true}, 
+            {id:7, n:'百-百位', sub:true}
+        ];
+        document.getElementById('menu-list').innerHTML = types.map(t => 
+            `<button class="btn-menu ${t.sub ? 'btn-sub' : 'btn-add'}" onclick="start(${t.id})">${t.n}</button>`
+        ).join('');
+    }
+
+    function start(type) {
+        currentType = type; currentQ = 1; totalPoints = 0;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-game').classList.add('active');
+        document.getElementById('current-score').innerText = "0";
+        loadProblem();
+    }
+
+    function loadProblem() {
+        let a, b, o = (currentType >= 5) ? '-' : '+';
+        const r = (min, range) => Math.floor(Math.random() * range) + min;
+        if(currentType === 1) { a=r(20,70); b=r(11,19); o=Math.random()>0.5?'+':'-'; }
+        else if(currentType === 2) { a=r(100,800); b=r(1,9); }
+        else if(currentType === 3) { a=r(100,800); b=r(11,88); }
+        else if(currentType === 4) { a=r(100,400); b=r(101,400); }
+        else if(currentType === 5) { a=r(101,800); b=r(2,7); }
+        else if(currentType === 6) { a=r(110,700); b=r(11,88); }
+        else if(currentType === 7) { a=r(500,400); b=r(101,390); }
+
+        if(o === '-' && a < b) [a, b] = [b, a];
+        n1=a; n2=b; op=o; correctVal=(o==='+')?a+b:a-b;
+        currentQPoints = 10;
+        
+        document.getElementById('q-n1').innerText = n1;
+        document.getElementById('q-op').innerText = op;
+        document.getElementById('q-n2').innerText = n2;
+        document.getElementById('final-ans').value = '';
+        document.getElementById('q-count').innerText = currentQ;
+        document.getElementById('p-bar').style.width = `${(currentQ-1)/10 * 100}%`;
+        document.getElementById('feedback-msg').innerText = '';
+        renderGrid();
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('interact-grid');
+        const s1 = n1.toString().padStart(3, ' '), s2 = n2.toString().padStart(3, ' ');
+        const colors = ['#3498db', '#2ecc71', '#f39c12'];
+        
+        let html = `<div></div>${[0,1,2].map(i => `
+            <div class="cell"><input type="number" class="cell-input mark-input" id="m-${i}" oninput="limitOne(this)"></div>
+        `).join('')}`;
+        
+        html += `<div></div>${[0,1,2].map(i => `<div class="cell" style="color:${colors[i]}">${s1[i].trim()}</div>`).join('')}`;
+        html += `<div class="cell" style="color:var(--error)">${op}</div>${[0,1,2].map(i => `<div class="cell" style="color:${colors[i]}">${s2[i].trim()}</div>`).join('')}`;
+        html += `<div class="v-line"></div>`;
+        
+        html += `<div></div>${[0,1,2].map(i => `
+            <div class="cell"><input type="number" class="cell-input" id="a-${i}" style="border-color:${colors[i]}" inputmode="numeric" oninput="limitOne(this)"></div>
+        `).join('')}`;
+        
+        grid.innerHTML = html;
+    }
+
+    // 僅限制一位數，不進行焦點跳轉
+    function limitOne(el) {
+        if (el.value.length > 1) {
+            el.value = el.value.slice(0, 1);
+        }
+    }
+
+    function moveAndSubmit() {
+        let v = ""; 
+        for(let i=0; i<3; i++) { 
+            let val = document.getElementById(`a-${i}`).value; 
+            if(val !== "") v += val; 
+        }
+        if(v === "") return;
+        document.getElementById('final-ans').value = parseInt(v);
+        check();
+    }
+
+    function check() {
+        const userVal = parseInt(document.getElementById('final-ans').value);
+        const msg = document.getElementById('feedback-msg');
+        
+        if(userVal === correctVal) {
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+            totalPoints += currentQPoints;
+            document.getElementById('current-score').innerText = totalPoints;
+            msg.style.color = "var(--success)";
+            msg.innerText = "太棒了！答對了 🌟";
+            
+            setTimeout(() => {
+                if(currentQ < 10) {
+                    currentQ++;
+                    loadProblem();
+                } else {
+                    showResult();
+                }
+            }, 800);
+        } else {
+            currentQPoints = Math.max(0, currentQPoints - 2);
+            msg.style.color = "var(--error)";
+            msg.innerText = "再試一次喔！加油！💪";
+            document.getElementById('final-ans').value = '';
+            setTimeout(() => { msg.innerText = ''; }, 1500);
+        }
+    }
+
+    function showResult() {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-result').classList.add('active');
+        const title = document.getElementById('result-title');
+        const scoreText = document.getElementById('result-score-text');
+        const content = document.getElementById('praise-content');
+        
+        scoreText.innerText = `總積分：${totalPoints}`;
+        
+        if(totalPoints === 100) {
+            title.innerText = "🏆 完美大滿貫！";
+            title.style.color = "#f1c40f";
+            content.innerText = perfectPraises[Math.floor(Math.random()*perfectPraises.length)];
+            celebratePerfect();
+        } else {
+            title.innerText = "挑戰完成！";
+            title.style.color = "#34495e";
+            content.innerText = encouragement[Math.floor(Math.random()*encouragement.length)];
+        }
+    }
+
+    function celebratePerfect() {
+        const end = Date.now() + (15 * 1000);
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+        (function frame() {
+            confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+            confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+            if (Date.now() % 2000 < 50) confetti({ particleCount: 80, spread: 360, origin: { x: Math.random(), y: Math.random()-0.2 } });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+        for(let i=0; i<30; i++) setTimeout(createBalloon, i * 300);
+    }
+
+    function createBalloon() {
+        const b = document.createElement('div');
+        b.className = 'balloon';
+        const colors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe'];
+        b.style.left = Math.random() * 100 + 'vw';
+        b.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        b.style.opacity = 0.7;
+        document.body.appendChild(b);
+        setTimeout(() => b.remove(), 7000);
+    }
+
+    function goHome() { 
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-home').classList.add('active');
+        initMenu();
+    }
+
+    window.onload = initMenu;
+</script>
+</body>
+</html>
