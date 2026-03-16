@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1080</title>
+    <title>Word Hero V1100 - Anson Master</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
@@ -18,33 +18,34 @@
             width: 60px; height: 90px; border: 1px solid var(--accent); border-radius: 12px; 
             background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-size: 3.2rem; font-weight: 900; 
             padding: 0; margin: 0; line-height: 90px; display: inline-block; flex-shrink: 0; -webkit-appearance: none;
+            caret-color: var(--accent);
         }
         .letter-box.correct { border-color: var(--success); }
         .letter-box.wrong { border-color: var(--danger); color: var(--danger); }
         .word-spacer { width: 100%; height: 5px; }
 
-        /* 戰鬥與進度條 */
+        /* 戰鬥與進化 UI */
         #combat-arena { height: 140px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
         .sprite { position: absolute; bottom: 8px; height: 75px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
         #player-sprite { left: 15px; transform: scaleX(-1); }
         #opp-sprite { right: 15px; }
 
-        .evo-ui-box { position: absolute; top: 5px; left: 15px; width: 110px; z-index: 20; }
-        .evo-progress-container { width: 100%; height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); overflow: hidden; }
+        .evo-ui-box { position: absolute; top: 5px; left: 15px; width: 115px; z-index: 20; }
+        .evo-progress-container { width: 100%; height: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); overflow: hidden; }
         #evo-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #fde047, #fbbf24); transition: 0.5s; }
-        .evo-text { font-size: 0.75rem; color: var(--gold); text-align: center; margin-top: 2px; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        .evo-text { font-size: 0.75rem; color: var(--gold); text-align: center; margin-top: 2px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
 
         /* UI 網格與按鈕 */
         .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
-        .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 135px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .grid-item img { width: 75px; height: 75px; object-fit: contain; }
         .grid-item.collected { filter: none !important; opacity: 1 !important; cursor: pointer; }
         .grid-item.locked { filter: grayscale(100%); opacity: 0.25; }
         .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.2); }
-        .name-zh { font-size: 0.8rem; font-weight: 800; margin-top: 2px; }
+        .name-zh { font-size: 0.8rem; font-weight: 800; margin-top: 2px; color: #fff; }
         .lv-tag { color: var(--gold); font-size: 0.65rem; font-weight: 900; }
 
-        .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; cursor: pointer; color: white; margin-bottom: 10px; text-align: center; }
+        .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; cursor: pointer; color: white; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .pass-btn { padding: 6px 14px; background: #334155; border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-weight: 800; cursor: pointer; }
     </style>
 </head>
@@ -66,7 +67,7 @@
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><button class="mode-btn" style="width:auto; padding:8px 15px; margin:0; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 離開</button></div>
         <div id="combat-arena">
             <img id="player-sprite" class="sprite" src="">
-            <div class="evo-ui-box"><div class="evo-progress-container"><div id="evo-progress-bar"></div></div><div id="evo-progress-text" class="evo-text">EXP 0/20</div></div>
+            <div class="evo-ui-box"><div class="evo-progress-container"><div id="evo-progress-bar"></div></div><div id="evo-progress-text" class="evo-text">LV.1 - EXP 0/20</div></div>
             <img id="opp-sprite" class="sprite" src="">
         </div>
         <div class="word-cn-box" style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:5px;">
@@ -80,7 +81,7 @@
         <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.1); padding:10px 40px; font-size:1rem;" onclick="playVoice()">🔊 再唸一次</button>
     </div>
 
-    <div id="view-team" class="view-section"><h2 style="text-align:center; color:var(--accent); margin-bottom:10px;">請選擇夥伴</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6; margin-top:15px;" onclick="switchView('view-main')">確認</button></div>
+    <div id="view-team" class="view-section"><h2 style="text-align:center; color:var(--accent); margin-bottom:10px;">出戰夥伴</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6; margin-top:15px;" onclick="switchView('view-main')">確認</button></div>
     <div id="view-pokedex" class="view-section"><h2 style="text-align:center; color:var(--gold); margin-bottom:10px;">收服圖鑑 (151)</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569; margin-top:15px;" onclick="switchView('view-main')">返回</button></div>
 </div>
 
@@ -89,9 +90,19 @@
     const GOD_IDS = [10079, 10044, 150, 992];
     const GOD_NAMES = ["烈空坐", "超夢Y", "超夢", "鐵臂膀"];
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"比雕",19:"小拉達",20:"拉達",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻"};
-    const localDict = { "wonder": "疑惑", "worder": "疑惑的", "social studies": "社會學科" };
     
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 10079, pokedex: "", gods_bits: "", solvedCount: 0, isTempPractice: false };
+    // --- 強化字典 W4-W9 ---
+    const localDict = {
+        "wonder": "疑惑", "worder": "疑惑的", "social studies": "社會學科",
+        "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "樣子滑稽的", "holler": "大喊", "a couple of": "一些，幾個", "mustard": "芥末",
+        "birthday": "生日", "call": "打電話/呼叫", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "shook head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎",
+        "bicycle": "腳踏車", "bus": "公車", "train": "火車", "by bus": "搭公車", "by car": "搭車", "by train": "搭火車", "motorcycle": "摩托車、機車", "on foot": "走路/步行", "sailing ship": "帆船", "transportation": "交通工具", "town": "城鎮", "wheel": "輪子",
+        "balloon": "氣球", "cross": "跨越/十字", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的",
+        "short": "短的/矮的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反的", "mug": "馬克杯", "handle": "把手", "anything": "任何事物", "begin to": "開始去做", "dizzy": "暈眩的",
+        "janitor": "工友/管理員", "zookeeper": "動物園管理員", "cartwheel": "側手翻", "(water) fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠"
+    };
+
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 10079, pokedex: "0".repeat(151), gods_bits: "1111", solvedCount: 0, isTempPractice: false };
 
     function setHeroData(name, value) {
         localStorage.setItem(name, value);
@@ -125,9 +136,11 @@
     function updateEvoUI() {
         const expKey = `exp_id_${state.activePokeId}`;
         const exp = parseInt(getHeroData(expKey)) || 0;
-        let target = exp < 20 ? 20 : 50; if(exp >= 50) target = 50;
+        let lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
+        let target = lv === 1 ? 20 : 50;
+        if(lv === 3) target = 50;
         document.getElementById('evo-progress-bar').style.width = Math.min(100, (exp/target)*100) + "%";
-        document.getElementById('evo-progress-text').innerText = `進化: ${exp}/${target}`;
+        document.getElementById('evo-progress-text').innerText = `LV.${lv} - EXP ${exp}/${target}`;
     }
 
     function checkEvolution() {
@@ -145,7 +158,7 @@
             let pArr = state.pokedex.split('');
             if (parseInt(pArr[idx]) < currentStatus) { pArr[idx] = currentStatus; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); updated = true; }
         }
-        if (updated) { confetti({ particleCount: 200, spread: 80 }); alert("能力提升！進化成功！"); renderTeam(); }
+        if (updated) { confetti({ particleCount: 250, spread: 100 }); alert("進化成功！夥伴變強了！"); renderTeam(); }
     }
 
     function startSession(mode) {
@@ -171,6 +184,7 @@
         let inputIdx = 0;
         word.en.split('').forEach((char) => {
             if(char === " ") area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%; height:5px"}));
+            else if(char === "/") area.appendChild(Object.assign(document.createElement('div'), {innerText:"/", style:"font-size:3rem; color:var(--accent); line-height:90px"}));
             else {
                 const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
                 inp.oninput = (e) => {
@@ -198,9 +212,9 @@
     function checkFinalAnswer() {
         const word = state.currentList[state.index]; const boxes = document.querySelectorAll('.letter-box');
         let ui = ""; boxes.forEach(b => ui += b.value);
-        const target = word.en.replace(/\s/g, '').toLowerCase();
+        const target = word.en.replace(/[\s\/]/g, '').toLowerCase();
         if (ui.toLowerCase() === target) {
-            confetti({ particleCount: 40, spread: 50, origin: { y: 0.8 } });
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
             if(!state.isTempPractice) {
                 state.solvedCount++;
                 const expKey = `exp_id_${state.activePokeId}`;
@@ -216,7 +230,7 @@
         }
     }
 
-    function handleVictory() { if(state.mode === 'quiz' && state.solvedCount > 0) { let pArr = state.pokedex.split(''); pArr[state.currentOppId-1] = "1"; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); alert(`成功收服！`); } switchView('view-main'); }
+    function handleVictory() { if(state.mode === 'quiz' && state.solvedCount > 0) { let pArr = state.pokedex.split(''); pArr[state.currentOppId-1] = "1"; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); alert(`成功收服新夥伴！`); } switchView('view-main'); }
     function skipWord() { state.isTempPractice = false; state.index++; loadWord(); }
     function triggerLearningMode() { state.isTempPractice = true; loadWord(); }
     async function getFinalTrans(wordObj) { const en = wordObj.en.toLowerCase(); if(localDict[en]) return localDict[en]; try { const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(en)}`); const data = await res.json(); return data[0][0][0]; } catch(e) { return en.toUpperCase(); } }
@@ -227,15 +241,19 @@
     function renderTeam() {
         const grid = document.getElementById('team-grid'); grid.innerHTML = "";
         GOD_IDS.forEach((id, idx) => {
-            const status = state.gods_bits[idx]; const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
-            it.innerHTML = `<img src="${getGif(id)}"><div class="name-zh">${GOD_NAMES[idx]}</div><div class="lv-tag">LV.${status}</div>`;
+            const exp = parseInt(getHeroData(`exp_id_${id}`)) || 0;
+            const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
+            const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
+            it.innerHTML = `<img src="${getGif(id)}"><div class="name-zh">${GOD_NAMES[idx]}</div><div class="lv-tag">LV.${lv} (EXP:${exp})</div>`;
             it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
         });
         for(let i=1; i<=151; i++) {
             const status = state.pokedex[i-1];
             if(status !== "0") {
+                const exp = parseInt(getHeroData(`exp_id_${i}`)) || 0;
+                const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
                 const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == i?'active':''} collected`;
-                it.innerHTML = `<img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i] || 'No.'+i}</div><div class="lv-tag">LV.${status}</div>`;
+                it.innerHTML = `<img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i] || 'No.'+i}</div><div class="lv-tag">LV.${lv} (EXP:${exp})</div>`;
                 it.onclick = () => { state.activePokeId = i; setHeroData('hero_myPoke', i); renderTeam(); }; grid.appendChild(it);
             }
         }
