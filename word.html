@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1130 - Anson Master</title>
+    <title>Word Hero V1140 - Anson Master</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
@@ -12,7 +12,6 @@
         .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #1e293b, #020617); }
         .view-section { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
 
-        /* iPad 字母框加固 (60x90) */
         .box-input-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; position: relative; z-index: 50; }
         .letter-box { 
             width: 60px; height: 90px; border: 1px solid var(--accent); border-radius: 12px; 
@@ -22,12 +21,10 @@
         .letter-box.correct { border-color: var(--success); }
         .letter-box.wrong { border-color: var(--danger); color: var(--danger); }
 
-        /* 進化舞台 */
         #combat-arena { height: 140px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
         .sprite { position: absolute; bottom: 8px; height: 75px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
         #player-sprite { left: 15px; transform: scaleX(-1); }
         #opp-sprite { right: 15px; }
-        
         .mega-glow { filter: drop-shadow(0 0 12px var(--gold)) brightness(1.2) !important; }
 
         .evo-ui-box { position: absolute; top: 5px; left: 15px; width: 130px; z-index: 20; }
@@ -50,12 +47,12 @@
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h1 style="text-align:center; color:var(--accent);">ANSON MASTER</h1>
+        <h1 style="text-align:center; color:var(--accent); margin: 20px 0;">ANSON MASTER</h1>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:18px; border-radius:16px; background:#1e293b; color:var(--gold); border:2.5px solid #334155; font-weight:900; font-size:1.6rem; margin-bottom:15px;"></select>
-            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (可進步)</button>
-            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式 (可進步)</button>
-            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號練習 (無進化/不抓寶)</button>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰</button>
+            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式</button>
+            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號複習 (不進化)</button>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 圖鑑</button></div>
     </div>
@@ -81,37 +78,30 @@
     </div>
 
     <div id="view-team" class="view-section"><h2 style="text-align:center;">夥伴清單</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認</button></div>
-    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">收服圖鑑</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button></div>
+    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">151圖鑑</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button></div>
 </div>
 
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"比雕",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"末入蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"素利普",97:"素利柏",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"沙瓦郎",107:"艾比郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"獨角犀牛",112:"鑽角犀獸",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"吸盤魔偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"大甲",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
-    const localDict = { "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "樣子滑稽的", "holler": "大喊", "a couple of": "一些", "mustard": "芥末", "birthday": "生日", "call": "打電話", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "shook head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎", "bicycle": "腳踏車", "bus": "公車", "train": "火車", "by bus": "搭公車", "by car": "搭車", "by train": "搭火車", "motorcycle": "摩托車", "on foot": "走路", "sailing ship": "帆船", "transportation": "交通", "town": "城鎮", "wheel": "輪子", "balloon": "氣球", "cross": "跨越", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的", "short": "短的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反", "mug": "馬克杯", "handle": "把手", "anything": "任何", "begin to": "開始", "dizzy": "暈眩", "janitor": "工友", "zookeeper": "管理員", "cartwheel": "側手翻", "fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠" };
-
-    // --- 完整進化鏈地圖 ---
-    const CHAINS = [
-        [1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[29,30,31],[32,33,34],[43,44,45],[60,61,62],[63,64,65],[66,67,68],[69,70,71],[74,75,76],[92,93,94],[147,148,149],
-        [19,20],[21,22],[23,24],[25,26],[27,28],[37,38],[41,42],[50,51],[52,53],[54,55],[58,59],[72,73],[77,78],[81,82],[90,91],[96,97],[109,110],[116,117],[129,130]
-    ];
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",25:"皮卡丘",26:"雷丘",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",143:"卡比獸",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
+    const localDict = { "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "滑稽的", "holler": "大喊", "a couple of": "一些", "mustard": "芥末", "birthday": "生日", "call": "打電話", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎", "bicycle": "腳踏車", "bus": "公車", "train": "火車", "motorcycle": "摩托車", "on foot": "走路", "transportation": "交通工具", "town": "城鎮", "wheel": "輪子", "balloon": "氣球", "cross": "跨越", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的", "short": "短的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反", "mug": "馬克杯", "handle": "把手", "anything": "任何", "begin to": "開始", "dizzy": "暈眩", "janitor": "工友", "zookeeper": "管理員", "fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠" };
+    const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[29,30,31],[32,33,34],[43,44,45],[60,61,62],[63,64,65],[66,67,68],[69,70,71],[74,75,76],[92,93,94],[147,148,149],[25,26]];
 
     let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 384, pokedex: "0".repeat(151) };
 
-    function setHeroData(name, value) { localStorage.setItem(name, value); document.cookie = `${name}=${value};path=/;SameSite=Lax`; }
-    function getHeroData(name) { const v = `; ${document.cookie}`; const p = v.split(`; ${name}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(name); }
+    function setHeroData(n, v) { localStorage.setItem(n, v); document.cookie = `${n}=${v};path=/;SameSite=Lax`; }
+    function getHeroData(n) { const v = `; ${document.cookie}`; const p = v.split(`; ${n}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(n); }
 
     function getEvoInfo(id) {
         const exp = parseInt(getHeroData(`exp_id_${id}`)) || 0;
         const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
         let curId = id; let name = PK_NAMES[id] || "No."+id;
-        
         if(id === 384 && lv === 3) { curId = 10079; name = "超級烈空坐"; }
         else if(id === 150 && lv === 3) { curId = 10044; name = "超級超夢Y"; }
         else {
-            const chain = CHAINS.find(c => c.includes(id));
-            if(chain) { curId = chain[lv-1] || chain[chain.length-1]; name = PK_NAMES[curId]; }
-            else if(lv === 2) name += "(覺醒)";
-            else if(lv === 3) name = "極致" + name;
+            const c = CHAINS.find(x => x.includes(id));
+            if(c) { curId = c[lv-1] || c[c.length-1]; name = PK_NAMES[curId]; }
+            else if(lv === 2) name += "(覺醒)"; else if(lv === 3) name = "極致" + name;
         }
         return { displayId: curId, name, lv, exp, isMega: (lv===3) };
     }
@@ -126,7 +116,7 @@
     function parseCSV(text) {
         const rows = text.split(/\r?\n/).map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
         state.banks = {}; rows[0].forEach((h, i) => { if(!h) return; state.banks[h] = []; for(let r=1; r<rows.length; r++) if(rows[r][i]) state.banks[h].push({ en: rows[r][i].split(',')[0], cn: rows[r][i].split(',')[1], ref: `${String.fromCharCode(65+i)}${r+1}` }); });
-        document.getElementById('unit-selector').innerHTML = Object.keys(state.banks).sort().map(k => `<option value="${k}">${k}</option>`).join('');
+        document.getElementById('unit-selector').innerHTML = Object.keys(state.banks).sort((a,b)=>parseInt(b.replace(/\D/g,''))-parseInt(a.replace(/\D/g,''))).map(k => `<option value="${k}">${k}</option>`).join('');
     }
 
     function updateEvoUI() {
@@ -134,9 +124,16 @@
         const target = info.lv === 1 ? 20 : 50;
         document.getElementById('evo-progress-bar').style.width = Math.min(100, (info.exp/target)*100) + "%";
         document.getElementById('evo-progress-text').innerText = `${info.name} LV.${info.lv} - EXP ${info.exp}/${target}`;
-        const sprite = document.getElementById('player-sprite'); sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif`;
+        const sprite = document.getElementById('player-sprite');
+        sprite.src = getGif(info.displayId);
         if(info.isMega) sprite.classList.add('mega-glow'); else sprite.classList.remove('mega-glow');
-        document.getElementById('evo-ui-container').style.display = (state.mode === 'priority') ? 'none' : 'block';
+        document.getElementById('evo-ui-container').style.visibility = (state.mode === 'priority') ? 'hidden' : 'visible';
+    }
+
+    function getGif(id) {
+        // 核心修正：針對 992 (鐵臂膀) 使用官方高畫質圖片，其餘使用動畫圖
+        if(id >= 900) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`;
     }
 
     function checkFinalAnswer() {
@@ -145,19 +142,19 @@
         if (ui.toLowerCase() === word.en.replace(/[\s\/]/g, '').toLowerCase()) {
             confetti({ particleCount: 40, spread: 50 });
             if(state.mode !== 'priority') {
-                const expKey = `exp_id_${state.activePokeId}`;
-                let curExp = (parseInt(getHeroData(expKey)) || 0) + 1;
-                setHeroData(expKey, curExp);
-                if(curExp === 20 || curExp === 50) { confetti({ particleCount: 200, spread: 100 }); alert("進化達成！"); }
+                const k = `exp_id_${state.activePokeId}`;
+                let cur = (parseInt(getHeroData(k)) || 0) + 1;
+                setHeroData(k, cur);
+                if(cur === 20 || cur === 50) { confetti({ particleCount: 200, spread: 100 }); alert("進化達成！"); }
             }
             updateEvoUI(); state.index++; setTimeout(loadWord, 600);
         } else { boxes.forEach(b => b.classList.add('wrong')); }
     }
 
-    function startSession(mode) {
+    function startSession(m) {
         state.unit = document.getElementById('unit-selector').value;
         state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
-        state.mode = mode; state.index = 0; switchView('view-game'); updateEvoUI(); loadWord();
+        state.mode = m; state.index = 0; switchView('view-game'); updateEvoUI(); loadWord();
     }
 
     function loadWord() {
@@ -189,8 +186,8 @@
 
     function handleVictory() { 
         if(state.mode !== 'priority') {
-            let pArr = state.pokedex.split(''); pArr[Math.floor(Math.random()*151)] = "1"; 
-            setHeroData('hero_pokedex_bits', pArr.join('')); alert("收服成功！"); 
+            let p = state.pokedex.split(''); p[Math.floor(Math.random()*151)] = "1"; 
+            setHeroData('hero_pokedex_bits', p.join('')); alert("收服成功！"); 
         }
         switchView('view-main'); 
     }
@@ -200,7 +197,7 @@
         [384, 150, 992, 1, 4, 7, 25, 133].forEach(id => {
             const info = getEvoInfo(id);
             const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
-            it.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif"><div class="name-zh">${info.name}</div><div class="lv-tag">LV.${info.lv}</div>`;
+            it.innerHTML = `<img src="${getGif(info.displayId)}"><div class="name-zh">${info.name}</div><div class="lv-tag">LV.${info.lv}</div>`;
             it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); };
             grid.appendChild(it);
         });
@@ -209,7 +206,7 @@
         const grid = document.getElementById('dex-grid'); grid.innerHTML = "";
         for(let i=1; i<=151; i++) {
             const status = state.pokedex[i-1];
-            grid.innerHTML += `<div class="grid-item ${status !== "0" ? 'collected' : 'locked'}"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${i}.gif"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div></div>`;
+            grid.innerHTML += `<div class="grid-item ${status !== "0" ? 'collected' : 'locked'}"><img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div></div>`;
         }
     }
     function toggleStar() { const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref); setHeroData('hero_priority', JSON.stringify(p)); loadWord(); }
