@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Hero V1060</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #020617; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; }
+        .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #1e293b, #020617); }
+        .view-section { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
+
+        /* 字母框核心：物理固定 60x90，1px 邊框 */
+        .box-input-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; position: relative; z-index: 50; }
+        .letter-box { 
+            width: 60px; height: 90px; border: 1px solid var(--accent); border-radius: 12px; 
+            background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-size: 3.2rem; font-weight: 900; 
+            padding: 0; margin: 0; line-height: 90px; display: inline-block; flex-shrink: 0; -webkit-appearance: none;
+        }
+        .letter-box.correct { border-color: var(--success); }
+        .letter-box.wrong { border-color: var(--danger); color: var(--danger); }
+
+        /* 戰鬥與進度 */
+        #combat-arena { height: 140px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
+        .sprite { position: absolute; bottom: 8px; height: 75px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
+        #player-sprite { left: 15px; transform: scaleX(-1); }
+        #opp-sprite { right: 15px; }
+
+        .evo-ui-box { position: absolute; top: 5px; left: 15px; width: 110px; z-index: 20; }
+        .evo-progress-container { width: 100%; height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); overflow: hidden; }
+        #evo-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #fde047, #fbbf24); transition: 0.5s; }
+        .evo-text { font-size: 0.75rem; color: var(--gold); text-align: center; margin-top: 2px; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+
+        /* 夥伴清單 */
+        .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
+        .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 135px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .grid-item img { width: 75px; height: 75px; object-fit: contain; }
+        .name-zh { color: #fff; font-size: 0.8rem; font-weight: 800; margin-top: 2px; }
+        .lv-tag { color: var(--gold); font-size: 0.65rem; font-weight: 900; }
+        .grid-item.locked { filter: grayscale(100%); opacity: 0.25; }
+        .grid-item.collected { filter: none !important; opacity: 1 !important; cursor: pointer; }
+        .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.2); }
+
+        .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; cursor: pointer; color: white; margin-bottom: 10px; text-align: center; }
+        .pass-btn { padding: 6px 14px; background: #334155; border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-weight: 800; cursor: pointer; }
+    </style>
+</head>
+<body onload="initSystem()">
+
+<div class="container">
+    <div id="view-main" class="view-section" style="display:flex;">
+        <h1 style="text-align:center; color:var(--accent); margin: 10px 0;">ANSON MASTER</h1>
+        <div style="flex:1;">
+            <select id="unit-selector" style="width:100%; padding:18px; border-radius:16px; background:#1e293b; color:var(--gold); border:2.5px solid #334155; font-weight:900; font-size:1.6rem; margin-bottom:15px;"></select>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (收服夥伴)</button>
+            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式</button>
+            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 常錯星號練習</button>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 圖鑑</button></div>
+    </div>
+
+    <div id="view-game" class="view-section">
+        <div class="battle-hp-row"><div class="hp-container" style="flex:1;"><div id="player-hp-bar" class="hp-bar" style="width:100%;"></div></div><div class="hp-container" style="flex:1;"><div id="enemy-hp-bar" class="hp-bar" style="width:100%;"></div></div></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><button class="mode-btn" style="width:auto; padding:8px 15px; margin:0; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 離開</button></div>
+        <div id="combat-arena">
+            <img id="player-sprite" class="sprite" src="">
+            <div class="evo-ui-box"><div class="evo-progress-container"><div id="evo-progress-bar"></div></div><div id="evo-progress-text" class="evo-text">EXP 0/20</div></div>
+            <img id="opp-sprite" class="sprite" src="">
+        </div>
+        <div class="word-cn-box" style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:5px;">
+            <span id="display-cn" style="font-size:2.2rem; font-weight:900; color:var(--gold);">...</span>
+            <span id="star-icon" style="font-size:2.4rem; cursor:pointer; color:#475569;" onclick="toggleStar()">☆</span>
+            <button class="pass-btn" onclick="skipWord()">PASS</button>
+        </div>
+        <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:900; font-size:1.8rem; height:35px; margin-bottom:5px;"></div>
+        <div id="letter-area" class="box-input-container"></div>
+        <div id="support-area" style="width:100%; display:none; justify-content:center; margin-bottom:10px;"><button class="mode-btn" style="background:var(--gold); color:#000; width:80%;" onclick="triggerLearningMode()">📖 我要練習</button></div>
+        <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.1); padding:10px 40px; font-size:1rem;" onclick="playVoice()">🔊 再唸一次</button>
+    </div>
+
+    <div id="view-team" class="view-section"><h2 style="text-align:center; color:var(--accent); margin-bottom:10px;">出戰夥伴</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6; margin-top:15px;" onclick="switchView('view-main')">確認</button></div>
+    <div id="view-pokedex" class="view-section"><h2 style="text-align:center; color:var(--gold); margin-bottom:10px;">收服圖鑑 (151)</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569; margin-top:15px;" onclick="switchView('view-main')">返回</button></div>
+</div>
+
+<script>
+    const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
+    const GOD_IDS = [10079, 10044, 150, 992];
+    const GOD_NAMES = ["烈空坐", "超夢Y", "超夢", "鐵臂膀"];
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"比雕",19:"小拉達",20:"拉達",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻"};
+    const localDict = { "wonder": "疑惑，想知道", "worder": "疑惑的", "last name": "姓", "first name": "名", "bell": "鈴", "lift": "舉起", "social studies": "社會學科" };
+    
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 10079, pokedex: "0".repeat(151), gods_bits: "1111", solvedCount: 0, isTempPractice: false };
+
+    // --- 關鍵：嘗試「分區 Cookie (Partitioned)」來穿透 Google Sites 阻礙 ---
+    function setHeroData(name, value) {
+        try {
+            const d = new Date(); d.setTime(d.getTime() + (365*24*60*60*1000));
+            // 加上 Partitioned 與 Secure，這是 iframe 儲存的新命脈
+            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=None;Secure;Partitioned`;
+            localStorage.setItem(name, value);
+        } catch(e) {}
+    }
+    function getHeroData(name) {
+        try {
+            const v = `; ${document.cookie}`; const p = v.split(`; ${name}=`);
+            let res = (p.length === 2) ? p.pop().split(';').shift() : null;
+            return res || localStorage.getItem(name);
+        } catch(e) { return null; }
+    }
+
+    async function initSystem() {
+        state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
+        state.gods_bits = getHeroData('hero_gods_bits') || "1111";
+        state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 10079;
+        try {
+            const res = await fetch(`https://docs.google.com/spreadsheets/d/${SS_ID}/gviz/tq?tqx=out:csv&sheet=工作表1&t=${Date.now()}`);
+            parseCSV(await res.text());
+        } catch (e) {}
+    }
+
+    function parseCSV(text) {
+        const rows = text.split(/\r?\n/).map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
+        const headers = rows[0]; state.banks = {};
+        headers.forEach((h, i) => { if(!h) return; state.banks[h] = []; for(let r=1; r<rows.length; r++) if(rows[r][i]) state.banks[h].push({ en: rows[r][i].split(',')[0], cn: rows[r][i].split(',')[1] || "", ref: `${String.fromCharCode(65+i)}${r+1}` }); });
+        const sorted = Object.keys(state.banks).sort((a,b)=>(parseInt(b.replace(/\D/g,''))||0)-(parseInt(a.replace(/\D/g,''))||0));
+        document.getElementById('unit-selector').innerHTML = sorted.map(k => `<option value="${k}">${k}</option>`).join('');
+    }
+
+    function updateEvoUI() {
+        const exp = parseInt(getHeroData('hero_global_exp')) || 0;
+        let target = exp < 20 ? 20 : 50; if(exp >= 50) target = 50;
+        document.getElementById('evo-progress-bar').style.width = Math.min(100, (exp/target)*100) + "%";
+        document.getElementById('evo-progress-text').innerText = `進化進度: ${exp}/${target}`;
+    }
+
+    function checkEvolution() {
+        const exp = parseInt(getHeroData('hero_global_exp')) || 0;
+        let currentStatus = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
+        let updated = false;
+
+        if (GOD_IDS.includes(state.activePokeId)) {
+            let idx = GOD_IDS.indexOf(state.activePokeId);
+            let gArr = state.gods_bits.split('');
+            if (parseInt(gArr[idx]) < currentStatus) { gArr[idx] = currentStatus; state.gods_bits = gArr.join(''); setHeroData('hero_gods_bits', state.gods_bits); updated = true; }
+        } else {
+            let idx = state.activePokeId - 1;
+            let pArr = state.pokedex.split('');
+            if (parseInt(pArr[idx]) < currentStatus) { pArr[idx] = currentStatus; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); updated = true; }
+        }
+        if (updated) { confetti({ particleCount: 200, spread: 80 }); alert("進化成功！Anson 的夥伴變強了！"); }
+    }
+
+    function startSession(mode) {
+        state.unit = document.getElementById('unit-selector').value; if(!state.banks[state.unit]) return;
+        state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
+        state.mode = mode; state.index = 0; state.solvedCount = 0;
+        initArena();
+    }
+
+    function initArena() {
+        document.getElementById('player-sprite').src = getGif(state.activePokeId);
+        let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1);
+        state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1;
+        document.getElementById('opp-sprite').src = getGif(state.currentOppId);
+        switchView('view-game'); updateEvoUI(); loadWord();
+    }
+
+    async function loadWord() {
+        if(state.index >= state.currentList.length) { handleVictory(); return; }
+        const word = state.currentList[state.index];
+        getFinalTrans(word).then(cn => document.getElementById('display-cn').innerText = cn);
+        const area = document.getElementById('letter-area'); area.innerHTML = "";
+        let inputIdx = 0;
+        word.en.split('').forEach((char) => {
+            if(char === " ") area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%; height:5px"}));
+            else {
+                const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
+                inp.oninput = (e) => {
+                    if(e.target.value.length === 1) {
+                        const n = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx)+1}"]`);
+                        if(n) n.focus();
+                        if([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150);
+                    }
+                };
+                inp.onkeydown = (e) => { if(e.key === "Backspace" && e.target.value === "" ) { const p = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx)-1}"]`); if(p) p.focus(); } };
+                area.appendChild(inp);
+            }
+        });
+        document.getElementById('practice-guide').innerText = (state.mode === 'practice' || state.isTempPractice) ? word.en : "";
+        document.getElementById('support-area').style.display = 'none';
+        setTimeout(() => { const f = document.querySelector('.letter-box[data-idx="0"]'); if(f) f.focus(); }, 450);
+        playVoice();
+    }
+
+    function checkFinalAnswer() {
+        const word = state.currentList[state.index]; const boxes = document.querySelectorAll('.letter-box');
+        let ui = ""; boxes.forEach(b => ui += b.value);
+        const target = word.en.replace(/\s/g, '').toLowerCase();
+        if (ui.toLowerCase() === target) {
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+            if(!state.isTempPractice) {
+                state.solvedCount++;
+                let gExp = (parseInt(getHeroData('hero_global_exp')) || 0) + 1;
+                setHeroData('hero_global_exp', gExp);
+                updateEvoUI(); checkEvolution();
+            }
+            boxes.forEach(b => { b.classList.add('correct'); b.disabled = true; });
+            setTimeout(() => { state.isTempPractice = false; state.index++; loadWord(); }, 600);
+        } else {
+            boxes.forEach((b, idx) => { if (b.value.toLowerCase() !== target[idx]) b.classList.add('wrong'); });
+            document.getElementById('support-area').style.display = 'flex';
+        }
+    }
+
+    function handleVictory() { 
+        if(state.mode === 'quiz' && state.solvedCount > 0) { 
+            let pArr = state.pokedex.split(''); pArr[state.currentOppId-1] = "1"; 
+            state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex);
+            alert(`大勝！成功收服新夥伴！`); 
+        } 
+        switchView('view-main'); 
+    }
+
+    function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-pokedex') renderDex(); if(id === 'view-team') renderTeam(); }
+    function triggerLearningMode() { state.isTempPractice = true; loadWord(); }
+    function skipWord() { state.isTempPractice = false; state.index++; loadWord(); }
+    async function getFinalTrans(wordObj) { const en = wordObj.en.toLowerCase(); if(localDict[en]) return localDict[en]; try { const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(en)}`); const data = await res.json(); return data[0][0][0]; } catch(e) { return en.toUpperCase(); } }
+    function playVoice() { window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(state.currentList[state.index].en); msg.lang = 'en-US'; msg.rate = 0.8; window.speechSynthesis.speak(msg); }
+    function getGif(id) { return id == 992 ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/992.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`; }
+
+    function renderTeam() {
+        const grid = document.getElementById('team-grid'); grid.innerHTML = "";
+        GOD_IDS.forEach((id, idx) => {
+            const status = state.gods_bits[idx]; const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
+            it.innerHTML = `<img src="${getGif(id)}"><div class="name-zh">${GOD_NAMES[idx]}</div><div class="lv-tag">LV.${status}</div>`;
+            it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
+        });
+        for(let i=1; i<=151; i++) {
+            const status = state.pokedex[i-1];
+            if(status !== "0") {
+                const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == i?'active':''} collected`;
+                it.innerHTML = `<img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i] || 'No.'+i}</div><div class="lv-tag">LV.${status}</div>`;
+                it.onclick = () => { state.activePokeId = i; setHeroData('hero_myPoke', i); renderTeam(); }; grid.appendChild(it);
+            }
+        }
+    }
+    function renderDex() { const grid = document.getElementById('dex-grid'); grid.innerHTML = ""; for(let i=1; i<=151; i++) { const status = state.pokedex[i-1]; grid.innerHTML += `<div class="grid-item ${status !== "0" ? 'collected' : 'locked'}"><img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i] || 'No.'+i}</div></div>`; } }
+    function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'quiz'; state.index = 0; initArena(); }
+    function toggleStar() { const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref); setHeroData('hero_priority', JSON.stringify(p)); }
+</script>
+</body>
+</html>
