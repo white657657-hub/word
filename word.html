@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1380 - Practice & Pass</title>
+    <title>Word Hero V1400 - Consistency Audit</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,16 +18,16 @@
         /* 字母框 */
         .box-input-container { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
         .letter-box { width: 58px; height: 85px; border: 1px solid var(--accent) !important; border-radius: 8px; background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-family: 'Montserrat', sans-serif !important; font-size: 2.2rem; font-weight: 800 !important; line-height: 85px; display: inline-block; -webkit-appearance: none; padding: 0 !important; }
-        @media screen and (max-width: 600px) { .letter-box { width: 35px; height: 60px; font-size: 1.6rem; line-height: 60px; } #display-cn { font-size: 2.5rem !important; } }
+        @media screen and (max-width: 600px) { .letter-box { width: 35px; height: 60px; font-size: 1.6rem; line-height: 60px; } #display-cn { font-size: 2.2rem !important; } }
         .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
-        /* 血條向上貼齊 */
+        /* 對戰 UI 與 HP */
         #combat-arena { height: 160px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 12px; position: relative; border: 1px solid #334155; margin-bottom: 5px; flex-shrink: 0; }
         .hp-container { position: absolute; top: 10px; width: 100px; height: 18px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.3); border-radius: 9px; overflow: hidden; z-index: 10; }
         .hp-bar { height: 100%; width: 100%; background: var(--success); transition: 0.4s; }
         #player-hp-box { left: 10px; } #opp-hp-box { right: 10px; }
 
-        /* 進度條 */
+        /* EXP 進度條 */
         .exp-container { position: absolute; bottom: 5px; left: 10px; width: 120px; height: 14px; background: rgba(0,0,0,0.7); border: 1px solid var(--exp); border-radius: 7px; overflow: hidden; display: flex; align-items: center; }
         .exp-bar { height: 100%; width: 0%; background: var(--exp); transition: 0.5s ease-out; }
         .exp-text { position: absolute; width: 100%; text-align: center; font-size: 0.65rem; font-weight: 900; color: #fff; text-shadow: 1px 1px 1px #000; z-index: 2; }
@@ -35,11 +35,36 @@
         .sprite { position: absolute; bottom: 22px; width: 85px !important; height: 85px !important; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
         #player-sprite { left: 10px; transform: scaleX(-1); } #opp-sprite { right: 10px; }
 
-        /* PASS 與練習按鈕樣式 */
-        .pass-btn { background: #475569; color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; cursor: pointer; border: none; margin-left: 10px; }
-        .practice-trigger-btn { background: var(--accent); color: #000; padding: 12px 25px; border-radius: 12px; font-size: 1.2rem; font-weight: 900; cursor: pointer; border: none; margin-top: 10px; display: none; }
+        /* 規格一致的動作按鈕 */
+        .game-action-btn { 
+            width: 220px; 
+            padding: 12px; 
+            border-radius: 12px; 
+            border: 1px solid #475569; 
+            background: rgba(255,255,255,0.08); 
+            color: white; 
+            font-size: 1.1rem; 
+            font-weight: 800; 
+            cursor: pointer; 
+            margin: 4px auto; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            transition: 0.2s;
+        }
+        .game-action-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.15); }
+        #btn-force-practice { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); display: none; }
 
-        #display-cn { font-size: 3.2rem; font-weight: 800; color: var(--gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); text-align: center; }
+        /* 圖鑑網格鎖死 */
+        .grid-view { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 6px; padding: 4px; }
+        .grid-item { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 8px 2px; text-align: center; border: 1px solid transparent; min-height: 155px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .grid-item img { width: 85px !important; height: 85px !important; object-fit: contain !important; transition: 0.3s; }
+        .grid-item.locked img { filter: grayscale(100%) brightness(0.3) !important; opacity: 0.4; }
+        .grid-item.collected img { filter: none !important; opacity: 1; }
+        .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); }
+
+        #display-cn { font-size: 3.2rem; font-weight: 800; color: var(--gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); text-align: center; vertical-align: middle; }
+        .pass-btn { background: #475569; color: white; padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; cursor: pointer; border: none; margin-left: 10px; vertical-align: middle; }
         .mode-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.2rem; color: white; margin-bottom: 8px; cursor: pointer; }
     </style>
 </head>
@@ -47,12 +72,12 @@
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">ANSON MASTER</h2>
+        <h2 style="text-align:center; color:var(--accent); margin:10px 0;">ANSON MASTER</h2>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:14px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.3rem; margin-bottom:10px;"></select>
-            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (輸了會降級)</button>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (敗北扣級)</button>
             <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 練習模式</button>
-            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號複習 (不扣血)</button>
+            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 圖鑑</button></div>
     </div>
@@ -68,15 +93,16 @@
         </div>
         <div style="text-align:center; min-height:65px;">
             <span id="display-cn">...</span>
-            <span id="star-icon" style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px;" onclick="toggleStar()">☆</span>
+            <span id="star-icon" style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px; vertical-align:middle;" onclick="toggleStar()">☆</span>
             <button id="btn-pass" class="pass-btn" onclick="handlePass()">PASS</button>
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:25px;"></div>
         <div id="letter-area" class="box-input-container"></div>
-        <div style="text-align:center;">
-            <button id="btn-force-practice" class="practice-trigger-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
+        
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <button id="btn-voice" class="game-action-btn" onclick="playVoice()">🔊 再唸一次</button>
+            <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
         </div>
-        <button id="btn-voice" class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.08); padding:10px 40px; font-size:1rem; border:1px solid #475569;" onclick="playVoice()">🔊 再唸一次</button>
     </div>
 
     <div id="view-team" class="view-section"><h2 style="text-align:center;">夥伴選擇</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認</button></div>
@@ -99,11 +125,9 @@
     function getEvoInfo(id) {
         const exp = parseInt(getHeroData(`exp_id_${id}`)) || 0;
         let lv = 1, progress = exp, target = 20;
-        if (exp >= 50) { lv = 3; progress = 50; target = 50; }
-        else if (exp >= 20) { lv = 2; progress = exp - 20; target = 30; }
+        if (exp >= 50) { lv = 3; progress = 50; target = 50; } else if (exp >= 20) { lv = 2; progress = exp - 20; target = 30; }
         let curId = id;
-        if(id === 384 && lv === 3) curId = 10079;
-        else if(id === 150 && lv === 3) curId = 10044;
+        if(id === 384 && lv === 3) curId = 10079; else if(id === 150 && lv === 3) curId = 10044;
         else { const c = CHAINS.find(x => x.includes(id)); if(c) curId = c[lv-1] || c[c.length-1]; }
         return { displayId: curId, lv, exp, progress, target };
     }
@@ -122,12 +146,7 @@
     }
 
     function startSession(m) { state.unit = document.getElementById('unit-selector').value; state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5); state.mode = m; state.tempPractice = false; state.index = 0; state.playerHP = 5; state.oppHP = 5; switchView('view-game'); initArena(); }
-
-    function initArena() {
-        let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1);
-        state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1;
-        updateHPUI(); loadWord();
-    }
+    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1; updateHPUI(); loadWord(); }
 
     function updateHPUI() {
         document.getElementById('player-hp-bar').style.width = (state.playerHP/5 * 100) + "%";
@@ -148,12 +167,12 @@
         let tip = localDict[word.en.toLowerCase()] || word.cn;
         if (!tip) { display.innerText = "載入中..."; tip = await fetchTranslation(word.en); }
         display.innerText = tip;
-
         const pRefs = JSON.parse(getHeroData('hero_priority') || '[]');
-        document.getElementById('star-icon').innerText = pRefs.includes(word.ref) ? "★" : "☆";
-        document.getElementById('star-icon').style.color = pRefs.includes(word.ref) ? "var(--gold)" : "#475569";
+        const isS = pRefs.includes(word.ref);
+        document.getElementById('star-icon').innerText = isS ? "★" : "☆";
+        document.getElementById('star-icon').style.color = isStarred ? "var(--gold)" : "#475569";
         
-        // 隱藏練習鈕
+        // 重置按鈕狀態
         document.getElementById('btn-force-practice').style.display = "none";
 
         const area = document.getElementById('letter-area'); area.innerHTML = "";
@@ -190,7 +209,7 @@
             boxes.forEach(b => { b.classList.add('wrong'); setTimeout(()=>b.classList.remove('wrong'), 800); });
             if(state.mode === 'quiz' && !state.tempPractice) {
                 state.playerHP--;
-                document.getElementById('btn-force-practice').style.display = "inline-block";
+                document.getElementById('btn-force-practice').style.display = "flex";
                 if(state.playerHP <= 0) { handlePlayerDeath(); return; }
             }
             updateHPUI();
@@ -202,8 +221,13 @@
 
     function handlePlayerDeath() {
         const pid = state.activePokeId;
-        if (DEFAULTS.includes(pid)) { setHeroData(`exp_id_${pid}`, 0); alert(`${PK_NAMES[pid]} 體力不支... 降回 LV.1`); }
-        else { let pArr = state.pokedex.split(''); pArr[pid - 1] = "0"; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); alert(`${PK_NAMES[pid] || '夥伴'} 戰死了... 它回到了圖鑑，請重新收服。`); state.activePokeId = 384; setHeroData('hero_myPoke', 384); }
+        if (DEFAULTS.includes(pid)) { setHeroData(`exp_id_${pid}`, 0); alert(`${PK_NAMES[pid]} 體力不支... 等級歸零！`); }
+        else {
+            let pArr = state.pokedex.split('');
+            if(pid <= 151) { pArr[pid - 1] = "0"; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); }
+            alert(`${PK_NAMES[pid] || '夥伴'} 戰死了... 牠回到了野外，請重新收服。`);
+            state.activePokeId = 384; setHeroData('hero_myPoke', 384);
+        }
         switchView('view-main');
     }
 
@@ -222,7 +246,7 @@
         state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena();
     }
 
-    function handleVictory() { if(state.mode !== 'priority') { let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; setHeroData('hero_pokedex_bits', p.join('')); confetti({ particleCount: 200, spread: 100 }); alert("收服成功！已更新圖鑑。"); } switchView('view-main'); }
+    function handleVictory() { if(state.mode !== 'priority') { let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; setHeroData('hero_pokedex_bits', p.join('')); confetti({ particleCount: 200, spread: 100 }); alert("擊潰魔王！點亮圖鑑。"); } switchView('view-main'); }
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); }
     function playVoice() { window.speechSynthesis.cancel(); const m = new SpeechSynthesisUtterance(state.currentList[state.index].en); m.lang = 'en-US'; window.speechSynthesis.speak(m); }
     
@@ -236,6 +260,7 @@
             it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
         });
     }
+
     function renderDex() {
         const grid = document.getElementById('dex-grid'); grid.innerHTML = "";
         for(let i=1; i<=151; i++) {
