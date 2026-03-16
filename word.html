@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1240 - Fixed Forever</title>
+    <title>Word Hero V1250 - API Integrated</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
@@ -12,7 +12,6 @@
         .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #1e293b, #020617); }
         .view-section { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
 
-        /* iPad 專用字母框 (60x90) */
         .box-input-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; position: relative; z-index: 50; }
         .letter-box { 
             width: 60px; height: 90px; border: 1.5px solid var(--accent) !important; border-radius: 12px; 
@@ -22,7 +21,6 @@
         .letter-box.correct { border-color: var(--success) !important; }
         .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
-        /* HP 血條 UI */
         #combat-arena { height: 160px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
         .hp-container { position: absolute; width: 115px; height: 24px; background: rgba(0,0,0,0.7); border: 2px solid #fff; border-radius: 12px; overflow: hidden; }
         .hp-bar { height: 100%; width: 100%; background: var(--success); transition: 0.4s; }
@@ -30,13 +28,13 @@
         #player-hp-box { bottom: 95px; left: 15px; }
         #opp-hp-box { top: 15px; right: 15px; }
 
-        .sprite { position: absolute; bottom: 8px; height: 85px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
+        .sprite { position: absolute; bottom: 8px; height: 80px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
         #player-sprite { left: 15px; transform: scaleX(-1); }
         #opp-sprite { right: 15px; }
         @keyframes flash-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.5) sepia(1) hue-rotate(-50deg); } 100% { filter: brightness(1); } }
         .take-damage { animation: flash-red 0.1s linear 4; }
 
-        #display-cn { font-size: 3.5rem; font-weight: 900; color: var(--gold); text-shadow: 2px 2px 4px #000; display: block; text-align: center; }
+        #display-cn { font-size: 3.2rem; font-weight: 900; color: var(--gold); text-shadow: 2px 2px 4px #000; text-align: center; display: block; }
         .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; color: white; margin-bottom: 10px; text-align: center; cursor: pointer; }
     </style>
 </head>
@@ -47,7 +45,7 @@
         <h1 style="text-align:center; color:var(--accent);">ANSON MASTER</h1>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:18px; border-radius:16px; background:#1e293b; color:var(--gold); border:2.5px solid #334155; font-weight:900; font-size:1.6rem; margin-bottom:15px;"></select>
-            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (可升級)</button>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (可進步)</button>
             <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式</button>
             <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
         </div>
@@ -55,7 +53,7 @@
     </div>
 
     <div id="view-game" class="view-section">
-        <div style="display:flex; justify-content:space-between;"><button class="mode-btn" style="width:auto; padding:8px 15px; background:#334155;" onclick="switchView('view-main')">🏠 離開</button></div>
+        <div style="display:flex; justify-content:space-between;"><button class="mode-btn" style="width:auto; padding:8px 15px; background:#334155; font-size:0.9rem;" onclick="switchView('view-main')">🏠 離開</button></div>
         <div id="combat-arena">
             <div id="player-hp-box" class="hp-container"><div id="player-hp-bar" class="hp-bar"></div><div id="player-hp-text" class="hp-text">Anson: 5/5</div></div>
             <img id="player-sprite" class="sprite" src="">
@@ -77,23 +75,29 @@
 
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",133:"伊布",143:"卡比獸",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
     
-    // --- 暴力注入所有翻譯 ---
+    // --- 已翻譯字典 ---
     const localDict = {
         "bell": "鈴", "busy": "忙碌", "first name": "名字", "last name": "姓氏", "bus driver": "公車司機",
-        "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺水", "funny-looking": "滑稽", "holler": "大喊", "a couple of": "一些", "mustard": "芥末",
-        "birthday": "生日", "call": "打電話", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "shook head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎",
-        "bicycle": "腳踏車", "bus": "公車", "train": "火車", "by bus": "搭公車", "by car": "搭車", "by train": "搭火車", "motorcycle": "機車", "on foot": "走路", "sailing ship": "帆船", "transportation": "交通", "town": "城鎮", "wheel": "輪子",
-        "balloon": "氣球", "cross": "跨越", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新", "old": "舊",
-        "short": "短", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反", "mug": "馬克杯", "handle": "把手", "anything": "任何", "begin to": "開始", "dizzy": "暈眩",
-        "janitor": "工友", "zookeeper": "管理員", "cartwheel": "側手翻", "fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "大叫", "packet": "小包", "pull out": "拉出", "yawn": "打呵欠"
+        "market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末",
+        "birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎",
+        "bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船", "transportation":"交通工具","town":"城鎮","wheel":"輪子"
     };
 
     let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1 };
 
     function setHeroData(n, v) { localStorage.setItem(n, v); document.cookie = `${n}=${v};path=/;SameSite=Lax`; }
     function getHeroData(n) { const v = `; ${document.cookie}`; const p = v.split(`; ${n}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(n); }
+
+    // --- 核心新增：自動翻譯 API 函數 ---
+    async function fetchTranslation(text) {
+        try {
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(text)}`);
+            const data = await res.json();
+            return data[0][0][0];
+        } catch (e) { return "..."; }
+    }
 
     async function initSystem() {
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
@@ -125,12 +129,18 @@
 
     function getGif(id) { return (id >= 900) ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`; }
 
-    function loadWord() {
+    async function loadWord() {
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         const word = state.currentList[state.index];
-        // --- 核心修正：強制翻譯 ---
-        let tip = localDict[word.en.toLowerCase()] || word.cn || word.en;
-        document.getElementById('display-cn').innerText = tip;
+        const display = document.getElementById('display-cn');
+        
+        // --- 翻譯連鎖邏輯 ---
+        let tip = localDict[word.en.toLowerCase()] || word.cn;
+        if (!tip) {
+            display.innerText = "..."; 
+            tip = await fetchTranslation(word.en);
+        }
+        display.innerText = tip;
         
         const area = document.getElementById('letter-area'); area.innerHTML = "";
         word.en.split('').forEach((char, i) => {
@@ -162,7 +172,7 @@
                 state.playerHP--; document.getElementById('player-sprite').classList.add('take-damage');
                 setTimeout(()=>document.getElementById('player-sprite').classList.remove('take-damage'), 450);
             }
-            if(state.playerHP <= 0) { alert("能量耗盡，先去休息吧！"); switchView('view-main'); return; }
+            if(state.playerHP <= 0) { alert("體力不支，休息一下吧！"); switchView('view-main'); return; }
             updateHPUI();
         }
     }
