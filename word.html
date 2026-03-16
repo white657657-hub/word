@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1140 - Anson Master</title>
+    <title>Word Hero V1150 - Total Fix</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
@@ -12,15 +12,17 @@
         .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #1e293b, #020617); }
         .view-section { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
 
+        /* iPad 字母框 (60x90, 1px) */
         .box-input-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; position: relative; z-index: 50; }
         .letter-box { 
-            width: 60px; height: 90px; border: 1px solid var(--accent); border-radius: 12px; 
+            width: 60px; height: 90px; border: 1px solid var(--accent) !important; border-radius: 12px; 
             background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-size: 3.2rem; font-weight: 900; 
             line-height: 90px; display: inline-block; flex-shrink: 0; -webkit-appearance: none;
         }
-        .letter-box.correct { border-color: var(--success); }
-        .letter-box.wrong { border-color: var(--danger); color: var(--danger); }
+        .letter-box.correct { border-color: var(--success) !important; }
+        .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
+        /* 進化舞台 */
         #combat-arena { height: 140px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
         .sprite { position: absolute; bottom: 8px; height: 75px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
         #player-sprite { left: 15px; transform: scaleX(-1); }
@@ -32,15 +34,16 @@
         #evo-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #fde047, #fbbf24); transition: 0.5s; }
         .evo-text { font-size: 0.75rem; color: var(--gold); text-align: center; margin-top: 2px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
 
+        /* 圖鑑濾鏡修正 */
         .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
         .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 145px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .grid-item img { width: 75px; height: 75px; object-fit: contain; }
+        .grid-item.locked img { filter: grayscale(100%) brightness(0.5) !important; opacity: 0.3; }
         .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.2); }
         .name-zh { font-size: 0.75rem; font-weight: 800; margin-top: 2px; color: #fff; }
         .lv-tag { color: var(--gold); font-size: 0.6rem; font-weight: 900; }
 
         .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; color: white; margin-bottom: 10px; text-align: center; }
-        .pass-btn { padding: 6px 14px; background: #334155; border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body onload="initSystem()">
@@ -50,9 +53,9 @@
         <h1 style="text-align:center; color:var(--accent); margin: 20px 0;">ANSON MASTER</h1>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:18px; border-radius:16px; background:#1e293b; color:var(--gold); border:2.5px solid #334155; font-weight:900; font-size:1.6rem; margin-bottom:15px;"></select>
-            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰</button>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (可進步)</button>
             <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式</button>
-            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號複習 (不進化)</button>
+            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號練習 (不進化)</button>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 圖鑑</button></div>
     </div>
@@ -70,7 +73,6 @@
         <div style="text-align:center; margin-bottom:5px;">
             <span id="display-cn" style="font-size:2.2rem; font-weight:900; color:var(--gold);">...</span>
             <span id="star-icon" style="font-size:2.4rem; cursor:pointer; color:#475569;" onclick="toggleStar()">☆</span>
-            <button class="pass-btn" onclick="skipWord()">PASS</button>
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:900; font-size:1.8rem; height:35px;"></div>
         <div id="letter-area" class="box-input-container"></div>
@@ -83,11 +85,11 @@
 
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",25:"皮卡丘",26:"雷丘",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",143:"卡比獸",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
-    const localDict = { "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "滑稽的", "holler": "大喊", "a couple of": "一些", "mustard": "芥末", "birthday": "生日", "call": "打電話", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎", "bicycle": "腳踏車", "bus": "公車", "train": "火車", "motorcycle": "摩托車", "on foot": "走路", "transportation": "交通工具", "town": "城鎮", "wheel": "輪子", "balloon": "氣球", "cross": "跨越", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的", "short": "短的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反", "mug": "馬克杯", "handle": "把手", "anything": "任何", "begin to": "開始", "dizzy": "暈眩", "janitor": "工友", "zookeeper": "管理員", "fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠" };
-    const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[29,30,31],[32,33,34],[43,44,45],[60,61,62],[63,64,65],[66,67,68],[69,70,71],[74,75,76],[92,93,94],[147,148,149],[25,26]];
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
+    const localDict = { "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "滑稽的", "holler": "大喊", "a couple of": "一些", "mustard": "芥末", "birthday": "生日", "call": "打電話", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "shake head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎", "bicycle": "腳踏車", "bus": "公車", "train": "火車", "by bus": "搭公車", "by car": "搭車", "by train": "搭火車", "motorcycle": "摩托車", "on foot": "走路", "transportation": "交通工具", "town": "城鎮", "wheel": "輪子", "balloon": "氣球", "cross": "跨越", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的", "short": "短的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反", "mug": "馬克杯", "handle": "把手", "anything": "任何", "begin to": "開始", "dizzy": "暈眩", "janitor": "工友", "zookeeper": "管理員", "fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠" };
+    const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 384, pokedex: "0".repeat(151) };
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 384, pokedex: "0".repeat(151), currentOppId: 1 };
 
     function setHeroData(n, v) { localStorage.setItem(n, v); document.cookie = `${n}=${v};path=/;SameSite=Lax`; }
     function getHeroData(n) { const v = `; ${document.cookie}`; const p = v.split(`; ${n}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(n); }
@@ -119,6 +121,14 @@
         document.getElementById('unit-selector').innerHTML = Object.keys(state.banks).sort((a,b)=>parseInt(b.replace(/\D/g,''))-parseInt(a.replace(/\D/g,''))).map(k => `<option value="${k}">${k}</option>`).join('');
     }
 
+    // --- 核心修復：初始化戰鬥對手 ---
+    function initArena() {
+        let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1);
+        state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1;
+        document.getElementById('opp-sprite').src = getGif(state.currentOppId);
+        updateEvoUI(); loadWord();
+    }
+
     function updateEvoUI() {
         const info = getEvoInfo(state.activePokeId);
         const target = info.lv === 1 ? 20 : 50;
@@ -131,7 +141,6 @@
     }
 
     function getGif(id) {
-        // 核心修正：針對 992 (鐵臂膀) 使用官方高畫質圖片，其餘使用動畫圖
         if(id >= 900) return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`;
     }
@@ -145,7 +154,7 @@
                 const k = `exp_id_${state.activePokeId}`;
                 let cur = (parseInt(getHeroData(k)) || 0) + 1;
                 setHeroData(k, cur);
-                if(cur === 20 || cur === 50) { confetti({ particleCount: 200, spread: 100 }); alert("進化達成！"); }
+                if(cur === 20 || cur === 50) { confetti({ particleCount: 200, spread: 100 }); alert("進化達成！夥伴變強了！"); }
             }
             updateEvoUI(); state.index++; setTimeout(loadWord, 600);
         } else { boxes.forEach(b => b.classList.add('wrong')); }
@@ -154,7 +163,7 @@
     function startSession(m) {
         state.unit = document.getElementById('unit-selector').value;
         state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
-        state.mode = m; state.index = 0; switchView('view-game'); updateEvoUI(); loadWord();
+        state.mode = m; state.index = 0; switchView('view-game'); initArena();
     }
 
     function loadWord() {
@@ -165,7 +174,6 @@
         let inputIdx = 0;
         word.en.split('').forEach(char => {
             if(char === " ") area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%;height:5px"}));
-            else if(char === "/") area.appendChild(Object.assign(document.createElement('div'), {innerText:"/", style:"font-size:3rem;line-height:90px;color:var(--accent)"}));
             else {
                 const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
                 inp.oninput = (e) => { if(e.target.value.length === 1) { 
@@ -180,26 +188,26 @@
                 area.appendChild(inp);
             }
         });
+        document.getElementById('practice-guide').innerText = (state.mode === 'practice') ? word.en : "";
         document.getElementById('star-icon').innerText = JSON.parse(getHeroData('hero_priority')||'[]').includes(word.ref) ? "★" : "☆";
-        setTimeout(() => document.querySelector('.letter-box').focus(), 450); playVoice();
+        setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
 
     function handleVictory() { 
         if(state.mode !== 'priority') {
-            let p = state.pokedex.split(''); p[Math.floor(Math.random()*151)] = "1"; 
-            setHeroData('hero_pokedex_bits', p.join('')); alert("收服成功！"); 
+            let p = state.pokedex.split(''); p[state.currentOppId-1] = "1"; 
+            setHeroData('hero_pokedex_bits', p.join('')); alert("成功收服對手！"); 
         }
         switchView('view-main'); 
     }
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); }
     function renderTeam() {
         const grid = document.getElementById('team-grid'); grid.innerHTML = "";
-        [384, 150, 992, 1, 4, 7, 25, 133].forEach(id => {
+        [384, 150, 992, 1, 4, 7, 25].forEach(id => {
             const info = getEvoInfo(id);
             const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
             it.innerHTML = `<img src="${getGif(info.displayId)}"><div class="name-zh">${info.name}</div><div class="lv-tag">LV.${info.lv}</div>`;
-            it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); };
-            grid.appendChild(it);
+            it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
         });
     }
     function renderDex() {
@@ -210,9 +218,8 @@
         }
     }
     function toggleStar() { const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref); setHeroData('hero_priority', JSON.stringify(p)); loadWord(); }
-    function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); updateEvoUI(); loadWord(); }
+    function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena(); }
     function playVoice() { window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(state.currentList[state.index].en); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
-    function skipWord() { state.index++; loadWord(); }
 </script>
 </body>
 </html>
