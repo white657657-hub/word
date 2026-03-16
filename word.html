@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1100 - Anson Master</title>
+    <title>Word Hero V1130 - Anson Master</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; }
@@ -12,40 +12,37 @@
         .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; position: relative; background: radial-gradient(circle at top, #1e293b, #020617); }
         .view-section { display: none; flex-direction: column; flex: 1; padding: 10px; overflow-y: auto; }
 
-        /* iPad 字母框物理加固 (60x90, 1px) */
+        /* iPad 字母框加固 (60x90) */
         .box-input-container { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px; position: relative; z-index: 50; }
         .letter-box { 
             width: 60px; height: 90px; border: 1px solid var(--accent); border-radius: 12px; 
             background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-size: 3.2rem; font-weight: 900; 
-            padding: 0; margin: 0; line-height: 90px; display: inline-block; flex-shrink: 0; -webkit-appearance: none;
-            caret-color: var(--accent);
+            line-height: 90px; display: inline-block; flex-shrink: 0; -webkit-appearance: none;
         }
         .letter-box.correct { border-color: var(--success); }
         .letter-box.wrong { border-color: var(--danger); color: var(--danger); }
-        .word-spacer { width: 100%; height: 5px; }
 
-        /* 戰鬥與進化 UI */
+        /* 進化舞台 */
         #combat-arena { height: 140px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 18px; position: relative; border: 2px solid #334155; margin-bottom: 10px; flex-shrink: 0; }
         .sprite { position: absolute; bottom: 8px; height: 75px; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
         #player-sprite { left: 15px; transform: scaleX(-1); }
         #opp-sprite { right: 15px; }
+        
+        .mega-glow { filter: drop-shadow(0 0 12px var(--gold)) brightness(1.2) !important; }
 
-        .evo-ui-box { position: absolute; top: 5px; left: 15px; width: 115px; z-index: 20; }
+        .evo-ui-box { position: absolute; top: 5px; left: 15px; width: 130px; z-index: 20; }
         .evo-progress-container { width: 100%; height: 10px; background: rgba(0,0,0,0.5); border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); overflow: hidden; }
         #evo-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #fde047, #fbbf24); transition: 0.5s; }
         .evo-text { font-size: 0.75rem; color: var(--gold); text-align: center; margin-top: 2px; font-weight: 900; text-shadow: 1px 1px 2px #000; }
 
-        /* UI 網格與按鈕 */
         .grid-view { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
-        .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .grid-item { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; border: 2px solid transparent; min-height: 145px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .grid-item img { width: 75px; height: 75px; object-fit: contain; }
-        .grid-item.collected { filter: none !important; opacity: 1 !important; cursor: pointer; }
-        .grid-item.locked { filter: grayscale(100%); opacity: 0.25; }
         .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.2); }
-        .name-zh { font-size: 0.8rem; font-weight: 800; margin-top: 2px; color: #fff; }
-        .lv-tag { color: var(--gold); font-size: 0.65rem; font-weight: 900; }
+        .name-zh { font-size: 0.75rem; font-weight: 800; margin-top: 2px; color: #fff; }
+        .lv-tag { color: var(--gold); font-size: 0.6rem; font-weight: 900; }
 
-        .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; cursor: pointer; color: white; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .mode-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 800; font-size: 1.25rem; color: white; margin-bottom: 10px; text-align: center; }
         .pass-btn { padding: 6px 14px; background: #334155; border: 1px solid var(--accent); border-radius: 8px; color: var(--accent); font-weight: 800; cursor: pointer; }
     </style>
 </head>
@@ -53,214 +50,172 @@
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h1 style="text-align:center; color:var(--accent); margin: 20px 0;">ANSON MASTER</h1>
+        <h1 style="text-align:center; color:var(--accent);">ANSON MASTER</h1>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:18px; border-radius:16px; background:#1e293b; color:var(--gold); border:2.5px solid #334155; font-weight:900; font-size:1.6rem; margin-bottom:15px;"></select>
-            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (收服夥伴)</button>
-            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式</button>
-            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 常錯星號練習</button>
+            <button class="mode-btn" style="background: linear-gradient(45deg, #ef4444, #f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (可進步)</button>
+            <button class="mode-btn" style="background: #3b82f6;" onclick="startSession('practice')">🛡️ 自由練習模式 (可進步)</button>
+            <button class="mode-btn" style="background: var(--gold); color:#000;" onclick="startPrioritySession()">★ 星號練習 (無進化/不抓寶)</button>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 夥伴</button><button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 圖鑑</button></div>
     </div>
 
     <div id="view-game" class="view-section">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><button class="mode-btn" style="width:auto; padding:8px 15px; margin:0; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 離開</button></div>
+        <div style="display:flex; justify-content:space-between; align-items:center;"><button class="mode-btn" style="width:auto; padding:8px 15px; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 離開</button></div>
         <div id="combat-arena">
             <img id="player-sprite" class="sprite" src="">
-            <div class="evo-ui-box"><div class="evo-progress-container"><div id="evo-progress-bar"></div></div><div id="evo-progress-text" class="evo-text">LV.1 - EXP 0/20</div></div>
+            <div id="evo-ui-container" class="evo-ui-box">
+                <div class="evo-progress-container"><div id="evo-progress-bar"></div></div>
+                <div id="evo-progress-text" class="evo-text">LV.1 - EXP 0/20</div>
+            </div>
             <img id="opp-sprite" class="sprite" src="">
         </div>
-        <div class="word-cn-box" style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:5px;">
+        <div style="text-align:center; margin-bottom:5px;">
             <span id="display-cn" style="font-size:2.2rem; font-weight:900; color:var(--gold);">...</span>
             <span id="star-icon" style="font-size:2.4rem; cursor:pointer; color:#475569;" onclick="toggleStar()">☆</span>
             <button class="pass-btn" onclick="skipWord()">PASS</button>
         </div>
-        <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:900; font-size:1.8rem; height:35px; margin-bottom:5px;"></div>
+        <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:900; font-size:1.8rem; height:35px;"></div>
         <div id="letter-area" class="box-input-container"></div>
-        <div id="support-area" style="width:100%; display:none; justify-content:center; margin-bottom:10px;"><button class="mode-btn" style="background:var(--gold); color:#000; width:80%;" onclick="triggerLearningMode()">📖 我要練習</button></div>
-        <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.1); padding:10px 40px; font-size:1rem;" onclick="playVoice()">🔊 再唸一次</button>
+        <button class="mode-btn" style="width:auto; align-self:center; background:rgba(255,255,255,0.1); padding:10px 40px;" onclick="playVoice()">🔊 再唸一次</button>
     </div>
 
-    <div id="view-team" class="view-section"><h2 style="text-align:center; color:var(--accent); margin-bottom:10px;">出戰夥伴</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6; margin-top:15px;" onclick="switchView('view-main')">確認</button></div>
-    <div id="view-pokedex" class="view-section"><h2 style="text-align:center; color:var(--gold); margin-bottom:10px;">收服圖鑑 (151)</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569; margin-top:15px;" onclick="switchView('view-main')">返回</button></div>
+    <div id="view-team" class="view-section"><h2 style="text-align:center;">夥伴清單</h2><div class="grid-view" id="team-grid"></div><button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認</button></div>
+    <div id="view-pokedex" class="view-section"><h2 style="text-align:center;">收服圖鑑</h2><div class="grid-view" id="dex-grid"></div><button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button></div>
 </div>
 
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-    const GOD_IDS = [10079, 10044, 150, 992];
-    const GOD_NAMES = ["烈空坐", "超夢Y", "超夢", "鐵臂膀"];
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"比雕",19:"小拉達",20:"拉達",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻"};
-    
-    // --- 強化字典 W4-W9 ---
-    const localDict = {
-        "wonder": "疑惑", "worder": "疑惑的", "social studies": "社會學科",
-        "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "樣子滑稽的", "holler": "大喊", "a couple of": "一些，幾個", "mustard": "芥末",
-        "birthday": "生日", "call": "打電話/呼叫", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "shook head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎",
-        "bicycle": "腳踏車", "bus": "公車", "train": "火車", "by bus": "搭公車", "by car": "搭車", "by train": "搭火車", "motorcycle": "摩托車、機車", "on foot": "走路/步行", "sailing ship": "帆船", "transportation": "交通工具", "town": "城鎮", "wheel": "輪子",
-        "balloon": "氣球", "cross": "跨越/十字", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的",
-        "short": "短的/矮的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反的", "mug": "馬克杯", "handle": "把手", "anything": "任何事物", "begin to": "開始去做", "dizzy": "暈眩的",
-        "janitor": "工友/管理員", "zookeeper": "動物園管理員", "cartwheel": "側手翻", "(water) fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠"
-    };
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"比雕",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"末入蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"素利普",97:"素利柏",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"沙瓦郎",107:"艾比郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"獨角犀牛",112:"鑽角犀獸",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"吸盤魔偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"大甲",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀"};
+    const localDict = { "market": "市場", "money": "錢", "poor": "窮", "sell": "賣", "tub": "澡盆", "splash": "濺起水花", "funny-looking": "樣子滑稽的", "holler": "大喊", "a couple of": "一些", "mustard": "芥末", "birthday": "生日", "call": "打電話", "peanut butter": "花生醬", "slug": "蛞蝓", "knock over": "撞倒", "wrestle": "摔跤", "shake head": "搖頭", "shook head": "搖頭", "sigh": "嘆氣", "attack": "攻擊", "tire": "輪胎", "bicycle": "腳踏車", "bus": "公車", "train": "火車", "by bus": "搭公車", "by car": "搭車", "by train": "搭火車", "motorcycle": "摩托車", "on foot": "走路", "sailing ship": "帆船", "transportation": "交通", "town": "城鎮", "wheel": "輪子", "balloon": "氣球", "cross": "跨越", "drive": "駕駛", "truck": "卡車", "wait": "等待", "corn": "玉米", "mule": "騾子", "fast": "快", "new": "新的", "old": "舊的", "short": "短的", "slow": "慢", "graph": "圖表", "garage": "車庫", "opposite": "相反", "mug": "馬克杯", "handle": "把手", "anything": "任何", "begin to": "開始", "dizzy": "暈眩", "janitor": "工友", "zookeeper": "管理員", "cartwheel": "側手翻", "fountain": "飲水機", "frown": "皺眉", "shrink": "縮小", "yell": "吼叫", "packet": "小包裝", "pull out": "拉出", "yawn": "打呵欠" };
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 10079, pokedex: "0".repeat(151), gods_bits: "1111", solvedCount: 0, isTempPractice: false };
+    // --- 完整進化鏈地圖 ---
+    const CHAINS = [
+        [1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[29,30,31],[32,33,34],[43,44,45],[60,61,62],[63,64,65],[66,67,68],[69,70,71],[74,75,76],[92,93,94],[147,148,149],
+        [19,20],[21,22],[23,24],[25,26],[27,28],[37,38],[41,42],[50,51],[52,53],[54,55],[58,59],[72,73],[77,78],[81,82],[90,91],[96,97],[109,110],[116,117],[129,130]
+    ];
 
-    function setHeroData(name, value) {
-        localStorage.setItem(name, value);
-        const d = new Date(); d.setTime(d.getTime() + (365*24*60*60*1000));
-        document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=Lax`;
-    }
-    function getHeroData(name) {
-        const v = `; ${document.cookie}`; const p = v.split(`; ${name}=`);
-        let res = (p.length === 2) ? p.pop().split(';').shift() : null;
-        return res || localStorage.getItem(name);
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', activePokeId: 384, pokedex: "0".repeat(151) };
+
+    function setHeroData(name, value) { localStorage.setItem(name, value); document.cookie = `${name}=${value};path=/;SameSite=Lax`; }
+    function getHeroData(name) { const v = `; ${document.cookie}`; const p = v.split(`; ${name}=`); return (p.length === 2) ? p.pop().split(';').shift() : localStorage.getItem(name); }
+
+    function getEvoInfo(id) {
+        const exp = parseInt(getHeroData(`exp_id_${id}`)) || 0;
+        const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
+        let curId = id; let name = PK_NAMES[id] || "No."+id;
+        
+        if(id === 384 && lv === 3) { curId = 10079; name = "超級烈空坐"; }
+        else if(id === 150 && lv === 3) { curId = 10044; name = "超級超夢Y"; }
+        else {
+            const chain = CHAINS.find(c => c.includes(id));
+            if(chain) { curId = chain[lv-1] || chain[chain.length-1]; name = PK_NAMES[curId]; }
+            else if(lv === 2) name += "(覺醒)";
+            else if(lv === 3) name = "極致" + name;
+        }
+        return { displayId: curId, name, lv, exp, isMega: (lv===3) };
     }
 
     async function initSystem() {
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
-        state.gods_bits = getHeroData('hero_gods_bits') || "1111";
-        state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 10079;
-        try {
-            const res = await fetch(`https://docs.google.com/spreadsheets/d/${SS_ID}/gviz/tq?tqx=out:csv&sheet=工作表1&t=${Date.now()}`);
-            parseCSV(await res.text());
-        } catch (e) {}
+        state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
+        const res = await fetch(`https://docs.google.com/spreadsheets/d/${SS_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`);
+        parseCSV(await res.text());
     }
 
     function parseCSV(text) {
         const rows = text.split(/\r?\n/).map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-        const headers = rows[0]; state.banks = {};
-        headers.forEach((h, i) => { if(!h) return; state.banks[h] = []; for(let r=1; r<rows.length; r++) if(rows[r][i]) state.banks[h].push({ en: rows[r][i].split(',')[0], cn: rows[r][i].split(',')[1] || "", ref: `${String.fromCharCode(65+i)}${r+1}` }); });
-        const sorted = Object.keys(state.banks).sort((a,b)=>(parseInt(b.replace(/\D/g,''))||0)-(parseInt(a.replace(/\D/g,''))||0));
-        document.getElementById('unit-selector').innerHTML = sorted.map(k => `<option value="${k}">${k}</option>`).join('');
+        state.banks = {}; rows[0].forEach((h, i) => { if(!h) return; state.banks[h] = []; for(let r=1; r<rows.length; r++) if(rows[r][i]) state.banks[h].push({ en: rows[r][i].split(',')[0], cn: rows[r][i].split(',')[1], ref: `${String.fromCharCode(65+i)}${r+1}` }); });
+        document.getElementById('unit-selector').innerHTML = Object.keys(state.banks).sort().map(k => `<option value="${k}">${k}</option>`).join('');
     }
 
     function updateEvoUI() {
-        const expKey = `exp_id_${state.activePokeId}`;
-        const exp = parseInt(getHeroData(expKey)) || 0;
-        let lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
-        let target = lv === 1 ? 20 : 50;
-        if(lv === 3) target = 50;
-        document.getElementById('evo-progress-bar').style.width = Math.min(100, (exp/target)*100) + "%";
-        document.getElementById('evo-progress-text').innerText = `LV.${lv} - EXP ${exp}/${target}`;
-    }
-
-    function checkEvolution() {
-        const expKey = `exp_id_${state.activePokeId}`;
-        const exp = parseInt(getHeroData(expKey)) || 0;
-        let currentStatus = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
-        let updated = false;
-
-        if (GOD_IDS.includes(state.activePokeId)) {
-            let idx = GOD_IDS.indexOf(state.activePokeId);
-            let gArr = state.gods_bits.split('');
-            if (parseInt(gArr[idx]) < currentStatus) { gArr[idx] = currentStatus; state.gods_bits = gArr.join(''); setHeroData('hero_gods_bits', state.gods_bits); updated = true; }
-        } else {
-            let idx = state.activePokeId - 1;
-            let pArr = state.pokedex.split('');
-            if (parseInt(pArr[idx]) < currentStatus) { pArr[idx] = currentStatus; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); updated = true; }
-        }
-        if (updated) { confetti({ particleCount: 250, spread: 100 }); alert("進化成功！夥伴變強了！"); renderTeam(); }
-    }
-
-    function startSession(mode) {
-        state.unit = document.getElementById('unit-selector').value; if(!state.banks[state.unit]) return;
-        state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
-        state.mode = mode; state.index = 0; state.solvedCount = 0;
-        initArena();
-    }
-
-    function initArena() {
-        document.getElementById('player-sprite').src = getGif(state.activePokeId);
-        let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1);
-        state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1;
-        document.getElementById('opp-sprite').src = getGif(state.currentOppId);
-        switchView('view-game'); updateEvoUI(); loadWord();
-    }
-
-    async function loadWord() {
-        if(state.index >= state.currentList.length) { handleVictory(); return; }
-        const word = state.currentList[state.index];
-        getFinalTrans(word).then(cn => document.getElementById('display-cn').innerText = cn);
-        const area = document.getElementById('letter-area'); area.innerHTML = "";
-        let inputIdx = 0;
-        word.en.split('').forEach((char) => {
-            if(char === " ") area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%; height:5px"}));
-            else if(char === "/") area.appendChild(Object.assign(document.createElement('div'), {innerText:"/", style:"font-size:3rem; color:var(--accent); line-height:90px"}));
-            else {
-                const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
-                inp.oninput = (e) => {
-                    if(e.target.value.length === 1) {
-                        const n = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx)+1}"]`);
-                        if(n) n.focus();
-                        if([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150);
-                    }
-                };
-                inp.onkeydown = (e) => { if(e.key === "Backspace" && e.target.value === "" ) { const p = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx)-1}"]`); if(p) p.focus(); } };
-                area.appendChild(inp);
-            }
-        });
-        document.getElementById('practice-guide').innerText = (state.mode === 'practice' || state.isTempPractice) ? word.en : "";
-        document.getElementById('support-area').style.display = 'none';
-        
-        const stars = JSON.parse(getHeroData('hero_priority') || '[]');
-        document.getElementById('star-icon').innerText = stars.includes(word.ref) ? "★" : "☆";
-        document.getElementById('star-icon').style.color = stars.includes(word.ref) ? "var(--gold)" : "#475569";
-
-        setTimeout(() => { const f = document.querySelector('.letter-box[data-idx="0"]'); if(f) f.focus(); }, 450);
-        playVoice();
+        const info = getEvoInfo(state.activePokeId);
+        const target = info.lv === 1 ? 20 : 50;
+        document.getElementById('evo-progress-bar').style.width = Math.min(100, (info.exp/target)*100) + "%";
+        document.getElementById('evo-progress-text').innerText = `${info.name} LV.${info.lv} - EXP ${info.exp}/${target}`;
+        const sprite = document.getElementById('player-sprite'); sprite.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif`;
+        if(info.isMega) sprite.classList.add('mega-glow'); else sprite.classList.remove('mega-glow');
+        document.getElementById('evo-ui-container').style.display = (state.mode === 'priority') ? 'none' : 'block';
     }
 
     function checkFinalAnswer() {
         const word = state.currentList[state.index]; const boxes = document.querySelectorAll('.letter-box');
         let ui = ""; boxes.forEach(b => ui += b.value);
-        const target = word.en.replace(/[\s\/]/g, '').toLowerCase();
-        if (ui.toLowerCase() === target) {
-            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
-            if(!state.isTempPractice) {
-                state.solvedCount++;
+        if (ui.toLowerCase() === word.en.replace(/[\s\/]/g, '').toLowerCase()) {
+            confetti({ particleCount: 40, spread: 50 });
+            if(state.mode !== 'priority') {
                 const expKey = `exp_id_${state.activePokeId}`;
-                let gExp = (parseInt(getHeroData(expKey)) || 0) + 1;
-                setHeroData(expKey, gExp);
-                updateEvoUI(); checkEvolution();
+                let curExp = (parseInt(getHeroData(expKey)) || 0) + 1;
+                setHeroData(expKey, curExp);
+                if(curExp === 20 || curExp === 50) { confetti({ particleCount: 200, spread: 100 }); alert("進化達成！"); }
             }
-            boxes.forEach(b => { b.classList.add('correct'); b.disabled = true; });
-            setTimeout(() => { state.isTempPractice = false; state.index++; loadWord(); }, 600);
-        } else {
-            boxes.forEach((b, idx) => { if (b.value.toLowerCase() !== target[idx]) b.classList.add('wrong'); });
-            document.getElementById('support-area').style.display = 'flex';
-        }
+            updateEvoUI(); state.index++; setTimeout(loadWord, 600);
+        } else { boxes.forEach(b => b.classList.add('wrong')); }
     }
 
-    function handleVictory() { if(state.mode === 'quiz' && state.solvedCount > 0) { let pArr = state.pokedex.split(''); pArr[state.currentOppId-1] = "1"; state.pokedex = pArr.join(''); setHeroData('hero_pokedex_bits', state.pokedex); alert(`成功收服新夥伴！`); } switchView('view-main'); }
-    function skipWord() { state.isTempPractice = false; state.index++; loadWord(); }
-    function triggerLearningMode() { state.isTempPractice = true; loadWord(); }
-    async function getFinalTrans(wordObj) { const en = wordObj.en.toLowerCase(); if(localDict[en]) return localDict[en]; try { const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(en)}`); const data = await res.json(); return data[0][0][0]; } catch(e) { return en.toUpperCase(); } }
-    function playVoice() { window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(state.currentList[state.index].en); msg.lang = 'en-US'; msg.rate = 0.8; window.speechSynthesis.speak(msg); }
-    function getGif(id) { return id == 992 ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/992.png` : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`; }
-    function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-pokedex') renderDex(); if(id === 'view-team') renderTeam(); }
-    
+    function startSession(mode) {
+        state.unit = document.getElementById('unit-selector').value;
+        state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
+        state.mode = mode; state.index = 0; switchView('view-game'); updateEvoUI(); loadWord();
+    }
+
+    function loadWord() {
+        if(state.index >= state.currentList.length) { handleVictory(); return; }
+        const word = state.currentList[state.index];
+        document.getElementById('display-cn').innerText = localDict[word.en.toLowerCase()] || word.cn || word.en;
+        const area = document.getElementById('letter-area'); area.innerHTML = "";
+        let inputIdx = 0;
+        word.en.split('').forEach(char => {
+            if(char === " ") area.appendChild(Object.assign(document.createElement('div'), {style:"width:100%;height:5px"}));
+            else if(char === "/") area.appendChild(Object.assign(document.createElement('div'), {innerText:"/", style:"font-size:3rem;line-height:90px;color:var(--accent)"}));
+            else {
+                const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
+                inp.oninput = (e) => { if(e.target.value.length === 1) { 
+                    const next = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx)+1}"]`);
+                    if(next) next.focus();
+                    if([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150);
+                }};
+                inp.onkeydown = (e) => { if(e.key==="Backspace" && e.target.value==="") {
+                    const prev = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx)-1}"]`);
+                    if(prev) prev.focus();
+                }};
+                area.appendChild(inp);
+            }
+        });
+        document.getElementById('star-icon').innerText = JSON.parse(getHeroData('hero_priority')||'[]').includes(word.ref) ? "★" : "☆";
+        setTimeout(() => document.querySelector('.letter-box').focus(), 450); playVoice();
+    }
+
+    function handleVictory() { 
+        if(state.mode !== 'priority') {
+            let pArr = state.pokedex.split(''); pArr[Math.floor(Math.random()*151)] = "1"; 
+            setHeroData('hero_pokedex_bits', pArr.join('')); alert("收服成功！"); 
+        }
+        switchView('view-main'); 
+    }
+    function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); }
     function renderTeam() {
         const grid = document.getElementById('team-grid'); grid.innerHTML = "";
-        GOD_IDS.forEach((id, idx) => {
-            const exp = parseInt(getHeroData(`exp_id_${id}`)) || 0;
-            const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
+        [384, 150, 992, 1, 4, 7, 25, 133].forEach(id => {
+            const info = getEvoInfo(id);
             const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == id?'active':''} collected`;
-            it.innerHTML = `<img src="${getGif(id)}"><div class="name-zh">${GOD_NAMES[idx]}</div><div class="lv-tag">LV.${lv} (EXP:${exp})</div>`;
-            it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); }; grid.appendChild(it);
+            it.innerHTML = `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif"><div class="name-zh">${info.name}</div><div class="lv-tag">LV.${info.lv}</div>`;
+            it.onclick = () => { state.activePokeId = id; setHeroData('hero_myPoke', id); renderTeam(); };
+            grid.appendChild(it);
         });
+    }
+    function renderDex() {
+        const grid = document.getElementById('dex-grid'); grid.innerHTML = "";
         for(let i=1; i<=151; i++) {
             const status = state.pokedex[i-1];
-            if(status !== "0") {
-                const exp = parseInt(getHeroData(`exp_id_${i}`)) || 0;
-                const lv = exp >= 50 ? 3 : (exp >= 20 ? 2 : 1);
-                const it = document.createElement('div'); it.className = `grid-item ${state.activePokeId == i?'active':''} collected`;
-                it.innerHTML = `<img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i] || 'No.'+i}</div><div class="lv-tag">LV.${lv} (EXP:${exp})</div>`;
-                it.onclick = () => { state.activePokeId = i; setHeroData('hero_myPoke', i); renderTeam(); }; grid.appendChild(it);
-            }
+            grid.innerHTML += `<div class="grid-item ${status !== "0" ? 'collected' : 'locked'}"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${i}.gif"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div></div>`;
         }
     }
-    function renderDex() { const grid = document.getElementById('dex-grid'); grid.innerHTML = ""; for(let i=1; i<=151; i++) { const status = state.pokedex[i-1]; grid.innerHTML += `<div class="grid-item ${status !== "0" ? 'collected' : 'locked'}"><img src="${getGif(i)}"><div class="name-zh">${PK_NAMES[i] || 'No.'+i}</div></div>`; } }
     function toggleStar() { const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]'); if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref); setHeroData('hero_priority', JSON.stringify(p)); loadWord(); }
-    function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'quiz'; state.index = 0; initArena(); }
+    function startPrioritySession() { const pRefs = JSON.parse(getHeroData('hero_priority') || '[]'); if(pRefs.length === 0) return alert("還沒有星號單字！"); state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); })); state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); updateEvoUI(); loadWord(); }
+    function playVoice() { window.speechSynthesis.cancel(); const msg = new SpeechSynthesisUtterance(state.currentList[state.index].en); msg.lang = 'en-US'; window.speechSynthesis.speak(msg); }
+    function skipWord() { state.index++; loadWord(); }
 </script>
 </body>
 </html>
