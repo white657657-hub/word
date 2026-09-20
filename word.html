@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1421 - Fixed</title>
+    <title>Word Hero V1422 - Question Bank Manager</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,280 +11,330 @@
 
     <style>
         :root {
-            --bg: #020617;
-            --card: rgba(30, 41, 59, 0.9);
-            --accent: #38bdf8;
-            --success: #4ade80;
-            --danger: #f87171;
-            --gold: #fbbf24;
-            --exp: #eab308;
+            --bg:#020617;
+            --card:rgba(30,41,59,.9);
+            --accent:#38bdf8;
+            --success:#4ade80;
+            --danger:#f87171;
+            --gold:#fbbf24;
+            --exp:#eab308;
         }
 
         * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
+            box-sizing:border-box;
+            -webkit-tap-highlight-color:transparent;
+            outline:none;
         }
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background: #020617;
-            color: #fff;
-            font-family: -apple-system, system-ui, sans-serif;
-            overflow: hidden;
+        html,body {
+            height:100%;
+            width:100%;
+            margin:0;
+            padding:0;
+            background:#020617;
+            color:#fff;
+            font-family:-apple-system,system-ui,sans-serif;
+            overflow:hidden;
         }
 
         .container {
-            width: 100%;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            background: radial-gradient(circle at top, #0f172a, #020617);
-            padding: 4px;
+            width:100%;
+            height:100dvh;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            background:radial-gradient(circle at top,#0f172a,#020617);
+            padding:4px;
         }
 
         .view-section {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            padding: 4px;
-            overflow-y: auto;
+            display:none;
+            flex-direction:column;
+            flex:1;
+            padding:4px;
+            overflow-y:auto;
         }
 
-        /* 字母框：1px 邊框, Montserrat 800, 置中 */
         .box-input-container {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
+            display:flex;
+            gap:4px;
+            justify-content:center;
+            flex-wrap:wrap;
+            margin-bottom:10px;
         }
 
         .letter-box {
-            width: 58px;
-            height: 85px;
-            border: 1px solid var(--accent) !important;
-            border-radius: 8px;
-            background: rgba(0,0,0,0.85);
-            color: #fff;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif !important;
-            font-size: 2.2rem;
-            font-weight: 800 !important;
-            line-height: 85px;
-            display: inline-block;
-            -webkit-appearance: none;
-            padding: 0 !important;
+            width:58px;
+            height:85px;
+            border:1px solid var(--accent)!important;
+            border-radius:8px;
+            background:rgba(0,0,0,.85);
+            color:#fff;
+            text-align:center;
+            font-family:'Montserrat',sans-serif!important;
+            font-size:2.2rem;
+            font-weight:800!important;
+            line-height:85px;
+            display:inline-block;
+            -webkit-appearance:none;
+            padding:0!important;
         }
 
-        @media screen and (max-width: 600px) {
+        @media screen and (max-width:600px) {
             .letter-box {
-                width: 35px;
-                height: 60px;
-                font-size: 1.6rem;
-                line-height: 60px;
+                width:35px;
+                height:60px;
+                font-size:1.6rem;
+                line-height:60px;
             }
 
             #display-cn {
-                font-size: 2.5rem !important;
+                font-size:2.5rem!important;
             }
         }
 
         .letter-box.wrong {
-            border-color: var(--danger) !important;
-            color: var(--danger);
+            border-color:var(--danger)!important;
+            color:var(--danger);
         }
 
-        /* HP 頂部貼齊 */
         #combat-arena {
-            height: 160px;
-            background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover;
-            border-radius: 12px;
-            position: relative;
-            border: 1px solid #334155;
-            margin-bottom: 5px;
-            flex-shrink: 0;
+            height:160px;
+            background:url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover;
+            border-radius:12px;
+            position:relative;
+            border:1px solid #334155;
+            margin-bottom:5px;
+            flex-shrink:0;
         }
 
         .hp-container {
-            position: absolute;
-            top: 10px;
-            width: 100px;
-            height: 18px;
-            background: rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 9px;
-            overflow: hidden;
-            z-index: 10;
+            position:absolute;
+            top:10px;
+            width:100px;
+            height:18px;
+            background:rgba(0,0,0,.8);
+            border:1px solid rgba(255,255,255,.3);
+            border-radius:9px;
+            overflow:hidden;
+            z-index:10;
         }
 
         .hp-bar {
-            height: 100%;
-            width: 100%;
-            background: var(--success);
-            transition: 0.4s;
+            height:100%;
+            width:100%;
+            background:var(--success);
+            transition:.4s;
         }
 
         #player-hp-box {
-            left: 10px;
+            left:10px;
         }
 
         #opp-hp-box {
-            right: 10px;
+            right:10px;
         }
 
-        /* EXP 條 */
         .exp-container {
-            position: absolute;
-            bottom: 5px;
-            left: 10px;
-            width: 120px;
-            height: 14px;
-            background: rgba(0,0,0,0.7);
-            border: 1px solid var(--exp);
-            border-radius: 7px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
+            position:absolute;
+            bottom:5px;
+            left:10px;
+            width:120px;
+            height:14px;
+            background:rgba(0,0,0,.7);
+            border:1px solid var(--exp);
+            border-radius:7px;
+            overflow:hidden;
+            display:flex;
+            align-items:center;
         }
 
         .exp-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--exp);
-            transition: 0.5s ease-out;
+            height:100%;
+            width:0%;
+            background:var(--exp);
+            transition:.5s ease-out;
         }
 
         .exp-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            font-size: 0.65rem;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 1px 1px 1px #000;
-            z-index: 2;
+            position:absolute;
+            width:100%;
+            text-align:center;
+            font-size:.65rem;
+            font-weight:900;
+            color:#fff;
+            text-shadow:1px 1px 1px #000;
+            z-index:2;
         }
 
         .sprite {
-            position: absolute;
-            bottom: 22px;
-            width: 85px !important;
-            height: 85px !important;
-            object-fit: contain;
-            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5));
-            z-index: 5;
+            position:absolute;
+            bottom:22px;
+            width:85px!important;
+            height:85px!important;
+            object-fit:contain;
+            filter:drop-shadow(0 5px 8px rgba(0,0,0,.5));
+            z-index:5;
         }
 
         #player-sprite {
-            left: 10px;
-            transform: scaleX(-1);
+            left:10px;
+            transform:scaleX(-1);
         }
 
         #opp-sprite {
-            right: 10px;
+            right:10px;
         }
 
-        /* 按鈕一致性風格 */
         .game-action-btn {
-            width: 220px;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #475569;
-            background: rgba(255,255,255,0.08);
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin: 4px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
+            width:220px;
+            padding:12px;
+            border-radius:12px;
+            border:1px solid #475569;
+            background:rgba(255,255,255,.08);
+            color:white;
+            font-size:1.1rem;
+            font-weight:800;
+            cursor:pointer;
+            margin:4px auto;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            transition:.2s;
         }
 
         .game-action-btn:active {
-            transform: scale(0.97);
+            transform:scale(.97);
         }
 
         #btn-force-practice {
-            border-color: var(--accent);
-            background: rgba(56, 189, 248, 0.15);
-            display: none;
+            border-color:var(--accent);
+            background:rgba(56,189,248,.15);
+            display:none;
         }
 
-        /* 圖鑑網格 4格排列 */
         .grid-view {
-            display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 6px;
-            padding: 4px;
+            display:grid!important;
+            grid-template-columns:repeat(4,1fr)!important;
+            gap:6px;
+            padding:4px;
         }
 
         .grid-item {
-            background: rgba(255,255,255,0.03);
-            border-radius: 10px;
-            padding: 8px 2px;
-            text-align: center;
-            border: 1px solid transparent;
-            min-height: 155px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background:rgba(255,255,255,.03);
+            border-radius:10px;
+            padding:8px 2px;
+            text-align:center;
+            border:1px solid transparent;
+            min-height:155px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
         }
 
         .grid-item img {
-            width: 85px !important;
-            height: 85px !important;
-            object-fit: contain !important;
+            width:85px!important;
+            height:85px!important;
+            object-fit:contain!important;
         }
 
         .grid-item.locked img {
-            filter: grayscale(100%) brightness(0.3) !important;
-            opacity: 0.4;
+            filter:grayscale(100%) brightness(.3)!important;
+            opacity:.4;
         }
 
         .grid-item.active {
-            border-color: var(--accent);
-            background: rgba(56, 189, 248, 0.15);
+            border-color:var(--accent);
+            background:rgba(56,189,248,.15);
         }
 
         #display-cn {
-            font-size: 3.2rem;
-            font-weight: 800;
-            color: var(--gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            vertical-align: middle;
+            font-size:3.2rem;
+            font-weight:800;
+            color:var(--gold);
+            text-shadow:2px 2px 4px rgba(0,0,0,.8);
+            vertical-align:middle;
         }
 
         .pass-btn {
-            background: #475569;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 800;
-            cursor: pointer;
-            border: none;
-            margin-left: 10px;
-            vertical-align: middle;
+            background:#475569;
+            color:white;
+            padding:5px 12px;
+            border-radius:8px;
+            font-size:.9rem;
+            font-weight:800;
+            cursor:pointer;
+            border:none;
+            margin-left:10px;
+            vertical-align:middle;
+        }
+
+        .bank-row {
+            background:rgba(255,255,255,.04);
+            border:1px solid #334155;
+            border-radius:10px;
+            padding:9px;
+            margin-bottom:6px;
+        }
+
+        .bank-row-main {
+            display:flex;
+            justify-content:space-between;
+            gap:8px;
+            align-items:center;
+        }
+
+        .bank-word {
+            font-weight:800;
+            font-size:1.05rem;
+            word-break:break-word;
+        }
+
+        .bank-cn {
+            color:#fbbf24;
+            margin-top:3px;
+        }
+
+        .bank-ref {
+            color:#64748b;
+            font-size:.7rem;
+            margin-top:3px;
+        }
+
+        .bank-action {
+            display:flex;
+            gap:5px;
+            flex-shrink:0;
+        }
+
+        .bank-action button {
+            border:0;
+            border-radius:7px;
+            padding:6px 9px;
+            color:white;
+            font-weight:800;
+            cursor:pointer;
+        }
+
+        .bank-edit {
+            background:#2563eb;
+        }
+
+        .bank-delete {
+            background:#dc2626;
         }
 
         .mode-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: white;
-            margin-bottom: 8px;
-            cursor: pointer;
+            width:100%;
+            padding:14px;
+            border-radius:12px;
+            border:none;
+            font-weight:800;
+            font-size:1.2rem;
+            color:white;
+            margin-bottom:8px;
+            cursor:pointer;
         }
     </style>
 </head>
@@ -294,35 +344,45 @@
 <div class="container">
 
     <div id="view-main" class="view-section" style="display:flex;">
-        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">
+
+        <h2 style="text-align:center;color:var(--accent);margin:8px 0;">
             ANSON MASTER
         </h2>
 
         <div style="flex:1;">
+
             <select id="unit-selector"
-                style="width:100%; padding:14px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.3rem; margin-bottom:10px;">
+                style="width:100%;padding:14px;border-radius:12px;background:#1e293b;color:var(--gold);border:1px solid #334155;font-weight:800;font-size:1.3rem;margin-bottom:10px;">
             </select>
 
             <button class="mode-btn"
-                style="background: linear-gradient(45deg, #ef4444, #f59e0b);"
+                style="background:linear-gradient(45deg,#ef4444,#f59e0b);"
                 onclick="startSession('quiz')">
                 🗡️ 魔王挑戰 (敗北扣級)
             </button>
 
             <button class="mode-btn"
-                style="background: #3b82f6;"
+                style="background:#3b82f6;"
                 onclick="startSession('practice')">
                 🛡️ 練習模式
             </button>
 
             <button class="mode-btn"
-                style="background: var(--gold); color:#000;"
+                style="background:var(--gold);color:#000;"
                 onclick="startPrioritySession()">
                 ★ 星號練習 (不扣血)
             </button>
+
+            <button class="mode-btn"
+                style="background:#7c3aed;"
+                onclick="switchView('view-bank')">
+                📚 題庫管理
+            </button>
+
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+
             <button class="mode-btn"
                 style="background:#475569;"
                 onclick="switchView('view-team')">
@@ -334,18 +394,22 @@
                 onclick="switchView('view-pokedex')">
                 📸 圖鑑
             </button>
+
         </div>
+
     </div>
 
 
     <div id="view-game" class="view-section">
 
-        <div style="display:flex; justify-content:space-between;">
+        <div style="display:flex;justify-content:space-between;">
+
             <button class="mode-btn"
-                style="width:auto; padding:6px 12px; background:#334155; font-size:0.8rem;"
+                style="width:auto;padding:6px 12px;background:#334155;font-size:.8rem;"
                 onclick="switchView('view-main')">
                 🏠 撤退
             </button>
+
         </div>
 
         <div id="combat-arena">
@@ -369,14 +433,15 @@
             </div>
 
             <img id="opp-sprite" class="sprite" src="">
+
         </div>
 
-        <div style="text-align:center; min-height:65px;">
+        <div style="text-align:center;min-height:65px;">
 
             <span id="display-cn">...</span>
 
             <span id="star-icon"
-                style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px; vertical-align:middle;"
+                style="font-size:2.5rem;cursor:pointer;color:#475569;margin-left:12px;vertical-align:middle;"
                 onclick="toggleStar()">
                 ☆
             </span>
@@ -390,12 +455,14 @@
         </div>
 
         <div id="practice-guide"
-            style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:25px;">
+            style="text-align:center;color:var(--accent);font-weight:700;font-size:1.5rem;height:25px;">
         </div>
 
-        <div id="letter-area" class="box-input-container"></div>
+        <div id="letter-area"
+            class="box-input-container">
+        </div>
 
-        <div style="display:flex; flex-direction:column; align-items:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
 
             <button id="btn-voice"
                 class="game-action-btn"
@@ -410,6 +477,7 @@
             </button>
 
         </div>
+
     </div>
 
 
@@ -419,7 +487,9 @@
             夥伴選擇
         </h2>
 
-        <div class="grid-view" id="team-grid"></div>
+        <div class="grid-view"
+            id="team-grid">
+        </div>
 
         <button class="mode-btn"
             style="background:#3b82f6;"
@@ -436,7 +506,9 @@
             圖鑑紀錄
         </h2>
 
-        <div class="grid-view" id="dex-grid"></div>
+        <div class="grid-view"
+            id="dex-grid">
+        </div>
 
         <button class="mode-btn"
             style="background:#475569;"
@@ -446,332 +518,1453 @@
 
     </div>
 
+
+    <div id="view-bank" class="view-section">
+
+        <h2 style="text-align:center;margin:8px 0;">
+            📚 題庫管理
+        </h2>
+
+        <div style="background:rgba(124,58,237,.12);border:1px solid #7c3aed;border-radius:10px;padding:8px;margin-bottom:8px;font-size:.82rem;color:#c4b5fd;">
+            本機題庫：可新增、編輯、刪除；資料保存在此瀏覽器，不會直接改寫 Google Sheet。
+        </div>
+
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+
+            <select id="bank-manage-unit"
+                onchange="renderBankManager()"
+                style="flex:1;padding:10px;border-radius:10px;background:#1e293b;color:#fbbf24;border:1px solid #475569;font-weight:800;">
+            </select>
+
+            <button class="pass-btn"
+                style="margin-left:0;background:#7c3aed;"
+                onclick="addBankUnit()">
+                ＋單元
+            </button>
+
+        </div>
+
+        <input id="bank-search"
+            type="search"
+            placeholder="🔍 搜尋英文或中文"
+            oninput="renderBankManager()"
+            style="width:100%;padding:11px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;margin-bottom:8px;">
+
+        <div id="bank-list"
+            style="flex:1;overflow-y:auto;">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+
+            <button class="mode-btn"
+                style="background:#16a34a;margin:0;"
+                onclick="openQuestionEditor()">
+                ＋ 新增題目
+            </button>
+
+            <button class="mode-btn"
+                style="background:#0ea5e9;margin:0;"
+                onclick="exportQuestionCSV()">
+                📤 匯出題庫
+            </button>
+
+        </div>
+
+        <button class="mode-btn"
+            style="background:#475569;margin-top:8px;"
+            onclick="switchView('view-main')">
+            返回
+        </button>
+
+    </div>
+
+
+    <div id="view-question-editor"
+        class="view-section">
+
+        <h2 id="question-editor-title"
+            style="text-align:center;margin:8px 0;">
+            ＋ 新增題目
+        </h2>
+
+        <label style="margin-top:8px;color:#94a3b8;">
+            單元
+        </label>
+
+        <select id="question-unit"
+            style="width:100%;padding:12px;border-radius:10px;background:#1e293b;color:#fbbf24;border:1px solid #475569;font-weight:800;">
+        </select>
+
+        <label style="margin-top:12px;color:#94a3b8;">
+            English
+        </label>
+
+        <input id="question-en"
+            autocomplete="off"
+            style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
+
+        <label style="margin-top:12px;color:#94a3b8;">
+            中文
+        </label>
+
+        <input id="question-cn"
+            autocomplete="off"
+            style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
+
+        <div style="flex:1;"></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+
+            <button class="mode-btn"
+                style="background:#475569;"
+                onclick="switchView('view-bank')">
+                取消
+            </button>
+
+            <button class="mode-btn"
+                style="background:#16a34a;"
+                onclick="saveQuestion()">
+                儲存
+            </button>
+
+        </div>
+
+    </div>
+
 </div>
 
 
 <script>
 
-    const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-
-    const PK_NAMES = {
-        1:"妙蛙種子",
-        2:"妙蛙草",
-        3:"妙蛙花",
-        4:"小火龍",
-        5:"火恐龍",
-        6:"噴火龍",
-        7:"傑尼龜",
-        8:"卡咪龜",
-        9:"水箭龜",
-        10:"綠毛蟲",
-        11:"鐵甲蛹",
-        12:"巴大蝶",
-        25:"皮卡丘",
-        26:"雷丘",
-        150:"超夢",
-        151:"夢幻",
-        384:"烈空坐",
-        992:"鐵臂膀",
-        10079:"超級烈空坐",
-        10044:"超級超夢Y"
-    };
-
-    const localDict = {
-        "bell":"鈴",
-        "busy":"忙碌",
-        "first name":"名字",
-        "last name":"姓氏",
-        "bus driver":"公車司機",
-        "market":"市場",
-        "money":"錢",
-        "poor":"窮",
-        "sell":"賣",
-        "tub":"澡盆",
-        "splash":"濺水",
-        "funny-looking":"滑稽",
-        "holler":"大喊",
-        "a couple of":"一些",
-        "mustard":"芥末",
-        "birthday":"生日",
-        "call":"打電話",
-        "peanut butter":"花生醬",
-        "slug":"蛞蝓",
-        "knock over":"撞倒",
-        "wrestle":"摔跤",
-        "shake head":"搖頭",
-        "shook head":"搖頭",
-        "sigh":"嘆氣",
-        "attack":"攻擊",
-        "tire":"輪胎",
-        "bicycle":"腳踏車",
-        "bus":"公車",
-        "train":"火車",
-        "by bus":"搭公車",
-        "by car":"搭車",
-        "by train":"搭火車",
-        "motorcycle":"機車",
-        "on foot":"走路",
-        "sailing ship":"帆船",
-        "transportation":"交通工具",
-        "town":"城鎮",
-        "wheel":"輪子"
-    };
-
-    const CHAINS = [
-        [1,2,3],
-        [4,5,6],
-        [7,8,9],
-        [10,11,12],
-        [25,26],
-        [147,148,149]
-    ];
-
-    const DEFAULTS = [384, 150, 992];
-
-    let state = {
-        banks: {},
-        currentList: [],
-        index: 0,
-        mode: 'quiz',
-        tempPractice: false,
-        activePokeId: 384,
-        pokedex: "0".repeat(151),
-        playerHP: 5,
-        oppHP: 5,
-        currentOppId: 1
-    };
+const SS_ID =
+    '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
 
 
-    function setHeroData(n, v) {
-        localStorage.setItem(n, v);
-        document.cookie = `${n}=${v};path=/;SameSite=Lax`;
-    }
+const PK_NAMES = {
+    1:"妙蛙種子",
+    2:"妙蛙草",
+    3:"妙蛙花",
+    4:"小火龍",
+    5:"火恐龍",
+    6:"噴火龍",
+    7:"傑尼龜",
+    8:"卡咪龜",
+    9:"水箭龜",
+    10:"綠毛蟲",
+    11:"鐵甲蛹",
+    12:"巴大蝶",
+    25:"皮卡丘",
+    26:"雷丘",
+    150:"超夢",
+    151:"夢幻",
+    384:"烈空坐",
+    992:"鐵臂膀",
+    10079:"超級烈空坐",
+    10044:"超級超夢Y"
+};
 
 
-    function getHeroData(n) {
-        const v = `; ${document.cookie}`;
-        const p = v.split(`; ${n}=`);
+const localDict = {
+    "bell":"鈴",
+    "busy":"忙碌",
+    "first name":"名字",
+    "last name":"姓氏",
+    "bus driver":"公車司機",
+    "market":"市場",
+    "money":"錢",
+    "poor":"窮",
+    "sell":"賣",
+    "tub":"澡盆",
+    "splash":"濺水",
+    "funny-looking":"滑稽",
+    "holler":"大喊",
+    "a couple of":"一些",
+    "mustard":"芥末",
+    "birthday":"生日",
+    "call":"打電話",
+    "peanut butter":"花生醬",
+    "slug":"蛞蝓",
+    "knock over":"撞倒",
+    "wrestle":"摔跤",
+    "shake head":"搖頭",
+    "shook head":"搖頭",
+    "sigh":"嘆氣",
+    "attack":"攻擊",
+    "tire":"輪胎",
+    "bicycle":"腳踏車",
+    "bus":"公車",
+    "train":"火車",
+    "by bus":"搭公車",
+    "by car":"搭車",
+    "by train":"搭火車",
+    "motorcycle":"機車",
+    "on foot":"走路",
+    "sailing ship":"帆船",
+    "transportation":"交通工具",
+    "town":"城鎮",
+    "wheel":"輪子"
+};
 
-        return (p.length === 2)
-            ? p.pop().split(';').shift()
-            : localStorage.getItem(n);
-    }
+
+const CHAINS = [
+    [1,2,3],
+    [4,5,6],
+    [7,8,9],
+    [10,11,12],
+    [25,26],
+    [147,148,149]
+];
 
 
-    async function fetchTranslation(t) {
-        try {
-            const r = await fetch(
+const DEFAULTS = [
+    384,
+    150,
+    992
+];
+
+
+let editingQuestionRef = null;
+
+
+let state = {
+    banks:{},
+    currentList:[],
+    index:0,
+    mode:'quiz',
+    tempPractice:false,
+    activePokeId:384,
+    pokedex:"0".repeat(151),
+    playerHP:5,
+    oppHP:5,
+    currentOppId:1
+};
+
+
+function setHeroData(n,v) {
+
+    localStorage.setItem(n,v);
+
+    document.cookie =
+        `${n}=${v};path=/;SameSite=Lax`;
+}
+
+
+function getHeroData(n) {
+
+    const v =
+        `; ${document.cookie}`;
+
+    const p =
+        v.split(`; ${n}=`);
+
+    return p.length === 2
+        ? p.pop().split(';').shift()
+        : localStorage.getItem(n);
+}
+
+
+async function fetchTranslation(t) {
+
+    try {
+
+        const r =
+            await fetch(
                 `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(t)}`
             );
 
-            const d = await r.json();
+        const d =
+            await r.json();
 
-            return d[0][0][0];
+        return d[0][0][0];
 
-        } catch (e) {
-            return "";
+    } catch(e) {
+
+        return "";
+    }
+}
+
+
+function getLocalJSON(key,fallback) {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem(key) ||
+            JSON.stringify(fallback)
+        );
+
+    } catch(e) {
+
+        return fallback;
+    }
+}
+
+
+function setLocalJSON(key,value) {
+
+    localStorage.setItem(
+        key,
+        JSON.stringify(value)
+    );
+}
+
+
+function escapeHtml(v) {
+
+    return String(v ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+}
+
+
+/* =========================
+   題庫管理
+========================= */
+
+
+function applyLocalQuestionChanges() {
+
+    const units =
+        getLocalJSON(
+            'hero_custom_units',
+            []
+        );
+
+    const custom =
+        getLocalJSON(
+            'hero_custom_questions',
+            []
+        );
+
+    const edits =
+        getLocalJSON(
+            'hero_question_edits',
+            {}
+        );
+
+    const deleted =
+        new Set(
+            getLocalJSON(
+                'hero_deleted_question_refs',
+                []
+            )
+        );
+
+
+    units.forEach(u => {
+
+        if (!state.banks[u]) {
+            state.banks[u] = [];
         }
+
+    });
+
+
+    Object.keys(state.banks)
+        .forEach(u => {
+
+            state.banks[u] =
+                state.banks[u]
+                    .filter(
+                        w =>
+                            !deleted.has(w.ref)
+                    )
+                    .map(
+                        w =>
+                            edits[w.ref]
+                                ? {
+                                    ...w,
+                                    ...edits[w.ref]
+                                }
+                                : w
+                    );
+
+        });
+
+
+    custom.forEach(w => {
+
+        if (
+            deleted.has(w.ref)
+        ) {
+            return;
+        }
+
+
+        if (!state.banks[w.unit]) {
+
+            state.banks[w.unit] = [];
+        }
+
+
+        if (
+            !state.banks[w.unit]
+                .some(
+                    x =>
+                        x.ref === w.ref
+                )
+        ) {
+
+            state.banks[w.unit].push({
+                en:w.en,
+                cn:w.cn,
+                ref:w.ref
+            });
+        }
+
+    });
+}
+
+
+function refreshUnitSelectors() {
+
+    const units =
+        Object.keys(
+            state.banks
+        ).sort();
+
+
+    [
+        'unit-selector',
+        'bank-manage-unit'
+    ].forEach(id => {
+
+        const el =
+            document.getElementById(id);
+
+        if (!el) {
+            return;
+        }
+
+
+        const old =
+            el.value;
+
+
+        el.innerHTML =
+            units
+                .map(
+                    u =>
+                        `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`
+                )
+                .join('');
+
+
+        if (
+            units.includes(old)
+        ) {
+
+            el.value = old;
+        }
+
+    });
+}
+
+
+function renderBankManager() {
+
+    const unit =
+        document.getElementById(
+            'bank-manage-unit'
+        )?.value;
+
+
+    const list =
+        document.getElementById(
+            'bank-list'
+        );
+
+
+    const key =
+        (
+            document.getElementById(
+                'bank-search'
+            )?.value || ''
+        )
+        .trim()
+        .toLowerCase();
+
+
+    if (!list) {
+        return;
     }
 
 
-    /*
-     * V1421 修正：
-     * 進化 EXP 永遠綁定進化鏈的第一隻 Pokémon。
-     *
-     * 例如：
-     * 妙蛙種子 / 妙蛙草 / 妙蛙花
-     * 全部使用 exp_id_1。
-     */
-    function getEvolutionBaseId(id) {
+    const words =
+        (
+            state.banks[unit] || []
+        )
+        .filter(
+            w =>
+                !key ||
+                w.en
+                    .toLowerCase()
+                    .includes(key) ||
+                (w.cn || '')
+                    .toLowerCase()
+                    .includes(key)
+        );
 
-        if (id === 384 || id === 10079) {
-            return 384;
-        }
 
-        if (id === 150 || id === 10044) {
-            return 150;
-        }
+    if (!words.length) {
 
-        const chain = CHAINS.find(c => c.includes(id));
+        list.innerHTML =
+            `
+            <div style="text-align:center;color:#64748b;padding:30px 10px;">
+                目前沒有符合條件的題目。
+            </div>
+            `;
 
-        return chain ? chain[0] : id;
+        return;
     }
 
 
-    function getEvoInfo(id) {
+    list.innerHTML =
+        words
+            .map(
+                w =>
+                    `
+                    <div class="bank-row">
 
-        const baseId = getEvolutionBaseId(id);
+                        <div class="bank-row-main">
 
-        const exp =
-            parseInt(getHeroData(`exp_id_${baseId}`)) || 0;
+                            <div style="min-width:0">
 
-        let lv = 1;
-        let progress = exp;
-        let target = 20;
+                                <div class="bank-word">
+                                    ${escapeHtml(w.en)}
+                                </div>
+
+                                <div class="bank-cn">
+                                    ${escapeHtml(w.cn || '')}
+                                </div>
+
+                                <div class="bank-ref">
+                                    ${escapeHtml(w.ref)}
+                                </div>
+
+                            </div>
+
+                            <div class="bank-action">
+
+                                <button
+                                    class="bank-edit"
+                                    onclick="openQuestionEditor('${encodeURIComponent(w.ref)}')">
+                                    編輯
+                                </button>
+
+                                <button
+                                    class="bank-delete"
+                                    onclick="deleteQuestion('${encodeURIComponent(w.ref)}')">
+                                    刪除
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    `
+            )
+            .join('');
+}
 
 
-        if (exp >= 50) {
+function addBankUnit() {
 
-            lv = 3;
-            progress = 50;
-            target = 50;
-
-        } else if (exp >= 20) {
-
-            lv = 2;
-            progress = exp - 20;
-            target = 30;
-        }
+    const input =
+        prompt(
+            '請輸入新單元名稱，例如 Unit 10：'
+        );
 
 
-        let curId = baseId;
+    if (!input) {
+        return;
+    }
 
 
-        if (baseId === 384 && lv === 3) {
+    const name =
+        input.trim();
 
-            curId = 10079;
 
-        } else if (baseId === 150 && lv === 3) {
+    if (!name) {
+        return;
+    }
 
-            curId = 10044;
 
-        } else {
+    if (state.banks[name]) {
 
-            const chain =
-                CHAINS.find(c => c[0] === baseId);
+        alert(
+            '這個單元已經存在。'
+        );
 
-            if (chain) {
-                curId =
-                    chain[lv - 1] ||
-                    chain[chain.length - 1];
+        return;
+    }
+
+
+    state.banks[name] = [];
+
+
+    const units =
+        getLocalJSON(
+            'hero_custom_units',
+            []
+        );
+
+
+    if (!units.includes(name)) {
+
+        units.push(name);
+
+        setLocalJSON(
+            'hero_custom_units',
+            units
+        );
+    }
+
+
+    refreshUnitSelectors();
+
+
+    document.getElementById(
+        'bank-manage-unit'
+    ).value = name;
+
+
+    renderBankManager();
+}
+
+
+function openQuestionEditor(
+    encodedRef = ''
+) {
+
+    editingQuestionRef =
+        encodedRef
+            ? decodeURIComponent(encodedRef)
+            : null;
+
+
+    refreshUnitSelectors();
+
+
+    const unitEl =
+        document.getElementById(
+            'question-unit'
+        );
+
+    const enEl =
+        document.getElementById(
+            'question-en'
+        );
+
+    const cnEl =
+        document.getElementById(
+            'question-cn'
+        );
+
+    const title =
+        document.getElementById(
+            'question-editor-title'
+        );
+
+
+    const units =
+        Object.keys(
+            state.banks
+        ).sort();
+
+
+    if (!units.length) {
+
+        alert(
+            '請先建立單元。'
+        );
+
+        return;
+    }
+
+
+    unitEl.innerHTML =
+        units
+            .map(
+                u =>
+                    `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`
+            )
+            .join('');
+
+
+    if (editingQuestionRef) {
+
+        let found = null;
+        let foundUnit = null;
+
+
+        Object.keys(
+            state.banks
+        )
+        .some(u => {
+
+            const w =
+                state.banks[u]
+                    .find(
+                        x =>
+                            x.ref ===
+                            editingQuestionRef
+                    );
+
+
+            if (w) {
+
+                found = w;
+                foundUnit = u;
+
+                return true;
             }
-        }
 
 
-        return {
-            baseId,
-            displayId: curId,
-            lv,
-            exp,
-            progress,
-            target
-        };
-    }
+            return false;
+        });
 
 
-    async function initSystem() {
-
-        state.pokedex =
-            getHeroData('hero_pokedex_bits') ||
-            "0".repeat(151);
-
-        state.activePokeId =
-            parseInt(getHeroData('hero_myPoke')) ||
-            384;
-
-
-        try {
-
-            const res = await fetch(
-                `https://docs.google.com/spreadsheets/d/${SS_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`
-            );
-
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
-
-            parseCSV(await res.text());
-
-        } catch (e) {
-
-            console.error("單字庫載入失敗:", e);
+        if (!found) {
 
             alert(
-                "單字庫載入失敗，請確認網路連線或 Google Sheet 權限。"
+                '找不到這筆題目。'
             );
-        }
-    }
-
-
-    /*
-     * V1421：
-     * 真正處理 CSV 的引號與逗號。
-     */
-    function parseCSVLine(line) {
-
-        const cells = [];
-
-        let cell = "";
-        let quoted = false;
-
-
-        for (let i = 0; i < line.length; i++) {
-
-            const ch = line[i];
-
-
-            if (ch === '"') {
-
-                if (quoted && line[i + 1] === '"') {
-
-                    cell += '"';
-                    i++;
-
-                } else {
-
-                    quoted = !quoted;
-                }
-
-            } else if (ch === ',' && !quoted) {
-
-                cells.push(cell.trim());
-                cell = "";
-
-            } else {
-
-                cell += ch;
-            }
-        }
-
-
-        cells.push(cell.trim());
-
-        return cells;
-    }
-
-
-    function parseCSV(text) {
-
-        const lines =
-            text
-                .split(/\r?\n/)
-                .filter(line => line.trim() !== "");
-
-
-        const rows =
-            lines.map(parseCSVLine);
-
-
-        if (!rows.length) {
-
-            state.banks = {};
-
-            document.getElementById(
-                'unit-selector'
-            ).innerHTML = "";
 
             return;
         }
 
 
+        title.innerText =
+            '✏️ 編輯題目';
+
+
+        unitEl.value =
+            foundUnit;
+
+
+        enEl.value =
+            found.en;
+
+
+        cnEl.value =
+            found.cn || '';
+
+
+    } else {
+
+        title.innerText =
+            '＋ 新增題目';
+
+
+        enEl.value = '';
+        cnEl.value = '';
+
+
+        const current =
+            document.getElementById(
+                'bank-manage-unit'
+            )?.value;
+
+
+        if (
+            current &&
+            state.banks[current]
+        ) {
+
+            unitEl.value =
+                current;
+        }
+    }
+
+
+    switchView(
+        'view-question-editor'
+    );
+
+
+    setTimeout(
+        () =>
+            enEl.focus(),
+        100
+    );
+}
+
+
+function saveQuestion() {
+
+    const unit =
+        document.getElementById(
+            'question-unit'
+        ).value.trim();
+
+
+    const en =
+        document.getElementById(
+            'question-en'
+        ).value.trim();
+
+
+    const cn =
+        document.getElementById(
+            'question-cn'
+        ).value.trim();
+
+
+    if (!unit || !en) {
+
+        alert(
+            '「單元」與「English」不能空白。'
+        );
+
+        return;
+    }
+
+
+    if (!state.banks[unit]) {
+
+        state.banks[unit] = [];
+    }
+
+
+    if (editingQuestionRef) {
+
+        const oldUnit =
+            Object.keys(
+                state.banks
+            )
+            .find(
+                u =>
+                    state.banks[u]
+                        .some(
+                            w =>
+                                w.ref ===
+                                editingQuestionRef
+                        )
+            );
+
+
+        if (!oldUnit) {
+
+            alert(
+                '找不到原題目，請重新整理後再試。'
+            );
+
+            return;
+        }
+
+
+        Object.keys(
+            state.banks
+        )
+        .forEach(u => {
+
+            state.banks[u] =
+                state.banks[u]
+                    .filter(
+                        w =>
+                            w.ref !==
+                            editingQuestionRef
+                    );
+
+        });
+
+
+        state.banks[unit].push({
+            en,
+            cn,
+            ref:editingQuestionRef
+        });
+
+
+        const edits =
+            getLocalJSON(
+                'hero_question_edits',
+                {}
+            );
+
+
+        edits[editingQuestionRef] = {
+            en,
+            cn,
+            unit
+        };
+
+
+        setLocalJSON(
+            'hero_question_edits',
+            edits
+        );
+
+
+    } else {
+
+        if (
+            state.banks[unit]
+                .some(
+                    w =>
+                        w.en.toLowerCase() ===
+                        en.toLowerCase()
+                )
+        ) {
+
+            alert(
+                '這個單元已經有相同的英文單字。'
+            );
+
+            return;
+        }
+
+
+        const ref =
+            `LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+
+
+        state.banks[unit].push({
+            en,
+            cn,
+            ref
+        });
+
+
+        const custom =
+            getLocalJSON(
+                'hero_custom_questions',
+                []
+            );
+
+
+        custom.push({
+            unit,
+            en,
+            cn,
+            ref
+        });
+
+
+        setLocalJSON(
+            'hero_custom_questions',
+            custom
+        );
+    }
+
+
+    refreshUnitSelectors();
+
+
+    document.getElementById(
+        'bank-manage-unit'
+    ).value = unit;
+
+
+    editingQuestionRef =
+        null;
+
+
+    switchView(
+        'view-bank'
+    );
+
+
+    renderBankManager();
+}
+
+
+function deleteQuestion(
+    encodedRef
+) {
+
+    const ref =
+        decodeURIComponent(
+            encodedRef
+        );
+
+
+    let target = null;
+    let unit = null;
+
+
+    Object.keys(
+        state.banks
+    )
+    .some(u => {
+
+        const w =
+            state.banks[u]
+                .find(
+                    x =>
+                        x.ref === ref
+                );
+
+
+        if (w) {
+
+            target = w;
+            unit = u;
+
+            return true;
+        }
+
+
+        return false;
+    });
+
+
+    if (!target) {
+        return;
+    }
+
+
+    if (
+        !confirm(
+            `確定刪除「${target.en}」？`
+        )
+    ) {
+
+        return;
+    }
+
+
+    state.banks[unit] =
+        state.banks[unit]
+            .filter(
+                w =>
+                    w.ref !== ref
+            );
+
+
+    const deleted =
+        getLocalJSON(
+            'hero_deleted_question_refs',
+            []
+        );
+
+
+    if (
+        !deleted.includes(ref)
+    ) {
+
+        deleted.push(ref);
+    }
+
+
+    setLocalJSON(
+        'hero_deleted_question_refs',
+        deleted
+    );
+
+
+    setLocalJSON(
+        'hero_custom_questions',
+        getLocalJSON(
+            'hero_custom_questions',
+            []
+        )
+        .filter(
+            w =>
+                w.ref !== ref
+        )
+    );
+
+
+    const edits =
+        getLocalJSON(
+            'hero_question_edits',
+            {}
+        );
+
+
+    delete edits[ref];
+
+
+    setLocalJSON(
+        'hero_question_edits',
+        edits
+    );
+
+
+    renderBankManager();
+}
+
+
+function exportQuestionCSV() {
+
+    const unit =
+        document.getElementById(
+            'bank-manage-unit'
+        )?.value;
+
+
+    if (
+        !unit ||
+        !state.banks[unit]
+    ) {
+
+        alert(
+            '請先選擇單元。'
+        );
+
+        return;
+    }
+
+
+    const rows = [
+        ['English','中文'],
+        ...state.banks[unit]
+            .map(
+                w =>
+                    [
+                        w.en,
+                        w.cn || ''
+                    ]
+            )
+    ];
+
+
+    const csv =
+        rows
+            .map(
+                row =>
+                    row
+                        .map(
+                            v =>
+                                `"${String(v).replace(/"/g,'""')}"`
+                        )
+                        .join(',')
+            )
+            .join('\r\n');
+
+
+    const blob =
+        new Blob(
+            ['\uFEFF' + csv],
+            {
+                type:
+                    'text/csv;charset=utf-8;'
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const a =
+        document.createElement(
+            'a'
+        );
+
+
+    a.href = url;
+
+
+    a.download =
+        `${unit.replace(/[\\/:*?"<>|]/g,'_')}_題庫.csv`;
+
+
+    a.click();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+}
+
+
+/* =========================
+   Pokémon / EXP
+========================= */
+
+
+function getEvolutionBaseId(id) {
+
+    if (
+        id === 384 ||
+        id === 10079
+    ) {
+
+        return 384;
+    }
+
+
+    if (
+        id === 150 ||
+        id === 10044
+    ) {
+
+        return 150;
+    }
+
+
+    const chain =
+        CHAINS.find(
+            c =>
+                c.includes(id)
+        );
+
+
+    return chain
+        ? chain[0]
+        : id;
+}
+
+
+function getEvoInfo(id) {
+
+    const baseId =
+        getEvolutionBaseId(id);
+
+
+    const exp =
+        parseInt(
+            getHeroData(
+                `exp_id_${baseId}`
+            )
+        ) || 0;
+
+
+    let lv = 1;
+    let progress = exp;
+    let target = 20;
+
+
+    if (exp >= 50) {
+
+        lv = 3;
+        progress = 50;
+        target = 50;
+
+    } else if (exp >= 20) {
+
+        lv = 2;
+        progress = exp - 20;
+        target = 30;
+    }
+
+
+    let curId =
+        baseId;
+
+
+    if (
+        baseId === 384 &&
+        lv === 3
+    ) {
+
+        curId = 10079;
+
+    } else if (
+        baseId === 150 &&
+        lv === 3
+    ) {
+
+        curId = 10044;
+
+    } else {
+
+        const chain =
+            CHAINS.find(
+                c =>
+                    c[0] === baseId
+            );
+
+
+        if (chain) {
+
+            curId =
+                chain[lv - 1] ||
+                chain[
+                    chain.length - 1
+                ];
+        }
+    }
+
+
+    return {
+        baseId,
+        displayId:curId,
+        lv,
+        exp,
+        progress,
+        target
+    };
+}
+
+
+/* =========================
+   初始化
+========================= */
+
+
+async function initSystem() {
+
+    state.pokedex =
+        getHeroData(
+            'hero_pokedex_bits'
+        ) ||
+        "0".repeat(151);
+
+
+    state.activePokeId =
+        parseInt(
+            getHeroData(
+                'hero_myPoke'
+            )
+        ) ||
+        384;
+
+
+    try {
+
+        const res =
+            await fetch(
+                `https://docs.google.com/spreadsheets/d/${SS_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`
+            );
+
+
+        if (!res.ok) {
+
+            throw new Error(
+                `HTTP ${res.status}`
+            );
+        }
+
+
+        parseCSV(
+            await res.text()
+        );
+
+
+    } catch(e) {
+
+        console.error(
+            "單字庫載入失敗:",
+            e
+        );
+
+
+        alert(
+            "單字庫載入失敗，請確認網路連線或 Google Sheet 權限。"
+        );
+    }
+}
+
+
+/* =========================
+   CSV
+========================= */
+
+
+function parseCSVLine(line) {
+
+    const cells = [];
+
+    let cell = "";
+    let quoted = false;
+
+
+    for (
+        let i = 0;
+        i < line.length;
+        i++
+    ) {
+
+        const ch =
+            line[i];
+
+
+        if (ch === '"') {
+
+            if (
+                quoted &&
+                line[i + 1] === '"'
+            ) {
+
+                cell += '"';
+
+                i++;
+
+            } else {
+
+                quoted =
+                    !quoted;
+            }
+
+
+        } else if (
+            ch === ',' &&
+            !quoted
+        ) {
+
+            cells.push(
+                cell.trim()
+            );
+
+            cell = "";
+
+
+        } else {
+
+            cell += ch;
+        }
+    }
+
+
+    cells.push(
+        cell.trim()
+    );
+
+
+    return cells;
+}
+
+
+function parseCSV(text) {
+
+    const lines =
+        text
+            .split(/\r?\n/)
+            .filter(
+                line =>
+                    line.trim() !== ""
+            );
+
+
+    const rows =
+        lines.map(
+            parseCSVLine
+        );
+
+
+    if (!rows.length) {
+
         state.banks = {};
 
+        refreshUnitSelectors();
 
-        rows[0].forEach((h, i) => {
+        return;
+    }
+
+
+    state.banks = {};
+
+
+    rows[0].forEach(
+        (h,i) => {
 
             h =
-                h.replace(/^"|"$/g, '')
-                 .trim();
+                h
+                    .replace(
+                        /^"|"$/g,
+                        ''
+                    )
+                    .trim();
 
 
             if (!h) {
@@ -782,10 +1975,17 @@
             state.banks[h] = [];
 
 
-            for (let r = 1; r < rows.length; r++) {
+            for (
+                let r = 1;
+                r < rows.length;
+                r++
+            ) {
 
                 const raw =
-                    (rows[r][i] || "").trim();
+                    (
+                        rows[r][i] ||
+                        ""
+                    ).trim();
 
 
                 if (!raw) {
@@ -794,385 +1994,466 @@
 
 
                 const comma =
-                    raw.indexOf(",");
+                    raw.indexOf(',');
 
 
                 const en =
                     comma >= 0
-                        ? raw.slice(0, comma).trim()
+                        ? raw
+                            .slice(
+                                0,
+                                comma
+                            )
+                            .trim()
                         : raw;
 
 
                 const cn =
                     comma >= 0
-                        ? raw.slice(comma + 1).trim()
+                        ? raw
+                            .slice(
+                                comma + 1
+                            )
+                            .trim()
                         : "";
 
 
                 if (en) {
 
-                    state.banks[h].push({
+                    state.banks[h]
+                        .push({
 
-                        en,
+                            en,
 
-                        cn,
+                            cn,
 
-                        ref:
-                            `${String.fromCharCode(65 + i)}${r + 1}`
-                    });
+                            ref:
+                                `${String.fromCharCode(65+i)}${r+1}`
+                        });
                 }
             }
-        });
+        }
+    );
 
 
+    applyLocalQuestionChanges();
+
+    refreshUnitSelectors();
+}
+
+
+/* =========================
+   遊戲
+========================= */
+
+
+function startSession(m) {
+
+    state.unit =
         document.getElementById(
             'unit-selector'
-        ).innerHTML =
+        ).value;
 
-            Object.keys(state.banks)
-                .sort()
-                .map(
-                    k =>
-                        `<option value="${k}">${k}</option>`
+
+    if (
+        !state.unit ||
+        !state.banks[state.unit] ||
+        state.banks[state.unit].length === 0
+    ) {
+
+        return alert(
+            "目前沒有可用的單字資料。"
+        );
+    }
+
+
+    state.currentList =
+        [
+            ...state.banks[
+                state.unit
+            ]
+        ]
+        .sort(
+            () =>
+                Math.random() - .5
+        );
+
+
+    state.mode = m;
+    state.tempPractice = false;
+    state.index = 0;
+    state.playerHP = 5;
+    state.oppHP = 5;
+
+
+    switchView(
+        'view-game'
+    );
+
+
+    initArena();
+}
+
+
+function initArena() {
+
+    let un = [];
+
+
+    for (
+        let i = 0;
+        i < 151;
+        i++
+    ) {
+
+        if (
+            state.pokedex[i] === "0"
+        ) {
+
+            un.push(
+                i + 1
+            );
+        }
+    }
+
+
+    state.currentOppId =
+        un.length > 0
+            ? un[
+                Math.floor(
+                    Math.random() *
+                    un.length
                 )
-                .join('');
-    }
+            ]
+            : Math.floor(
+                Math.random() *
+                151
+            ) + 1;
 
 
-    function startSession(m) {
+    updateHPUI();
 
-        state.unit =
-            document.getElementById(
-                'unit-selector'
-            ).value;
+    loadWord();
+}
 
 
-        if (
-            !state.unit ||
-            !state.banks[state.unit] ||
-            state.banks[state.unit].length === 0
-        ) {
+function updateHPUI() {
 
-            return alert(
-                "目前沒有可用的單字資料。"
+    document.getElementById(
+        'player-hp-bar'
+    ).style.width =
+        (
+            state.playerHP /
+            5 *
+            100
+        ) + "%";
+
+
+    document.getElementById(
+        'opp-hp-bar'
+    ).style.width =
+        (
+            state.oppHP /
+            5 *
+            100
+        ) + "%";
+
+
+    const info =
+        getEvoInfo(
+            state.activePokeId
+        );
+
+
+    document.getElementById(
+        'player-sprite'
+    ).src =
+        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif`;
+
+
+    document.getElementById(
+        'opp-sprite'
+    ).src =
+        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${state.currentOppId}.gif`;
+
+
+    const pct =
+        info.lv === 3
+            ? 100
+            : (
+                info.progress /
+                info.target *
+                100
             );
-        }
 
 
-        state.currentList =
-            [...state.banks[state.unit]]
-                .sort(() => Math.random() - 0.5);
+    document.getElementById(
+        'player-exp-bar'
+    ).style.width =
+        pct + "%";
 
 
-        state.mode = m;
-
-        state.tempPractice = false;
-
-        state.index = 0;
-
-        state.playerHP = 5;
-
-        state.oppHP = 5;
+    document.getElementById(
+        'player-exp-text'
+    ).innerText =
+        info.lv === 3
+            ? "LV.MAX"
+            : `LV.${info.lv} : ${info.progress}/${info.target}`;
 
 
-        switchView('view-game');
+    const v =
+        state.mode === 'priority'
+            ? 'hidden'
+            : 'visible';
 
-        initArena();
+
+    document.getElementById(
+        'player-hp-box'
+    ).style.visibility = v;
+
+
+    document.getElementById(
+        'opp-hp-box'
+    ).style.visibility = v;
+
+
+    document.getElementById(
+        'player-exp-box'
+    ).style.visibility = v;
+}
+
+
+async function loadWord() {
+
+    if (
+        state.index >=
+        state.currentList.length
+    ) {
+
+        handleVictory();
+
+        return;
     }
 
 
-    function initArena() {
+    const word =
+        state.currentList[
+            state.index
+        ];
 
-        let un = [];
+
+    const display =
+        document.getElementById(
+            'display-cn'
+        );
 
 
-        for (let i = 0; i < 151; i++) {
+    let tip =
+        localDict[
+            word.en.toLowerCase()
+        ] ||
+        word.cn;
 
-            if (state.pokedex[i] === "0") {
-                un.push(i + 1);
+
+    if (!tip) {
+
+        display.innerText =
+            "載入中...";
+
+
+        tip =
+            await fetchTranslation(
+                word.en
+            );
+    }
+
+
+    display.innerText =
+        tip;
+
+
+    const pRefs =
+        JSON.parse(
+            getHeroData(
+                'hero_priority'
+            ) ||
+            '[]'
+        );
+
+
+    const isS =
+        pRefs.includes(
+            word.ref
+        );
+
+
+    document.getElementById(
+        'star-icon'
+    ).innerText =
+        isS
+            ? "★"
+            : "☆";
+
+
+    document.getElementById(
+        'star-icon'
+    ).style.color =
+        isS
+            ? "var(--gold)"
+            : "#475569";
+
+
+    document.getElementById(
+        'btn-force-practice'
+    ).style.display =
+        "none";
+
+
+    const area =
+        document.getElementById(
+            'letter-area'
+        );
+
+
+    area.innerHTML = "";
+
+
+    let inputIdx = 0;
+
+
+    word.en
+        .split('')
+        .forEach(
+            char => {
+
+                if (
+                    char === " " ||
+                    char === "/" ||
+                    char === "-"
+                ) {
+
+                    const sep =
+                        document.createElement(
+                            'div'
+                        );
+
+
+                    sep.innerText =
+                        char === " "
+                            ? ""
+                            : char;
+
+
+                    sep.style.cssText =
+                        "width:10px;font-size:1.2rem;text-align:center;line-height:85px;color:var(--accent);";
+
+
+                    area.appendChild(
+                        sep
+                    );
+
+
+                } else {
+
+                    const inp =
+                        document.createElement(
+                            'input'
+                        );
+
+
+                    inp.className =
+                        'letter-box';
+
+
+                    inp.maxLength = 1;
+
+
+                    inp.dataset.idx =
+                        inputIdx++;
+
+
+                    inp.onkeydown =
+                        e => {
+
+                            if (
+                                e.key ===
+                                    "Backspace" &&
+                                e.target.value === ""
+                            ) {
+
+                                const p =
+                                    document.querySelector(
+                                        `.letter-box[data-idx="${parseInt(e.target.dataset.idx)-1}"]`
+                                    );
+
+
+                                if (p) {
+                                    p.focus();
+                                }
+                            }
+                        };
+
+
+                    inp.oninput =
+                        e => {
+
+                            if (
+                                e.target.value.length === 1
+                            ) {
+
+                                const n =
+                                    document.querySelector(
+                                        `.letter-box[data-idx="${parseInt(e.target.dataset.idx)+1}"]`
+                                    );
+
+
+                                if (n) {
+                                    n.focus();
+                                }
+
+
+                                if (
+                                    [
+                                        ...document.querySelectorAll(
+                                            '.letter-box'
+                                        )
+                                    ]
+                                    .every(
+                                        b =>
+                                            b.value.length > 0
+                                    )
+                                ) {
+
+                                    setTimeout(
+                                        checkFinalAnswer,
+                                        150
+                                    );
+                                }
+                            }
+                        };
+
+
+                    area.appendChild(
+                        inp
+                    );
+                }
             }
-        }
+        );
 
 
-        state.currentOppId =
-            un.length > 0
-                ? un[Math.floor(Math.random() * un.length)]
-                : Math.floor(Math.random() * 151) + 1;
+    document.getElementById(
+        'practice-guide'
+    ).innerText =
+        (
+            state.mode === 'practice' ||
+            state.tempPractice
+        )
+            ? word.en
+            : "";
 
 
-        updateHPUI();
-
-        loadWord();
-    }
-
-
-    function updateHPUI() {
-
-        document.getElementById(
-            'player-hp-bar'
-        ).style.width =
-            (state.playerHP / 5 * 100) + "%";
-
-
-        document.getElementById(
-            'opp-hp-bar'
-        ).style.width =
-            (state.oppHP / 5 * 100) + "%";
-
-
-        const info =
-            getEvoInfo(state.activePokeId);
-
-
-        document.getElementById(
-            'player-sprite'
-        ).src =
-            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif`;
-
-
-        document.getElementById(
-            'opp-sprite'
-        ).src =
-            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${state.currentOppId}.gif`;
-
-
-        const pct =
-            info.lv === 3
-                ? 100
-                : (info.progress / info.target * 100);
-
-
-        document.getElementById(
-            'player-exp-bar'
-        ).style.width =
-            pct + "%";
-
-
-        document.getElementById(
-            'player-exp-text'
-        ).innerText =
-            info.lv === 3
-                ? "LV.MAX"
-                : `LV.${info.lv} : ${info.progress}/${info.target}`;
-
-
-        const v =
-            (state.mode === 'priority')
-                ? 'hidden'
-                : 'visible';
-
-
-        document.getElementById(
-            'player-hp-box'
-        ).style.visibility = v;
-
-
-        document.getElementById(
-            'opp-hp-box'
-        ).style.visibility = v;
-
-
-        document.getElementById(
-            'player-exp-box'
-        ).style.visibility = v;
-    }
-
-
-    async function loadWord() {
-
-        if (
-            state.index >=
-            state.currentList.length
-        ) {
-
-            handleVictory();
-
-            return;
-        }
-
-
-        const word =
-            state.currentList[state.index];
-
-
-        const display =
-            document.getElementById(
-                'display-cn'
-            );
-
-
-        let tip =
-            localDict[word.en.toLowerCase()] ||
-            word.cn;
-
-
-        if (!tip) {
-
-            display.innerText = "載入中...";
-
-            tip =
-                await fetchTranslation(word.en);
-        }
-
-
-        display.innerText = tip;
-
-
-        const pRefs =
-            JSON.parse(
-                getHeroData('hero_priority') ||
-                '[]'
-            );
-
-
-        const isS =
-            pRefs.includes(word.ref);
-
-
-        document.getElementById(
-            'star-icon'
-        ).innerText =
-            isS ? "★" : "☆";
-
-
-        document.getElementById(
-            'star-icon'
-        ).style.color =
-            isS
-                ? "var(--gold)"
-                : "#475569";
-
-
-        document.getElementById(
-            'btn-force-practice'
-        ).style.display = "none";
-
-
-        const area =
-            document.getElementById(
-                'letter-area'
-            );
-
-
-        area.innerHTML = "";
-
-
-        let inputIdx = 0;
-
-
-        word.en.split('').forEach((char) => {
-
-            if (
-                char === " " ||
-                char === "/" ||
-                char === "-"
-            ) {
-
-                const sep =
-                    document.createElement('div');
-
-
-                sep.innerText =
-                    (char === " ")
-                        ? ""
-                        : char;
-
-
-                sep.style.cssText =
-                    "width:10px; font-size:1.2rem; text-align:center; line-height:85px; color:var(--accent);";
-
-
-                area.appendChild(sep);
-
-
-            } else {
-
-                const inp =
-                    document.createElement('input');
-
-
-                inp.className =
-                    'letter-box';
-
-
-                inp.maxLength = 1;
-
-
-                inp.dataset.idx =
-                    inputIdx++;
-
-
-                inp.onkeydown = (e) => {
-
-                    if (
-                        e.key === "Backspace" &&
-                        e.target.value === ""
-                    ) {
-
-                        const p =
-                            document.querySelector(
-                                `.letter-box[data-idx="${parseInt(e.target.dataset.idx) - 1}"]`
-                            );
-
-
-                        if (p) {
-                            p.focus();
-                        }
-                    }
-                };
-
-
-                inp.oninput = (e) => {
-
-                    if (
-                        e.target.value.length === 1
-                    ) {
-
-                        const n =
-                            document.querySelector(
-                                `.letter-box[data-idx="${parseInt(e.target.dataset.idx) + 1}"]`
-                            );
-
-
-                        if (n) {
-                            n.focus();
-                        }
-
-
-                        if (
-                            [...document.querySelectorAll('.letter-box')]
-                                .every(
-                                    b =>
-                                        b.value.length > 0
-                                )
-                        ) {
-
-                            setTimeout(
-                                checkFinalAnswer,
-                                150
-                            );
-                        }
-                    }
-                };
-
-
-                area.appendChild(inp);
-            }
-        });
-
-
-        document.getElementById(
-            'practice-guide'
-        ).innerText =
-            (
-                state.mode === 'practice' ||
-                state.tempPractice
-            )
-                ? word.en
-                : "";
-
-
-        setTimeout(() => {
+    setTimeout(
+        () => {
 
             const f =
                 document.querySelector(
@@ -1184,117 +2465,124 @@
                 f.focus();
             }
 
-        }, 450);
+        },
+        450
+    );
 
 
-        playVoice();
-    }
+    playVoice();
+}
 
 
-    function checkFinalAnswer() {
+function checkFinalAnswer() {
 
-        const word =
-            state.currentList[state.index];
-
-
-        const boxes =
-            document.querySelectorAll(
-                '.letter-box'
-            );
+    const word =
+        state.currentList[
+            state.index
+        ];
 
 
-        let ui = "";
-
-
-        boxes.forEach(
-            b =>
-                ui += b.value
+    const boxes =
+        document.querySelectorAll(
+            '.letter-box'
         );
 
 
+    let ui = "";
+
+
+    boxes.forEach(
+        b =>
+            ui += b.value
+    );
+
+
+    if (
+        ui.toLowerCase() ===
+        word.en
+            .replace(
+                /[\s\/-]/g,
+                ''
+            )
+            .toLowerCase()
+    ) {
+
+        confetti({
+            particleCount:30,
+            spread:50
+        });
+
+
         if (
-            ui.toLowerCase() ===
-            word.en
-                .replace(/[\s\/-]/g, '')
-                .toLowerCase()
+            state.mode === 'quiz' &&
+            !state.tempPractice
         ) {
 
-            confetti({
-                particleCount: 30,
-                spread: 50
-            });
+            state.oppHP--;
 
 
-            /*
-             * 正式魔王挑戰：
-             * 答對扣敵方 HP
-             * 並增加自己的 EXP。
-             *
-             * EXP 綁定進化鏈 base ID。
-             */
-            if (
-                state.mode === 'quiz' &&
-                !state.tempPractice
-            ) {
-
-                state.oppHP--;
-
-
-                const baseId =
-                    getEvolutionBaseId(
-                        state.activePokeId
-                    );
-
-
-                const expK =
-                    `exp_id_${baseId}`;
-
-
-                let cur =
-                    Math.min(
-                        (parseInt(
-                            getHeroData(expK)
-                        ) || 0) + 1,
-                        50
-                    );
-
-
-                setHeroData(
-                    expK,
-                    cur
-                );
-            }
-
-
-            if (
-                state.oppHP <= 0
-            ) {
-
-                setTimeout(
-                    handleVictory,
-                    500
+            const baseId =
+                getEvolutionBaseId(
+                    state.activePokeId
                 );
 
-                return;
-            }
+
+            const expK =
+                `exp_id_${baseId}`;
 
 
-            state.index++;
+            let cur =
+                Math.min(
+                    (
+                        parseInt(
+                            getHeroData(
+                                expK
+                            )
+                        ) || 0
+                    ) + 1,
+                    50
+                );
 
-            state.tempPractice = false;
 
-            updateHPUI();
+            setHeroData(
+                expK,
+                cur
+            );
+        }
 
+
+        if (
+            state.oppHP <= 0
+        ) {
 
             setTimeout(
-                loadWord,
-                600
+                handleVictory,
+                500
             );
 
+            return;
+        }
 
-        } else {
 
-            boxes.forEach(b => {
+        state.index++;
+
+        state.tempPractice =
+            false;
+
+
+        updateHPUI();
+
+
+        setTimeout(
+            loadWord,
+            600
+        );
+
+
+    } else {
+
+        boxes.forEach(
+            b => {
 
                 b.classList.add(
                     'wrong'
@@ -1308,436 +2596,458 @@
                         ),
                     800
                 );
-            });
+
+            }
+        );
+
+
+        if (
+            state.mode === 'quiz' &&
+            !state.tempPractice
+        ) {
+
+            state.playerHP--;
+
+
+            document.getElementById(
+                'btn-force-practice'
+            ).style.display =
+                "flex";
 
 
             if (
-                state.mode === 'quiz' &&
-                !state.tempPractice
+                state.playerHP <= 0
             ) {
 
-                state.playerHP--;
+                handlePlayerDeath();
 
-
-                document.getElementById(
-                    'btn-force-practice'
-                ).style.display =
-                    "flex";
-
-
-                if (
-                    state.playerHP <= 0
-                ) {
-
-                    handlePlayerDeath();
-
-                    return;
-                }
+                return;
             }
-
-
-            updateHPUI();
-        }
-    }
-
-
-    function handlePass() {
-
-        if (
-            state.index >=
-            state.currentList.length
-        ) {
-            return;
         }
 
-
-        state.index++;
-
-        state.tempPractice = false;
 
         updateHPUI();
+    }
+}
 
-        loadWord();
+
+function handlePass() {
+
+    if (
+        state.index >=
+        state.currentList.length
+    ) {
+        return;
     }
 
 
-    function startInGamePractice() {
+    state.index++;
 
-        state.tempPractice = true;
-
-        loadWord();
-    }
+    state.tempPractice =
+        false;
 
 
-    function handlePlayerDeath() {
+    updateHPUI();
 
-        const pid =
-            state.activePokeId;
-
-
-        if (
-            DEFAULTS.includes(pid)
-        ) {
-
-            const baseId =
-                getEvolutionBaseId(pid);
+    loadWord();
+}
 
 
-            setHeroData(
-                `exp_id_${baseId}`,
-                0
-            );
+function startInGamePractice() {
+
+    state.tempPractice =
+        true;
+
+    loadWord();
+}
 
 
-            alert(
-                `${PK_NAMES[pid]} 戰死... 降回 LV.1`
-            );
+function handlePlayerDeath() {
+
+    const pid =
+        state.activePokeId;
 
 
-        } else {
-
-            let pArr =
-                state.pokedex.split('');
-
-
-            if (
-                pid <= 151
-            ) {
-
-                pArr[pid - 1] = "0";
-
-                state.pokedex =
-                    pArr.join('');
-
-
-                setHeroData(
-                    'hero_pokedex_bits',
-                    state.pokedex
-                );
-            }
-
-
-            alert(
-                `${PK_NAMES[pid] || '夥伴'} 戰死了... 它回到了圖鑑。`
-            );
-
-
-            state.activePokeId = 384;
-
-            setHeroData(
-                'hero_myPoke',
-                384
-            );
-        }
-
-
-        switchView(
-            'view-main'
-        );
-    }
-
-
-    function toggleStar() {
-
-        const word =
-            state.currentList[state.index];
-
-
-        if (!word) {
-            return;
-        }
-
-
-        let p =
-            JSON.parse(
-                getHeroData('hero_priority') ||
-                '[]'
-            );
-
-
-        if (
-            p.includes(word.ref)
-        ) {
-
-            p =
-                p.filter(
-                    r =>
-                        r !== word.ref
-                );
-
-        } else {
-
-            p.push(word.ref);
-        }
-
+    if (
+        DEFAULTS.includes(pid)
+    ) {
 
         setHeroData(
-            'hero_priority',
-            JSON.stringify(p)
+            `exp_id_${pid}`,
+            0
         );
 
 
-        const isS =
-            p.includes(word.ref);
+        alert(
+            `${PK_NAMES[pid]} 戰死... 降回 LV.1`
+        );
 
 
-        document.getElementById(
-            'star-icon'
-        ).innerText =
-            isS ? "★" : "☆";
+    } else {
 
-
-        document.getElementById(
-            'star-icon'
-        ).style.color =
-            isS
-                ? "var(--gold)"
-                : "#475569";
-    }
-
-
-    function startPrioritySession() {
-
-        const pRefs =
-            JSON.parse(
-                getHeroData('hero_priority') ||
-                '[]'
-            );
+        let pArr =
+            state.pokedex.split('');
 
 
         if (
-            pRefs.length === 0
+            pid <= 151
         ) {
 
-            return alert(
-                "還沒有星號單字！"
-            );
-        }
-
-
-        state.currentList = [];
-
-
-        Object.values(
-            state.banks
-        ).forEach(
-            b =>
-                b.forEach(
-                    w => {
-
-                        if (
-                            pRefs.includes(
-                                w.ref
-                            )
-                        ) {
-
-                            state.currentList.push(
-                                w
-                            );
-                        }
-                    }
-                )
-        );
-
-
-        state.currentList.sort(
-            () =>
-                Math.random() - 0.5
-        );
-
-
-        state.mode = 'priority';
-
-        state.index = 0;
-
-        state.tempPractice = false;
-
-
-        switchView(
-            'view-game'
-        );
-
-
-        initArena();
-    }
-
-
-    /*
-     * V1421：
-     * 只有正式 quiz 才能收服 Pokémon。
-     *
-     * practice：
-     *   不扣血
-     *   不收服
-     *
-     * priority：
-     *   不扣血
-     *   不收服
-     */
-    function handleVictory() {
-
-        if (
-            state.mode === 'quiz'
-        ) {
-
-            let p =
-                state.pokedex.split('');
-
-
-            p[
-                state.currentOppId - 1
-            ] = "1";
+            pArr[
+                pid - 1
+            ] = "0";
 
 
             state.pokedex =
-                p.join('');
+                pArr.join('');
 
 
             setHeroData(
                 'hero_pokedex_bits',
                 state.pokedex
             );
-
-
-            confetti({
-                particleCount: 200,
-                spread: 100
-            });
-
-
-            alert(
-                "收服成功！已更新圖鑑。"
-            );
-
-
-        } else if (
-            state.mode === 'practice'
-        ) {
-
-            alert(
-                "練習完成！"
-            );
-
-
-        } else if (
-            state.mode === 'priority'
-        ) {
-
-            alert(
-                "星號練習完成！"
-            );
         }
 
 
-        switchView(
-            'view-main'
+        alert(
+            `${PK_NAMES[pid] || '夥伴'} 戰死了...它回到了圖鑑。`
+        );
+
+
+        state.activePokeId =
+            384;
+
+
+        setHeroData(
+            'hero_myPoke',
+            384
         );
     }
 
 
-    function switchView(id) {
-
-        document
-            .querySelectorAll(
-                '.view-section'
-            )
-            .forEach(
-                v =>
-                    v.style.display =
-                        'none'
-            );
+    switchView(
+        'view-main'
+    );
+}
 
 
-        document.getElementById(
-            id
-        ).style.display = 'flex';
+function toggleStar() {
 
-
-        if (
-            id === 'view-team'
-        ) {
-
-            renderTeam();
-        }
-
-
-        if (
-            id === 'view-pokedex'
-        ) {
-
-            renderDex();
-        }
-    }
-
-
-    function playVoice() {
-
-        const word =
-            state.currentList[state.index];
-
-
-        if (
-            !word ||
-            !word.en
-        ) {
-
-            return;
-        }
-
-
-        window.speechSynthesis.cancel();
-
-
-        const m =
-            new SpeechSynthesisUtterance(
-                word.en
-            );
-
-
-        m.lang = 'en-US';
-
-
-        window.speechSynthesis.speak(
-            m
-        );
-    }
-
-
-    function renderTeam() {
-
-        const grid =
-            document.getElementById(
-                'team-grid'
-            );
-
-
-        grid.innerHTML = "";
-
-
-        let ids = [
-            384,
-            150,
-            992
+    const word =
+        state.currentList[
+            state.index
         ];
 
 
-        for (
-            let i = 1;
-            i <= 151;
-            i++
+    let p =
+        JSON.parse(
+            getHeroData(
+                'hero_priority'
+            ) ||
+            '[]'
+        );
+
+
+    if (
+        p.includes(
+            word.ref
+        )
+    ) {
+
+        p =
+            p.filter(
+                r =>
+                    r !== word.ref
+            );
+
+    } else {
+
+        p.push(
+            word.ref
+        );
+    }
+
+
+    setHeroData(
+        'hero_priority',
+        JSON.stringify(p)
+    );
+
+
+    const isS =
+        p.includes(
+            word.ref
+        );
+
+
+    document.getElementById(
+        'star-icon'
+    ).innerText =
+        isS
+            ? "★"
+            : "☆";
+
+
+    document.getElementById(
+        'star-icon'
+    ).style.color =
+        isS
+            ? "var(--gold)"
+            : "#475569";
+}
+
+
+function startPrioritySession() {
+
+    const pRefs =
+        JSON.parse(
+            getHeroData(
+                'hero_priority'
+            ) ||
+            '[]'
+        );
+
+
+    if (
+        pRefs.length === 0
+    ) {
+
+        return alert(
+            "還沒有星號單字！"
+        );
+    }
+
+
+    state.currentList = [];
+
+
+    Object.values(
+        state.banks
+    )
+    .forEach(
+        b =>
+            b.forEach(
+                w => {
+
+                    if (
+                        pRefs.includes(
+                            w.ref
+                        )
+                    ) {
+
+                        state.currentList.push(
+                            w
+                        );
+                    }
+                }
+            )
+    );
+
+
+    state.currentList.sort(
+        () =>
+            Math.random() - .5
+    );
+
+
+    state.mode =
+        'priority';
+
+
+    state.index =
+        0;
+
+
+    switchView(
+        'view-game'
+    );
+
+
+    initArena();
+}
+
+
+function handleVictory() {
+
+    if (
+        state.mode === 'quiz'
+    ) {
+
+        let p =
+            state.pokedex.split('');
+
+
+        p[
+            state.currentOppId - 1
+        ] = "1";
+
+
+        state.pokedex =
+            p.join('');
+
+
+        setHeroData(
+            'hero_pokedex_bits',
+            state.pokedex
+        );
+
+
+        confetti({
+            particleCount:200,
+            spread:100
+        });
+
+
+        alert(
+            "收服成功！已更新圖鑑。"
+        );
+
+
+    } else if (
+        state.mode === 'practice'
+    ) {
+
+        alert(
+            "練習完成！"
+        );
+
+
+    } else if (
+        state.mode === 'priority'
+    ) {
+
+        alert(
+            "星號練習完成！"
+        );
+    }
+
+
+    switchView(
+        'view-main'
+    );
+}
+
+
+function switchView(id) {
+
+    document
+        .querySelectorAll(
+            '.view-section'
+        )
+        .forEach(
+            v =>
+                v.style.display =
+                    'none'
+        );
+
+
+    document.getElementById(
+        id
+    ).style.display =
+        'flex';
+
+
+    if (
+        id === 'view-team'
+    ) {
+
+        renderTeam();
+    }
+
+
+    if (
+        id === 'view-pokedex'
+    ) {
+
+        renderDex();
+    }
+
+
+    if (
+        id === 'view-bank'
+    ) {
+
+        refreshUnitSelectors();
+
+        renderBankManager();
+    }
+}
+
+
+function playVoice() {
+
+    const word =
+        state.currentList[
+            state.index
+        ];
+
+
+    if (
+        !word ||
+        !word.en
+    ) {
+
+        return;
+    }
+
+
+    window.speechSynthesis.cancel();
+
+
+    const m =
+        new SpeechSynthesisUtterance(
+            word.en
+        );
+
+
+    m.lang =
+        'en-US';
+
+
+    window.speechSynthesis.speak(
+        m
+    );
+}
+
+
+function renderTeam() {
+
+    const grid =
+        document.getElementById(
+            'team-grid'
+        );
+
+
+    grid.innerHTML = "";
+
+
+    let ids = [
+        384,
+        150,
+        992
+    ];
+
+
+    for (
+        let i = 1;
+        i <= 151;
+        i++
+    ) {
+
+        if (
+            state.pokedex[
+                i - 1
+            ] === "1" &&
+            !ids.includes(i)
         ) {
 
-            if (
-                state.pokedex[i - 1] === "1" &&
-                !ids.includes(i)
-            ) {
-
-                ids.push(i);
-            }
+            ids.push(i);
         }
+    }
 
 
-        ids.forEach(id => {
+    ids.forEach(
+        id => {
 
             const info =
                 getEvoInfo(id);
@@ -1758,84 +3068,93 @@
 
 
             it.innerHTML =
+                `
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${info.displayId}.png">
 
-                `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${info.displayId}.png">
-                 <div class="name-zh">
+                <div class="name-zh">
                     ${PK_NAMES[info.displayId] || info.displayId}
-                 </div>`;
+                </div>
+                `;
 
 
-            it.onclick = () => {
+            it.onclick =
+                () => {
 
-                state.activePokeId =
-                    id;
-
-
-                setHeroData(
-                    'hero_myPoke',
-                    id
-                );
+                    state.activePokeId =
+                        id;
 
 
-                renderTeam();
-            };
+                    setHeroData(
+                        'hero_myPoke',
+                        id
+                    );
 
 
-            grid.appendChild(
-                it
-            );
-        });
-    }
-
-
-    function renderDex() {
-
-        const grid =
-            document.getElementById(
-                'dex-grid'
-            );
-
-
-        grid.innerHTML = "";
-
-
-        for (
-            let i = 1;
-            i <= 151;
-            i++
-        ) {
-
-            const captured =
-                state.pokedex[i - 1] === "1";
-
-
-            const it =
-                document.createElement(
-                    'div'
-                );
-
-
-            it.className =
-                `grid-item ${
-                    captured
-                        ? 'collected'
-                        : 'locked'
-                }`;
-
-
-            it.innerHTML =
-
-                `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${i}.png">
-                 <div class="name-zh">
-                    ${PK_NAMES[i] || 'No.' + i}
-                 </div>`;
+                    renderTeam();
+                };
 
 
             grid.appendChild(
                 it
             );
+
         }
+    );
+}
+
+
+function renderDex() {
+
+    const grid =
+        document.getElementById(
+            'dex-grid'
+        );
+
+
+    grid.innerHTML = "";
+
+
+    for (
+        let i = 1;
+        i <= 151;
+        i++
+    ) {
+
+        const captured =
+            state.pokedex[
+                i - 1
+            ] === "1";
+
+
+        const it =
+            document.createElement(
+                'div'
+            );
+
+
+        it.className =
+            `grid-item ${
+                captured
+                    ? 'collected'
+                    : 'locked'
+            }`;
+
+
+        it.innerHTML =
+            `
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${i}.png">
+
+            <div class="name-zh">
+                ${PK_NAMES[i] || 'No.' + i}
+            </div>
+            `;
+
+
+        grid.appendChild(
+            it
+        );
     }
+}
 
 </script>
 
