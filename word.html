@@ -16,8 +16,9 @@
         .view-section { display: none; flex-direction: column; flex: 1; padding: 4px; overflow-y: auto; }
 
         /* 字母框：1px 邊框, Montserrat 800, 置中 */
-        .box-input-container { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
-        .letter-box { width: 58px; height: 85px; border: 1px solid var(--accent) !important; border-radius: 8px; background: rgba(0,0,0,0.85); color: #fff; text-align: center; font-family: 'Montserrat', sans-serif !important; font-size: 2.2rem; font-weight: 800 !important; line-height: 85px; display: inline-block; -webkit-appearance: none; padding: 0 !important; }
+        .box-input-container { display:flex; gap:5px; justify-content:center; align-items:center; flex-wrap:wrap; margin:8px auto 12px; max-width:100%; }
+        .letter-box { width:52px; height:72px; border:1px solid var(--accent) !important; border-radius:8px; background:rgba(0,0,0,.85); color:#fff; text-align:center; font-family:'Montserrat',sans-serif !important; font-size:2rem; font-weight:800 !important; line-height:72px; display:inline-block; -webkit-appearance:none; padding:0 !important; box-sizing:border-box; }
+        .word-separator { width:10px; text-align:center; color:var(--accent); font-size:1.2rem; }
         @media screen and (max-width: 600px) { .letter-box { width: 35px; height: 60px; font-size: 1.6rem; line-height: 60px; } #display-cn { font-size: 2.5rem !important; } }
         .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
@@ -51,6 +52,52 @@
         .pass-btn { background: #475569; color: white; padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; cursor: pointer; border: none; margin-left: 10px; vertical-align: middle; }
         .mode-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.2rem; color: white; margin-bottom: 8px; cursor: pointer; }
 
+
+        /* 後台管理 UI：低干擾、灰色、小尺寸 */
+        .admin-btn {
+            width:auto !important;
+            min-width:0;
+            padding:7px 10px !important;
+            margin:0 !important;
+            border-radius:8px !important;
+            background:#475569 !important;
+            color:#e2e8f0 !important;
+            font-size:.78rem !important;
+            font-weight:700 !important;
+            line-height:1.2;
+        }
+        .admin-btn:hover { background:#64748b !important; }
+        .admin-toolbar {
+            display:flex;
+            flex-wrap:wrap;
+            gap:6px;
+            align-items:center;
+            margin:6px 0;
+        }
+        .admin-panel {
+            background:#111827;
+            border:1px solid #334155;
+            border-radius:10px;
+            padding:9px;
+            margin-bottom:8px;
+        }
+        .admin-title {
+            font-size:1rem;
+            font-weight:800;
+            color:#cbd5e1;
+            margin:4px 0 8px;
+        }
+        .admin-subtitle {
+            font-size:.72rem;
+            color:#94a3b8;
+            margin:0 0 7px;
+        }
+        .admin-input, .admin-select {
+            padding:8px 9px !important;
+            border-radius:8px !important;
+            font-size:.85rem !important;
+        }
+
         /* 題庫管理 */
         .bank-row { background:rgba(255,255,255,0.04); border:1px solid #334155; border-radius:10px; padding:9px; margin-bottom:6px; }
         .bank-row-main { display:flex; justify-content:space-between; gap:8px; align-items:center; }
@@ -75,9 +122,9 @@
             <button class="mode-btn" style="background:linear-gradient(45deg,#ef4444,#f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (敗北扣級)</button>
             <button class="mode-btn" style="background:#3b82f6;" onclick="startSession('practice')">🛡️ 練習模式</button>
             <button class="mode-btn" style="background:var(--gold);color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
-            <button class="mode-btn" style="background:#7c3aed;" onclick="switchView('view-bank')">📚 題庫管理</button>
-            <button class="mode-btn" style="background:#0f766e;" onclick="downloadErrorLog()">📝 錯題 Log</button>
-            <button class="mode-btn" style="background:#9333ea;" onclick="downloadChildProgress()">📦 夥伴／圖鑑進度</button>
+            <button class="mode-btn admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
+            <button class="mode-btn admin-btn" onclick="downloadErrorLog()">📝 錯題 Log</button>
+            <button class="mode-btn admin-btn" onclick="downloadChildProgress()">📦 夥伴／圖鑑進度</button>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 我的夥伴</button>
@@ -132,9 +179,9 @@
         </div>
         <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManager()" style="width:100%;padding:11px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;margin-bottom:8px;">
 
-        <div style="background:rgba(14,165,233,.10);border:1px solid #0ea5e9;border-radius:12px;padding:10px;margin-bottom:8px;">
-            <div style="font-weight:900;color:#7dd3fc;margin-bottom:6px;">📋 一次輸入多個單字</div>
-            <div style="font-size:.78rem;color:#94a3b8;margin-bottom:7px;">
+        <div class="admin-panel">
+            <div class="admin-title">📋 一次輸入多個單字</div>
+            <div class="admin-subtitle">
                 一行一個單字。先按「檢查單字」，確認拼字正確後，才能送出。
             </div>
             <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
@@ -153,10 +200,10 @@
 
         <div id="bank-list" style="flex:1;overflow-y:auto;"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-            <button class="mode-btn" style="background:#16a34a;margin:0;" onclick="openQuestionEditor()">＋單個新增</button>
-            <button class="mode-btn" style="background:#0ea5e9;margin:0;" onclick="exportQuestionCSV()">📤匯出題庫</button>
+            <button class="mode-btn admin-btn" onclick="openQuestionEditor()">＋單個新增</button>
+            <button class="mode-btn admin-btn" onclick="exportQuestionCSV()">📤匯出題庫</button>
         </div>
-        <button class="mode-btn" style="background:#475569;margin-top:8px;" onclick="switchView('view-main')">返回</button>
+        <button class="mode-btn admin-btn" style="margin-top:8px;" onclick="switchView('view-main')">返回主畫面</button>
     </div>
 
     <div id="view-question-editor" class="view-section">
@@ -169,8 +216,8 @@
         <input id="question-cn" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
         <div style="flex:1;"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <button class="mode-btn" style="background:#475569;" onclick="switchView('view-bank')">取消</button>
-            <button class="mode-btn" style="background:#16a34a;" onclick="saveQuestion()">儲存</button>
+            <button class="mode-btn admin-btn" onclick="switchView('view-bank')">取消</button>
+            <button class="mode-btn admin-btn" onclick="saveQuestion()">儲存</button>
         </div>
     </div>
 </div>
@@ -874,20 +921,57 @@ ${detail}
         document.getElementById('star-icon').style.color = isS ? "var(--gold)" : "#475569";
         document.getElementById('btn-force-practice').style.display = "none";
 
-        const area = document.getElementById('letter-area'); area.innerHTML = "";
+        const area = document.getElementById('letter-area');
+        area.innerHTML = "";
+
+        const answerChars = Array.from(String(word.en || ""));
         let inputIdx = 0;
-        word.en.split('').forEach((char) => {
-            if(char === " " || char === "/" || char === "-") { 
-                const sep = document.createElement('div'); sep.innerText = (char === " ") ? "" : char;
-                sep.style.cssText = "width:10px; font-size:1.2rem; text-align:center; line-height:85px; color:var(--accent);";
-                area.appendChild(sep); 
-            } else {
-                const inp = document.createElement('input'); inp.className = 'letter-box'; inp.maxLength = 1; inp.dataset.idx = inputIdx++;
-                inp.onkeydown = (e) => { if (e.key === "Backspace" && e.target.value === "") { const p = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) - 1}"]`); if (p) p.focus(); } };
-                inp.oninput = (e) => { if (e.target.value.length === 1) { const n = document.querySelector(`.letter-box[data-idx="${parseInt(e.target.dataset.idx) + 1}"]`); if (n) n.focus(); if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length > 0)) setTimeout(checkFinalAnswer, 150); } };
-                area.appendChild(inp);
+
+        answerChars.forEach((char) => {
+            if (char === " " || char === "/" || char === "-") {
+                const sep = document.createElement('div');
+                sep.className = 'word-separator';
+                sep.innerText = char === " " ? " " : char;
+                area.appendChild(sep);
+                return;
             }
+
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.inputMode = 'text';
+            inp.autocomplete = 'off';
+            inp.className = 'letter-box';
+            inp.maxLength = 1;
+            inp.dataset.idx = inputIdx;
+
+            inp.onkeydown = (e) => {
+                if (e.key === "Backspace" && e.target.value === "") {
+                    const prev = document.querySelector(`.letter-box[data-idx="${inputIdx - 1}"]`);
+                    if (prev) {
+                        prev.focus();
+                        prev.select();
+                    }
+                }
+            };
+
+            inp.oninput = (e) => {
+                e.target.value = Array.from(e.target.value).slice(-1).join("");
+                if (e.target.value.length === 1) {
+                    const next = document.querySelector(`.letter-box[data-idx="${inputIdx + 1}"]`);
+                    if (next) {
+                        next.focus();
+                    } else if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length === 1)) {
+                        setTimeout(checkFinalAnswer, 150);
+                    }
+                }
+            };
+
+            area.appendChild(inp);
+            inputIdx++;
         });
+
+        // 顯示目前題目的實際字母數，避免字框數與答案不一致。
+        area.dataset.answerLength = String(inputIdx);
         document.getElementById('practice-guide').innerText = (state.mode === 'practice' || state.tempPractice) ? word.en : "";
         setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
