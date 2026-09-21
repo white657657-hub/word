@@ -946,11 +946,25 @@ ${detail}
             inp.spellcheck = false;
 
             inp.onkeydown = (e) => {
-                if (e.key === "Backspace" && e.target.value === "") {
-                    const prev = document.querySelector(`.letter-box[data-idx="${inputIdx - 1}"]`);
+                const idx = parseInt(e.target.dataset.idx, 10);
+
+                if (e.key === "Backspace") {
+                    // 目前這格有字：先清掉目前這格，再停留。
+                    if (e.target.value !== "") {
+                        e.preventDefault();
+                        e.target.value = "";
+                        return;
+                    }
+
+                    // 目前這格已經是空的：回上一格，並清掉上一格。
+                    e.preventDefault();
+                    const prev = document.querySelector(
+                        `.letter-box[data-idx="${idx - 1}"]`
+                    );
+
                     if (prev) {
                         prev.focus();
-                        prev.select();
+                        prev.value = "";
                     }
                 }
             };
