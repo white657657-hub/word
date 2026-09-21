@@ -943,6 +943,7 @@ ${detail}
             inp.className = 'letter-box';
             inp.maxLength = 1;
             inp.dataset.idx = inputIdx;
+            inp.spellcheck = false;
 
             inp.onkeydown = (e) => {
                 if (e.key === "Backspace" && e.target.value === "") {
@@ -955,13 +956,24 @@ ${detail}
             };
 
             inp.oninput = (e) => {
-                e.target.value = Array.from(e.target.value).slice(-1).join("");
+                // 一格只允許一個字母；輸入後自動跳到下一格
+                const chars = Array.from(String(e.target.value || ""));
+                e.target.value = chars.length ? chars[chars.length - 1] : "";
+
                 if (e.target.value.length === 1) {
-                    const next = document.querySelector(`.letter-box[data-idx="${inputIdx + 1}"]`);
+                    const next = document.querySelector(
+                        `.letter-box[data-idx="${parseInt(e.target.dataset.idx, 10) + 1}"]`
+                    );
+
                     if (next) {
                         next.focus();
-                    } else if ([...document.querySelectorAll('.letter-box')].every(b => b.value.length === 1)) {
-                        setTimeout(checkFinalAnswer, 150);
+                        next.select();
+                    } else {
+                        // 最後一格輸入完成後自動送出答案
+                        const boxes = [...document.querySelectorAll('.letter-box')];
+                        if (boxes.length && boxes.every(b => b.value.length === 1)) {
+                            setTimeout(checkFinalAnswer, 150);
+                        }
                     }
                 }
             };
