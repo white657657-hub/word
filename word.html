@@ -76,6 +76,8 @@
             <button class="mode-btn" style="background:#3b82f6;" onclick="startSession('practice')">🛡️ 練習模式</button>
             <button class="mode-btn" style="background:var(--gold);color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
             <button class="mode-btn" style="background:#7c3aed;" onclick="switchView('view-bank')">📚 題庫管理</button>
+            <button class="mode-btn" style="background:#0f766e;" onclick="downloadErrorLog()">📝 錯題 Log</button>
+            <button class="mode-btn" style="background:#9333ea;" onclick="downloadChildProgress()">📦 夥伴／圖鑑進度</button>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 我的夥伴</button>
@@ -107,7 +109,7 @@
     </div>
 
     <div id="view-team" class="view-section">
-        <h2 style="text-align:center;margin:8px 0;">🐲 我的夥伴</h2>
+        <h2 style="text-align:center;margin:8px 0;">🐲 我的夥伴</h2><div style="font-size:.9rem;color:#94a3b8;margin-bottom:8px;">小朋友：<span id="team-child-name"></span></div>
         <div style="text-align:center;color:#94a3b8;font-size:.85rem;margin-bottom:8px;">點擊已捕捉的寶可夢，即可設為下一場的出戰夥伴。</div>
         <div id="current-team-name" style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;"></div>
         <div class="grid-view" id="team-grid"></div>
@@ -115,7 +117,7 @@
     </div>
 
     <div id="view-pokedex" class="view-section">
-        <h2 style="text-align:center;margin:8px 0;">📸 寶可夢圖鑑</h2>
+        <h2 style="text-align:center;margin:8px 0;">📸 寶可夢圖鑑</h2><div style="font-size:.9rem;color:#94a3b8;margin-bottom:8px;">小朋友：<span id="dex-child-name"></span></div>
         <div id="dex-count" style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;"></div>
         <div class="grid-view" id="dex-grid"></div>
         <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button>
@@ -173,7 +175,7 @@
     const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
     const DEFAULTS = [384, 150, 992];
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1 };
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1, quizCompleted: 0 };
     let editingQuestionRef = null;
 
     function setHeroData(n, v) { localStorage.setItem(n, v); document.cookie = `${n}=${v};path=/;SameSite=Lax`; }
@@ -185,6 +187,139 @@
         catch (e) { return fallback; }
     }
     function setLocalJSON(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+    function getChildName() {
+        return localStorage.getItem('hero_child_name') || '';
+    }
+
+    function safeFileName(name) {
+        return String(name || 'WordHero')
+            .trim()
+            .replace(/[\\/:*?"<>|]/g, '_')
+            .replace(/\s+/g, '_') || 'WordHero';
+    }
+
+    function ensureChildName() {
+        let name = getChildName();
+        if (!name) {
+            while (!name) {
+                name = prompt('第一次使用 Word Hero，請輸入小朋友的名字：');
+                if (name === null) {
+                    name = '';
+                } else {
+                    name = name.trim();
+                }
+            }
+            localStorage.setItem('hero_child_name', name);
+        }
+        return name;
+    }
+
+    function getErrorLog() {
+        return getLocalJSON('hero_error_log', []);
+    }
+
+    function addErrorLog(word, typed) {
+        const now = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const item = {
+            child: getChildName(),
+            date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
+            time: `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
+            unit: state.unit || '',
+            correct: word.en,
+            typed: typed
+        };
+        const log = getErrorLog();
+        log.push(item);
+        setLocalJSON('hero_error_log', log);
+    }
+
+    function downloadChildProgress() {
+        const childName = getChildName();
+        const caught = [];
+        for (let i = 0; i < state.pokedex.length; i++) {
+            if (state.pokedex[i] === "1") caught.push(i + 1);
+        }
+
+        const partnerIds = [384, 150, 992].concat(caught);
+        const uniquePartners = [...new Set(partnerIds)];
+        const active = state.activePokeId;
+
+        const lines = [
+            `${childName}｜WORD HERO 夥伴與圖鑑進度`,
+            '================================',
+            '',
+            '【目前出戰夥伴】',
+            `${PK_NAMES[active] || '寶可夢 #' + active}（ID: ${active}）`,
+            '',
+            '【夥伴】',
+            uniquePartners.map(id => `${id}. ${PK_NAMES[id] || '未知寶可夢'}`).join('\n') || '尚無',
+            '',
+            '【寶可夢圖鑑】',
+            `已收服：${caught.length} / 151`,
+            `尚未收服：${151 - caught.length} / 151`,
+            '',
+            '已收服寶可夢：',
+            caught.map(id => `${id}. ${PK_NAMES[id] || '未知寶可夢'}`).join('\n') || '尚無'
+        ];
+
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeFileName(childName)}_夥伴與寶可夢圖鑑.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function downloadErrorLog() {
+        const log = getErrorLog();
+
+        if (!log.length) {
+            return alert('目前還沒有錯題 Log。');
+        }
+
+        const counts = {};
+        log.forEach(item => {
+            const key = item.correct;
+            counts[key] = (counts[key] || 0) + 1;
+        });
+
+        const common = Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([word, count]) => `${word}：${count} 次`)
+            .join('\n');
+
+        const detail = log.map(item =>
+            `${item.date} ${item.time} | ${item.unit} | 正確：${item.correct} | 輸入：${item.typed}`
+        ).join('\n');
+
+        const childName = getChildName();
+        const content =
+`${childName}｜WORD HERO 錯題 LOG
+====================
+
+【常錯單字統計】
+${common}
+
+【錯題紀錄】
+日期 時間 | 單元 | 正確單字 | 輸入錯誤
+${detail}
+`;
+
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeFileName(childName)}_錯題Log.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
     function escapeHtml(v) {
         return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
     }
@@ -388,6 +523,7 @@
     }
 
     async function initSystem() {
+        ensureChildName();
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
         state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
 
@@ -570,6 +706,7 @@
         state.mode = m;
         state.tempPractice = false;
         state.index = 0;
+        state.quizCompleted = 0;
         state.playerHP = 5;
         state.oppHP = 5;
         switchView('view-game');
@@ -622,33 +759,121 @@
     }
 
     function checkFinalAnswer() {
-        const word = state.currentList[state.index], boxes = document.querySelectorAll('.letter-box');
-        let ui = ""; boxes.forEach(b => ui += b.value);
-        if (ui.toLowerCase() === word.en.replace(/[\s\/-]/g, '').toLowerCase()) {
+        const word = state.currentList[state.index];
+        if (!word) return;
+
+        const boxes = document.querySelectorAll('.letter-box');
+        let ui = "";
+        boxes.forEach(b => ui += b.value);
+
+        const normalizedInput = ui.replace(/[\s\/-]/g, '').toLowerCase();
+        const normalizedAnswer = word.en.replace(/[\s\/-]/g, '').toLowerCase();
+
+        if (normalizedInput === normalizedAnswer) {
             confetti({ particleCount: 30, spread: 50 });
-            if(state.mode === 'quiz' && !state.tempPractice) {
+
+            if (state.mode === 'quiz' && !state.tempPractice) {
                 state.oppHP--;
+
                 const baseId = getEvolutionBaseId(state.activePokeId);
                 const expK = `exp_id_${baseId}`;
                 let cur = Math.min((parseInt(getHeroData(expK)) || 0) + 1, 50);
                 setHeroData(expK, cur);
+
+                // 魔王挑戰：這個單字答對後就從本輪題目移除。
+                // 因此必須把該 W 的全部單字答對，才會真正通關。
+                state.currentList.splice(state.index, 1);
+                state.quizCompleted++;
+
+                // 下一題仍然使用 index=0。
+                state.index = 0;
+
+                // 擊敗一隻寶可夢後，繼續考剩下的單字，而不是直接結束整個 W。
+                if (state.oppHP <= 0) {
+                    let p = state.pokedex.split('');
+                    p[state.currentOppId - 1] = "1";
+                    state.pokedex = p.join('');
+                    setHeroData('hero_pokedex_bits', state.pokedex);
+                    confetti({ particleCount: 100, spread: 80 });
+
+                    if (state.currentList.length === 0) {
+                        setTimeout(handleVictory, 500);
+                        return;
+                    }
+
+                    const un = [];
+                    for (let i = 0; i < 151; i++) {
+                        if (state.pokedex[i] === "0") un.push(i + 1);
+                    }
+                    state.currentOppId = un.length > 0
+                        ? un[Math.floor(Math.random() * un.length)]
+                        : Math.floor(Math.random() * 151) + 1;
+
+                    state.oppHP = 5;
+                }
+
+                updateHPUI();
+
+                if (state.currentList.length === 0) {
+                    setTimeout(handleVictory, 500);
+                } else {
+                    setTimeout(loadWord, 600);
+                }
+                return;
             }
-            if(state.oppHP <= 0) { setTimeout(handleVictory, 500); return; }
-            state.index++; state.tempPractice = false; updateHPUI(); setTimeout(loadWord, 600);
+
+            // 練習模式／星號練習維持原本流程。
+            if (state.mode === 'practice' || state.mode === 'priority') {
+                state.index++;
+                state.tempPractice = false;
+
+                if (state.oppHP > 0 && state.mode !== 'priority') {
+                    state.oppHP--;
+                }
+
+                if (state.index >= state.currentList.length) {
+                    setTimeout(handleVictory, 500);
+                    return;
+                }
+
+                updateHPUI();
+                setTimeout(loadWord, 600);
+            }
         } else {
-            boxes.forEach(b => { b.classList.add('wrong'); setTimeout(()=>b.classList.remove('wrong'), 800); });
-            if(state.mode === 'quiz' && !state.tempPractice) {
+            // 只記錄答錯；答對完全不寫 Log。
+            addErrorLog(word, ui || '(空白)');
+
+            boxes.forEach(b => {
+                b.classList.add('wrong');
+                setTimeout(() => b.classList.remove('wrong'), 800);
+            });
+
+            if (state.mode === 'quiz' && !state.tempPractice) {
                 state.playerHP--;
                 document.getElementById('btn-force-practice').style.display = "flex";
-                if(state.playerHP <= 0) { handlePlayerDeath(); return; }
+
+                if (state.playerHP <= 0) {
+                    handlePlayerDeath();
+                    return;
+                }
             }
+
             updateHPUI();
         }
     }
 
     function handlePass() {
         if (state.index >= state.currentList.length) return;
-        state.index++;
+
+        if (state.mode === 'quiz' && !state.tempPractice) {
+            // 魔王挑戰不能用 PASS 把單字永久跳掉；放到隊伍最後，之後仍會考到。
+            const word = state.currentList.splice(state.index, 1)[0];
+            state.currentList.push(word);
+            state.index = 0;
+        } else {
+            state.index++;
+        }
+
         state.tempPractice = false;
         updateHPUI();
         loadWord();
@@ -684,19 +909,23 @@
 
     function handleVictory() {
         if (state.mode === 'quiz') {
-            let p = state.pokedex.split('');
-            p[state.currentOppId - 1] = "1";
-            state.pokedex = p.join('');
-            setHeroData('hero_pokedex_bits', state.pokedex);
+            // 只有該單元所有單字都答對並從 currentList 移除後，才算通關。
+            if (state.currentList.length > 0) {
+                loadWord();
+                return;
+            }
+
             confetti({ particleCount: 200, spread: 100 });
-            alert(`收服成功！${PK_NAMES[state.currentOppId] || "寶可夢"} 已加入圖鑑，現在可以到「我的夥伴」設為下一場出戰。`);
+            alert(`🎉 ${state.unit} 魔王挑戰完成！\n共完成 ${state.quizCompleted} 個單字。\n所有單字都已考完！`);
         } else if (state.mode === 'practice') {
             alert("練習完成！");
         } else if (state.mode === 'priority') {
             alert("星號練習完成！");
         }
+
         switchView('view-main');
     }
+
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
     function playVoice() {
         const word = state.currentList[state.index];
@@ -708,6 +937,8 @@
     }
     
     function renderTeam() {
+        const nameEl = document.getElementById('team-child-name');
+        if (nameEl) nameEl.textContent = getChildName();
         const grid=document.getElementById('team-grid'); grid.innerHTML='';
         const current=document.getElementById('current-team-name');
         const active=getEvoInfo(state.activePokeId);
@@ -725,6 +956,8 @@
     }
 
     function renderDex() {
+        const nameEl = document.getElementById('dex-child-name');
+        if (nameEl) nameEl.textContent = getChildName();
         const grid=document.getElementById('dex-grid'); grid.innerHTML='';
         let caught=0;
         for(let i=1;i<=151;i++){
