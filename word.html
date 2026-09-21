@@ -136,7 +136,10 @@
                 一行一個單字，不需要中文。直接把單字複製貼上後按「送出」即可。
             </div>
             <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
-            <button class="mode-btn" style="background:#0ea5e9;margin:7px 0 0 0;" onclick="addBulkWords()">📥 送出這批單字</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px;">
+                <button class="mode-btn" style="background:#0ea5e9;margin:0;" onclick="addBulkWords()">📥 送出這批單字</button>
+                <button class="mode-btn" style="background:#16a34a;margin:0;" onclick="downloadQuestionBankJSON()">💾 下載題庫</button>
+            </div>
         </div>
 
         <div id="bank-list" style="flex:1;overflow-y:auto;"></div>
@@ -226,6 +229,30 @@
         refreshUnitSelectors(); document.getElementById('bank-manage-unit').value = name; renderBankManager();
     }
 
+    function downloadQuestionBankJSON() {
+        const bankData = {};
+
+        Object.keys(state.banks || {}).forEach(unit => {
+            bankData[unit] = (state.banks[unit] || []).map(item => ({
+                en: item.en,
+                cn: item.cn || ""
+            }));
+        });
+
+        const json = JSON.stringify(bankData, null, 2);
+        const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "question-bank.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
     function addBulkWords() {
         const unit = document.getElementById('bank-manage-unit')?.value?.trim();
         const box = document.getElementById('bulk-words');
@@ -266,7 +293,10 @@
         box.value = '';
         renderBankManager();
 
-        let msg = `成功加入 ${added.length} 個單字。`;
+        // 送出後立即產生最新的 question-bank.json
+        downloadQuestionBankJSON();
+
+        let msg = `成功加入 ${added.length} 個單字，已產生最新的 question-bank.json。`;
         if (skipped.length) {
             msg += `\n\n重複單字已跳過 ${skipped.length} 個：\n${skipped.join('\n')}`;
         }
