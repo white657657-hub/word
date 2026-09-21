@@ -135,22 +135,20 @@
         <div style="background:rgba(14,165,233,.10);border:1px solid #0ea5e9;border-radius:12px;padding:10px;margin-bottom:8px;">
             <div style="font-weight:900;color:#7dd3fc;margin-bottom:6px;">📋 一次輸入多個單字</div>
             <div style="font-size:.78rem;color:#94a3b8;margin-bottom:7px;">
-                一行一個單字，直接複製貼上即可，不需要逐字輸入。
+                一行一個單字。先按「檢查單字」，確認拼字正確後，才能送出。
             </div>
             <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
-            <button class="mode-btn" style="background:#0ea5e9;margin:7px 0 0 0;" onclick="addBulkWords()">📥 送出這批單字</button>
-        </div>
 
-        <div style="background:rgba(14,165,233,.10);border:1px solid #0ea5e9;border-radius:12px;padding:10px;margin-bottom:8px;">
-            <div style="font-weight:900;color:#7dd3fc;margin-bottom:6px;">📋 一次貼上多個單字</div>
-            <div style="font-size:.78rem;color:#94a3b8;margin-bottom:7px;">
-                一行一個單字，不需要中文。直接把單字複製貼上後按「送出」即可。
-            </div>
-            <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px;">
-                <button class="mode-btn" style="background:#0ea5e9;margin:0;" onclick="addBulkWords()">📥 送出這批單字</button>
-                <button class="mode-btn" style="background:#16a34a;margin:0;" onclick="downloadQuestionBankJSON()">💾 下載題庫</button>
-            </div>
+            <button class="mode-btn" style="background:#f59e0b;margin:7px 0 0 0;" onclick="validateBulkWords()">🔎 檢查單字</button>
+
+            <div id="bulk-check-result" style="display:none;margin-top:8px;padding:9px;border-radius:9px;background:#0f172a;font-size:.85rem;line-height:1.7;"></div>
+
+            <label id="bulk-confirm-wrap" style="display:none;align-items:center;gap:8px;margin-top:8px;color:#e2e8f0;font-size:.88rem;">
+                <input id="bulk-confirm" type="checkbox" onchange="updateBulkSubmitState()" style="width:18px;height:18px;">
+                我已確認上面的單字拼字正確
+            </label>
+
+            <button id="bulk-submit" class="mode-btn" disabled style="background:#334155;margin:7px 0 0 0;opacity:.55;" onclick="addBulkWords()">📥 送出到共用題庫</button>
         </div>
 
         <div id="bank-list" style="flex:1;overflow-y:auto;"></div>
@@ -179,7 +177,11 @@
 
 <script>
     const SS_ID = '1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    
+    // 共用題庫伺服器：部署 Google Apps Script Web App 後，把網址貼到這裡。
+    // 題庫實際保存於伺服器端 question-bank.txt，不會在送出時跳下載。
+    const SERVER_API_URL = "";
+const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
     const localDict = { "bell":"鈴","busy":"忙碌","first name":"名字","last name":"姓氏","bus driver":"公車司機","market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末","birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎","bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船","transportation":"交通工具","town":"城鎮","wheel":"輪子" };
     const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
     const DEFAULTS = [384, 150, 992];
@@ -364,13 +366,32 @@ ${detail}
         if (!words.length) { list.innerHTML = '<div style="text-align:center;color:#64748b;padding:30px 10px;">目前沒有符合條件的題目。</div>'; return; }
         list.innerHTML = words.map(w => `<div class="bank-row"><div class="bank-row-main"><div style="min-width:0;"><div class="bank-word">${escapeHtml(w.en)}</div><div class="bank-cn">${escapeHtml(w.cn||'')}</div><div class="bank-ref">${escapeHtml(w.ref)}</div></div><div class="bank-action"><button class="bank-edit" onclick="openQuestionEditor('${encodeURIComponent(w.ref)}')">編輯</button><button class="bank-delete" onclick="deleteQuestion('${encodeURIComponent(w.ref)}')">刪除</button></div></div></div>`).join('');
     }
-    function addBulkWords() {
-        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
-        const box = document.getElementById('bulk-words');
 
-        if (!unit || !state.banks[unit]) {
-            return alert('請先選擇要加入的單元。');
-        }
+
+    let bulkValidatedWords = [];
+    let bulkValidationPassed = false;
+
+    function updateBulkSubmitState() {
+        const btn = document.getElementById('bulk-submit');
+        const cb = document.getElementById('bulk-confirm');
+        const ok = bulkValidationPassed && cb && cb.checked && bulkValidatedWords.length > 0;
+        if (!btn) return;
+        btn.disabled = !ok;
+        btn.style.opacity = ok ? '1' : '.55';
+        btn.style.background = ok ? '#16a34a' : '#334155';
+    }
+
+    async function validateBulkWords() {
+        const box = document.getElementById('bulk-words');
+        const result = document.getElementById('bulk-check-result');
+        const wrap = document.getElementById('bulk-confirm-wrap');
+        const cb = document.getElementById('bulk-confirm');
+
+        bulkValidatedWords = [];
+        bulkValidationPassed = false;
+        if (cb) cb.checked = false;
+        if (wrap) wrap.style.display = 'none';
+        updateBulkSubmitState();
 
         const words = (box?.value || '')
             .split(/\r?\n/)
@@ -378,43 +399,163 @@ ${detail}
             .filter(Boolean);
 
         if (!words.length) {
-            return alert('請先貼上單字，一行一個。');
+            if (result) {
+                result.style.display = 'block';
+                result.innerHTML = '<span style="color:#f87171;">請先貼上單字，一行一個。</span>';
+            }
+            return;
         }
 
-        const existing = new Set(
-            (state.banks[unit] || []).map(w => w.en.trim().toLowerCase())
-        );
+        // 基本格式檢查：只接受英文單字、空格、連字號、撇號。
+        const invalidFormat = words.filter(w => !/^[A-Za-z][A-Za-z' -]*$/.test(w));
+        const normalized = words.map(w => w.toLowerCase());
+        const duplicates = normalized.filter((w, i) => normalized.indexOf(w) !== i);
 
-        const custom = getLocalJSON('hero_custom_questions', []);
-        const added = [];
-        const skipped = [];
+        if (invalidFormat.length) {
+            result.style.display = 'block';
+            result.innerHTML =
+                '<span style="color:#f87171;font-weight:800;">格式有問題，請修正：</span><br>' +
+                invalidFormat.map(escapeHtml).join('<br>');
+            return;
+        }
 
-        words.forEach(en => {
-            const key = en.toLowerCase();
+        result.style.display = 'block';
+        result.innerHTML = '<span style="color:#fbbf24;">正在查字典確認拼字，請稍候……</span>';
 
-            if (existing.has(key)) {
-                skipped.push(en);
-                return;
-            }
+        const unique = [...new Map(words.map(w => [w.toLowerCase(), w])).values()];
+        const checks = await Promise.all(unique.map(async word => {
+            // 片語逐字驗證；例如 picnic table、parking lot。
+            const parts = word.split(/[\s-]+/).filter(Boolean);
+            const results = await Promise.all(parts.map(async part => {
+                try {
+                    const r = await fetch(
+                        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(part)}`,
+                        { cache: 'no-store' }
+                    );
+                    return r.ok;
+                } catch (e) {
+                    return false;
+                }
+            }));
+            return { word, ok: results.every(Boolean) };
+        }));
 
-            const ref = `LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-            state.banks[unit].push({ en, cn: '', ref });
-            custom.push({ unit, en, cn: '', ref });
-            existing.add(key);
-            added.push(en);
-        });
+        const bad = checks.filter(x => !x.ok).map(x => x.word);
 
-        setLocalJSON('hero_custom_questions', custom);
+        if (bad.length) {
+            result.innerHTML =
+                '<span style="color:#f87171;font-weight:900;">❌ 發現可能的拼字問題，不能送出：</span><br>' +
+                bad.map(w => `• ${escapeHtml(w)}`).join('<br>') +
+                '<br><span style="color:#94a3b8;">請修正後再按「檢查單字」。</span>';
+            return;
+        }
 
-        box.value = '';
-        renderBankManager();
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
+        const newWords = unique.filter(w => !existing.has(w.toLowerCase()));
+        const repeated = unique.filter(w => existing.has(w.toLowerCase()));
 
-        alert(
-            `成功加入 ${added.length} 個單字。` +
-            (skipped.length
-                ? `\n\n重複單字已跳過 ${skipped.length} 個：\n${skipped.join('\n')}`
-                : '')
-        );
+        bulkValidatedWords = newWords;
+        bulkValidationPassed = true;
+
+        result.innerHTML =
+            '<span style="color:#4ade80;font-weight:900;">✅ 拼字檢查完成</span><br>' +
+            `共 ${unique.length} 個單字；新單字 ${newWords.length} 個` +
+            (repeated.length ? `；已存在 ${repeated.length} 個，送出時會跳過。` : '。');
+
+        if (wrap) wrap.style.display = 'flex';
+        updateBulkSubmitState();
+    }
+
+    async function addBulkWords() {
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        const box = document.getElementById('bulk-words');
+
+        if (!unit || !state.banks[unit]) {
+            return alert('請先選擇要加入的單元。');
+        }
+
+        if (!bulkValidationPassed || !bulkValidatedWords.length) {
+            return alert('請先按「檢查單字」，確認拼字正確後才能送出。');
+        }
+
+        if (!SERVER_API_URL) {
+            return alert(
+                '共用題庫伺服器尚未設定。\n\n' +
+                '請先把 Google Apps Script Web App 網址填入 SERVER_API_URL，' +
+                '才能把題庫寫入 server 端 question-bank.txt。'
+            );
+        }
+
+        const words = [...bulkValidatedWords];
+
+        try {
+            const response = await fetch(SERVER_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'addWords', unit, words })
+            });
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+
+            if (!data.ok) throw new Error(data.message || '伺服器拒絕寫入');
+
+            // 同步更新本機畫面，但不把本機資料當成中央題庫。
+            const existing = new Set((state.banks[unit] || []).map(w => w.en.toLowerCase()));
+            words.forEach(en => {
+                if (!existing.has(en.toLowerCase())) {
+                    state.banks[unit].push({
+                        en,
+                        cn: '',
+                        ref: `SERVER_${Date.now()}_${Math.random().toString(36).slice(2,7)}`
+                    });
+                }
+            });
+
+            box.value = '';
+            bulkValidatedWords = [];
+            bulkValidationPassed = false;
+
+            const cb = document.getElementById('bulk-confirm');
+            const wrap = document.getElementById('bulk-confirm-wrap');
+            const result = document.getElementById('bulk-check-result');
+            if (cb) cb.checked = false;
+            if (wrap) wrap.style.display = 'none';
+            if (result) result.style.display = 'none';
+
+            updateBulkSubmitState();
+            renderBankManager();
+
+            alert(`✅ 已寫入共用題庫。\nW${unit.replace(/^W/i,'')} 本次新增 ${data.added || words.length} 個單字。\n\n其他裝置重新載入後即可使用。`);
+        } catch (e) {
+            alert(`❌ 題庫寫入失敗：${e.message}`);
+        }
+    }
+
+    async function loadServerQuestionBank() {
+        if (!SERVER_API_URL) return false;
+
+        try {
+            const r = await fetch(`${SERVER_API_URL}?action=getAll&t=${Date.now()}`, { cache: 'no-store' });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            const data = await r.json();
+            if (!data.ok || !data.banks) return false;
+
+            Object.keys(data.banks).forEach(unit => {
+                state.banks[unit] = (data.banks[unit] || []).map((en, idx) => ({
+                    en,
+                    cn: '',
+                    ref: `SERVER_${unit}_${idx + 1}`
+                }));
+            });
+
+            refreshUnitSelectors();
+            return true;
+        } catch (e) {
+            console.warn('共用題庫讀取失敗，保留原本題庫來源：', e);
+            return false;
+        }
     }
 
     function addBankUnit() {
@@ -426,79 +567,7 @@ ${detail}
         refreshUnitSelectors(); document.getElementById('bank-manage-unit').value = name; renderBankManager();
     }
 
-    function downloadQuestionBankJSON() {
-        const bankData = {};
 
-        Object.keys(state.banks || {}).forEach(unit => {
-            bankData[unit] = (state.banks[unit] || []).map(item => ({
-                en: item.en,
-                cn: item.cn || ""
-            }));
-        });
-
-        const json = JSON.stringify(bankData, null, 2);
-        const blob = new Blob([json], { type: "application/json;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "question-bank.json";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-
-    function addBulkWords() {
-        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
-        const box = document.getElementById('bulk-words');
-        if (!unit || !state.banks[unit]) return alert('請先選擇單元。');
-
-        const raw = box?.value || '';
-        const words = raw
-            .split(/\r?\n/)
-            .map(w => w.trim())
-            .filter(Boolean);
-
-        if (!words.length) return alert('請先貼上單字，一行一個。');
-
-        const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
-        const custom = getLocalJSON('hero_custom_questions', []);
-        const added = [];
-        const skipped = [];
-
-        words.forEach(en => {
-            const key = en.toLowerCase();
-
-            if (existing.has(key)) {
-                skipped.push(en);
-                return;
-            }
-
-            const ref = `LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-            const item = { unit, en, cn: '', ref };
-
-            state.banks[unit].push({ en, cn: '', ref });
-            custom.push(item);
-            existing.add(key);
-            added.push(en);
-        });
-
-        setLocalJSON('hero_custom_questions', custom);
-
-        box.value = '';
-        renderBankManager();
-
-        // 送出後立即產生最新的 question-bank.json
-        downloadQuestionBankJSON();
-
-        let msg = `成功加入 ${added.length} 個單字，已產生最新的 question-bank.json。`;
-        if (skipped.length) {
-            msg += `\n\n重複單字已跳過 ${skipped.length} 個：\n${skipped.join('\n')}`;
-        }
-        alert(msg);
-    }
     function openQuestionEditor(encodedRef='') {
         editingQuestionRef = encodedRef ? decodeURIComponent(encodedRef) : null;
         refreshUnitSelectors();
@@ -595,6 +664,9 @@ ${detail}
             );
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             parseCSV(await res.text());
+            resetAndSetW1W4();
+            await loadServerQuestionBank();
+            refreshUnitSelectors();
         } catch (e) {
             console.error("單字庫載入失敗:", e);
             alert("單字庫載入失敗，請確認網路連線或 Google Sheet 權限。");
@@ -636,7 +708,7 @@ ${detail}
                 ['dinosaur','恐龍'],
                 ['million','百萬'],
                 ['street','街道'],
-                ['Eart','地球'],
+                ['Earth','地球'],
                 ['dance','跳舞'],
                 ['cloud','雲'],
                 ['lake','湖'],
@@ -671,7 +743,7 @@ ${detail}
             'W4': [
                 ['castle','城堡'],
                 ['gold','黃金'],
-                ['gloden','金色的'],
+                ['golden','金色的'],
                 ['today','今天'],
                 ['American','美國的'],
                 ['Australia','澳洲'],
