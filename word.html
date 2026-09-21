@@ -133,6 +133,15 @@
         <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManager()" style="width:100%;padding:11px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;margin-bottom:8px;">
 
         <div style="background:rgba(14,165,233,.10);border:1px solid #0ea5e9;border-radius:12px;padding:10px;margin-bottom:8px;">
+            <div style="font-weight:900;color:#7dd3fc;margin-bottom:6px;">📋 一次輸入多個單字</div>
+            <div style="font-size:.78rem;color:#94a3b8;margin-bottom:7px;">
+                一行一個單字，直接複製貼上即可，不需要逐字輸入。
+            </div>
+            <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
+            <button class="mode-btn" style="background:#0ea5e9;margin:7px 0 0 0;" onclick="addBulkWords()">📥 送出這批單字</button>
+        </div>
+
+        <div style="background:rgba(14,165,233,.10);border:1px solid #0ea5e9;border-radius:12px;padding:10px;margin-bottom:8px;">
             <div style="font-weight:900;color:#7dd3fc;margin-bottom:6px;">📋 一次貼上多個單字</div>
             <div style="font-size:.78rem;color:#94a3b8;margin-bottom:7px;">
                 一行一個單字，不需要中文。直接把單字複製貼上後按「送出」即可。
@@ -355,6 +364,59 @@ ${detail}
         if (!words.length) { list.innerHTML = '<div style="text-align:center;color:#64748b;padding:30px 10px;">目前沒有符合條件的題目。</div>'; return; }
         list.innerHTML = words.map(w => `<div class="bank-row"><div class="bank-row-main"><div style="min-width:0;"><div class="bank-word">${escapeHtml(w.en)}</div><div class="bank-cn">${escapeHtml(w.cn||'')}</div><div class="bank-ref">${escapeHtml(w.ref)}</div></div><div class="bank-action"><button class="bank-edit" onclick="openQuestionEditor('${encodeURIComponent(w.ref)}')">編輯</button><button class="bank-delete" onclick="deleteQuestion('${encodeURIComponent(w.ref)}')">刪除</button></div></div></div>`).join('');
     }
+    function addBulkWords() {
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        const box = document.getElementById('bulk-words');
+
+        if (!unit || !state.banks[unit]) {
+            return alert('請先選擇要加入的單元。');
+        }
+
+        const words = (box?.value || '')
+            .split(/\r?\n/)
+            .map(w => w.trim())
+            .filter(Boolean);
+
+        if (!words.length) {
+            return alert('請先貼上單字，一行一個。');
+        }
+
+        const existing = new Set(
+            (state.banks[unit] || []).map(w => w.en.trim().toLowerCase())
+        );
+
+        const custom = getLocalJSON('hero_custom_questions', []);
+        const added = [];
+        const skipped = [];
+
+        words.forEach(en => {
+            const key = en.toLowerCase();
+
+            if (existing.has(key)) {
+                skipped.push(en);
+                return;
+            }
+
+            const ref = `LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+            state.banks[unit].push({ en, cn: '', ref });
+            custom.push({ unit, en, cn: '', ref });
+            existing.add(key);
+            added.push(en);
+        });
+
+        setLocalJSON('hero_custom_questions', custom);
+
+        box.value = '';
+        renderBankManager();
+
+        alert(
+            `成功加入 ${added.length} 個單字。` +
+            (skipped.length
+                ? `\n\n重複單字已跳過 ${skipped.length} 個：\n${skipped.join('\n')}`
+                : '')
+        );
+    }
+
     function addBankUnit() {
         const input = prompt('請輸入新單元名稱，例如 Unit 10：'); if (!input) return;
         const name = input.trim(); if (!name) return;
