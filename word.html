@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1434 - User Question Bank</title>
+    <title>Word Hero V1436 - Natural Phonics Syllables</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +68,37 @@
         .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); }
 
         #display-cn { font-size: 3.2rem; font-weight: 800; color: var(--gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); vertical-align: middle; }
+
+        /* 練習模式：英文單字依音節分色，並放大字體 */
+        #practice-guide {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:0;
+            min-height:52px !important;
+            height:auto !important;
+            margin:4px 0 8px;
+            font-size:2.35rem !important;
+            line-height:1.15;
+            font-weight:1000 !important;
+            letter-spacing:.02em;
+            text-shadow:2px 2px 5px rgba(0,0,0,.75);
+        }
+        .practice-syllable { display:inline-block; font-weight:1000; }
+        .practice-syllable.color-1 { color:#38bdf8; }
+        .practice-syllable.color-2 { color:#fbbf24; }
+        .practice-syllable.color-3 { color:#4ade80; }
+        .practice-syllable.color-4 { color:#f472b6; }
+        .practice-syllable.color-5 { color:#a78bfa; }
+        .practice-syllable.color-6 { color:#fb923c; }
+        .practice-syllable-separator { color:#94a3b8; font-weight:800; margin:0 .08em; }
+        .practice-phonics-note { display:block; width:100%; text-align:center; color:#94a3b8; font-size:.72rem; font-weight:700; margin-top:2px; }
+        .practice-syllable { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+        @media screen and (max-width: 600px) {
+            #practice-guide { font-size:2.05rem !important; }
+        }
+
         .pass-btn { background: #475569; color: white; padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; cursor: pointer; border: none; margin-left: 10px; vertical-align: middle; }
         .mode-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.2rem; color: white; margin-bottom: 8px; cursor: pointer; }
 
@@ -147,7 +178,7 @@
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">WORD HERO V1434</h2>
+        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">WORD HERO V1436</h2>
         <div style="text-align:center;color:#94a3b8;font-size:.9rem;margin-bottom:8px;">使用者：<span id="main-child-name"></span></div>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:14px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.3rem; margin-bottom:10px;"></select>
@@ -361,6 +392,7 @@
         setLocalJSON('hero_error_log', log);
     }
 
+    // 所有下載功能都只能由使用者點擊按鈕觸發；初始化時絕不自動下載檔案。
     function downloadChildProgress() {
         const childName = getChildName();
         const caught = [];
@@ -1138,7 +1170,7 @@ ${detail}
 
         // 顯示目前題目的實際字母數，避免字框數與答案不一致。
         area.dataset.answerLength = String(inputIdx);
-        document.getElementById('practice-guide').innerText = (state.mode === 'practice' || state.tempPractice) ? word.en : "";
+        renderPracticeGuide((state.mode === 'practice' || state.tempPractice) ? word.en : "");
         setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
 
@@ -1314,12 +1346,151 @@ ${detail}
     }
 
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
+    /*
+     * 英文音節顯示：
+     * 1. 先使用常見單字的固定音節，避免一般規則把學習單字切錯。
+     * 2. 其他單字使用英文母音核心的保守切法。
+     * 3. 不改變原單字，只控制「練習提示」的視覺呈現。
+     */
+    /*
+     * 自然發音法導向的音節分色：
+     * - 以「可讀、可拼讀」的音節／字母群為單位，而不是任意每幾個字母切一次。
+     * - W1-W4 目前使用的單字採明確規則，避免自動演算法切錯。
+     * - 這裡只改「視覺分組」，不修改孩子真正要拼寫的答案。
+     */
+    const COMMON_SYLLABLES = {
+        dinosaur:['di','no','saur'],
+        million:['mil','lion'],
+        street:['street'],
+        eart:['eart'],
+        earth:['earth'],
+        dance:['dance'],
+        cloud:['cloud'],
+        lake:['lake'],
+        near:['near'],
+        valley:['val','ley'],
+        yesterday:['yes','ter','day'],
+
+        camp:['camp'],
+        map:['map'],
+        eighty:['eigh','ty'],
+        fifty:['fif','ty'],
+        forty:['for','ty'],
+        star:['star'],
+        seventy:['sev','en','ty'],
+        sixty:['six','ty'],
+        thirty:['thir','ty'],
+        twenty:['twen','ty'],
+
+        hundred:['hun','dred'],
+        ninety:['nine','ty'],
+        east:['east'],
+        north:['north'],
+        south:['south'],
+        west:['west'],
+        far:['far'],
+        'picnic table':['pic','nic','table'],
+        'parking lot':['park','ing','lot'],
+        lizard:['liz','ard'],
+
+        castle:['cas','tle'],
+        gold:['gold'],
+        gloden:['glo','den'],
+        golden:['gold','en'],
+        today:['to','day'],
+        american:['a','mer','i','can'],
+        australia:['aus','tra','li','a'],
+        australian:['aus','tra','li','an'],
+        china:['chi','na'],
+        country:['coun','try'],
+        egypt:['e','gypt'],
+        flag:['flag']
+    };
+
+    function fallbackSyllables(raw) {
+        const text = String(raw || '');
+        const words = text.split(/(\s+|[\/-])/);
+        const out = [];
+        words.forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part) || /^[\/-]$/.test(part)) { out.push(part); return; }
+            const w = part.toLowerCase();
+            if (COMMON_SYLLABLES[w]) { out.push(...COMMON_SYLLABLES[w]); return; }
+            if (!/[a-z]/i.test(part)) { out.push(part); return; }
+            const chars = Array.from(part);
+            const vowels = /[aeiouy]/i;
+            const chunks = []; let start = 0; let i = 0;
+            while (i < chars.length) {
+                if (vowels.test(chars[i])) {
+                    let nucleusEnd = i + 1;
+                    while (nucleusEnd < chars.length && vowels.test(chars[nucleusEnd])) nucleusEnd++;
+                    let end = nucleusEnd;
+                    if (end < chars.length) {
+                        let j = end;
+                        while (j < chars.length && !vowels.test(chars[j])) j++;
+                        const consonants = j - end;
+                        if (j < chars.length && consonants > 1) end = end + consonants - 1;
+                        else end = j;
+                    }
+                    chunks.push(chars.slice(start, end).join(''));
+                    start = end; i = end;
+                } else i++;
+            }
+            if (start < chars.length) {
+                if (chunks.length) chunks[chunks.length-1] += chars.slice(start).join('');
+                else chunks.push(part);
+            }
+            out.push(...(chunks.length ? chunks : [part]));
+        });
+        return out;
+    }
+
+    function renderPracticeGuide(text) {
+        const el = document.getElementById('practice-guide');
+        if (!el) return;
+        el.innerHTML = '';
+        if (!text) return;
+
+        const note = document.createElement('div');
+        note.className = 'practice-phonics-note';
+        note.textContent = '自然發音練習：每個顏色代表一個音節';
+        el.appendChild(note);
+
+        const parts = fallbackSyllables(text);
+        let syllableIndex = 0;
+        parts.forEach(part => {
+            if (/^\s+$/.test(part)) {
+                const s = document.createElement('span');
+                s.className = 'practice-syllable-separator';
+                s.textContent = ' ';
+                el.appendChild(s);
+            } else if (/^[\/-]$/.test(part)) {
+                const s = document.createElement('span');
+                s.className = 'practice-syllable-separator';
+                s.textContent = part;
+                el.appendChild(s);
+            } else {
+                const s = document.createElement('span');
+                s.className = 'practice-syllable';
+                const colorNo = (syllableIndex % 6) + 1;
+                s.classList.add(`color-${colorNo}`);
+                s.dataset.syllable = String(syllableIndex++);
+                s.textContent = part;
+                el.appendChild(s);
+            }
+        });
+    }
+
     function playVoice() {
         const word = state.currentList[state.index];
         if (!word || !word.en) return;
         window.speechSynthesis.cancel();
         const m = new SpeechSynthesisUtterance(word.en);
         m.lang = 'en-US';
+        /* 比原本慢約 20%，方便孩子聽清楚每個音節。 */
+        m.rate = 0.78;
+        m.pitch = 1;
+        m.volume = 1;
         window.speechSynthesis.speak(m);
     }
     
