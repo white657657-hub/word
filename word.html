@@ -124,6 +124,20 @@
             align-items:center;
             margin:6px 0;
         }
+        .bank-source-panel {
+            background:rgba(30,41,59,.75);
+            border:1px solid #475569;
+            border-radius:10px;
+            padding:9px;
+            margin-bottom:8px;
+        }
+        .bank-source-title { font-size:.9rem; font-weight:900; color:#e2e8f0; margin-bottom:7px; }
+        .bank-source-buttons { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+        .bank-source-btn { border:1px solid #475569; border-radius:9px; padding:9px 7px; background:#0f172a; color:#cbd5e1; font-weight:800; cursor:pointer; }
+        .bank-source-btn.active { border-color:#38bdf8; background:rgba(56,189,248,.14); color:#fff; }
+        .bank-source-note { margin-top:7px; color:#94a3b8; font-size:.76rem; line-height:1.5; }
+        #txt-file-input { display:none; }
+
         .admin-panel {
             background:#111827;
             border:1px solid #334155;
@@ -237,6 +251,17 @@
     <div id="view-bank" class="view-section">
         <h2 style="text-align:center;margin:8px 0;">📚 題庫管理</h2>
         <div id="bank-storage-info" style="background:rgba(124,58,237,.12);border:1px solid #7c3aed;border-radius:10px;padding:8px;margin-bottom:8px;font-size:.82rem;color:#c4b5fd;">題庫儲存方式載入中……</div>
+
+        <div class="bank-source-panel">
+            <div class="bank-source-title">📚 選擇題庫方式</div>
+            <div class="bank-source-buttons">
+                <button id="bank-source-text" class="bank-source-btn" onclick="useTextQuestionBank()">📄 文字題庫</button>
+                <button id="bank-source-custom" class="bank-source-btn" onclick="useCustomQuestionBank()">✏️ 自行變更題庫</button>
+            </div>
+            <div id="bank-source-note" class="bank-source-note"></div>
+            <input id="txt-file-input" type="file" accept=".txt,text/plain" onchange="handleTxtFile(event)">
+        </div>
+
         <div style="display:flex;gap:6px;margin-bottom:8px;">
             <select id="bank-manage-unit" onchange="renderBankManager()" style="flex:1;padding:10px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
             <button class="pass-btn" style="margin-left:0;background:#7c3aed;" onclick="addBankUnit()">＋單元</button>
@@ -299,6 +324,7 @@
     let currentUserName = '';
     let currentUserKey = '';
     let isAnsonUser = false;
+    let bankSourceMode = 'custom'; // text = 文字題庫；custom = 自行變更題庫
 
     function normalizeUserKey(name) {
         return encodeURIComponent(String(name || '').trim().toLowerCase());
@@ -552,8 +578,111 @@ ${detail}
         return banks;
     }
 
+    function setBankSourceMode(mode) {
+        bankSourceMode = mode === 'text' ? 'text' : 'custom';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        updateBankSourceUI();
+    }
+
+    function updateBankSourceUI() {
+        const textBtn = document.getElementById('bank-source-text');
+        const customBtn = document.getElementById('bank-source-custom');
+        const note = document.getElementById('bank-source-note');
+        if (textBtn) textBtn.classList.toggle('active', bankSourceMode === 'text');
+        if (customBtn) customBtn.classList.toggle('active', bankSourceMode === 'custom');
+        if (!note) return;
+
+        if (bankSourceMode === 'text') {
+            if (isAnsonUser) {
+                note.innerHTML = '目前使用：<b>vocab/Anson.txt</b>。文字檔是基準題庫；若要自己新增、刪除或修改，請切換到「自行變更題庫」。';
+            } else {
+                const imported = getLocalJSON('hero_text_bank', null);
+                note.innerHTML = imported
+                    ? '目前使用這位使用者上次匯入的 TXT 文字題庫。需要修改內容時，請切換到「自行變更題庫」。'
+                    : '尚未匯入 TXT。按「文字題庫」後可選擇自己的 .txt 單字庫。';
+            }
+        } else {
+            note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除都只會影響這位使用者。`;
+        }
+    }
+
+    async function useTextQuestionBank() {
+        if (isAnsonUser) {
+            bankSourceMode = 'text';
+            setHeroData('hero_bank_source_mode', bankSourceMode);
+            await loadAnsonTxtQuestionBank();
+            refreshUnitSelectors();
+            updateBankSourceUI();
+            renderBankManager();
+            alert('📄 已切換到 Anson.txt 文字題庫。\n\n若要自己修改題目，請再切換「自行變更題庫」。');
+            return;
+        }
+
+        const savedText = getLocalJSON('hero_text_bank', null);
+        if (savedText && Object.keys(savedText).length) {
+            state.banks = cloneBanks(savedText);
+            bankSourceMode = 'text';
+            setHeroData('hero_bank_source_mode', bankSourceMode);
+            refreshUnitSelectors();
+            updateBankSourceUI();
+            renderBankManager();
+            return;
+        }
+
+        const input = document.getElementById('txt-file-input');
+        if (input) {
+            input.value = '';
+            input.click();
+        }
+    }
+
+    function handleTxtFile(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const parsed = parseAnsonTxt(String(reader.result || ''));
+                if (!Object.keys(parsed).length || !Object.values(parsed).some(arr => arr.length)) {
+                    alert('TXT 裡沒有讀到單字。\n\n格式請使用：\n[W1]\ndinosaur,恐龍\nmillion,百萬');
+                    return;
+                }
+                setLocalJSON('hero_text_bank', parsed);
+                state.banks = cloneBanks(parsed);
+                bankSourceMode = 'text';
+                setHeroData('hero_bank_source_mode', bankSourceMode);
+                refreshUnitSelectors();
+                updateBankSourceUI();
+                renderBankManager();
+                alert(`📄 已載入「${file.name}」文字題庫。\n\n這個 TXT 會保存在「${getChildName()}」的本機資料，不會影響其他使用者。`);
+            } catch (e) {
+                alert('TXT 讀取失敗，請確認檔案格式。');
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function useCustomQuestionBank() {
+        if (bankSourceMode === 'custom') {
+            updateBankSourceUI();
+            renderBankManager();
+            return;
+        }
+
+        // 以目前文字題庫複製一份，作為可自由修改的本機題庫。
+        const copied = cloneBanks(state.banks);
+        state.banks = copied;
+        setLocalJSON('hero_question_bank', copied);
+        bankSourceMode = 'custom';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        refreshUnitSelectors();
+        updateBankSourceUI();
+        renderBankManager();
+        alert('✏️ 已切換到「自行變更題庫」。\n\n現在新增、編輯、刪除單字，都只會修改這位使用者的本機題庫。');
+    }
+
     function saveUserQuestionBank() {
-        if (!currentUserKey || isAnsonUser) return;
+        if (!currentUserKey || bankSourceMode !== 'custom') return;
         setLocalJSON('hero_question_bank', state.banks);
     }
 
@@ -625,6 +754,7 @@ ${detail}
     }
 
     async function validateBulkWords() {
+        if (bankSourceMode !== 'custom') { alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。'); return; }
         const box = document.getElementById('bulk-words');
         const result = document.getElementById('bulk-check-result');
         const wrap = document.getElementById('bulk-confirm-wrap');
@@ -731,6 +861,7 @@ ${detail}
     }
 
     function addBankUnit() {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
         const input = prompt('請輸入新單元名稱，例如 Unit 10：'); if (!input) return;
         const name = input.trim(); if (!name) return;
         if (state.banks[name]) return alert('這個單元已經存在。');
@@ -762,6 +893,7 @@ ${detail}
     }
 
     function saveQuestion() {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
         const unit=document.getElementById('question-unit').value.trim(), en=document.getElementById('question-en').value.trim(), cn=document.getElementById('question-cn').value.trim();
         if(!unit || !en) return alert('「單元」與「English」不能空白。');
         if(!state.banks[unit]) state.banks[unit]=[];
@@ -796,6 +928,7 @@ ${detail}
     }
 
     function deleteQuestion(encodedRef) {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
         const ref=decodeURIComponent(encodedRef); let target=null, unit=null;
         Object.keys(state.banks).some(u=>{const w=state.banks[u].find(x=>x.ref===ref);if(w){target=w;unit=u;return true;}return false;});
         if(!target) return;
@@ -870,18 +1003,15 @@ ${detail}
             const parsed = parseAnsonTxt(text);
             state.banks = mergeFixedBanks(parsed);
             setLocalJSON('hero_anson_txt_cache', state.banks);
-            applyLocalQuestionChanges();
             return true;
         } catch (e) {
             const cached = getLocalJSON('hero_anson_txt_cache', null);
             if (cached && Object.keys(cached).length) {
                 state.banks = mergeFixedBanks(cloneBanks(cached));
-                applyLocalQuestionChanges();
                 console.warn('Anson.txt 無法讀取，改用本機快取題庫：', e);
                 return true;
             }
             state.banks = banksFromPairs(getFixedBanks());
-            applyLocalQuestionChanges();
             console.warn('Anson.txt 無法讀取，使用內建 W1-W4：', e);
             return false;
         }
@@ -900,12 +1030,25 @@ ${detail}
     }
 
     async function initQuestionBank() {
-        if (isAnsonUser) {
-            await loadAnsonTxtQuestionBank();
+        const savedMode = getHeroData('hero_bank_source_mode');
+        if (savedMode === 'text' || savedMode === 'custom') bankSourceMode = savedMode;
+
+        if (bankSourceMode === 'text') {
+            if (isAnsonUser) {
+                await loadAnsonTxtQuestionBank();
+            } else {
+                const savedText = getLocalJSON('hero_text_bank', null);
+                if (savedText && Object.keys(savedText).length) state.banks = cloneBanks(savedText);
+                else {
+                    bankSourceMode = 'custom';
+                    loadLocalQuestionBank();
+                }
+            }
         } else {
             loadLocalQuestionBank();
         }
         refreshUnitSelectors();
+        updateBankSourceUI();
     }
 
     function getEvolutionBaseId(id) {
@@ -952,8 +1095,8 @@ ${detail}
         const storageInfo = document.getElementById('bank-storage-info');
         if (storageInfo) {
             storageInfo.innerHTML = isAnsonUser
-                ? '👦 Anson：單字庫來源為 <b>vocab/Anson.txt</b>；新增、編輯、刪除會保存在 Anson 的本機資料。'
-                : `👤 ${escapeHtml(getChildName())}：單字庫保存在這台裝置的瀏覽器，只屬於這位使用者。`;
+                ? '👦 Anson：可在「📄 文字題庫」與「✏️ 自行變更題庫」之間切換。文字題庫使用 <b>vocab/Anson.txt</b>；自行變更後只保存在 Anson 本機。'
+                : `👤 ${escapeHtml(getChildName())}：可匯入自己的 TXT 文字題庫，也可以切換成完全由自己管理的本機題庫。`;
         }
         await initQuestionBank();
         renderBankManager();
