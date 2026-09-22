@@ -5,7 +5,7 @@
 dinosaur,恐龍
 million,百萬
 street,街道
-Eart,地球
+Earth,地球
 dance,跳舞
 cloud,雲
 lake,湖
