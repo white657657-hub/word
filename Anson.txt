@@ -1,0 +1,55 @@
+# Word Hero Anson 專屬單字庫
+# 格式：單元標題下一行一個單字，可寫成 English,中文
+
+[W1]
+dinosaur,恐龍
+million,百萬
+street,街道
+Eart,地球
+dance,跳舞
+cloud,雲
+lake,湖
+near,附近
+valley,山谷
+yesterday,昨天
+
+[W2]
+camp,營地
+map,地圖
+eighty,八十
+fifty,五十
+forty,四十
+star,星星
+seventy,七十
+sixty,六十
+thirty,三十
+twenty,二十
+
+[W3]
+hundred,一百
+ninety,九十
+east,東方
+north,北方
+south,南方
+west,西方
+far,遠的
+picnic table,野餐桌
+parking lot,停車場
+lizard,蜥蜴
+
+[W4]
+castle,城堡
+gold,黃金
+gloden,金色的
+today,今天
+American,美國的
+Australia,澳洲
+Australian,澳洲的
+China,中國
+country,國家
+Egypt,埃及
+flag,國旗
+
+# 可繼續增加：
+# [W5]
+# volcano,火山
