@@ -93,7 +93,14 @@
         .practice-syllable.color-5 { color:#a78bfa; }
         .practice-syllable.color-6 { color:#fb923c; }
         .practice-syllable-separator { color:#94a3b8; font-weight:800; margin:0 .08em; }
-        .practice-phonics-note { display:block; width:100%; text-align:center; color:#94a3b8; font-size:.72rem; font-weight:700; margin-top:2px; }
+        .practice-phonics-note { display:block; width:100%; text-align:center; color:#cbd5e1; font-size:.78rem; font-weight:800; margin:3px 0 2px; }
+        .practice-phonics-row { display:flex; width:100%; justify-content:center; align-items:center; flex-wrap:wrap; gap:5px; margin-top:2px; }
+        .practice-phonics-item { display:inline-flex; align-items:center; gap:4px; padding:3px 7px; border-radius:8px; background:rgba(15,23,42,.78); border:1px solid #475569; font-size:.78rem; font-weight:900; color:#f8fafc; }
+        .practice-phonics-letter { color:#94a3b8; }
+        .practice-phonics-arrow { color:#64748b; }
+        .practice-phonics-sound { color:#f8fafc; }
+        .practice-silent { color:#f87171; text-decoration:line-through; }
+        .practice-rule { width:100%; text-align:center; color:#fbbf24; font-size:.7rem; font-weight:800; margin-top:2px; }
         .practice-syllable { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
         @media screen and (max-width: 600px) {
             #practice-guide { font-size:2.05rem !important; }
@@ -1588,6 +1595,88 @@ ${detail}
         return out;
     }
 
+    /*
+     * 自然發音提示：不是把單字硬翻成中文諧音，而是把「字母／字母群」
+     * 與孩子可以模仿的音值並排顯示。W1-W4 使用明確設定，其餘單字維持原本音節分色。
+     */
+    const PHONICS_HINTS = {
+        dinosaur: { parts:[['di','/daɪ/'],['no','/nə/'],['saur','/sɔːr/']] },
+        million: { parts:[['mil','/mɪl/'],['lion','/jən/']] },
+        street: { parts:[['str','/str/'],['ee','/iː/'],['t','/t/']] },
+        eart: { parts:[['ear','/ɜːr/'],['t','/t/']] },
+        earth: { parts:[['ear','/ɜːr/'],['th','/θ/']] },
+        dance: { parts:[['d','/d/'],['an','/æ/'],['ce','/s/']] },
+        cloud: { parts:[['cl','/kl/'],['ou','/aʊ/'],['d','/d/']] },
+        lake: { parts:[['l','/l/'],['a_e','/eɪ/'],['k','/k/'],['e','不發音',true]], rule:'a_e：magic e 讓 a 發長音，最後 e 不發音' },
+        near: { parts:[['n','/n/'],['ear','/ɪər/']] },
+        valley: { parts:[['val','/væl/'],['ley','/i/']] },
+        yesterday: { parts:[['yes','/jes/'],['ter','/tər/'],['day','/deɪ/']] },
+        camp: { parts:[['c','/k/'],['a','/æ/'],['mp','/mp/']] },
+        map: { parts:[['m','/m/'],['a','/æ/'],['p','/p/']] },
+        eighty: { parts:[['eigh','/eɪ/'],['ty','/ti/']] },
+        fifty: { parts:[['fif','/fɪf/'],['ty','/ti/']] },
+        forty: { parts:[['for','/fɔːr/'],['ty','/ti/']] },
+        star: { parts:[['st','/st/'],['ar','/ɑːr/']] },
+        seventy: { parts:[['sev','/sev/'],['en','/ən/'],['ty','/ti/']] },
+        sixty: { parts:[['six','/sɪks/'],['ty','/ti/']] },
+        thirty: { parts:[['th','/θ/'],['ir','/ɜːr/'],['ty','/ti/']] },
+        twenty: { parts:[['twen','/twen/'],['ty','/ti/']] },
+        hundred: { parts:[['hun','/hʌn/'],['dred','/drəd/']] },
+        ninety: { parts:[['nine','/naɪn/'],['ty','/ti/']] },
+        east: { parts:[['ea','/iː/'],['st','/st/']] },
+        north: { parts:[['nor','/nɔːr/'],['th','/θ/']] },
+        south: { parts:[['sou','/saʊ/'],['th','/θ/']] },
+        west: { parts:[['w','/w/'],['e','/e/'],['st','/st/']] },
+        far: { parts:[['f','/f/'],['ar','/ɑːr/']] },
+        'picnic table': { parts:[['pic','/pɪk/'],['nic','/nɪk/'],['ta','/teɪ/'],['ble','/bəl/']] },
+        'parking lot': { parts:[['park','/pɑːrk/'],['ing','/ɪŋ/'],['lot','/lɑːt/']] },
+        lizard: { parts:[['liz','/lɪz/'],['ard','/ərd/']] },
+        castle: { parts:[['cas','/kæs/'],['t','不發音',true],['le','/əl/']], rule:'castle：t 不發音' },
+        gold: { parts:[['g','/g/'],['o','/oʊ/'],['ld','/ld/']] },
+        gloden: { parts:[['glo','/gloʊ/'],['den','/dən/']] },
+        golden: { parts:[['gold','/goʊld/'],['en','/ən/']] },
+        today: { parts:[['to','/tə/'],['day','/deɪ/']] },
+        american: { parts:[['a','/ə/'],['mer','/mɛr/'],['i','/ɪ/'],['can','/kən/']] },
+        australia: { parts:[['Aus','/ɔː/'],['tra','/streɪ/'],['li','/li/'],['a','/ə/']] },
+        australian: { parts:[['Aus','/ɔː/'],['tra','/streɪ/'],['li','/li/'],['an','/ən/']] },
+        china: { parts:[['Chi','/tʃaɪ/'],['na','/nə/']] },
+        country: { parts:[['coun','/kʌn/'],['try','/tri/']] },
+        egypt: { parts:[['E','/iː/'],['gypt','/dʒɪpt/']] },
+        flag: { parts:[['fl','/fl/'],['a','/æ/'],['g','/g/']] }
+    };
+
+    function renderPracticePhonics(el, text) {
+        const key = String(text || '').toLowerCase();
+        const data = PHONICS_HINTS[key];
+        if (!data) return;
+
+        const row = document.createElement('div');
+        row.className = 'practice-phonics-row';
+        data.parts.forEach(item => {
+            const box = document.createElement('span');
+            box.className = 'practice-phonics-item';
+            const letters = document.createElement('span');
+            letters.className = 'practice-phonics-letter' + (item[2] ? ' practice-silent' : '');
+            letters.textContent = item[0];
+            const arrow = document.createElement('span');
+            arrow.className = 'practice-phonics-arrow';
+            arrow.textContent = '→';
+            const sound = document.createElement('span');
+            sound.className = 'practice-phonics-sound';
+            sound.textContent = item[1];
+            box.append(letters, arrow, sound);
+            row.appendChild(box);
+        });
+        el.appendChild(row);
+
+        if (data.rule) {
+            const rule = document.createElement('div');
+            rule.className = 'practice-rule';
+            rule.textContent = '💡 ' + data.rule;
+            el.appendChild(rule);
+        }
+    }
+
     function renderPracticeGuide(text) {
         const el = document.getElementById('practice-guide');
         if (!el) return;
@@ -1596,7 +1685,7 @@ ${detail}
 
         const note = document.createElement('div');
         note.className = 'practice-phonics-note';
-        note.textContent = '自然發音練習：每個顏色代表一個音節';
+        note.textContent = '自然發音：先看音節，再看字母／字母群怎麼發音';
         el.appendChild(note);
 
         const parts = fallbackSyllables(text);
@@ -1622,6 +1711,8 @@ ${detail}
                 el.appendChild(s);
             }
         });
+
+        renderPracticePhonics(el, text);
     }
 
     function playVoice() {
