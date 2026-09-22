@@ -3,3622 +3,1707 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1421 - Fixed</title>
-
+    <title>Word Hero V1436 - Natural Phonics Syllables</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            --bg:#020617;
-            --card:rgba(30,41,59,.9);
-            --accent:#38bdf8;
-            --success:#4ade80;
-            --danger:#f87171;
-            --gold:#fbbf24;
-            --exp:#eab308;
-        }
+        :root { --bg: #020617; --card: rgba(30, 41, 59, 0.9); --accent: #38bdf8; --success: #4ade80; --danger: #f87171; --gold: #fbbf24; --exp: #eab308; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; background: #020617; color: #fff; font-family: -apple-system, system-ui, sans-serif; overflow: hidden; }
+        .container { width: 100%; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; background: radial-gradient(circle at top, #0f172a, #020617); padding: 4px; }
+        .view-section { display: none; flex-direction: column; flex: 1; padding: 4px; overflow-y: auto; }
 
-        * {
-            box-sizing:border-box;
-            -webkit-tap-highlight-color:transparent;
-            outline:none;
-        }
+        /* 字母框：1px 邊框, Montserrat 800, 置中 */
+        .box-input-container { display:flex; gap:5px; justify-content:center; align-items:center; flex-wrap:wrap; margin:8px auto 12px; max-width:100%; }
+        .letter-box { width:52px; height:72px; border:1px solid var(--accent) !important; border-radius:8px; background:rgba(0,0,0,.85); color:#fff; text-align:center; font-family:'Montserrat',sans-serif !important; font-size:2rem; font-weight:800 !important; line-height:72px; display:inline-block; -webkit-appearance:none; padding:0 !important; box-sizing:border-box; }
+        .word-separator { width:10px; text-align:center; color:var(--accent); font-size:1.2rem; }
+        @media screen and (max-width: 600px) { .letter-box { width: 35px; height: 60px; font-size: 1.6rem; line-height: 60px; } #display-cn { font-size: 2.5rem !important; } }
+        .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
 
-        html,body {
-            height:100%;
-            width:100%;
-            margin:0;
-            padding:0;
-            background:#020617;
-            color:#fff;
-            font-family:-apple-system,system-ui,sans-serif;
-            overflow:hidden;
-        }
+        /* HP 頂部貼齊 */
+        #combat-arena { height: 160px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 12px; position: relative; border: 1px solid #334155; margin-bottom: 5px; flex-shrink: 0; }
+        .hp-container { position:absolute; top:8px; width:132px; height:22px; background:rgba(0,0,0,.82); border:1px solid rgba(255,255,255,.35); border-radius:11px; overflow:hidden; z-index:10; box-shadow:0 2px 6px rgba(0,0,0,.45); }
+        .hp-bar { height:100%; width:100%; background:var(--success); transition:width .35s ease; }
+        .hp-label { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:900; color:#fff; text-shadow:1px 1px 2px #000; z-index:2; pointer-events:none; }
+        #player-hp-box { left:10px; } #opp-hp-box { right:10px; }
 
-        .container {
-            width:100%;
-            height:100dvh;
+        /* EXP 條 */
+        .exp-container { position: absolute; bottom: 5px; left: 10px; width: 120px; height: 14px; background: rgba(0,0,0,0.7); border: 1px solid var(--exp); border-radius: 7px; overflow: hidden; display: flex; align-items: center; }
+        .exp-bar { height: 100%; width: 0%; background: var(--exp); transition: 0.5s ease-out; }
+        .exp-text { position: absolute; width: 100%; text-align: center; font-size: 0.65rem; font-weight: 900; color: #fff; text-shadow: 1px 1px 1px #000; z-index: 2; }
+
+        .sprite { position: absolute; bottom: 22px; width: 85px !important; height: 85px !important; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)); z-index: 5; }
+        #player-sprite { left: 10px; transform: scaleX(-1); } #opp-sprite { right: 10px; }
+
+        .damage-pop { position:absolute; z-index:30; font-size:2rem; font-weight:1000; color:#fff; text-shadow:0 2px 5px #000, 0 0 8px #f87171; pointer-events:none; animation:damageFloat .75s ease-out forwards; }
+        .damage-player { left:22%; top:54px; }
+        .damage-opp { right:22%; top:54px; }
+        .damage-shake { animation:shakeHit .28s ease; }
+        @keyframes damageFloat { 0%{opacity:0;transform:translateY(12px) scale(.6)} 25%{opacity:1;transform:translateY(0) scale(1.25)} 100%{opacity:0;transform:translateY(-38px) scale(1)} }
+        @keyframes shakeHit { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 50%{transform:translateX(7px)} 75%{transform:translateX(-5px)} }
+        .evo-overlay { position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; background:radial-gradient(circle,#fef3c7 0%,#fde68a 12%,rgba(2,6,23,.98) 58%); overflow:hidden; }
+        .evo-overlay.show { display:flex; animation:evoFlash .55s ease; }
+        .evo-card { width:min(92vw,420px); text-align:center; position:relative; }
+        .evo-title { font-size:2.4rem; font-weight:1000; color:#fff; text-shadow:0 0 8px #fbbf24,0 0 22px #f59e0b; animation:evoTitle 1s infinite alternate; }
+        .evo-sub { color:#fde68a; font-weight:900; font-size:1rem; margin:6px 0 12px; }
+        .evo-img { width:190px; height:190px; object-fit:contain; filter:drop-shadow(0 0 18px #fff) drop-shadow(0 0 34px #fbbf24); animation:evoPulse .7s infinite alternate; }
+        .evo-rays { position:absolute; left:50%; top:52%; width:360px; height:360px; transform:translate(-50%,-50%); border:5px solid rgba(255,255,255,.75); border-radius:50%; box-shadow:0 0 30px #fff,0 0 70px #fbbf24, inset 0 0 50px #fff; animation:evoRing 1s linear infinite; }
+        @keyframes evoFlash { 0%{filter:brightness(4)} 100%{filter:brightness(1)} }
+        @keyframes evoTitle { from{transform:scale(1)} to{transform:scale(1.08)} }
+        @keyframes evoPulse { from{transform:scale(.88) rotate(-2deg)} to{transform:scale(1.12) rotate(2deg)} }
+        @keyframes evoRing { from{transform:translate(-50%,-50%) rotate(0) scale(.7);opacity:.95} to{transform:translate(-50%,-50%) rotate(360deg) scale(1.2);opacity:0} }
+
+        /* 按鈕一致性風格 */
+        .game-action-btn { width: 220px; padding: 12px; border-radius: 12px; border: 1px solid #475569; background: rgba(255,255,255,0.08); color: white; font-size: 1.1rem; font-weight: 800; cursor: pointer; margin: 4px auto; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .game-action-btn:active { transform: scale(0.97); }
+        #btn-force-practice { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); display: none; }
+
+        /* 圖鑑網格 4格排列 */
+        .grid-view { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 6px; padding: 4px; }
+        .grid-item { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 8px 2px; text-align: center; border: 1px solid transparent; min-height: 155px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .grid-item img { width: 85px !important; height: 85px !important; object-fit: contain !important; }
+        .grid-item.locked img { filter: grayscale(100%) brightness(.72) !important; opacity:.48; }
+        .grid-item.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.15); }
+
+        #display-cn { font-size: 3.2rem; font-weight: 800; color: var(--gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); vertical-align: middle; }
+
+        /* 練習模式：英文單字依音節分色，並放大字體 */
+        #practice-guide {
             display:flex;
-            flex-direction:column;
-            overflow:hidden;
-            background:radial-gradient(circle at top,#0f172a,#020617);
-            padding:4px;
-        }
-
-        .view-section {
-            display:none;
-            flex-direction:column;
-            flex:1;
-            padding:4px;
-            overflow-y:auto;
-        }
-
-        /* =========================
-           字母框
-        ========================= */
-
-        .box-input-container {
-            display:flex;
-            gap:4px;
             justify-content:center;
+            align-items:center;
             flex-wrap:wrap;
-            margin-bottom:10px;
+            gap:0;
+            min-height:52px !important;
+            height:auto !important;
+            margin:4px 0 8px;
+            font-size:2.35rem !important;
+            line-height:1.15;
+            font-weight:1000 !important;
+            letter-spacing:.02em;
+            text-shadow:2px 2px 5px rgba(0,0,0,.75);
+        }
+        .practice-syllable { display:inline-block; font-weight:1000; }
+        .practice-syllable.color-1 { color:#38bdf8; }
+        .practice-syllable.color-2 { color:#fbbf24; }
+        .practice-syllable.color-3 { color:#4ade80; }
+        .practice-syllable.color-4 { color:#f472b6; }
+        .practice-syllable.color-5 { color:#a78bfa; }
+        .practice-syllable.color-6 { color:#fb923c; }
+        .practice-syllable-separator { color:#94a3b8; font-weight:800; margin:0 .08em; }
+        .practice-phonics-note { display:block; width:100%; text-align:center; color:#94a3b8; font-size:.72rem; font-weight:700; margin-top:2px; }
+        .practice-syllable { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+        @media screen and (max-width: 600px) {
+            #practice-guide { font-size:2.05rem !important; }
         }
 
-        .letter-box {
-            width:58px;
-            height:85px;
-            border:1px solid var(--accent)!important;
-            border-radius:8px;
-            background:rgba(0,0,0,.85);
-            color:#fff;
-            text-align:center;
-            font-family:'Montserrat',sans-serif!important;
-            font-size:2.2rem;
-            font-weight:800!important;
-            line-height:85px;
-            display:inline-block;
-            -webkit-appearance:none;
-            padding:0!important;
+        .pass-btn { background: #475569; color: white; padding: 5px 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; cursor: pointer; border: none; margin-left: 10px; vertical-align: middle; }
+        .mode-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; font-size: 1.2rem; color: white; margin-bottom: 8px; cursor: pointer; }
+
+
+        /* 後台管理 UI：低干擾、灰色、小尺寸 */
+        .admin-btn {
+            width:auto !important;
+            min-width:0;
+            padding:7px 10px !important;
+            margin:0 !important;
+            border-radius:8px !important;
+            background:#475569 !important;
+            color:#e2e8f0 !important;
+            font-size:.78rem !important;
+            font-weight:700 !important;
+            line-height:1.2;
         }
-
-        @media screen and (max-width:600px) {
-            .letter-box {
-                width:35px;
-                height:60px;
-                font-size:1.6rem;
-                line-height:60px;
-            }
-
-            #display-cn {
-                font-size:2.5rem!important;
-            }
-        }
-
-        .letter-box.wrong {
-            border-color:var(--danger)!important;
-            color:var(--danger);
-        }
-
-        /* =========================
-           戰鬥
-        ========================= */
-
-        #combat-arena {
-            height:160px;
-            background:url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover;
-            border-radius:12px;
-            position:relative;
-            border:1px solid #334155;
-            margin-bottom:5px;
-            flex-shrink:0;
-        }
-
-        .hp-container {
-            position:absolute;
-            top:10px;
-            width:100px;
-            height:18px;
-            background:rgba(0,0,0,.8);
-            border:1px solid rgba(255,255,255,.3);
-            border-radius:9px;
-            overflow:hidden;
-            z-index:10;
-        }
-
-        .hp-bar {
-            height:100%;
-            width:100%;
-            background:var(--success);
-            transition:.4s;
-        }
-
-        #player-hp-box {
-            left:10px;
-        }
-
-        #opp-hp-box {
-            right:10px;
-        }
-
-        .exp-container {
-            position:absolute;
-            bottom:5px;
-            left:10px;
-            width:120px;
-            height:14px;
-            background:rgba(0,0,0,.7);
-            border:1px solid var(--exp);
-            border-radius:7px;
-            overflow:hidden;
+        .admin-btn:hover { background:#64748b !important; }
+        .admin-toolbar {
             display:flex;
-            align-items:center;
-        }
-
-        .exp-bar {
-            height:100%;
-            width:0%;
-            background:var(--exp);
-            transition:.5s ease-out;
-        }
-
-        .exp-text {
-            position:absolute;
-            width:100%;
-            text-align:center;
-            font-size:.65rem;
-            font-weight:900;
-            color:#fff;
-            text-shadow:1px 1px 1px #000;
-            z-index:2;
-        }
-
-        .sprite {
-            position:absolute;
-            bottom:22px;
-            width:85px!important;
-            height:85px!important;
-            object-fit:contain;
-            filter:drop-shadow(0 5px 8px rgba(0,0,0,.5));
-            z-index:5;
-        }
-
-        #player-sprite {
-            left:10px;
-            transform:scaleX(-1);
-        }
-
-        #opp-sprite {
-            right:10px;
-        }
-
-        /* =========================
-           按鈕
-        ========================= */
-
-        .game-action-btn {
-            width:220px;
-            padding:12px;
-            border-radius:12px;
-            border:1px solid #475569;
-            background:rgba(255,255,255,.08);
-            color:white;
-            font-size:1.1rem;
-            font-weight:800;
-            cursor:pointer;
-            margin:4px auto;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            transition:.2s;
-        }
-
-        .game-action-btn:active {
-            transform:scale(.97);
-        }
-
-        #btn-force-practice {
-            border-color:var(--accent);
-            background:rgba(56,189,248,.15);
-            display:none;
-        }
-
-        .pass-btn {
-            background:#475569;
-            color:white;
-            padding:5px 12px;
-            border-radius:8px;
-            font-size:.9rem;
-            font-weight:800;
-            cursor:pointer;
-            border:none;
-            margin-left:10px;
-            vertical-align:middle;
-        }
-
-        .mode-btn {
-            width:100%;
-            padding:14px;
-            border-radius:12px;
-            border:none;
-            font-weight:800;
-            font-size:1.2rem;
-            color:white;
-            margin-bottom:8px;
-            cursor:pointer;
-        }
-
-        /* =========================
-           圖鑑 / 夥伴
-        ========================= */
-
-        .grid-view {
-            display:grid!important;
-            grid-template-columns:repeat(4,1fr)!important;
+            flex-wrap:wrap;
             gap:6px;
-            padding:4px;
-        }
-
-        .grid-item {
-            background:rgba(255,255,255,.03);
-            border-radius:10px;
-            padding:8px 2px;
-            text-align:center;
-            border:1px solid transparent;
-            min-height:155px;
-            display:flex;
-            flex-direction:column;
             align-items:center;
-            justify-content:center;
+            margin:6px 0;
         }
-
-        .grid-item img {
-            width:85px!important;
-            height:85px!important;
-            object-fit:contain!important;
+        .bank-source-panel {
+            background:rgba(30,41,59,.75);
+            border:1px solid #475569;
+            border-radius:10px;
+            padding:9px;
+            margin-bottom:8px;
         }
+        .bank-source-title { font-size:.9rem; font-weight:900; color:#e2e8f0; margin-bottom:7px; }
+        .bank-source-buttons { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+        .bank-source-btn { border:1px solid #475569; border-radius:9px; padding:9px 7px; background:#0f172a; color:#cbd5e1; font-weight:800; cursor:pointer; }
+        .bank-source-btn.active { border-color:#38bdf8; background:rgba(56,189,248,.14); color:#fff; }
+        .bank-source-note { margin-top:7px; color:#94a3b8; font-size:.76rem; line-height:1.5; }
+        #txt-file-input { display:none; }
 
-        .grid-item.locked img {
-            filter:grayscale(100%) brightness(.3)!important;
-            opacity:.4;
-        }
-
-        .grid-item.active {
-            border-color:var(--accent);
-            background:rgba(56,189,248,.15);
-        }
-
-        .team-status {
-            margin-top:4px;
-            font-size:.72rem;
-            font-weight:800;
-            color:var(--accent);
-        }
-
-        .caught-badge {
-            background:rgba(74,222,128,.15);
-            color:var(--success);
-            border:1px solid rgba(74,222,128,.35);
-            border-radius:6px;
-            padding:2px 5px;
-            font-size:.65rem;
-            font-weight:800;
-            margin-top:3px;
-        }
-
-        #display-cn {
-            font-size:3.2rem;
-            font-weight:800;
-            color:var(--gold);
-            text-shadow:2px 2px 4px rgba(0,0,0,.8);
-            vertical-align:middle;
-        }
-
-        /* =========================
-           題庫管理
-        ========================= */
-
-        .bank-row {
-            background:rgba(255,255,255,.04);
+        .admin-panel {
+            background:#111827;
             border:1px solid #334155;
             border-radius:10px;
             padding:9px;
-            margin-bottom:6px;
+            margin-bottom:8px;
         }
-
-        .bank-row-main {
-            display:flex;
-            justify-content:space-between;
-            gap:8px;
-            align-items:center;
-        }
-
-        .bank-word {
+        .admin-title {
+            font-size:1rem;
             font-weight:800;
-            font-size:1.05rem;
-            word-break:break-word;
+            color:#cbd5e1;
+            margin:4px 0 8px;
+        }
+        .admin-subtitle {
+            font-size:.72rem;
+            color:#94a3b8;
+            margin:0 0 7px;
+        }
+        .admin-input, .admin-select {
+            padding:8px 9px !important;
+            border-radius:8px !important;
+            font-size:.85rem !important;
         }
 
-        .bank-cn {
-            color:var(--gold);
-            margin-top:3px;
-        }
-
-        .bank-ref {
-            color:#64748b;
-            font-size:.7rem;
-            margin-top:3px;
-        }
-
-        .bank-action {
-            display:flex;
-            gap:5px;
-            flex-shrink:0;
-        }
-
-        .bank-action button {
-            border:0;
-            border-radius:7px;
-            padding:6px 9px;
-            color:white;
-            font-weight:800;
-            cursor:pointer;
-        }
-
-        .bank-edit {
-            background:#2563eb;
-        }
-
-        .bank-delete {
-            background:#dc2626;
-        }
+        /* 題庫管理 */
+        .bank-row { background:rgba(255,255,255,0.04); border:1px solid #334155; border-radius:10px; padding:9px; margin-bottom:6px; }
+        .bank-row-main { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+        .bank-word { font-weight:800; font-size:1.05rem; word-break:break-word; }
+        .bank-cn { color:var(--gold); margin-top:3px; }
+        .bank-ref { color:#64748b; font-size:.7rem; margin-top:3px; }
+        .bank-action { display:flex; gap:5px; flex-shrink:0; }
+        .bank-action button { border:0; border-radius:7px; padding:6px 9px; color:white; font-weight:800; cursor:pointer; }
+        .bank-edit { background:#2563eb; }
+        .bank-delete { background:#dc2626; }
+        .team-status { margin-top:4px; font-size:.72rem; font-weight:800; color:var(--accent); }
+        .grid-item.defeated { opacity:.42; filter:grayscale(.7); cursor:not-allowed !important; border-color:#64748b !important; }
+        .grid-item.defeated .team-status { color:var(--danger); }
+        .caught-badge { background:rgba(74,222,128,.15); color:var(--success); border:1px solid rgba(74,222,128,.35); border-radius:6px; padding:2px 5px; font-size:.65rem; font-weight:800; }
     </style>
 </head>
-
 <body onload="initSystem()">
 
-<div class="container">
-
-    <!-- =========================
-         主畫面
-    ========================= -->
-
-    <div id="view-main" class="view-section" style="display:flex;">
-
-        <h2 style="text-align:center;color:var(--accent);margin:8px 0;">
-            ANSON MASTER
-        </h2>
-
-        <div style="flex:1;">
-
-            <select id="unit-selector"
-                style="width:100%;padding:14px;border-radius:12px;background:#1e293b;color:var(--gold);border:1px solid #334155;font-weight:800;font-size:1.3rem;margin-bottom:10px;">
-            </select>
-
-            <button class="mode-btn"
-                style="background:linear-gradient(45deg,#ef4444,#f59e0b);"
-                onclick="startSession('quiz')">
-                🗡️ 魔王挑戰 (敗北扣級)
-            </button>
-
-            <button class="mode-btn"
-                style="background:#3b82f6;"
-                onclick="startSession('practice')">
-                🛡️ 練習模式
-            </button>
-
-            <button class="mode-btn"
-                style="background:var(--gold);color:#000;"
-                onclick="startPrioritySession()">
-                ★ 星號練習 (不扣血)
-            </button>
-
-            <button class="mode-btn"
-                style="background:#7c3aed;"
-                onclick="switchView('view-bank')">
-                📚 題庫管理
-            </button>
-
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-
-            <button class="mode-btn"
-                style="background:#475569;"
-                onclick="switchView('view-team')">
-                🐲 我的夥伴
-            </button>
-
-            <button class="mode-btn"
-                style="background:#475569;"
-                onclick="switchView('view-pokedex')">
-                📸 寶可夢圖鑑
-            </button>
-
-        </div>
-
+<div id="evolution-overlay" class="evo-overlay" aria-hidden="true">
+    <div class="evo-card">
+        <div class="evo-rays"></div>
+        <div class="evo-title">✨ EVOLUTION! ✨</div>
+        <div id="evo-sub" class="evo-sub"></div>
+        <img id="evo-img" class="evo-img" src="" alt="進化後夥伴">
+        <div id="evo-name" style="font-size:1.7rem;font-weight:1000;color:#fff;text-shadow:0 0 10px #fbbf24;"></div>
     </div>
+</div>
 
-
-    <!-- =========================
-         遊戲
-    ========================= -->
+<div class="container">
+    <div id="view-main" class="view-section" style="display:flex;">
+        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">WORD HERO V1436</h2>
+        <div style="text-align:center;color:#94a3b8;font-size:.9rem;margin-bottom:8px;">使用者：<span id="main-child-name"></span></div>
+        <div style="flex:1;">
+            <select id="unit-selector" style="width:100%; padding:14px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.3rem; margin-bottom:10px;"></select>
+            <button class="mode-btn" style="background:linear-gradient(45deg,#ef4444,#f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (敗北扣級)</button>
+            <button class="mode-btn" style="background:#3b82f6;" onclick="startSession('practice')">🛡️ 練習模式</button>
+            <button class="mode-btn" style="background:var(--gold);color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
+            <button class="mode-btn admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
+            <button class="mode-btn admin-btn" onclick="downloadErrorLog()">📝 錯題 Log</button>
+            <button class="mode-btn admin-btn" onclick="downloadChildProgress()">📦 夥伴／圖鑑進度</button>
+            <button class="mode-btn admin-btn" onclick="switchUser()">👤 切換使用者</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 我的夥伴</button>
+            <button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 寶可夢圖鑑</button>
+        </div>
+    </div>
 
     <div id="view-game" class="view-section">
-
-        <div style="display:flex;justify-content:space-between;">
-
-            <button class="mode-btn"
-                style="width:auto;padding:6px 12px;background:#334155;font-size:.8rem;"
-                onclick="switchView('view-main')">
-                🏠 撤退
-            </button>
-
-        </div>
-
+        <div style="display:flex; justify-content:space-between;"><button class="mode-btn" style="width:auto; padding:6px 12px; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 撤退</button></div>
         <div id="combat-arena">
-
-            <div id="player-hp-box" class="hp-container">
-                <div id="player-hp-bar" class="hp-bar"></div>
-            </div>
-
-            <img id="player-sprite"
-                class="sprite"
-                src="">
-
-            <div id="player-exp-box"
-                class="exp-container">
-
-                <div id="player-exp-bar"
-                    class="exp-bar">
-                </div>
-
-                <div id="player-exp-text"
-                    class="exp-text">
-                </div>
-
-            </div>
-
-            <div id="opp-hp-box"
-                class="hp-container">
-
-                <div id="opp-hp-bar"
-                    class="hp-bar"
-                    style="background:var(--danger);">
-                </div>
-
-            </div>
-
-            <img id="opp-sprite"
-                class="sprite"
-                src="">
-
+            <div id="player-hp-box" class="hp-container"><div id="player-hp-bar" class="hp-bar"></div><div id="player-hp-label" class="hp-label">HP 5/5</div></div>
+            <img id="player-sprite" class="sprite" src="">
+            <div id="player-exp-box" class="exp-container"><div id="player-exp-bar" class="exp-bar"></div><div id="player-exp-text" class="exp-text"></div></div>
+            <div id="opp-hp-box" class="hp-container"><div id="opp-hp-bar" class="hp-bar" style="background:var(--danger);"></div><div id="opp-hp-label" class="hp-label">HP 5/5</div></div>
+            <img id="opp-sprite" class="sprite" src="">
         </div>
-
-        <div style="text-align:center;min-height:65px;">
-
+        <div style="text-align:center; min-height:65px;">
             <span id="display-cn">...</span>
-
-            <span id="star-icon"
-                style="font-size:2.5rem;cursor:pointer;color:#475569;margin-left:12px;vertical-align:middle;"
-                onclick="toggleStar()">
-                ☆
-            </span>
-
-            <button id="btn-pass"
-                class="pass-btn"
-                onclick="handlePass()">
-                PASS
-            </button>
-
+            <span id="star-icon" style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px; vertical-align:middle;" onclick="toggleStar()">☆</span>
+            <button id="btn-pass" class="pass-btn" onclick="handlePass()">PASS</button>
         </div>
-
-        <div id="practice-guide"
-            style="text-align:center;color:var(--accent);font-weight:700;font-size:1.5rem;height:25px;">
+        <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:25px;"></div>
+        <div id="letter-area" class="box-input-container"></div>
+        
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <button id="btn-voice" class="game-action-btn" onclick="playVoice()">🔊 再唸一次</button>
+            <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
         </div>
-
-        <div id="letter-area"
-            class="box-input-container">
-        </div>
-
-        <div style="display:flex;flex-direction:column;align-items:center;">
-
-            <button id="btn-voice"
-                class="game-action-btn"
-                onclick="playVoice()">
-                🔊 再唸一次
-            </button>
-
-            <button id="btn-force-practice"
-                class="game-action-btn"
-                onclick="startInGamePractice()">
-                🛡️ 進入練習
-            </button>
-
-        </div>
-
     </div>
 
-
-    <!-- =========================
-         我的夥伴
-    ========================= -->
-
-    <div id="view-team"
-        class="view-section">
-
-        <h2 style="text-align:center;margin:8px 0;">
-            🐲 我的夥伴
-        </h2>
-
-        <div style="text-align:center;color:#94a3b8;font-size:.85rem;margin-bottom:8px;">
-            點擊已捕捉的寶可夢，即可設為下一場的出戰夥伴。
-        </div>
-
-        <div id="current-team-name"
-            style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;">
-        </div>
-
-        <div class="grid-view"
-            id="team-grid">
-        </div>
-
-        <button class="mode-btn"
-            style="background:#3b82f6;"
-            onclick="switchView('view-main')">
-            確認出戰夥伴
-        </button>
-
+    <div id="view-team" class="view-section">
+        <h2 style="text-align:center;margin:8px 0;">🐲 我的夥伴</h2><div style="font-size:.9rem;color:#94a3b8;margin-bottom:8px;">小朋友：<span id="team-child-name"></span></div>
+        <div style="text-align:center;color:#94a3b8;font-size:.85rem;margin-bottom:8px;">點擊已捕捉的寶可夢，即可設為下一場的出戰夥伴。</div>
+        <div id="current-team-name" style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;"></div>
+        <div class="grid-view" id="team-grid"></div>
+        <button class="mode-btn" style="background:#3b82f6;" onclick="switchView('view-main')">確認出戰夥伴</button>
     </div>
 
-
-    <!-- =========================
-         寶可夢圖鑑
-    ========================= -->
-
-    <div id="view-pokedex"
-        class="view-section">
-
-        <h2 style="text-align:center;margin:8px 0;">
-            📸 寶可夢圖鑑
-        </h2>
-
-        <div id="dex-count"
-            style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;">
-        </div>
-
-        <div class="grid-view"
-            id="dex-grid">
-        </div>
-
-        <button class="mode-btn"
-            style="background:#475569;"
-            onclick="switchView('view-main')">
-            返回
-        </button>
-
+    <div id="view-pokedex" class="view-section">
+        <h2 style="text-align:center;margin:8px 0;">📸 寶可夢圖鑑</h2><div style="font-size:.9rem;color:#94a3b8;margin-bottom:8px;">小朋友：<span id="dex-child-name"></span></div>
+        <div id="dex-count" style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;"></div>
+        <div class="grid-view" id="dex-grid"></div>
+        <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button>
     </div>
 
+    <div id="view-bank" class="view-section">
+        <h2 style="text-align:center;margin:8px 0;">📚 題庫管理</h2>
+        <div id="bank-storage-info" style="background:rgba(124,58,237,.12);border:1px solid #7c3aed;border-radius:10px;padding:8px;margin-bottom:8px;font-size:.82rem;color:#c4b5fd;">題庫儲存方式載入中……</div>
 
-    <!-- =========================
-         題庫管理
-    ========================= -->
-
-    <div id="view-bank"
-        class="view-section">
-
-        <h2 style="text-align:center;margin:8px 0;">
-            📚 題庫管理
-        </h2>
-
-        <div style="background:rgba(124,58,237,.12);border:1px solid #7c3aed;border-radius:10px;padding:8px;margin-bottom:8px;font-size:.82rem;color:#c4b5fd;">
-
-            新增、編輯、刪除會保存在這台裝置的瀏覽器。
-            本機修改不會直接改寫 Google Sheet。
-
+        <div class="bank-source-panel">
+            <div class="bank-source-title">📚 選擇題庫方式</div>
+            <div class="bank-source-buttons">
+                <button id="bank-source-text" class="bank-source-btn" onclick="useTextQuestionBank()">📄 文字題庫</button>
+                <button id="bank-source-custom" class="bank-source-btn" onclick="useCustomQuestionBank()">✏️ 自行變更題庫</button>
+            </div>
+            <div id="bank-source-note" class="bank-source-note"></div>
+            <input id="txt-file-input" type="file" accept=".txt,text/plain" onchange="handleTxtFile(event)">
         </div>
 
         <div style="display:flex;gap:6px;margin-bottom:8px;">
+            <select id="bank-manage-unit" onchange="renderBankManager()" style="flex:1;padding:10px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
+            <button class="pass-btn" style="margin-left:0;background:#7c3aed;" onclick="addBankUnit()">＋單元</button>
+        </div>
+        <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManager()" style="width:100%;padding:11px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;margin-bottom:8px;">
 
-            <select id="bank-manage-unit"
-                onchange="renderBankManager()"
-                style="flex:1;padding:10px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;">
-            </select>
+        <div class="admin-panel">
+            <div class="admin-title">📋 一次輸入多個單字</div>
+            <div class="admin-subtitle">
+                一行一個單字。先按「檢查單字」，確認拼字正確後，才能送出。
+            </div>
+            <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
 
-            <button class="pass-btn"
-                style="margin-left:0;background:#7c3aed;"
-                onclick="addBankUnit()">
-                ＋單元
-            </button>
+            <button class="mode-btn" style="background:#f59e0b;margin:7px 0 0 0;" onclick="validateBulkWords()">🔎 檢查單字</button>
 
+            <div id="bulk-check-result" style="display:none;margin-top:8px;padding:9px;border-radius:9px;background:#0f172a;font-size:.85rem;line-height:1.7;"></div>
+
+            <label id="bulk-confirm-wrap" style="display:none;align-items:center;gap:8px;margin-top:8px;color:#e2e8f0;font-size:.88rem;">
+                <input id="bulk-confirm" type="checkbox" onchange="updateBulkSubmitState()" style="width:18px;height:18px;">
+                我已確認上面的單字拼字正確
+            </label>
+
+            <button id="bulk-submit" class="mode-btn" disabled style="background:#334155;margin:7px 0 0 0;opacity:.55;" onclick="addBulkWords()">💾 儲存到本機題庫</button>
         </div>
 
-        <input id="bank-search"
-            type="search"
-            placeholder="🔍 搜尋英文或中文"
-            oninput="renderBankManager()"
-            style="width:100%;padding:11px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;margin-bottom:8px;">
-
-        <div id="bank-list"
-            style="flex:1;overflow-y:auto;">
-        </div>
-
+        <div id="bank-list" style="flex:1;overflow-y:auto;"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-
-            <button class="mode-btn"
-                style="background:#16a34a;margin:0;"
-                onclick="openQuestionEditor()">
-                ＋新增題目
-            </button>
-
-            <button class="mode-btn"
-                style="background:#0ea5e9;margin:0;"
-                onclick="exportQuestionCSV()">
-                📤匯出題庫
-            </button>
-
+            <button class="mode-btn admin-btn" onclick="openQuestionEditor()">＋單個新增</button>
+            <button class="mode-btn admin-btn" onclick="exportQuestionCSV()">📤匯出題庫</button>
         </div>
-
-        <button class="mode-btn"
-            style="background:#475569;margin-top:8px;"
-            onclick="switchView('view-main')">
-            返回
-        </button>
-
+        <button class="mode-btn admin-btn" style="margin-top:8px;" onclick="switchView('view-main')">返回主畫面</button>
     </div>
 
-
-    <!-- =========================
-         題目編輯
-    ========================= -->
-
-    <div id="view-question-editor"
-        class="view-section">
-
-        <h2 id="question-editor-title"
-            style="text-align:center;margin:8px 0;">
-            ＋新增題目
-        </h2>
-
-        <label style="margin-top:8px;color:#94a3b8;">
-            單元
-        </label>
-
-        <select id="question-unit"
-            style="width:100%;padding:12px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;">
-        </select>
-
-        <label style="margin-top:12px;color:#94a3b8;">
-            English
-        </label>
-
-        <input id="question-en"
-            autocomplete="off"
-            style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
-
-        <label style="margin-top:12px;color:#94a3b8;">
-            中文
-        </label>
-
-        <input id="question-cn"
-            autocomplete="off"
-            style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
-
+    <div id="view-question-editor" class="view-section">
+        <h2 id="question-editor-title" style="text-align:center;margin:8px 0;">＋新增題目</h2>
+        <label style="margin-top:8px;color:#94a3b8;">單元</label>
+        <select id="question-unit" style="width:100%;padding:12px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
+        <label style="margin-top:12px;color:#94a3b8;">English</label>
+        <input id="question-en" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
+        <label style="margin-top:12px;color:#94a3b8;">中文</label>
+        <input id="question-cn" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
         <div style="flex:1;"></div>
-
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-
-            <button class="mode-btn"
-                style="background:#475569;"
-                onclick="switchView('view-bank')">
-                取消
-            </button>
-
-            <button class="mode-btn"
-                style="background:#16a34a;"
-                onclick="saveQuestion()">
-                儲存
-            </button>
-
+            <button class="mode-btn admin-btn" onclick="switchView('view-bank')">取消</button>
+            <button class="mode-btn admin-btn" onclick="saveQuestion()">儲存</button>
         </div>
-
     </div>
-
 </div>
 
-
 <script>
+    const ANSON_USER = 'anson';
+    const ANSON_TXT_URL = './vocab/Anson.txt';
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    const localDict = { "bell":"鈴","busy":"忙碌","first name":"名字","last name":"姓氏","bus driver":"公車司機","market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末","birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎","bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船","transportation":"交通工具","town":"城鎮","wheel":"輪子" };
+    const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
+    const DEFAULTS = [384, 150, 992];
 
-const SS_ID =
-'1NOCryDyDFHTrZYIynihKJajUcVsCMJUcuMUozDEnsUs';
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1, quizCompleted: 0, awaitingPartner: false };
+    let editingQuestionRef = null;
+    let currentUserName = '';
+    let currentUserKey = '';
+    let isAnsonUser = false;
+    let bankSourceMode = 'custom'; // text = 文字題庫；custom = 自行變更題庫
 
+    function normalizeUserKey(name) {
+        return encodeURIComponent(String(name || '').trim().toLowerCase());
+    }
+    function scopedKey(key) {
+        if (!currentUserKey) return `wordhero_pending_${key}`;
+        return `wordhero_${currentUserKey}_${key}`;
+    }
+    function setHeroData(n, v) { localStorage.setItem(scopedKey(n), String(v)); }
+    function getHeroData(n) { return localStorage.getItem(scopedKey(n)); }
+    async function fetchTranslation(t) { try { const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(t)}`); const d = await r.json(); return d[0][0][0]; } catch (e) { return ""; } }
 
-const PK_NAMES = {
-
-    1:"妙蛙種子",
-    2:"妙蛙草",
-    3:"妙蛙花",
-
-    4:"小火龍",
-    5:"火恐龍",
-    6:"噴火龍",
-
-    7:"傑尼龜",
-    8:"卡咪龜",
-    9:"水箭龜",
-
-    10:"綠毛蟲",
-    11:"鐵甲蛹",
-    12:"巴大蝶",
-
-    25:"皮卡丘",
-    26:"雷丘",
-
-    150:"超夢",
-    151:"夢幻",
-
-    384:"烈空坐",
-    992:"鐵臂膀",
-
-    10079:"超級烈空坐",
-    10044:"超級超夢Y"
-
-};
-
-
-const localDict = {
-
-    "bell":"鈴",
-    "busy":"忙碌",
-    "first name":"名字",
-    "last name":"姓氏",
-    "bus driver":"公車司機",
-    "market":"市場",
-    "money":"錢",
-    "poor":"窮",
-    "sell":"賣",
-    "tub":"澡盆",
-    "splash":"濺水",
-    "funny-looking":"滑稽",
-    "holler":"大喊",
-    "a couple of":"一些",
-    "mustard":"芥末",
-    "birthday":"生日",
-    "call":"打電話",
-    "peanut butter":"花生醬",
-    "slug":"蛞蝓",
-    "knock over":"撞倒",
-    "wrestle":"摔跤",
-    "shake head":"搖頭",
-    "shook head":"搖頭",
-    "sigh":"嘆氣",
-    "attack":"攻擊",
-    "tire":"輪胎",
-    "bicycle":"腳踏車",
-    "bus":"公車",
-    "train":"火車",
-    "by bus":"搭公車",
-    "by car":"搭車",
-    "by train":"搭火車",
-    "motorcycle":"機車",
-    "on foot":"走路",
-    "sailing ship":"帆船",
-    "transportation":"交通工具",
-    "town":"城鎮",
-    "wheel":"輪子"
-
-};
-
-
-const CHAINS = [
-
-    [1,2,3],
-    [4,5,6],
-    [7,8,9],
-    [10,11,12],
-    [25,26],
-    [147,148,149]
-
-];
-
-
-const DEFAULTS = [
-
-    384,
-    150,
-    992
-
-];
-
-
-let state = {
-
-    banks:{},
-
-    currentList:[],
-
-    index:0,
-
-    mode:'quiz',
-
-    tempPractice:false,
-
-    activePokeId:384,
-
-    pokedex:"0".repeat(151),
-
-    playerHP:5,
-
-    oppHP:5,
-
-    currentOppId:1
-
-};
-
-
-let editingQuestionRef = null;
-
-
-/* =========================
-   基本資料
-========================= */
-
-function setHeroData(n,v) {
-
-    localStorage.setItem(n,v);
-
-    document.cookie =
-        `${n}=${v};path=/;SameSite=Lax`;
-
-}
-
-
-function getHeroData(n) {
-
-    const v =
-        `; ${document.cookie}`;
-
-    const p =
-        v.split(`; ${n}=`);
-
-    return p.length === 2
-        ?
-        p.pop().split(';').shift()
-        :
-        localStorage.getItem(n);
-
-}
-
-
-/* =========================
-   LocalStorage JSON
-========================= */
-
-function getLocalJSON(key,fallback) {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem(key) ||
-            JSON.stringify(fallback)
-        );
-
-    } catch(e) {
-
-        return fallback;
-
+    function getLocalJSON(key, fallback) {
+        try { return JSON.parse(localStorage.getItem(scopedKey(key)) || JSON.stringify(fallback)); }
+        catch (e) { return fallback; }
+    }
+    function setLocalJSON(key, value) { localStorage.setItem(scopedKey(key), JSON.stringify(value)); }
+    function getChildName() {
+        return currentUserName || localStorage.getItem('wordhero_active_user') || '';
     }
 
-}
+    function migrateLegacyUserData() {
+        if (!currentUserKey) return;
+        const keys = ['hero_pokedex_bits','hero_myPoke','hero_priority','hero_error_log','hero_custom_units','hero_custom_questions','hero_question_edits','hero_deleted_question_refs','hero_question_bank'];
+        keys.forEach(key => {
+            const target = scopedKey(key);
+            if (localStorage.getItem(target) !== null) return;
+            const legacy = localStorage.getItem(key);
+            if (legacy !== null) localStorage.setItem(target, legacy);
+        });
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('exp_id_')) {
+                const target = scopedKey(key);
+                if (localStorage.getItem(target) === null) localStorage.setItem(target, localStorage.getItem(key));
+            }
+        }
+    }
 
+    function safeFileName(name) {
+        return String(name || 'WordHero')
+            .trim()
+            .replace(/[\\/:*?"<>|]/g, '_')
+            .replace(/\s+/g, '_') || 'WordHero';
+    }
 
-function setLocalJSON(key,value) {
+    function ensureChildName() {
+        let name = getChildName();
+        if (!name) {
+            while (!name) {
+                name = prompt('第一次使用 Word Hero，請輸入小朋友的名字：');
+                if (name === null) name = '';
+                else name = name.trim();
+            }
+        }
+        currentUserName = name;
+        currentUserKey = normalizeUserKey(name);
+        isAnsonUser = name.trim().toLowerCase() === ANSON_USER;
+        localStorage.setItem('wordhero_active_user', name);
+        migrateLegacyUserData();
+        return name;
+    }
 
-    localStorage.setItem(
-        key,
-        JSON.stringify(value)
-    );
+    function switchUser() {
+        const name = prompt('請輸入要切換的使用者名稱：', getChildName());
+        if (name === null) return;
+        const trimmed = name.trim();
+        if (!trimmed) return alert('使用者名稱不能空白。');
+        if (trimmed === getChildName()) return;
+        localStorage.setItem('wordhero_active_user', trimmed);
+        location.reload();
+    }
 
-}
+    function getErrorLog() {
+        return getLocalJSON('hero_error_log', []);
+    }
 
+    function addErrorLog(word, typed) {
+        const now = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const item = {
+            child: getChildName(),
+            date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
+            time: `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
+            unit: state.unit || '',
+            correct: word.en,
+            typed: typed
+        };
+        const log = getErrorLog();
+        log.push(item);
+        setLocalJSON('hero_error_log', log);
+    }
 
-function escapeHtml(v) {
+    // 所有下載功能都只能由使用者點擊按鈕觸發；初始化時絕不自動下載檔案。
+    function downloadChildProgress() {
+        const childName = getChildName();
+        const caught = [];
+        for (let i = 0; i < state.pokedex.length; i++) {
+            if (state.pokedex[i] === "1") caught.push(i + 1);
+        }
 
-    return String(v ?? '')
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;')
-        .replace(/'/g,'&#039;');
+        const partnerIds = [384, 150, 992].concat(caught);
+        const uniquePartners = [...new Set(partnerIds)];
+        const active = state.activePokeId;
 
-}
+        const lines = [
+            `${childName}｜WORD HERO 夥伴與圖鑑進度`,
+            '================================',
+            '',
+            '【目前出戰夥伴】',
+            `${PK_NAMES[active] || '寶可夢 #' + active}（ID: ${active}）`,
+            '',
+            '【夥伴】',
+            uniquePartners.map(id => `${id}. ${PK_NAMES[id] || '未知寶可夢'}`).join('\n') || '尚無',
+            '',
+            '【寶可夢圖鑑】',
+            `已收服：${caught.length} / 151`,
+            `尚未收服：${151 - caught.length} / 151`,
+            '',
+            '已收服寶可夢：',
+            caught.map(id => `${id}. ${PK_NAMES[id] || '未知寶可夢'}`).join('\n') || '尚無'
+        ];
 
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeFileName(childName)}_夥伴與寶可夢圖鑑.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
 
-/* =========================
-   題庫本機修改套用
-========================= */
+    function downloadErrorLog() {
+        const log = getErrorLog();
 
-function applyLocalQuestionChanges() {
+        if (!log.length) {
+            return alert('目前還沒有錯題 Log。');
+        }
 
-    const units =
-        getLocalJSON(
-            'hero_custom_units',
-            []
-        );
+        const counts = {};
+        log.forEach(item => {
+            const key = item.correct;
+            counts[key] = (counts[key] || 0) + 1;
+        });
 
-    const custom =
-        getLocalJSON(
-            'hero_custom_questions',
-            []
-        );
+        const common = Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([word, count]) => `${word}：${count} 次`)
+            .join('\n');
 
-    const edits =
-        getLocalJSON(
-            'hero_question_edits',
-            {}
-        );
+        const detail = log.map(item =>
+            `${item.date} ${item.time} | ${item.unit} | 正確：${item.correct} | 輸入：${item.typed}`
+        ).join('\n');
 
-    const deleted =
-        new Set(
-            getLocalJSON(
-                'hero_deleted_question_refs',
-                []
-            )
-        );
+        const childName = getChildName();
+        const content =
+`${childName}｜WORD HERO 錯題 LOG
+====================
 
+【常錯單字統計】
+${common}
 
-    units.forEach(
-        u => {
+【錯題紀錄】
+日期 時間 | 單元 | 正確單字 | 輸入錯誤
+${detail}
+`;
 
-            if(!state.banks[u]) {
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeFileName(childName)}_錯題Log.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
 
-                state.banks[u] = [];
+    function escapeHtml(v) {
+        return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+    function cloneBanks(banks) {
+        return JSON.parse(JSON.stringify(banks || {}));
+    }
 
+    function getFixedBanks() {
+        return {
+            'W1': [
+                ['dinosaur','恐龍'],
+                ['million','百萬'],
+                ['street','街道'],
+                ['Eart','地球'],
+                ['dance','跳舞'],
+                ['cloud','雲'],
+                ['lake','湖'],
+                ['near','附近'],
+                ['valley','山谷'],
+                ['yesterday','昨天']
+            ],
+            'W2': [
+                ['camp','營地'],
+                ['map','地圖'],
+                ['eighty','八十'],
+                ['fifty','五十'],
+                ['forty','四十'],
+                ['star','星星'],
+                ['seventy','七十'],
+                ['sixty','六十'],
+                ['thirty','三十'],
+                ['twenty','二十']
+            ],
+            'W3': [
+                ['hundred','一百'],
+                ['ninety','九十'],
+                ['east','東方'],
+                ['north','北方'],
+                ['south','南方'],
+                ['west','西方'],
+                ['far','遠的'],
+                ['picnic table','野餐桌'],
+                ['parking lot','停車場'],
+                ['lizard','蜥蜴']
+            ],
+            'W4': [
+                ['castle','城堡'],
+                ['gold','黃金'],
+                ['gloden','金色的'],
+                ['today','今天'],
+                ['American','美國的'],
+                ['Australia','澳洲'],
+                ['Australian','澳洲的'],
+                ['China','中國'],
+                ['country','國家'],
+                ['Egypt','埃及'],
+                ['flag','國旗']
+            ]
+        };
+    }
+
+    function banksFromPairs(pairs) {
+        const banks = {};
+        Object.keys(pairs).forEach(unit => {
+            banks[unit] = pairs[unit].map((item, idx) => ({
+                en: item[0],
+                cn: item[1],
+                ref: `FIXED_${unit}_${idx + 1}`
+            }));
+        });
+        return banks;
+    }
+
+    function setBankSourceMode(mode) {
+        bankSourceMode = mode === 'text' ? 'text' : 'custom';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        updateBankSourceUI();
+    }
+
+    function updateBankSourceUI() {
+        const textBtn = document.getElementById('bank-source-text');
+        const customBtn = document.getElementById('bank-source-custom');
+        const note = document.getElementById('bank-source-note');
+        if (textBtn) textBtn.classList.toggle('active', bankSourceMode === 'text');
+        if (customBtn) customBtn.classList.toggle('active', bankSourceMode === 'custom');
+        if (!note) return;
+
+        if (bankSourceMode === 'text') {
+            if (isAnsonUser) {
+                note.innerHTML = '目前使用：<b>vocab/Anson.txt</b>。文字檔是基準題庫；若要自己新增、刪除或修改，請切換到「自行變更題庫」。';
+            } else {
+                const imported = getLocalJSON('hero_text_bank', null);
+                note.innerHTML = imported
+                    ? '目前使用這位使用者上次匯入的 TXT 文字題庫。需要修改內容時，請切換到「自行變更題庫」。'
+                    : '尚未匯入 TXT。按「文字題庫」後可選擇自己的 .txt 單字庫。';
+            }
+        } else {
+            note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除都只會影響這位使用者。`;
+        }
+    }
+
+    async function useTextQuestionBank() {
+        if (isAnsonUser) {
+            bankSourceMode = 'text';
+            setHeroData('hero_bank_source_mode', bankSourceMode);
+            await loadAnsonTxtQuestionBank();
+            refreshUnitSelectors();
+            updateBankSourceUI();
+            renderBankManager();
+            alert('📄 已切換到 Anson.txt 文字題庫。\n\n若要自己修改題目，請再切換「自行變更題庫」。');
+            return;
+        }
+
+        const savedText = getLocalJSON('hero_text_bank', null);
+        if (savedText && Object.keys(savedText).length) {
+            state.banks = cloneBanks(savedText);
+            bankSourceMode = 'text';
+            setHeroData('hero_bank_source_mode', bankSourceMode);
+            refreshUnitSelectors();
+            updateBankSourceUI();
+            renderBankManager();
+            return;
+        }
+
+        const input = document.getElementById('txt-file-input');
+        if (input) {
+            input.value = '';
+            input.click();
+        }
+    }
+
+    function handleTxtFile(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const parsed = parseAnsonTxt(String(reader.result || ''));
+                if (!Object.keys(parsed).length || !Object.values(parsed).some(arr => arr.length)) {
+                    alert('TXT 裡沒有讀到單字。\n\n格式請使用：\n[W1]\ndinosaur,恐龍\nmillion,百萬');
+                    return;
+                }
+                setLocalJSON('hero_text_bank', parsed);
+                state.banks = cloneBanks(parsed);
+                bankSourceMode = 'text';
+                setHeroData('hero_bank_source_mode', bankSourceMode);
+                refreshUnitSelectors();
+                updateBankSourceUI();
+                renderBankManager();
+                alert(`📄 已載入「${file.name}」文字題庫。\n\n這個 TXT 會保存在「${getChildName()}」的本機資料，不會影響其他使用者。`);
+            } catch (e) {
+                alert('TXT 讀取失敗，請確認檔案格式。');
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function useCustomQuestionBank() {
+        if (bankSourceMode === 'custom') {
+            updateBankSourceUI();
+            renderBankManager();
+            return;
+        }
+
+        // 以目前文字題庫複製一份，作為可自由修改的本機題庫。
+        const copied = cloneBanks(state.banks);
+        state.banks = copied;
+        setLocalJSON('hero_question_bank', copied);
+        bankSourceMode = 'custom';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        refreshUnitSelectors();
+        updateBankSourceUI();
+        renderBankManager();
+        alert('✏️ 已切換到「自行變更題庫」。\n\n現在新增、編輯、刪除單字，都只會修改這位使用者的本機題庫。');
+    }
+
+    function saveUserQuestionBank() {
+        if (!currentUserKey || bankSourceMode !== 'custom') return;
+        setLocalJSON('hero_question_bank', state.banks);
+    }
+
+    function applyLocalQuestionChanges() {
+        const units = getLocalJSON('hero_custom_units', []);
+        const custom = getLocalJSON('hero_custom_questions', []);
+        const edits = getLocalJSON('hero_question_edits', {});
+        const deleted = new Set(getLocalJSON('hero_deleted_question_refs', []));
+        const nextBanks = {};
+
+        units.forEach(u => { nextBanks[u] = nextBanks[u] || []; });
+
+        Object.keys(state.banks).forEach(sourceUnit => {
+            (state.banks[sourceUnit] || []).forEach(w => {
+                if (deleted.has(w.ref)) return;
+                const merged = edits[w.ref] ? {...w, ...edits[w.ref]} : {...w};
+                const targetUnit = String(merged.unit || sourceUnit).trim() || sourceUnit;
+                delete merged.unit;
+                if (!nextBanks[targetUnit]) nextBanks[targetUnit] = [];
+                if (!nextBanks[targetUnit].some(x => x.ref === merged.ref)) nextBanks[targetUnit].push(merged);
+            });
+        });
+
+        custom.forEach(w => {
+            if (deleted.has(w.ref)) return;
+            const targetUnit = String(w.unit || 'W1').trim();
+            if (!nextBanks[targetUnit]) nextBanks[targetUnit] = [];
+            if (!nextBanks[targetUnit].some(x => x.ref === w.ref)) {
+                nextBanks[targetUnit].push({en:w.en, cn:w.cn || '', ref:w.ref});
+            }
+        });
+
+        state.banks = nextBanks;
+    }
+
+    function refreshUnitSelectors() {
+        const units = Object.keys(state.banks).sort();
+        ['unit-selector','bank-manage-unit','question-unit'].forEach(id => {
+            const el = document.getElementById(id); if (!el) return;
+            const old = el.value;
+            el.innerHTML = units.map(u => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+            if (units.includes(old)) el.value = old;
+        });
+    }
+
+    function renderBankManager() {
+        const unit = document.getElementById('bank-manage-unit')?.value;
+        const list = document.getElementById('bank-list'); if (!list) return;
+        const key = (document.getElementById('bank-search')?.value || '').trim().toLowerCase();
+        const words = (state.banks[unit] || []).filter(w => !key || w.en.toLowerCase().includes(key) || (w.cn||'').toLowerCase().includes(key));
+        if (!words.length) {
+            list.innerHTML = '<div style="text-align:center;color:#64748b;padding:30px 10px;">目前沒有符合條件的題目。</div>';
+            return;
+        }
+        list.innerHTML = words.map(w => `<div class="bank-row"><div class="bank-row-main"><div style="min-width:0;"><div class="bank-word">${escapeHtml(w.en)}</div><div class="bank-cn">${escapeHtml(w.cn||'')}</div><div class="bank-ref">${escapeHtml(w.ref)}</div></div><div class="bank-action"><button class="bank-edit" onclick="openQuestionEditor('${encodeURIComponent(w.ref)}')">編輯</button><button class="bank-delete" onclick="deleteQuestion('${encodeURIComponent(w.ref)}')">刪除</button></div></div></div>`).join('');
+    }
+
+    let bulkValidatedWords = [];
+    let bulkValidationPassed = false;
+
+    function updateBulkSubmitState() {
+        const btn = document.getElementById('bulk-submit');
+        const cb = document.getElementById('bulk-confirm');
+        const ok = bulkValidationPassed && cb && cb.checked && bulkValidatedWords.length > 0;
+        if (!btn) return;
+        btn.disabled = !ok;
+        btn.style.opacity = ok ? '1' : '.55';
+        btn.style.background = ok ? '#16a34a' : '#334155';
+    }
+
+    async function validateBulkWords() {
+        if (bankSourceMode !== 'custom') { alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。'); return; }
+        const box = document.getElementById('bulk-words');
+        const result = document.getElementById('bulk-check-result');
+        const wrap = document.getElementById('bulk-confirm-wrap');
+        const cb = document.getElementById('bulk-confirm');
+
+        bulkValidatedWords = [];
+        bulkValidationPassed = false;
+        if (cb) cb.checked = false;
+        if (wrap) wrap.style.display = 'none';
+        updateBulkSubmitState();
+
+        const words = (box?.value || '').split(/\r?\n/).map(w => w.trim()).filter(Boolean);
+        if (!words.length) {
+            if (result) {
+                result.style.display = 'block';
+                result.innerHTML = '<span style="color:#f87171;">請先貼上單字，一行一個。</span>';
+            }
+            return;
+        }
+
+        const invalidFormat = words.filter(w => !/^[A-Za-z][A-Za-z' -]*$/.test(w));
+        const normalized = words.map(w => w.toLowerCase());
+        const duplicates = normalized.filter((w, i) => normalized.indexOf(w) !== i);
+        if (invalidFormat.length) {
+            result.style.display = 'block';
+            result.innerHTML = '<span style="color:#f87171;font-weight:800;">格式有問題，請修正：</span><br>' + invalidFormat.map(escapeHtml).join('<br>');
+            return;
+        }
+
+        result.style.display = 'block';
+        result.innerHTML = '<span style="color:#fbbf24;">正在查字典確認拼字，請稍候……</span>';
+
+        const unique = [...new Map(words.map(w => [w.toLowerCase(), w])).values()];
+        const checks = await Promise.all(unique.map(async word => {
+            const parts = word.split(/[\s-]+/).filter(Boolean);
+            const results = await Promise.all(parts.map(async part => {
+                try {
+                    const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(part)}`, { cache: 'no-store' });
+                    return r.ok;
+                } catch (e) {
+                    return false;
+                }
+            }));
+            return { word, ok: results.every(Boolean) };
+        }));
+
+        const bad = checks.filter(x => !x.ok).map(x => x.word);
+        if (bad.length) {
+            result.innerHTML = '<span style="color:#f87171;font-weight:900;">❌ 發現可能的拼字問題，不能送出：</span><br>' + bad.map(w => `• ${escapeHtml(w)}`).join('<br>') + '<br><span style="color:#94a3b8;">請修正後再按「檢查單字」。</span>';
+            return;
+        }
+
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
+        const newWords = unique.filter(w => !existing.has(w.toLowerCase()));
+        const repeated = unique.filter(w => existing.has(w.toLowerCase()));
+        bulkValidatedWords = newWords;
+        bulkValidationPassed = true;
+
+        result.innerHTML = '<span style="color:#4ade80;font-weight:900;">✅ 拼字檢查完成</span><br>' + `共 ${unique.length} 個單字；新單字 ${newWords.length} 個` + (repeated.length ? `；已存在 ${repeated.length} 個，送出時會跳過。` : '。');
+        if (duplicates.length) result.innerHTML += `<br><span style="color:#94a3b8;">重複輸入 ${duplicates.length} 個，已自動合併。</span>`;
+        if (wrap) wrap.style.display = 'flex';
+        updateBulkSubmitState();
+    }
+
+    function clearBulkInput() {
+        const box = document.getElementById('bulk-words');
+        const cb = document.getElementById('bulk-confirm');
+        const wrap = document.getElementById('bulk-confirm-wrap');
+        const result = document.getElementById('bulk-check-result');
+        if (box) box.value = '';
+        if (cb) cb.checked = false;
+        if (wrap) wrap.style.display = 'none';
+        if (result) result.style.display = 'none';
+        bulkValidatedWords = [];
+        bulkValidationPassed = false;
+        updateBulkSubmitState();
+    }
+
+    function addBulkWords() {
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        if (!unit || !state.banks[unit]) return alert('請先選擇要加入的單元。');
+        if (!bulkValidationPassed || !bulkValidatedWords.length) return alert('請先按「檢查單字」，確認拼字正確後才能送出。');
+
+        const words = [...bulkValidatedWords];
+        words.forEach(en => {
+            state.banks[unit].push({
+                en,
+                cn: '',
+                ref: `LOCAL_BULK_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
+            });
+        });
+
+        const custom = getLocalJSON('hero_custom_questions', []);
+        words.forEach(en => {
+            const ref = state.banks[unit][state.banks[unit].length - words.length + words.indexOf(en)].ref;
+            custom.push({unit, en, cn:'', ref});
+        });
+        setLocalJSON('hero_custom_questions', custom);
+        saveUserQuestionBank();
+        clearBulkInput();
+        renderBankManager();
+        alert(`✅ 已加入 ${unit} 本機題庫 ${words.length} 個單字。\n\n這些單字只會存在「${getChildName()}」的題庫。`);
+    }
+
+    function addBankUnit() {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+        const input = prompt('請輸入新單元名稱，例如 Unit 10：'); if (!input) return;
+        const name = input.trim(); if (!name) return;
+        if (state.banks[name]) return alert('這個單元已經存在。');
+        state.banks[name] = [];
+        const units = getLocalJSON('hero_custom_units', []);
+        if (!units.includes(name)) { units.push(name); setLocalJSON('hero_custom_units', units); }
+        saveUserQuestionBank();
+        refreshUnitSelectors();
+        document.getElementById('bank-manage-unit').value = name;
+        renderBankManager();
+    }
+
+    function openQuestionEditor(encodedRef='') {
+        editingQuestionRef = encodedRef ? decodeURIComponent(encodedRef) : null;
+        refreshUnitSelectors();
+        const unitEl=document.getElementById('question-unit'), enEl=document.getElementById('question-en'), cnEl=document.getElementById('question-cn'), title=document.getElementById('question-editor-title');
+        const units=Object.keys(state.banks).sort(); if (!units.length) return alert('請先建立單元。');
+        unitEl.innerHTML=units.map(u=>`<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+        if (editingQuestionRef) {
+            let found=null, foundUnit=null;
+            Object.keys(state.banks).some(u => { const w=state.banks[u].find(x=>x.ref===editingQuestionRef); if(w){found=w;foundUnit=u;return true;} return false; });
+            if(!found) return alert('找不到這筆題目。');
+            title.innerText='✏️ 編輯題目'; unitEl.value=foundUnit; enEl.value=found.en; cnEl.value=found.cn||'';
+        } else {
+            title.innerText='＋新增題目'; enEl.value=''; cnEl.value='';
+            const current=document.getElementById('bank-manage-unit')?.value; if(current && state.banks[current]) unitEl.value=current;
+        }
+        switchView('view-question-editor'); setTimeout(()=>enEl.focus(),100);
+    }
+
+    function saveQuestion() {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+        const unit=document.getElementById('question-unit').value.trim(), en=document.getElementById('question-en').value.trim(), cn=document.getElementById('question-cn').value.trim();
+        if(!unit || !en) return alert('「單元」與「English」不能空白。');
+        if(!state.banks[unit]) state.banks[unit]=[];
+        if(editingQuestionRef) {
+            let oldUnit = null;
+            Object.keys(state.banks).forEach(u=>{
+                if(state.banks[u].some(w=>w.ref===editingQuestionRef)) oldUnit=u;
+                state.banks[u]=state.banks[u].filter(w=>w.ref!==editingQuestionRef);
+            });
+            state.banks[unit].push({en,cn,ref:editingQuestionRef});
+            const edits=getLocalJSON('hero_question_edits',{});
+            edits[editingQuestionRef]={en,cn,unit};
+            setLocalJSON('hero_question_edits',edits);
+            if (oldUnit && oldUnit !== unit) {
+                const custom=getLocalJSON('hero_custom_questions',[]);
+                setLocalJSON('hero_custom_questions',custom.map(w=>w.ref===editingQuestionRef?{...w,unit,en,cn}:w));
+            }
+        } else {
+            if(state.banks[unit].some(w=>w.en.toLowerCase()===en.toLowerCase())) return alert('這個單元已經有相同的英文單字。');
+            const ref=`LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+            state.banks[unit].push({en,cn,ref});
+            const custom=getLocalJSON('hero_custom_questions',[]);
+            custom.push({unit,en,cn,ref});
+            setLocalJSON('hero_custom_questions',custom);
+        }
+        saveUserQuestionBank();
+        editingQuestionRef=null;
+        refreshUnitSelectors();
+        document.getElementById('bank-manage-unit').value=unit;
+        switchView('view-bank');
+        renderBankManager();
+    }
+
+    function deleteQuestion(encodedRef) {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+        const ref=decodeURIComponent(encodedRef); let target=null, unit=null;
+        Object.keys(state.banks).some(u=>{const w=state.banks[u].find(x=>x.ref===ref);if(w){target=w;unit=u;return true;}return false;});
+        if(!target) return;
+        if(!confirm(`確定刪除「${target.en}」？`)) return;
+        state.banks[unit]=state.banks[unit].filter(w=>w.ref!==ref);
+        const deleted=getLocalJSON('hero_deleted_question_refs',[]);
+        if(!deleted.includes(ref)) deleted.push(ref);
+        setLocalJSON('hero_deleted_question_refs',deleted);
+        const custom=getLocalJSON('hero_custom_questions',[]);
+        setLocalJSON('hero_custom_questions',custom.filter(w=>w.ref!==ref));
+        const edits=getLocalJSON('hero_question_edits',{});
+        delete edits[ref];
+        setLocalJSON('hero_question_edits',edits);
+        saveUserQuestionBank();
+        renderBankManager();
+    }
+
+    function exportQuestionCSV() {
+        const unit=document.getElementById('bank-manage-unit')?.value;
+        if(!unit || !state.banks[unit]) return alert('請先選擇單元。');
+        const rows=[['English','中文'],...state.banks[unit].map(w=>[w.en,w.cn||''])];
+        const csv=rows.map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+        const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+        a.href=url; a.download=`${unit.replace(/[\\/:*?"<>|]/g,'_')}_題庫.csv`; a.click(); URL.revokeObjectURL(url);
+    }
+
+    function parseAnsonTxt(text) {
+        const banks = {};
+        let currentUnit = '';
+        let serial = 0;
+        const lines = String(text || '').split(/\r?\n/);
+
+        lines.forEach(raw => {
+            const line = raw.trim();
+            if (!line || line.startsWith('#') || line.startsWith('//')) return;
+
+            const heading = line.match(/^\[?\s*(W\d+|Unit\s*\d+)\s*\]?$/i);
+            if (heading) {
+                currentUnit = heading[1].replace(/\s+/g,'').toUpperCase().replace(/^UNIT/,'W');
+                if (!banks[currentUnit]) banks[currentUnit] = [];
+                return;
             }
 
+            if (!currentUnit) currentUnit = 'W1';
+            const parts = line.includes('\t') ? line.split('\t') : line.split(/\s*,\s*/);
+            const en = (parts.shift() || '').trim();
+            const cn = parts.join(',').trim();
+            if (!en) return;
+            serial++;
+            banks[currentUnit].push({
+                en,
+                cn,
+                ref: `TXT_ANSON_${currentUnit}_${serial}`
+            });
+        });
+        return banks;
+    }
+
+    function mergeFixedBanks(base) {
+        const fixed = banksFromPairs(getFixedBanks());
+        Object.keys(fixed).forEach(unit => {
+            base[unit] = fixed[unit];
+        });
+        return base;
+    }
+
+    async function loadAnsonTxtQuestionBank() {
+        try {
+            const response = await fetch(`${ANSON_TXT_URL}?t=${Date.now()}`, {cache:'no-store'});
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const text = await response.text();
+            const parsed = parseAnsonTxt(text);
+            state.banks = mergeFixedBanks(parsed);
+            setLocalJSON('hero_anson_txt_cache', state.banks);
+            return true;
+        } catch (e) {
+            const cached = getLocalJSON('hero_anson_txt_cache', null);
+            if (cached && Object.keys(cached).length) {
+                state.banks = mergeFixedBanks(cloneBanks(cached));
+                console.warn('Anson.txt 無法讀取，改用本機快取題庫：', e);
+                return true;
+            }
+            state.banks = banksFromPairs(getFixedBanks());
+            console.warn('Anson.txt 無法讀取，使用內建 W1-W4：', e);
+            return false;
         }
-    );
+    }
 
-
-    Object.keys(
-        state.banks
-    ).forEach(
-        u => {
-
-            state.banks[u] =
-                state.banks[u]
-
-                .filter(
-                    w =>
-                        !deleted.has(w.ref)
-                )
-
-                .map(
-                    w =>
-                        edits[w.ref]
-                        ?
-                        {
-                            ...w,
-                            ...edits[w.ref]
-                        }
-                        :
-                        w
-                );
-
+    function loadLocalQuestionBank() {
+        const saved = getLocalJSON('hero_question_bank', null);
+        if (saved && typeof saved === 'object' && Object.keys(saved).length) {
+            state.banks = saved;
+            return;
         }
-    );
 
+        state.banks = banksFromPairs(getFixedBanks());
+        applyLocalQuestionChanges();
+        saveUserQuestionBank();
+    }
 
-    custom.forEach(
-        w => {
+    async function initQuestionBank() {
+        const savedMode = getHeroData('hero_bank_source_mode');
+        if (savedMode === 'text' || savedMode === 'custom') bankSourceMode = savedMode;
 
-            if(
-                deleted.has(w.ref)
-            )
+        if (bankSourceMode === 'text') {
+            if (isAnsonUser) {
+                await loadAnsonTxtQuestionBank();
+            } else {
+                const savedText = getLocalJSON('hero_text_bank', null);
+                if (savedText && Object.keys(savedText).length) state.banks = cloneBanks(savedText);
+                else {
+                    bankSourceMode = 'custom';
+                    loadLocalQuestionBank();
+                }
+            }
+        } else {
+            loadLocalQuestionBank();
+        }
+        refreshUnitSelectors();
+        updateBankSourceUI();
+    }
+
+    function getEvolutionBaseId(id) {
+        if (id === 384 || id === 10079) return 384;
+        if (id === 150 || id === 10044) return 150;
+        const chain = CHAINS.find(c => c.includes(id));
+        return chain ? chain[0] : id;
+    }
+
+    function getEvoInfo(id) {
+        const baseId = getEvolutionBaseId(id);
+        const exp = parseInt(getHeroData(`exp_id_${baseId}`)) || 0;
+        let lv = 1, progress = exp, target = 20;
+
+        if (exp >= 50) {
+            lv = 3;
+            progress = 50;
+            target = 50;
+        } else if (exp >= 20) {
+            lv = 2;
+            progress = exp - 20;
+            target = 30;
+        }
+
+        let curId = baseId;
+        if (baseId === 384 && lv === 3) {
+            curId = 10079;
+        } else if (baseId === 150 && lv === 3) {
+            curId = 10044;
+        } else {
+            const chain = CHAINS.find(c => c[0] === baseId);
+            if (chain) curId = chain[lv - 1] || chain[chain.length - 1];
+        }
+
+        return { baseId, displayId: curId, lv, exp, progress, target };
+    }
+
+    async function initSystem() {
+        ensureChildName();
+        state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
+        state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
+        const mainName = document.getElementById('main-child-name');
+        if (mainName) mainName.textContent = getChildName();
+        const storageInfo = document.getElementById('bank-storage-info');
+        if (storageInfo) {
+            storageInfo.innerHTML = isAnsonUser
+                ? '👦 Anson：可在「📄 文字題庫」與「✏️ 自行變更題庫」之間切換。文字題庫使用 <b>vocab/Anson.txt</b>；自行變更後只保存在 Anson 本機。'
+                : `👤 ${escapeHtml(getChildName())}：可匯入自己的 TXT 文字題庫，也可以切換成完全由自己管理的本機題庫。`;
+        }
+        await initQuestionBank();
+        renderBankManager();
+    }
+
+    function startSession(m) {
+        state.unit = document.getElementById('unit-selector').value;
+
+        if (!state.unit || !state.banks[state.unit] || state.banks[state.unit].length === 0) {
+            return alert("目前沒有可用的單字資料。");
+        }
+
+        state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
+        state.mode = m;
+        state.tempPractice = false;
+        state.index = 0;
+        state.quizCompleted = 0;
+        state.playerHP = 5;
+        state.oppHP = 5;
+        switchView('view-game');
+        initArena();
+    }
+    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1; updateHPUI(); loadWord(); }
+
+    function getPokeImageCandidates(id) {
+        const base = (id === 10079) ? 384 : (id === 10044 ? 150 : id);
+        return [
+            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`,
+            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${base}.png`
+        ];
+    }
+
+    function getPokeImageUrl(id, artwork=true) {
+        const candidates = getPokeImageCandidates(id);
+        return artwork ? candidates[0] : candidates[2];
+    }
+
+    function setPokeImageFallback(img, id) {
+        if (!img) return;
+        const candidates = getPokeImageCandidates(id);
+        let next = 0;
+        const tryNext = () => {
+            if (next >= candidates.length) {
+                img.onerror = null;
+                img.style.visibility = 'hidden';
                 return;
+            }
+            const url = candidates[next++];
+            if (img.src === url) {
+                tryNext();
+                return;
+            }
+            img.onerror = tryNext;
+            img.src = url;
+        };
+        img.onerror = tryNext;
+    }
 
+    function showDamage(target, amount=1) {
+        const arena=document.getElementById('combat-arena');
+        const sprite=document.getElementById(target==='player'?'player-sprite':'opp-sprite');
+        if(!arena || !sprite) return;
 
-            if(
-                !state.banks[w.unit]
-            )
-                state.banks[w.unit]=[];
+        sprite.classList.remove('damage-shake');
+        void sprite.offsetWidth;
+        sprite.classList.add('damage-shake');
 
+        const pop=document.createElement('div');
+        pop.className=`damage-pop ${target==='player'?'damage-player':'damage-opp'}`;
+        pop.textContent=`-${amount}`;
+        arena.appendChild(pop);
+        setTimeout(()=>pop.remove(),800);
+    }
 
-            if(
-                !state.banks[w.unit]
-                .some(
-                    x =>
-                        x.ref === w.ref
-                )
-            ) {
+    function showEvolution(oldId, newId) {
+        if (oldId === newId) return 0;
+        const overlay=document.getElementById('evolution-overlay');
+        const img=document.getElementById('evo-img');
+        const sub=document.getElementById('evo-sub');
+        const name=document.getElementById('evo-name');
+        if(!overlay || !img) return 0;
 
-                state.banks[w.unit]
-                .push({
+        sub.textContent=`${PK_NAMES[oldId] || '夥伴'} 的力量突破極限！`;
+        name.textContent=`✨ ${PK_NAMES[newId] || '新形態'} ✨`;
+        img.style.visibility='visible';
+        img.src=getPokeImageUrl(newId,true);
+        setPokeImageFallback(img,newId);
 
-                    en:w.en,
+        overlay.classList.add('show');
+        if(window.confetti){
+            confetti({particleCount:180,spread:150,origin:{x:.5,y:.45}});
+            setTimeout(()=>confetti({particleCount:120,spread:120,origin:{x:.2,y:.6}}),250);
+            setTimeout(()=>confetti({particleCount:120,spread:120,origin:{x:.8,y:.6}}),450);
+        }
+        setTimeout(()=>overlay.classList.remove('show'),2600);
+        return 2700;
+    }
 
-                    cn:w.cn,
+    function updateHPUI() {
+        const playerPct=Math.max(0,state.playerHP)/5*100;
+        const oppPct=Math.max(0,state.oppHP)/5*100;
+        document.getElementById('player-hp-bar').style.width=playerPct+'%';
+        document.getElementById('opp-hp-bar').style.width=oppPct+'%';
+        document.getElementById('player-hp-label').textContent=`HP ${Math.max(0,state.playerHP)}/5`;
+        document.getElementById('opp-hp-label').textContent=`HP ${Math.max(0,state.oppHP)}/5`;
 
-                    ref:w.ref
+        const info=getEvoInfo(state.activePokeId);
+        const playerSprite=document.getElementById('player-sprite');
+        const oppSprite=document.getElementById('opp-sprite');
+        playerSprite.style.visibility='visible';
+        oppSprite.style.visibility='visible';
+        playerSprite.src=getPokeImageUrl(info.displayId,true);
+        oppSprite.src=getPokeImageUrl(state.currentOppId,true);
+        setPokeImageFallback(playerSprite,info.displayId);
+        setPokeImageFallback(oppSprite,state.currentOppId);
 
-                });
+        const pct=info.lv===3?100:(info.progress/info.target*100);
+        document.getElementById('player-exp-bar').style.width=pct+'%';
+        document.getElementById('player-exp-text').innerText=info.lv===3?'LV.MAX':`LV.${info.lv} : ${info.progress}/${info.target}`;
+        const v=(state.mode==='priority')?'hidden':'visible';
+        document.getElementById('player-hp-box').style.visibility=v;
+        document.getElementById('opp-hp-box').style.visibility=v;
+        document.getElementById('player-exp-box').style.visibility=v;
+    }
 
+    async function loadWord() {
+        if(state.index >= state.currentList.length) { handleVictory(); return; }
+        const word = state.currentList[state.index], display = document.getElementById('display-cn');
+        let tip = localDict[word.en.toLowerCase()] || word.cn;
+        if (!tip) { display.innerText = "載入中..."; tip = await fetchTranslation(word.en); }
+        display.innerText = tip;
+
+        const pRefs = JSON.parse(getHeroData('hero_priority') || '[]');
+        const isS = pRefs.includes(word.ref);
+        document.getElementById('star-icon').innerText = isS ? "★" : "☆";
+        document.getElementById('star-icon').style.color = isS ? "var(--gold)" : "#475569";
+        document.getElementById('btn-force-practice').style.display = "none";
+
+        const area = document.getElementById('letter-area');
+        area.innerHTML = "";
+
+        const answerChars = Array.from(String(word.en || ""));
+        let inputIdx = 0;
+
+        answerChars.forEach((char) => {
+            if (char === " " || char === "/" || char === "-") {
+                const sep = document.createElement('div');
+                sep.className = 'word-separator';
+                sep.innerText = char === " " ? " " : char;
+                area.appendChild(sep);
+                return;
             }
 
-        }
-    );
-
-}
-
-
-/* =========================
-   單元下拉選單
-========================= */
-
-function refreshUnitSelectors() {
-
-    const units =
-        Object.keys(
-            state.banks
-        ).sort();
-
-
-    [
-        'unit-selector',
-        'bank-manage-unit',
-        'question-unit'
-    ]
-    .forEach(
-        id => {
-
-            const el =
-                document.getElementById(id);
-
-            if(!el)
-                return;
-
-
-            const old =
-                el.value;
-
-
-            el.innerHTML =
-                units
-                .map(
-                    u =>
-                        `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`
-                )
-                .join('');
-
-
-            if(
-                units.includes(old)
-            )
-                el.value=old;
-
-        }
-    );
-
-}
-
-
-/* =========================
-   題庫列表
-========================= */
-
-function renderBankManager() {
-
-    const unit =
-        document.getElementById(
-            'bank-manage-unit'
-        )?.value;
-
-
-    const list =
-        document.getElementById(
-            'bank-list'
-        );
-
-
-    if(!list)
-        return;
-
-
-    const key =
-        (
-            document.getElementById(
-                'bank-search'
-            )?.value ||
-            ''
-        )
-        .trim()
-        .toLowerCase();
-
-
-    const words =
-        (
-            state.banks[unit] ||
-            []
-        )
-        .filter(
-            w =>
-                !key ||
-                w.en
-                    .toLowerCase()
-                    .includes(key) ||
-                (w.cn || '')
-                    .toLowerCase()
-                    .includes(key)
-        );
-
-
-    if(!words.length) {
-
-        list.innerHTML =
-            `
-            <div style="text-align:center;color:#64748b;padding:30px 10px;">
-                目前沒有符合條件的題目。
-            </div>
-            `;
-
-        return;
-
-    }
-
-
-    list.innerHTML =
-        words
-        .map(
-            w =>
-                `
-                <div class="bank-row">
-
-                    <div class="bank-row-main">
-
-                        <div style="min-width:0;">
-
-                            <div class="bank-word">
-                                ${escapeHtml(w.en)}
-                            </div>
-
-                            <div class="bank-cn">
-                                ${escapeHtml(w.cn || '')}
-                            </div>
-
-                            <div class="bank-ref">
-                                ${escapeHtml(w.ref)}
-                            </div>
-
-                        </div>
-
-                        <div class="bank-action">
-
-                            <button
-                                class="bank-edit"
-                                onclick="openQuestionEditor('${encodeURIComponent(w.ref)}')">
-                                編輯
-                            </button>
-
-                            <button
-                                class="bank-delete"
-                                onclick="deleteQuestion('${encodeURIComponent(w.ref)}')">
-                                刪除
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-                `
-        )
-        .join('');
-
-}
-
-
-/* =========================
-   新增單元
-========================= */
-
-function addBankUnit() {
-
-    const input =
-        prompt(
-            '請輸入新單元名稱，例如 Unit 10：'
-        );
-
-
-    if(!input)
-        return;
-
-
-    const name =
-        input.trim();
-
-
-    if(!name)
-        return;
-
-
-    if(
-        state.banks[name]
-    ) {
-
-        alert(
-            '這個單元已經存在。'
-        );
-
-        return;
-
-    }
-
-
-    state.banks[name]=[];
-
-
-    const units =
-        getLocalJSON(
-            'hero_custom_units',
-            []
-        );
-
-
-    if(
-        !units.includes(name)
-    ) {
-
-        units.push(name);
-
-        setLocalJSON(
-            'hero_custom_units',
-            units
-        );
-
-    }
-
-
-    refreshUnitSelectors();
-
-
-    document.getElementById(
-        'bank-manage-unit'
-    ).value=name;
-
-
-    renderBankManager();
-
-}
-
-
-/* =========================
-   編輯題目
-========================= */
-
-function openQuestionEditor(
-    encodedRef=''
-) {
-
-    editingQuestionRef =
-        encodedRef
-        ?
-        decodeURIComponent(
-            encodedRef
-        )
-        :
-        null;
-
-
-    refreshUnitSelectors();
-
-
-    const unitEl =
-        document.getElementById(
-            'question-unit'
-        );
-
-    const enEl =
-        document.getElementById(
-            'question-en'
-        );
-
-    const cnEl =
-        document.getElementById(
-            'question-cn'
-        );
-
-    const title =
-        document.getElementById(
-            'question-editor-title'
-        );
-
-
-    const units =
-        Object.keys(
-            state.banks
-        ).sort();
-
-
-    if(!units.length) {
-
-        alert(
-            '請先建立單元。'
-        );
-
-        return;
-
-    }
-
-
-    unitEl.innerHTML =
-        units
-        .map(
-            u =>
-                `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`
-        )
-        .join('');
-
-
-    if(
-        editingQuestionRef
-    ) {
-
-        let found=null;
-
-        let foundUnit=null;
-
-
-        Object.keys(
-            state.banks
-        )
-        .some(
-            u => {
-
-                const w =
-                    state.banks[u]
-                    .find(
-                        x =>
-                            x.ref ===
-                            editingQuestionRef
+            const inp = document.createElement('input');
+            inp.type = 'text';
+            inp.inputMode = 'text';
+            inp.autocomplete = 'off';
+            inp.className = 'letter-box';
+            inp.maxLength = 1;
+            inp.dataset.idx = inputIdx;
+            inp.spellcheck = false;
+
+            inp.onkeydown = (e) => {
+                const idx = parseInt(e.target.dataset.idx, 10);
+
+                if (e.key === "Backspace") {
+                    // 目前這格有字：先清掉目前這格，再停留。
+                    if (e.target.value !== "") {
+                        e.preventDefault();
+                        e.target.value = "";
+                        return;
+                    }
+
+                    // 目前這格已經是空的：回上一格，並清掉上一格。
+                    e.preventDefault();
+                    const prev = document.querySelector(
+                        `.letter-box[data-idx="${idx - 1}"]`
                     );
 
+                    if (prev) {
+                        prev.focus();
+                        prev.value = "";
+                    }
+                }
+            };
 
-                if(w) {
+            inp.oninput = (e) => {
+                // 一格只允許一個字母；輸入後自動跳到下一格
+                const chars = Array.from(String(e.target.value || ""));
+                e.target.value = chars.length ? chars[chars.length - 1] : "";
 
-                    found=w;
+                if (e.target.value.length === 1) {
+                    const next = document.querySelector(
+                        `.letter-box[data-idx="${parseInt(e.target.dataset.idx, 10) + 1}"]`
+                    );
 
-                    foundUnit=u;
+                    if (next) {
+                        next.focus();
+                        next.select();
+                    } else {
+                        // 最後一格輸入完成後自動送出答案
+                        const boxes = [...document.querySelectorAll('.letter-box')];
+                        if (boxes.length && boxes.every(b => b.value.length === 1)) {
+                            setTimeout(checkFinalAnswer, 150);
+                        }
+                    }
+                }
+            };
 
-                    return true;
+            area.appendChild(inp);
+            inputIdx++;
+        });
 
+        // 顯示目前題目的實際字母數，避免字框數與答案不一致。
+        area.dataset.answerLength = String(inputIdx);
+        renderPracticeGuide((state.mode === 'practice' || state.tempPractice) ? word.en : "");
+        setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
+    }
+
+    function checkFinalAnswer() {
+        const word = state.currentList[state.index];
+        if (!word) return;
+
+        const boxes = document.querySelectorAll('.letter-box');
+        let ui = "";
+        boxes.forEach(b => ui += b.value);
+
+        const normalizedInput = ui.replace(/[\s\/-]/g, '').toLowerCase();
+        const normalizedAnswer = word.en.replace(/[\s\/-]/g, '').toLowerCase();
+
+        if (normalizedInput === normalizedAnswer) {
+            confetti({ particleCount: 30, spread: 50 });
+
+            if (state.mode === 'quiz' && !state.tempPractice) {
+                state.oppHP--;
+                showDamage('opp',1);
+
+                const baseId = getEvolutionBaseId(state.activePokeId);
+                const beforeEvo = getEvoInfo(state.activePokeId);
+                const expK = `exp_id_${baseId}`;
+                let cur = Math.min((parseInt(getHeroData(expK)) || 0) + 1, 50);
+                setHeroData(expK, cur);
+                const afterEvo = getEvoInfo(state.activePokeId);
+                const evolutionDelay = showEvolution(beforeEvo.displayId, afterEvo.displayId);
+
+                // 魔王挑戰：這個單字答對後就從本輪題目移除。
+                // 因此必須把該 W 的全部單字答對，才會真正通關。
+                state.currentList.splice(state.index, 1);
+                state.quizCompleted++;
+
+                // 下一題仍然使用 index=0。
+                state.index = 0;
+
+                // 擊敗一隻寶可夢後，繼續考剩下的單字，而不是直接結束整個 W。
+                if (state.oppHP <= 0) {
+                    let p = state.pokedex.split('');
+                    p[state.currentOppId - 1] = "1";
+                    state.pokedex = p.join('');
+                    setHeroData('hero_pokedex_bits', state.pokedex);
+                    confetti({ particleCount: 100, spread: 80 });
+
+                    if (state.currentList.length === 0) {
+                        setTimeout(handleVictory, Math.max(500, evolutionDelay));
+                        return;
+                    }
+
+                    const un = [];
+                    for (let i = 0; i < 151; i++) {
+                        if (state.pokedex[i] === "0") un.push(i + 1);
+                    }
+                    state.currentOppId = un.length > 0
+                        ? un[Math.floor(Math.random() * un.length)]
+                        : Math.floor(Math.random() * 151) + 1;
+
+                    state.oppHP = 5;
                 }
 
-                return false;
-
-            }
-        );
-
-
-        if(!found) {
-
-            alert(
-                '找不到這筆題目。'
-            );
-
-            return;
-
-        }
-
-
-        title.innerText =
-            '✏️ 編輯題目';
-
-
-        unitEl.value =
-            foundUnit;
-
-
-        enEl.value =
-            found.en;
-
-
-        cnEl.value =
-            found.cn || '';
-
-    } else {
-
-        title.innerText =
-            '＋新增題目';
-
-
-        enEl.value='';
-
-        cnEl.value='';
-
-
-        const current =
-            document.getElementById(
-                'bank-manage-unit'
-            )?.value;
-
-
-        if(
-            current &&
-            state.banks[current]
-        )
-            unitEl.value=current;
-
-    }
-
-
-    switchView(
-        'view-question-editor'
-    );
-
-
-    setTimeout(
-        () =>
-            enEl.focus(),
-        100
-    );
-
-}
-
-
-/* =========================
-   儲存題目
-========================= */
-
-function saveQuestion() {
-
-    const unit =
-        document.getElementById(
-            'question-unit'
-        )
-        .value
-        .trim();
-
-
-    const en =
-        document.getElementById(
-            'question-en'
-        )
-        .value
-        .trim();
-
-
-    const cn =
-        document.getElementById(
-            'question-cn'
-        )
-        .value
-        .trim();
-
-
-    if(
-        !unit ||
-        !en
-    ) {
-
-        alert(
-            '「單元」與「English」不能空白。'
-        );
-
-        return;
-
-    }
-
-
-    if(
-        !state.banks[unit]
-    )
-        state.banks[unit]=[];
-
-
-    if(
-        editingQuestionRef
-    ) {
-
-        Object.keys(
-            state.banks
-        )
-        .forEach(
-            u => {
-
-                state.banks[u] =
-                    state.banks[u]
-                    .filter(
-                        w =>
-                            w.ref !==
-                            editingQuestionRef
-                    );
-
-            }
-        );
-
-
-        state.banks[unit]
-        .push({
-
-            en,
-
-            cn,
-
-            ref:
-                editingQuestionRef
-
-        });
-
-
-        const edits =
-            getLocalJSON(
-                'hero_question_edits',
-                {}
-            );
-
-
-        edits[
-            editingQuestionRef
-        ] = {
-
-            en,
-
-            cn,
-
-            unit
-
-        };
-
-
-        setLocalJSON(
-            'hero_question_edits',
-            edits
-        );
-
-    } else {
-
-        if(
-            state.banks[unit]
-            .some(
-                w =>
-                    w.en.toLowerCase() ===
-                    en.toLowerCase()
-            )
-        ) {
-
-            alert(
-                '這個單元已經有相同的英文單字。'
-            );
-
-            return;
-
-        }
-
-
-        const ref =
-            `LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
-
-
-        state.banks[unit]
-        .push({
-
-            en,
-
-            cn,
-
-            ref
-
-        });
-
-
-        const custom =
-            getLocalJSON(
-                'hero_custom_questions',
-                []
-            );
-
-
-        custom.push({
-
-            unit,
-
-            en,
-
-            cn,
-
-            ref
-
-        });
-
-
-        setLocalJSON(
-            'hero_custom_questions',
-            custom
-        );
-
-    }
-
-
-    editingQuestionRef=null;
-
-
-    refreshUnitSelectors();
-
-
-    document.getElementById(
-        'bank-manage-unit'
-    ).value=unit;
-
-
-    switchView(
-        'view-bank'
-    );
-
-
-    renderBankManager();
-
-}
-
-
-/* =========================
-   刪除題目
-========================= */
-
-function deleteQuestion(
-    encodedRef
-) {
-
-    const ref =
-        decodeURIComponent(
-            encodedRef
-        );
-
-
-    let target=null;
-
-    let unit=null;
-
-
-    Object.keys(
-        state.banks
-    )
-    .some(
-        u => {
-
-            const w =
-                state.banks[u]
-                .find(
-                    x =>
-                        x.ref===ref
-                );
-
-
-            if(w) {
-
-                target=w;
-
-                unit=u;
-
-                return true;
-
+                updateHPUI();
+
+                if (state.currentList.length === 0) {
+                    setTimeout(handleVictory, Math.max(500, evolutionDelay));
+                } else {
+                    setTimeout(loadWord, Math.max(600, evolutionDelay));
+                }
+                return;
             }
 
-            return false;
+            // 練習模式／星號練習維持原本流程。
+            if (state.mode === 'practice' || state.mode === 'priority') {
+                state.index++;
+                state.tempPractice = false;
 
-        }
-    );
+                if (state.oppHP > 0 && state.mode !== 'priority') {
+                    state.oppHP--;
+                }
 
+                if (state.index >= state.currentList.length) {
+                    setTimeout(handleVictory, 500);
+                    return;
+                }
 
-    if(!target)
-        return;
-
-
-    if(
-        !confirm(
-            `確定刪除「${target.en}」？`
-        )
-    )
-        return;
-
-
-    state.banks[unit] =
-        state.banks[unit]
-        .filter(
-            w =>
-                w.ref !== ref
-        );
-
-
-    const deleted =
-        getLocalJSON(
-            'hero_deleted_question_refs',
-            []
-        );
-
-
-    if(
-        !deleted.includes(ref)
-    )
-        deleted.push(ref);
-
-
-    setLocalJSON(
-        'hero_deleted_question_refs',
-        deleted
-    );
-
-
-    const custom =
-        getLocalJSON(
-            'hero_custom_questions',
-            []
-        );
-
-
-    setLocalJSON(
-        'hero_custom_questions',
-        custom.filter(
-            w =>
-                w.ref !== ref
-        )
-    );
-
-
-    const edits =
-        getLocalJSON(
-            'hero_question_edits',
-            {}
-        );
-
-
-    delete edits[ref];
-
-
-    setLocalJSON(
-        'hero_question_edits',
-        edits
-    );
-
-
-    renderBankManager();
-
-}
-
-
-/* =========================
-   匯出 CSV
-========================= */
-
-function exportQuestionCSV() {
-
-    const unit =
-        document.getElementById(
-            'bank-manage-unit'
-        )?.value;
-
-
-    if(
-        !unit ||
-        !state.banks[unit]
-    ) {
-
-        alert(
-            '請先選擇單元。'
-        );
-
-        return;
-
-    }
-
-
-    const rows = [
-
-        ['English','中文'],
-
-        ...state.banks[unit]
-        .map(
-            w =>
-                [
-                    w.en,
-                    w.cn || ''
-                ]
-        )
-
-    ];
-
-
-    const csv =
-        rows
-        .map(
-            row =>
-                row
-                .map(
-                    v =>
-                        `"${String(v).replace(/"/g,'""')}"`
-                )
-                .join(',')
-        )
-        .join('\r\n');
-
-
-    const blob =
-        new Blob(
-            [
-                '\uFEFF' + csv
-            ],
-            {
-                type:
-                    'text/csv;charset=utf-8;'
+                updateHPUI();
+                setTimeout(loadWord, 600);
             }
-        );
+        } else {
+            // 只記錄答錯；答對完全不寫 Log。
+            addErrorLog(word, ui || '(空白)');
 
+            boxes.forEach(b => {
+                b.classList.add('wrong');
+                setTimeout(() => b.classList.remove('wrong'), 800);
+            });
 
-    const url =
-        URL.createObjectURL(
-            blob
-        );
+            if (state.mode === 'quiz' && !state.tempPractice) {
+                state.playerHP--;
+                showDamage('player',1);
+                document.getElementById('btn-force-practice').style.display = "flex";
 
+                if (state.playerHP <= 0) {
+                    handlePlayerDeath();
+                    return;
+                }
+            }
 
-    const a =
-        document.createElement(
-            'a'
-        );
-
-
-    a.href=url;
-
-
-    a.download =
-        `${unit.replace(/[\\/:*?"<>|]/g,'_')}_題庫.csv`;
-
-
-    a.click();
-
-
-    URL.revokeObjectURL(
-        url
-    );
-
-}
-
-
-/* =========================
-   翻譯
-========================= */
-
-async function fetchTranslation(t) {
-
-    try {
-
-        const r =
-            await fetch(
-                `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(t)}`
-            );
-
-
-        const d =
-            await r.json();
-
-
-        return d[0][0][0];
-
-    } catch(e) {
-
-        return "";
-
+            updateHPUI();
+        }
     }
 
-}
+    function handlePass() {
+        if (state.index >= state.currentList.length) return;
 
-
-/* =========================
-   Pokémon 進化
-========================= */
-
-function getEvolutionBaseId(id) {
-
-    if(
-        id===384 ||
-        id===10079
-    )
-        return 384;
-
-
-    if(
-        id===150 ||
-        id===10044
-    )
-        return 150;
-
-
-    const chain =
-        CHAINS.find(
-            c =>
-                c.includes(id)
-        );
-
-
-    return chain
-        ?
-        chain[0]
-        :
-        id;
-
-}
-
-
-function getEvoInfo(id) {
-
-    const baseId =
-        getEvolutionBaseId(id);
-
-
-    const exp =
-        parseInt(
-            getHeroData(
-                `exp_id_${baseId}`
-            )
-        ) || 0;
-
-
-    let lv=1;
-
-    let progress=exp;
-
-    let target=20;
-
-
-    if(
-        exp>=50
-    ) {
-
-        lv=3;
-
-        progress=50;
-
-        target=50;
-
-    } else if(
-        exp>=20
-    ) {
-
-        lv=2;
-
-        progress=exp-20;
-
-        target=30;
-
-    }
-
-
-    let curId=baseId;
-
-
-    if(
-        baseId===384 &&
-        lv===3
-    ) {
-
-        curId=10079;
-
-    } else if(
-        baseId===150 &&
-        lv===3
-    ) {
-
-        curId=10044;
-
-    } else {
-
-        const chain =
-            CHAINS.find(
-                c =>
-                    c[0]===baseId
-            );
-
-
-        if(chain) {
-
-            curId =
-                chain[lv-1] ||
-                chain[
-                    chain.length-1
-                ];
-
+        if (state.mode === 'quiz' && !state.tempPractice) {
+            // 魔王挑戰不能用 PASS 把單字永久跳掉；放到隊伍最後，之後仍會考到。
+            const word = state.currentList.splice(state.index, 1)[0];
+            state.currentList.push(word);
+            state.index = 0;
+        } else {
+            state.index++;
         }
 
+        state.tempPractice = false;
+        updateHPUI();
+        loadWord();
+    }
+    function startInGamePractice() { state.tempPractice = true; loadWord(); }
+
+    function handlePlayerDeath() {
+        state.awaitingPartner = true;
+        state.playerHP = 0;
+        updateHPUI();
+
+        const fallen = PK_NAMES[getEvoInfo(state.activePokeId).displayId] || '夥伴';
+        alert(`${fallen} HP 歸零了！\n\n請選擇「另一隻」夥伴繼續戰鬥。\n倒下的夥伴不能再次選擇。`);
+        switchView('view-team');
     }
 
+    function toggleStar() {
+        const word = state.currentList[state.index]; let p = JSON.parse(getHeroData('hero_priority') || '[]');
+        if(p.includes(word.ref)) p = p.filter(r => r !== word.ref); else p.push(word.ref);
+        setHeroData('hero_priority', JSON.stringify(p));
+        const isS = p.includes(word.ref); document.getElementById('star-icon').innerText = isS ? "★" : "☆";
+        document.getElementById('star-icon').style.color = isS ? "var(--gold)" : "#475569";
+    }
 
-    return {
+    function startPrioritySession() {
+        const pRefs = JSON.parse(getHeroData('hero_priority') || '[]');
+        if(pRefs.length === 0) return alert("還沒有星號單字！");
+        state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); }));
+        state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena();
+    }
 
-        baseId,
+    function handleVictory() {
+        if (state.mode === 'quiz') {
+            // 只有該單元所有單字都答對並從 currentList 移除後，才算通關。
+            if (state.currentList.length > 0) {
+                loadWord();
+                return;
+            }
 
-        displayId:curId,
+            confetti({ particleCount: 200, spread: 100 });
+            alert(`🎉 ${state.unit} 魔王挑戰完成！\n共完成 ${state.quizCompleted} 個單字。\n所有單字都已考完！`);
+        } else if (state.mode === 'practice') {
+            alert("練習完成！");
+        } else if (state.mode === 'priority') {
+            alert("星號練習完成！");
+        }
 
-        lv,
+        switchView('view-main');
+    }
 
-        exp,
+    function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
+    /*
+     * 英文音節顯示：
+     * 1. 先使用常見單字的固定音節，避免一般規則把學習單字切錯。
+     * 2. 其他單字使用英文母音核心的保守切法。
+     * 3. 不改變原單字，只控制「練習提示」的視覺呈現。
+     */
+    /*
+     * 自然發音法導向的音節分色：
+     * - 以「可讀、可拼讀」的音節／字母群為單位，而不是任意每幾個字母切一次。
+     * - W1-W4 目前使用的單字採明確規則，避免自動演算法切錯。
+     * - 這裡只改「視覺分組」，不修改孩子真正要拼寫的答案。
+     */
+    const COMMON_SYLLABLES = {
+        dinosaur:['di','no','saur'],
+        million:['mil','lion'],
+        street:['street'],
+        eart:['eart'],
+        earth:['earth'],
+        dance:['dance'],
+        cloud:['cloud'],
+        lake:['lake'],
+        near:['near'],
+        valley:['val','ley'],
+        yesterday:['yes','ter','day'],
 
-        progress,
+        camp:['camp'],
+        map:['map'],
+        eighty:['eigh','ty'],
+        fifty:['fif','ty'],
+        forty:['for','ty'],
+        star:['star'],
+        seventy:['sev','en','ty'],
+        sixty:['six','ty'],
+        thirty:['thir','ty'],
+        twenty:['twen','ty'],
 
-        target
+        hundred:['hun','dred'],
+        ninety:['nine','ty'],
+        east:['east'],
+        north:['north'],
+        south:['south'],
+        west:['west'],
+        far:['far'],
+        'picnic table':['pic','nic','table'],
+        'parking lot':['park','ing','lot'],
+        lizard:['liz','ard'],
 
+        castle:['cas','tle'],
+        gold:['gold'],
+        gloden:['glo','den'],
+        golden:['gold','en'],
+        today:['to','day'],
+        american:['a','mer','i','can'],
+        australia:['aus','tra','li','a'],
+        australian:['aus','tra','li','an'],
+        china:['chi','na'],
+        country:['coun','try'],
+        egypt:['e','gypt'],
+        flag:['flag']
     };
 
-}
-
-
-/* =========================
-   初始化
-========================= */
-
-async function initSystem() {
-
-    state.pokedex =
-        getHeroData(
-            'hero_pokedex_bits'
-        ) ||
-        "0".repeat(151);
-
-
-    state.activePokeId =
-        parseInt(
-            getHeroData(
-                'hero_myPoke'
-            )
-        ) ||
-        384;
-
-
-    try {
-
-        const res =
-            await fetch(
-                `https://docs.google.com/spreadsheets/d/${SS_ID}/gviz/tq?tqx=out:csv&t=${Date.now()}`
-            );
-
-
-        if(!res.ok)
-            throw new Error(
-                `HTTP ${res.status}`
-            );
-
-
-        parseCSV(
-            await res.text()
-        );
-
-
-    } catch(e) {
-
-        console.error(
-            "單字庫載入失敗:",
-            e
-        );
-
-
-        alert(
-            "單字庫載入失敗，請確認網路連線或 Google Sheet 權限。"
-        );
-
-    }
-
-}
-
-
-/* =========================
-   CSV
-========================= */
-
-function parseCSVLine(line) {
-
-    const cells=[];
-
-    let cell="";
-
-    let quoted=false;
-
-
-    for(
-        let i=0;
-        i<line.length;
-        i++
-    ) {
-
-        const ch =
-            line[i];
-
-
-        if(
-            ch==='"'
-        ) {
-
-            if(
-                quoted &&
-                line[i+1]==='"'
-            ) {
-
-                cell+='"';
-
-                i++;
-
-            } else {
-
-                quoted=!quoted;
-
-            }
-
-        } else if(
-            ch===',' &&
-            !quoted
-        ) {
-
-            cells.push(
-                cell.trim()
-            );
-
-            cell="";
-
-        } else {
-
-            cell+=ch;
-
-        }
-
-    }
-
-
-    cells.push(
-        cell.trim()
-    );
-
-
-    return cells;
-
-}
-
-
-function parseCSV(text) {
-
-    const lines =
-        text
-        .split(/\r?\n/)
-        .filter(
-            line =>
-                line.trim()!==""
-        );
-
-
-    const rows =
-        lines.map(
-            parseCSVLine
-        );
-
-
-    if(!rows.length) {
-
-        state.banks={};
-
-        refreshUnitSelectors();
-
-        return;
-
-    }
-
-
-    state.banks={};
-
-
-    rows[0].forEach(
-        (h,i) => {
-
-            h =
-                h
-                .replace(
-                    /^"|"$/g,
-                    ''
-                )
-                .trim();
-
-
-            if(!h)
-                return;
-
-
-            state.banks[h]=[];
-
-
-            for(
-                let r=1;
-                r<rows.length;
-                r++
-            ) {
-
-                const raw =
-                    (
-                        rows[r][i] ||
-                        ""
-                    )
-                    .trim();
-
-
-                if(!raw)
-                    continue;
-
-
-                const comma =
-                    raw.indexOf(",");
-
-
-                const en =
-                    comma>=0
-                    ?
-                    raw
-                    .slice(
-                        0,
-                        comma
-                    )
-                    .trim()
-                    :
-                    raw;
-
-
-                const cn =
-                    comma>=0
-                    ?
-                    raw
-                    .slice(
-                        comma+1
-                    )
-                    .trim()
-                    :
-                    "";
-
-
-                if(en) {
-
-                    state.banks[h]
-                    .push({
-
-                        en,
-
-                        cn,
-
-                        ref:
-                            `${String.fromCharCode(65+i)}${r+1}`
-
-                    });
-
-                }
-
-            }
-
-        }
-    );
-
-
-    applyLocalQuestionChanges();
-
-    refreshUnitSelectors();
-
-}
-
-
-/* =========================
-   開始遊戲
-========================= */
-
-function startSession(m) {
-
-    state.unit =
-        document.getElementById(
-            'unit-selector'
-        ).value;
-
-
-    if(
-        !state.unit ||
-        !state.banks[state.unit] ||
-        state.banks[state.unit].length===0
-    ) {
-
-        return alert(
-            "目前沒有可用的單字資料。"
-        );
-
-    }
-
-
-    state.currentList =
-        [
-            ...state.banks[
-                state.unit
-            ]
-        ]
-        .sort(
-            () =>
-                Math.random()-.5
-        );
-
-
-    state.mode=m;
-
-    state.tempPractice=false;
-
-    state.index=0;
-
-    state.playerHP=5;
-
-    state.oppHP=5;
-
-
-    switchView(
-        'view-game'
-    );
-
-
-    initArena();
-
-}
-
-
-/* =========================
-   戰鬥初始化
-========================= */
-
-function initArena() {
-
-    let un=[];
-
-
-    for(
-        let i=0;
-        i<151;
-        i++
-    ) {
-
-        if(
-            state.pokedex[i]==="0"
-        )
-            un.push(i+1);
-
-    }
-
-
-    state.currentOppId =
-        un.length>0
-        ?
-        un[
-            Math.floor(
-                Math.random()*
-                un.length
-            )
-        ]
-        :
-        Math.floor(
-            Math.random()*151
-        )+1;
-
-
-    updateHPUI();
-
-    loadWord();
-
-}
-
-
-/* =========================
-   HP / 圖片
-========================= */
-
-function updateHPUI() {
-
-    document.getElementById(
-        'player-hp-bar'
-    ).style.width =
-        (
-            state.playerHP/
-            5*
-            100
-        )+"%";
-
-
-    document.getElementById(
-        'opp-hp-bar'
-    ).style.width =
-        (
-            state.oppHP/
-            5*
-            100
-        )+"%";
-
-
-    const info =
-        getEvoInfo(
-            state.activePokeId
-        );
-
-
-    document.getElementById(
-        'player-sprite'
-    ).src =
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${info.displayId}.gif`;
-
-
-    document.getElementById(
-        'opp-sprite'
-    ).src =
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${state.currentOppId}.gif`;
-
-
-    const pct =
-        info.lv===3
-        ?
-        100
-        :
-        (
-            info.progress/
-            info.target*
-            100
-        );
-
-
-    document.getElementById(
-        'player-exp-bar'
-    ).style.width =
-        pct+"%";
-
-
-    document.getElementById(
-        'player-exp-text'
-    ).innerText =
-        info.lv===3
-        ?
-        "LV.MAX"
-        :
-        `LV.${info.lv} : ${info.progress}/${info.target}`;
-
-
-    const v =
-        state.mode==='priority'
-        ?
-        'hidden'
-        :
-        'visible';
-
-
-    document.getElementById(
-        'player-hp-box'
-    ).style.visibility=v;
-
-
-    document.getElementById(
-        'opp-hp-box'
-    ).style.visibility=v;
-
-
-    document.getElementById(
-        'player-exp-box'
-    ).style.visibility=v;
-
-}
-
-
-/* =========================
-   題目
-========================= */
-
-async function loadWord() {
-
-    if(
-        state.index>=
-        state.currentList.length
-    ) {
-
-        handleVictory();
-
-        return;
-
-    }
-
-
-    const word =
-        state.currentList[
-            state.index
-        ];
-
-
-    const display =
-        document.getElementById(
-            'display-cn'
-        );
-
-
-    let tip =
-        localDict[
-            word.en.toLowerCase()
-        ] ||
-        word.cn;
-
-
-    if(!tip) {
-
-        display.innerText=
-            "載入中...";
-
-
-        tip =
-            await fetchTranslation(
-                word.en
-            );
-
-    }
-
-
-    display.innerText=
-        tip;
-
-
-    const pRefs =
-        JSON.parse(
-            getHeroData(
-                'hero_priority'
-            ) ||
-            '[]'
-        );
-
-
-    const isS =
-        pRefs.includes(
-            word.ref
-        );
-
-
-    document.getElementById(
-        'star-icon'
-    ).innerText =
-        isS
-        ?
-        "★"
-        :
-        "☆";
-
-
-    document.getElementById(
-        'star-icon'
-    ).style.color =
-        isS
-        ?
-        "var(--gold)"
-        :
-        "#475569";
-
-
-    document.getElementById(
-        'btn-force-practice'
-    ).style.display=
-        "none";
-
-
-    const area =
-        document.getElementById(
-            'letter-area'
-        );
-
-
-    area.innerHTML="";
-
-
-    let inputIdx=0;
-
-
-    word.en
-    .split('')
-    .forEach(
-        char => {
-
-            if(
-                char===" " ||
-                char==="/" ||
-                char==="-"
-            ) {
-
-                const sep =
-                    document.createElement(
-                        'div'
-                    );
-
-
-                sep.innerText =
-                    char===" "
-                    ?
-                    ""
-                    :
-                    char;
-
-
-                sep.style.cssText =
-                    "width:10px;font-size:1.2rem;text-align:center;line-height:85px;color:var(--accent);";
-
-
-                area.appendChild(
-                    sep
-                );
-
-
-            } else {
-
-                const inp =
-                    document.createElement(
-                        'input'
-                    );
-
-
-                inp.className=
-                    'letter-box';
-
-
-                inp.maxLength=1;
-
-
-                inp.dataset.idx=
-                    inputIdx++;
-
-
-                inp.onkeydown =
-                    e => {
-
-                        if(
-                            e.key==="Backspace" &&
-                            e.target.value===""
-                        ) {
-
-                            const p =
-                                document.querySelector(
-                                    `.letter-box[data-idx="${parseInt(e.target.dataset.idx)-1}"]`
-                                );
-
-
-                            if(p)
-                                p.focus();
-
-                        }
-
-                    };
-
-
-                inp.oninput =
-                    e => {
-
-                        if(
-                            e.target.value.length===1
-                        ) {
-
-                            const n =
-                                document.querySelector(
-                                    `.letter-box[data-idx="${parseInt(e.target.dataset.idx)+1}"]`
-                                );
-
-
-                            if(n)
-                                n.focus();
-
-
-                            if(
-                                [
-                                    ...document.querySelectorAll(
-                                        '.letter-box'
-                                    )
-                                ]
-                                .every(
-                                    b =>
-                                        b.value.length>0
-                                )
-                            ) {
-
-                                setTimeout(
-                                    checkFinalAnswer,
-                                    150
-                                );
-
-                            }
-
-                        }
-
-                    };
-
-
-                area.appendChild(
-                    inp
-                );
-
-            }
-
-        }
-    );
-
-
-    document.getElementById(
-        'practice-guide'
-    ).innerText =
-        (
-            state.mode==='practice' ||
-            state.tempPractice
-        )
-        ?
-        word.en
-        :
-        "";
-
-
-    setTimeout(
-        () => {
-
-            const f =
-                document.querySelector(
-                    '.letter-box'
-                );
-
-
-            if(f)
-                f.focus();
-
-        },
-        450
-    );
-
-
-    playVoice();
-
-}
-
-
-/* =========================
-   答題
-========================= */
-
-function checkFinalAnswer() {
-
-    const word =
-        state.currentList[
-            state.index
-        ];
-
-
-    const boxes =
-        document.querySelectorAll(
-            '.letter-box'
-        );
-
-
-    let ui="";
-
-
-    boxes.forEach(
-        b =>
-            ui+=b.value
-    );
-
-
-    if(
-        ui.toLowerCase() ===
-        word.en
-        .replace(
-            /[\s\/-]/g,
-            ''
-        )
-        .toLowerCase()
-    ) {
-
-        confetti({
-            particleCount:30,
-            spread:50
-        });
-
-
-        if(
-            state.mode==='quiz' &&
-            !state.tempPractice
-        ) {
-
-            state.oppHP--;
-
-
-            const baseId =
-                getEvolutionBaseId(
-                    state.activePokeId
-                );
-
-
-            const expK =
-                `exp_id_${baseId}`;
-
-
-            let cur =
-                Math.min(
-                    (
-                        parseInt(
-                            getHeroData(
-                                expK
-                            )
-                        ) || 0
-                    )+1,
-                    50
-                );
-
-
-            setHeroData(
-                expK,
-                cur
-            );
-
-        }
-
-
-        if(
-            state.oppHP<=0
-        ) {
-
-            setTimeout(
-                handleVictory,
-                500
-            );
-
-            return;
-
-        }
-
-
-        state.index++;
-
-        state.tempPractice=false;
-
-        updateHPUI();
-
-
-        setTimeout(
-            loadWord,
-            600
-        );
-
-
-    } else {
-
-        boxes.forEach(
-            b => {
-
-                b.classList.add(
-                    'wrong'
-                );
-
-
-                setTimeout(
-                    () =>
-                        b.classList.remove(
-                            'wrong'
-                        ),
-                    800
-                );
-
-            }
-        );
-
-
-        if(
-            state.mode==='quiz' &&
-            !state.tempPractice
-        ) {
-
-            state.playerHP--;
-
-
-            document.getElementById(
-                'btn-force-practice'
-            ).style.display=
-                "flex";
-
-
-            if(
-                state.playerHP<=0
-            ) {
-
-                handlePlayerDeath();
-
-                return;
-
-            }
-
-        }
-
-
-        updateHPUI();
-
-    }
-
-}
-
-
-/* =========================
-   PASS
-========================= */
-
-function handlePass() {
-
-    if(
-        state.index>=
-        state.currentList.length
-    )
-        return;
-
-
-    state.index++;
-
-    state.tempPractice=false;
-
-    updateHPUI();
-
-    loadWord();
-
-}
-
-
-/* =========================
-   遊戲中練習
-========================= */
-
-function startInGamePractice() {
-
-    state.tempPractice=true;
-
-    loadWord();
-
-}
-
-
-/* =========================
-   戰敗
-========================= */
-
-function handlePlayerDeath() {
-
-    const pid =
-        state.activePokeId;
-
-
-    if(
-        DEFAULTS.includes(pid)
-    ) {
-
-        setHeroData(
-            `exp_id_${pid}`,
-            0
-        );
-
-
-        alert(
-            `${PK_NAMES[pid]} 戰死... 降回 LV.1`
-        );
-
-
-    } else {
-
-        let pArr =
-            state.pokedex.split('');
-
-
-        if(
-            pid<=151
-        ) {
-
-            pArr[
-                pid-1
-            ]="0";
-
-
-            state.pokedex =
-                pArr.join('');
-
-
-            setHeroData(
-                'hero_pokedex_bits',
-                state.pokedex
-            );
-
-        }
-
-
-        alert(
-            `${PK_NAMES[pid] || '夥伴'} 戰死了... 它回到了圖鑑。`
-        );
-
-
-        state.activePokeId=384;
-
-
-        setHeroData(
-            'hero_myPoke',
-            384
-        );
-
-    }
-
-
-    switchView(
-        'view-main'
-    );
-
-}
-
-
-/* =========================
-   星號
-========================= */
-
-function toggleStar() {
-
-    const word =
-        state.currentList[
-            state.index
-        ];
-
-
-    if(!word)
-        return;
-
-
-    let p =
-        JSON.parse(
-            getHeroData(
-                'hero_priority'
-            ) ||
-            '[]'
-        );
-
-
-    if(
-        p.includes(
-            word.ref
-        )
-    ) {
-
-        p =
-            p.filter(
-                r =>
-                    r!==word.ref
-            );
-
-    } else {
-
-        p.push(
-            word.ref
-        );
-
-    }
-
-
-    setHeroData(
-        'hero_priority',
-        JSON.stringify(p)
-    );
-
-
-    const isS =
-        p.includes(
-            word.ref
-        );
-
-
-    document.getElementById(
-        'star-icon'
-    ).innerText =
-        isS
-        ?
-        "★"
-        :
-        "☆";
-
-
-    document.getElementById(
-        'star-icon'
-    ).style.color =
-        isS
-        ?
-        "var(--gold)"
-        :
-        "#475569";
-
-}
-
-
-/* =========================
-   星號練習
-========================= */
-
-function startPrioritySession() {
-
-    const pRefs =
-        JSON.parse(
-            getHeroData(
-                'hero_priority'
-            ) ||
-            '[]'
-        );
-
-
-    if(
-        pRefs.length===0
-    ) {
-
-        return alert(
-            "還沒有星號單字！"
-        );
-
-    }
-
-
-    state.currentList=[];
-
-
-    Object.values(
-        state.banks
-    )
-    .forEach(
-        b =>
-            b.forEach(
-                w => {
-
-                    if(
-                        pRefs.includes(
-                            w.ref
-                        )
-                    )
-                        state.currentList.push(
-                            w
-                        );
-
-                }
-            )
-    );
-
-
-    state.currentList.sort(
-        () =>
-            Math.random()-.5
-    );
-
-
-    state.mode=
-        'priority';
-
-
-    state.index=0;
-
-
-    switchView(
-        'view-game'
-    );
-
-
-    initArena();
-
-}
-
-
-/* =========================
-   勝利 / 捕捉
-========================= */
-
-function handleVictory() {
-
-    if(
-        state.mode==='quiz'
-    ) {
-
-        let p =
-            state.pokedex.split('');
-
-
-        p[
-            state.currentOppId-1
-        ]="1";
-
-
-        state.pokedex =
-            p.join('');
-
-
-        setHeroData(
-            'hero_pokedex_bits',
-            state.pokedex
-        );
-
-
-        confetti({
-            particleCount:200,
-            spread:100
-        });
-
-
-        alert(
-            `收服成功！${PK_NAMES[state.currentOppId] || "寶可夢"} 已加入圖鑑，現在可以到「我的夥伴」設為下一場出戰。`
-        );
-
-
-    } else if(
-        state.mode==='practice'
-    ) {
-
-        alert(
-            "練習完成！"
-        );
-
-
-    } else if(
-        state.mode==='priority'
-    ) {
-
-        alert(
-            "星號練習完成！"
-        );
-
-    }
-
-
-    switchView(
-        'view-main'
-    );
-
-}
-
-
-/* =========================
-   畫面切換
-========================= */
-
-function switchView(id) {
-
-    document
-        .querySelectorAll(
-            '.view-section'
-        )
-        .forEach(
-            v =>
-                v.style.display='none'
-        );
-
-
-    document.getElementById(
-        id
-    ).style.display='flex';
-
-
-    if(
-        id==='view-team'
-    )
-        renderTeam();
-
-
-    if(
-        id==='view-pokedex'
-    )
-        renderDex();
-
-
-    if(
-        id==='view-bank'
-    ) {
-
-        refreshUnitSelectors();
-
-        renderBankManager();
-
-    }
-
-}
-
-
-/* =========================
-   語音
-========================= */
-
-function playVoice() {
-
-    const word =
-        state.currentList[
-            state.index
-        ];
-
-
-    if(
-        !word ||
-        !word.en
-    )
-        return;
-
-
-    window.speechSynthesis.cancel();
-
-
-    const m =
-        new SpeechSynthesisUtterance(
-            word.en
-        );
-
-
-    m.lang='en-US';
-
-
-    window.speechSynthesis.speak(
-        m
-    );
-
-}
-
-
-/* =========================
-   我的夥伴
-========================= */
-
-function renderTeam() {
-
-    const grid =
-        document.getElementById(
-            'team-grid'
-        );
-
-
-    grid.innerHTML='';
-
-
-    const current =
-        document.getElementById(
-            'current-team-name'
-        );
-
-
-    const active =
-        getEvoInfo(
-            state.activePokeId
-        );
-
-
-    current.innerText =
-        `目前出戰：${
-            PK_NAMES[active.displayId] ||
-            'No.'+active.displayId
-        }（點擊其他寶可夢即可更換）`;
-
-
-    /*
-       預設三隻夥伴一定存在：
-       烈空坐、超夢、鐵臂膀
-    */
-
-    let ids=[
-        384,
-        150,
-        992
-    ];
-
-
-    /*
-       把已捕捉的 1～151
-       加入我的夥伴
-    */
-
-    for(
-        let i=1;
-        i<=151;
-        i++
-    ) {
-
-        if(
-            state.pokedex[i-1]==='1' &&
-            !ids.includes(i)
-        ) {
-
-            ids.push(i);
-
-        }
-
-    }
-
-
-    ids.forEach(
-        id => {
-
-            const info =
-                getEvoInfo(id);
-
-
-            const it =
-                document.createElement(
-                    'div'
-                );
-
-
-            it.className =
-                `grid-item collected ${
-                    state.activePokeId==id
-                    ?
-                    'active'
-                    :
-                    ''
-                }`;
-
-
-            it.innerHTML =
-                `
-                <img
-                    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${info.displayId}.png">
-
-                <div class="name-zh">
-                    ${
-                        PK_NAMES[info.displayId] ||
-                        'No.'+info.displayId
+    function fallbackSyllables(raw) {
+        const text = String(raw || '');
+        const words = text.split(/(\s+|[\/-])/);
+        const out = [];
+        words.forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part) || /^[\/-]$/.test(part)) { out.push(part); return; }
+            const w = part.toLowerCase();
+            if (COMMON_SYLLABLES[w]) { out.push(...COMMON_SYLLABLES[w]); return; }
+            if (!/[a-z]/i.test(part)) { out.push(part); return; }
+            const chars = Array.from(part);
+            const vowels = /[aeiouy]/i;
+            const chunks = []; let start = 0; let i = 0;
+            while (i < chars.length) {
+                if (vowels.test(chars[i])) {
+                    let nucleusEnd = i + 1;
+                    while (nucleusEnd < chars.length && vowels.test(chars[nucleusEnd])) nucleusEnd++;
+                    let end = nucleusEnd;
+                    if (end < chars.length) {
+                        let j = end;
+                        while (j < chars.length && !vowels.test(chars[j])) j++;
+                        const consonants = j - end;
+                        if (j < chars.length && consonants > 1) end = end + consonants - 1;
+                        else end = j;
                     }
-                </div>
+                    chunks.push(chars.slice(start, end).join(''));
+                    start = end; i = end;
+                } else i++;
+            }
+            if (start < chars.length) {
+                if (chunks.length) chunks[chunks.length-1] += chars.slice(start).join('');
+                else chunks.push(part);
+            }
+            out.push(...(chunks.length ? chunks : [part]));
+        });
+        return out;
+    }
 
-                <div class="team-status">
-                    ${
-                        state.activePokeId==id
-                        ?
-                        '⚔️ 出戰中'
-                        :
-                        '點擊設為出戰'
-                    }
-                </div>
-                `;
+    function renderPracticeGuide(text) {
+        const el = document.getElementById('practice-guide');
+        if (!el) return;
+        el.innerHTML = '';
+        if (!text) return;
 
+        const note = document.createElement('div');
+        note.className = 'practice-phonics-note';
+        note.textContent = '自然發音練習：每個顏色代表一個音節';
+        el.appendChild(note);
 
-            it.onclick =
-                () => {
+        const parts = fallbackSyllables(text);
+        let syllableIndex = 0;
+        parts.forEach(part => {
+            if (/^\s+$/.test(part)) {
+                const s = document.createElement('span');
+                s.className = 'practice-syllable-separator';
+                s.textContent = ' ';
+                el.appendChild(s);
+            } else if (/^[\/-]$/.test(part)) {
+                const s = document.createElement('span');
+                s.className = 'practice-syllable-separator';
+                s.textContent = part;
+                el.appendChild(s);
+            } else {
+                const s = document.createElement('span');
+                s.className = 'practice-syllable';
+                const colorNo = (syllableIndex % 6) + 1;
+                s.classList.add(`color-${colorNo}`);
+                s.dataset.syllable = String(syllableIndex++);
+                s.textContent = part;
+                el.appendChild(s);
+            }
+        });
+    }
 
-                    state.activePokeId=id;
+    function playVoice() {
+        const word = state.currentList[state.index];
+        if (!word || !word.en) return;
+        window.speechSynthesis.cancel();
+        const m = new SpeechSynthesisUtterance(word.en);
+        m.lang = 'en-US';
+        /* 比原本慢約 20%，方便孩子聽清楚每個音節。 */
+        m.rate = 0.78;
+        m.pitch = 1;
+        m.volume = 1;
+        window.speechSynthesis.speak(m);
+    }
+    
+    function renderTeam() {
+        const nameEl = document.getElementById('team-child-name');
+        if (nameEl) nameEl.textContent = getChildName();
+        const grid=document.getElementById('team-grid');
+        grid.innerHTML='';
+        const current=document.getElementById('current-team-name');
+        const active=getEvoInfo(state.activePokeId);
+        current.innerText=state.awaitingPartner
+            ? '⚠️ 夥伴已倒下：請選擇另一隻夥伴繼續戰鬥'
+            : `目前出戰：${PK_NAMES[active.displayId] || 'No.'+active.displayId}（點擊其他寶可夢即可更換）`;
 
+        let ids=[384,150,992];
+        for(let i=1;i<=151;i++) if(state.pokedex[i-1]==='1' && !ids.includes(i)) ids.push(i);
 
-                    setHeroData(
-                        'hero_myPoke',
-                        id
-                    );
+        ids.forEach(id=>{
+            const info=getEvoInfo(id);
+            const it=document.createElement('div');
+            const blocked = state.awaitingPartner && id === state.activePokeId;
+            it.className=`grid-item collected ${state.activePokeId==id?'active':''} ${blocked?'defeated':''}`;
+            const status = blocked
+                ? '💥 已倒下・不可再次出戰'
+                : (state.activePokeId==id ? '⚔️ 出戰中' : '點擊設為出戰');
+            it.innerHTML=`<img src="${getPokeImageUrl(info.displayId,true)}"><div class="name-zh">${PK_NAMES[info.displayId]||'No.'+info.displayId}</div><div class="team-status">${status}</div>`;
+            const img = it.querySelector('img');
+            setPokeImageFallback(img, info.displayId);
 
-
+            it.onclick=()=>{
+                if (state.awaitingPartner && id === state.activePokeId) {
+                    alert('這隻夥伴剛剛已經 HP 歸零，請選擇另一隻夥伴。');
+                    return;
+                }
+                state.activePokeId=id;
+                setHeroData('hero_myPoke',id);
+                if(state.awaitingPartner){
+                    state.awaitingPartner=false;
+                    state.playerHP=5;
+                    updateHPUI();
+                    switchView('view-game');
+                    loadWord();
+                } else {
                     renderTeam();
-
-                };
-
-
-            grid.appendChild(
-                it
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================
-   寶可夢圖鑑
-========================= */
-
-function renderDex() {
-
-    const grid =
-        document.getElementById(
-            'dex-grid'
-        );
-
-
-    grid.innerHTML='';
-
-
-    let caught=0;
-
-
-    for(
-        let i=1;
-        i<=151;
-        i++
-    ) {
-
-        const captured =
-            state.pokedex[i-1]==='1';
-
-
-        if(captured)
-            caught++;
-
-
-        const it =
-            document.createElement(
-                'div'
-            );
-
-
-        it.className =
-            `grid-item ${
-                captured
-                ?
-                'collected'
-                :
-                'locked'
-            }`;
-
-
-        it.innerHTML =
-            `
-            <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${i}.png">
-
-            <div class="name-zh">
-                ${
-                    PK_NAMES[i] ||
-                    'No.'+i
                 }
-            </div>
-
-            ${
-                captured
-                ?
-                '<div class="caught-badge">已捕捉・可加入夥伴</div>'
-                :
-                '<div style="color:#64748b;font-size:.7rem;">未捕捉</div>'
-            }
-            `;
-
-
-        if(captured) {
-
-            it.style.cursor='pointer';
-
-
-            it.onclick =
-                () => {
-
-                    /*
-                       從圖鑑直接點擊，
-                       就把這隻設成出戰夥伴
-                    */
-
-                    state.activePokeId=i;
-
-
-                    setHeroData(
-                        'hero_myPoke',
-                        i
-                    );
-
-
-                    switchView(
-                        'view-team'
-                    );
-
-                };
-
-        }
-
-
-        grid.appendChild(
-            it
-        );
-
+            };
+            grid.appendChild(it);
+        });
     }
 
-
-    document.getElementById(
-        'dex-count'
-    ).innerText =
-        `已捕捉 ${caught} / 151｜捕捉後可加入「我的夥伴」並在下一場出戰`;
-
-}
-
+    function renderDex() {
+        const nameEl = document.getElementById('dex-child-name');
+        if (nameEl) nameEl.textContent = getChildName();
+        const grid=document.getElementById('dex-grid'); grid.innerHTML='';
+        let caught=0;
+        for(let i=1;i<=151;i++){
+            const captured=state.pokedex[i-1]==='1'; if(captured) caught++;
+            const it=document.createElement('div');
+            it.className=`grid-item ${captured?'collected':'locked'}`;
+            it.innerHTML=`<img src="${getPokeImageUrl(i,true)}"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div>${captured?'<div class="caught-badge">已捕捉・可加入夥伴</div>':'<div style="color:#64748b;font-size:.7rem;">未捕捉</div>'}`;
+            const img=it.querySelector('img');
+            setPokeImageFallback(img,i);
+            if(captured){
+                it.style.cursor='pointer';
+                it.onclick=()=>{ state.activePokeId=i; setHeroData('hero_myPoke',i); switchView('view-team'); };
+            }
+            grid.appendChild(it);
+        }
+        document.getElementById('dex-count').innerText=`已捕捉 ${caught} / 151｜捕捉後可加入「我的夥伴」並在下一場出戰`;
+    }
 </script>
-
 </body>
 </html>
