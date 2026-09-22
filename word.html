@@ -95,7 +95,11 @@
         .practice-syllable-separator { color:#94a3b8; font-weight:800; margin:0 .08em; }
         .practice-phonics-note { display:block; width:100%; text-align:center; color:#cbd5e1; font-size:.78rem; font-weight:800; margin:3px 0 2px; }
         .practice-phonics-row { display:flex; width:100%; justify-content:center; align-items:center; flex-wrap:wrap; gap:5px; margin-top:2px; }
-        .practice-phonics-item { display:inline-flex; align-items:center; gap:4px; padding:3px 7px; border-radius:8px; background:rgba(15,23,42,.78); border:1px solid #475569; font-size:.78rem; font-weight:900; color:#f8fafc; }
+        .practice-phonics-item { display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:8px; background:rgba(15,23,42,.78); border:1px solid #475569; font-size:.78rem; font-weight:900; color:#f8fafc; cursor:pointer; user-select:none; transition:transform .08s, background .12s, border-color .12s; }
+        .practice-phonics-item:hover { background:rgba(56,189,248,.14); border-color:#38bdf8; }
+        .practice-phonics-item:active { transform:scale(.96); }
+        .practice-phonics-item.is-playing { border-color:#fbbf24; background:rgba(251,191,36,.12); }
+        .practice-phonics-speaker { color:#38bdf8; font-size:.72rem; margin-left:1px; }
         .practice-phonics-letter { color:#94a3b8; }
         .practice-phonics-arrow { color:#64748b; }
         .practice-phonics-sound { color:#f8fafc; }
@@ -525,7 +529,7 @@ ${detail}
                 ['dinosaur','恐龍'],
                 ['million','百萬'],
                 ['street','街道'],
-                ['Eart','地球'],
+                ['Earth','地球'],
                 ['dance','跳舞'],
                 ['cloud','雲'],
                 ['lake','湖'],
@@ -995,11 +999,13 @@ ${detail}
     }
 
     function mergeFixedBanks(base) {
+        // TXT 是 Anson 的真正題庫來源；只補上 TXT 沒有的 W1-W4，不覆蓋 TXT 已修改的內容。
+        const result = cloneBanks(base || {});
         const fixed = banksFromPairs(getFixedBanks());
         Object.keys(fixed).forEach(unit => {
-            base[unit] = fixed[unit];
+            if (!Array.isArray(result[unit]) || !result[unit].length) result[unit] = fixed[unit];
         });
-        return base;
+        return result;
     }
 
     async function loadAnsonTxtQuestionBank() {
@@ -1603,8 +1609,8 @@ ${detail}
         dinosaur: { parts:[['di','/daɪ/'],['no','/nə/'],['saur','/sɔːr/']] },
         million: { parts:[['mil','/mɪl/'],['lion','/jən/']] },
         street: { parts:[['str','/str/'],['ee','/iː/'],['t','/t/']] },
-        eart: { parts:[['ear','/ɜːr/'],['t','/t/']] },
         earth: { parts:[['ear','/ɜːr/'],['th','/θ/']] },
+        eart: { parts:[['ear','/ɜːr/'],['t','/t/']] },
         dance: { parts:[['d','/d/'],['an','/æ/'],['ce','/s/']] },
         cloud: { parts:[['cl','/kl/'],['ou','/aʊ/'],['d','/d/']] },
         lake: { parts:[['l','/l/'],['a_e','/eɪ/'],['k','/k/'],['e','不發音',true]], rule:'a_e：magic e 讓 a 發長音，最後 e 不發音' },
@@ -1645,6 +1651,48 @@ ${detail}
         flag: { parts:[['fl','/fl/'],['a','/æ/'],['g','/g/']] }
     };
 
+    // 點擊單一自然發音提示即可單獨播放。
+    // 瀏覽器 TTS 對孤立子音的表現各異，因此以最接近的學習示範音播放。
+    const PHONICS_AUDIO_TEXT = {
+        '/str/':'street', '/st/':'stop', '/sp/':'spin', '/sk/':'skip', '/kl/':'clap', '/fl/':'flag',
+        '/pl/':'play', '/tr/':'tree', '/dr/':'drink', '/br/':'bring', '/cr/':'crab', '/gr/':'green',
+        '/pr/':'press', '/fr/':'frog', '/bl/':'blue', '/gl/':'glow', '/tw/':'twin', '/kw/':'quick',
+        '/iː/':'ee', '/ɪ/':'ih', '/e/':'eh', '/æ/':'a', '/ʌ/':'uh', '/ɑːr/':'car', '/ɜːr/':'bird',
+        '/ɔːr/':'more', '/ɔː/':'or', '/oʊ/':'go', '/aʊ/':'out', '/eɪ/':'say', '/aɪ/':'eye', '/ɪə/':'ear',
+        '/ɪər/':'ear', '/ə/':'uh', '/ər/':'er', '/ən/':'un', '/əl/':'ul', '/dʒɪpt/':'Egypt',
+        '/tʃaɪ/':'China', '/θ/':'think', '/ð/':'this', '/ŋ/':'sing', '/ʃ/':'ship', '/ʒ/':'vision',
+        '/j/':'yes', '/w/':'we', '/r/':'red', '/l/':'leg', '/m/':'map', '/n/':'no', '/p/':'pen',
+        '/b/':'book', '/t/':'top', '/d/':'dog', '/k/':'cat', '/g/':'go', '/f/':'fish', '/v/':'van',
+        '/s/':'see', '/z/':'zoo', '/h/':'hat', '/mp/':'camp', '/ld/':'old', '/md/':'and', '/nd/':'end',
+        '/ks/':'six', '/drəd/':'hundred', '/mɪl/':'mill', '/jən/':'million', '/nə/':'no', '/sɔːr/':'sore',
+        '/æ/':'cat', '/væl/':'val', '/i/':'happy', '/jes/':'yes', '/tər/':'ter', '/deɪ/':'day',
+        '/k/':'cat', '/p/':'pen', '/fɪf/':'fif', '/ti/':'tea', '/fɔːr/':'four', '/sev/':'seven',
+        '/sɪks/':'six', '/θ/':'think', '/ɜːr/':'bird', '/twen/':'twenty', '/hʌn/':'hundred',
+        '/drəd/':'dred', '/naɪn/':'nine', '/nɔːr/':'north', '/saʊ/':'south', '/pɪk/':'pick',
+        '/nɪk/':'nick', '/teɪ/':'table', '/bəl/':'bull', '/pɑːrk/':'park', '/ɪŋ/':'ing', '/lɑːt/':'lot',
+        '/lɪz/':'liz', '/ərd/':'erd', '/kæs/':'castle', '/goʊld/':'gold', '/gloʊ/':'glow',
+        '/dən/':'den', '/goʊld/':'gold', '/tə/':'to', '/mɛr/':'mer', '/kən/':'can', '/streɪ/':'Australia',
+        '/li/':'lee', '/dʒɪpt/':'Egypt', '/kʌn/':'country', '/tri/':'tree', '/fl/':'flag'
+    };
+
+    function playPhonicsPart(button, item) {
+        if (!item || item[1] === '不發音') return;
+        const sound = item[1];
+        const spoken = PHONICS_AUDIO_TEXT[sound] || item[0];
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        document.querySelectorAll('.practice-phonics-item.is-playing').forEach(x => x.classList.remove('is-playing'));
+        button.classList.add('is-playing');
+        const utter = new SpeechSynthesisUtterance(spoken);
+        utter.lang = 'en-US';
+        utter.rate = 0.62;
+        utter.pitch = 1;
+        utter.volume = 1;
+        utter.onend = () => button.classList.remove('is-playing');
+        utter.onerror = () => button.classList.remove('is-playing');
+        window.speechSynthesis.speak(utter);
+    }
+
     function renderPracticePhonics(el, text) {
         const key = String(text || '').toLowerCase();
         const data = PHONICS_HINTS[key];
@@ -1653,8 +1701,12 @@ ${detail}
         const row = document.createElement('div');
         row.className = 'practice-phonics-row';
         data.parts.forEach(item => {
-            const box = document.createElement('span');
+            const box = document.createElement('button');
+            box.type = 'button';
             box.className = 'practice-phonics-item';
+            box.title = item[2] ? '不發音' : '點一下聽這個發音';
+            box.setAttribute('aria-label', item[2] ? `${item[0]}：不發音` : `${item[0]}：播放發音`);
+            box.addEventListener('click', () => playPhonicsPart(box, item));
             const letters = document.createElement('span');
             letters.className = 'practice-phonics-letter' + (item[2] ? ' practice-silent' : '');
             letters.textContent = item[0];
@@ -1665,6 +1717,12 @@ ${detail}
             sound.className = 'practice-phonics-sound';
             sound.textContent = item[1];
             box.append(letters, arrow, sound);
+            if (!item[2]) {
+                const speaker = document.createElement('span');
+                speaker.className = 'practice-phonics-speaker';
+                speaker.textContent = '🔊';
+                box.appendChild(speaker);
+            }
             row.appendChild(box);
         });
         el.appendChild(row);
@@ -1685,7 +1743,7 @@ ${detail}
 
         const note = document.createElement('div');
         note.className = 'practice-phonics-note';
-        note.textContent = '自然發音：先看音節，再看字母／字母群怎麼發音';
+        note.textContent = '自然發音：先看音節，再看字母／字母群怎麼發音；🔊 點一下可單獨聽';
         el.appendChild(note);
 
         const parts = fallbackSyllables(text);
