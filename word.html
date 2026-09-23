@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1444 - 每題造句＋PASS</title>
+    <title>Word Hero V1445 - 練習模式：單字／造句獨立單元</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,8 +112,8 @@
 
 
 
-        /* 每一題都顯示造句區，PASS 與檢查文法並排 */
-        .sentence-inline { width:min(96%,520px); margin:8px auto 10px; padding:10px; border:1px solid #475569; border-radius:12px; background:rgba(15,23,42,.9); }
+        /* 舊版每題造句區：V1445 改為獨立造句單元，保留 DOM 僅供舊資料相容 */
+        .sentence-inline { display:none !important; width:min(96%,520px); margin:8px auto 10px; padding:10px; border:1px solid #475569; border-radius:12px; background:rgba(15,23,42,.9); }
         .sentence-inline-title { text-align:center; color:#fbbf24; font-weight:1000; font-size:.95rem; margin-bottom:3px; }
         .sentence-inline-word { text-align:center; color:#38bdf8; font-size:1.15rem; font-weight:1000; margin-bottom:6px; }
         #sentence-inline-input { width:100%; min-height:72px; resize:vertical; padding:9px; border-radius:9px; border:1px solid #475569; background:#020617; color:#fff; font-size:1rem; line-height:1.45; font-family:inherit; }
@@ -121,6 +121,24 @@
         .sentence-inline-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:7px; }
         .pass-btn-inline { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
         .pass-btn-inline:active { transform:scale(.97); }
+
+        /* V1445：練習模式子單元 */
+        .practice-unit-title { text-align:center; color:#f8fafc; font-size:1.35rem; font-weight:1000; margin:8px 0 4px; }
+        .practice-unit-subtitle { text-align:center; color:#94a3b8; font-size:.85rem; line-height:1.5; margin-bottom:12px; }
+        .practice-unit-grid { display:grid; grid-template-columns:1fr; gap:10px; margin:auto 0; }
+        .practice-unit-btn { min-height:78px; border:0; border-radius:16px; color:#fff; font-weight:1000; font-size:1.15rem; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.2); }
+        .practice-unit-btn small { display:block; margin-top:4px; font-size:.72rem; opacity:.82; font-weight:700; }
+        .practice-word-btn { background:#3b82f6; }
+        .practice-sentence-btn { background:linear-gradient(135deg,#7c3aed,#a855f7); }
+        .sentence-unit-card { width:min(96%,560px); margin:auto; padding:14px; border:1px solid #475569; border-radius:16px; background:rgba(15,23,42,.92); }
+        .sentence-unit-cn { text-align:center; color:#fbbf24; font-size:1.2rem; font-weight:1000; min-height:30px; }
+        .sentence-unit-word { text-align:center; color:#38bdf8; font-size:2.1rem; font-weight:1000; margin:4px 0 10px; }
+        #sentence-unit-input { width:100%; min-height:105px; resize:vertical; padding:11px; border-radius:10px; border:1px solid #475569; background:#020617; color:#fff; font-size:1.05rem; line-height:1.5; font-family:inherit; box-sizing:border-box; }
+        #sentence-unit-input:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,.15); outline:none; }
+        .sentence-unit-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:8px; }
+        .sentence-unit-pass { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
+        .sentence-unit-progress { text-align:center; color:#94a3b8; font-size:.78rem; margin-top:8px; }
+        .sentence-unit-back { margin-top:10px; background:#334155; }
 
         /* 造句功能 */
         .sentence-btn {
@@ -344,12 +362,12 @@
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">WORD HERO V1442</h2>
+        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">WORD HERO V1445</h2>
         <div style="text-align:center;color:#94a3b8;font-size:.9rem;margin-bottom:8px;">使用者：<span id="main-child-name"></span></div>
         <div style="flex:1;">
             <select id="unit-selector" style="width:100%; padding:14px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.3rem; margin-bottom:10px;"></select>
             <button class="mode-btn" style="background:linear-gradient(45deg,#ef4444,#f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (敗北扣級)</button>
-            <button class="mode-btn" style="background:#3b82f6;" onclick="startSession('practice')">🛡️ 練習模式</button>
+            <button class="mode-btn" style="background:#3b82f6;" onclick="openPracticeMenu()">🛡️ 練習模式</button>
             <button class="mode-btn" style="background:var(--gold);color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
             <button class="mode-btn admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
             <button class="mode-btn admin-btn" onclick="downloadErrorLog()">📝 錯題 Log</button>
@@ -360,6 +378,36 @@
             <button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 我的夥伴</button>
             <button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 寶可夢圖鑑</button>
         </div>
+    </div>
+
+    <div id="view-practice-menu" class="view-section">
+        <h2 class="practice-unit-title">🛡️ 練習模式</h2>
+        <div class="practice-unit-subtitle">請選擇今天要練習的項目。<br>「單字練習」和「單字造句」分開進行。</div>
+        <div class="practice-unit-grid">
+            <button class="practice-unit-btn practice-word-btn" onclick="startSession('practice')">🔤 單字練習<small>拼字・自然拼音・朗讀</small></button>
+            <button class="practice-unit-btn practice-sentence-btn" onclick="startSentenceSession()">✍️ 單字造句<small>用本單字造句・檢查文法・PASS</small></button>
+        </div>
+        <button class="mode-btn" style="background:#334155;margin-top:auto;" onclick="switchView('view-main')">🏠 返回主畫面</button>
+    </div>
+
+    <div id="view-sentence-practice" class="view-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <button class="mode-btn" style="width:auto;padding:6px 12px;background:#334155;font-size:.8rem;" onclick="switchView('view-practice-menu')">← 練習模式</button>
+            <div id="sentence-unit-progress-top" style="color:#94a3b8;font-size:.8rem;font-weight:800;"></div>
+        </div>
+        <div class="sentence-unit-card">
+            <div style="text-align:center;color:#fbbf24;font-weight:1000;font-size:1rem;margin-bottom:2px;">✍️ 單字造句</div>
+            <div id="sentence-unit-cn" class="sentence-unit-cn"></div>
+            <div id="sentence-unit-word" class="sentence-unit-word"></div>
+            <textarea id="sentence-unit-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子"></textarea>
+            <div class="sentence-unit-actions">
+                <button type="button" class="sentence-check-btn" onclick="checkStandaloneSentenceGrammar()">🔎 檢查文法</button>
+                <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
+            </div>
+            <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
+            <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
+        </div>
+        <button class="mode-btn sentence-unit-back" onclick="switchView('view-practice-menu')">結束造句練習</button>
     </div>
 
     <div id="view-game" class="view-section">
@@ -501,7 +549,7 @@
     const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
     const DEFAULTS = [384, 150, 992];
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: null };
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
     let currentUserKey = '';
@@ -1079,7 +1127,15 @@ ${detail}
     }
 
     function saveQuestion() {
-        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+        // 文字題庫來自 TXT，網頁無法直接回寫 GitHub 上的 TXT。
+        // 使用者若在文字題庫模式按下儲存，先複製成自己的本機自訂題庫，再完成修改。
+        if (bankSourceMode !== 'custom') {
+            const copied = cloneBanks(state.banks);
+            state.banks = normalizeLegacyEarthInBanks(copied);
+            setLocalJSON('hero_question_bank', state.banks);
+            bankSourceMode = 'custom';
+            setHeroData('hero_bank_source_mode', bankSourceMode);
+        }
         const unit=document.getElementById('question-unit').value.trim(), en=document.getElementById('question-en').value.trim(), cn=document.getElementById('question-cn').value.trim();
         if(!unit || !en) return alert('「單元」與「English」不能空白。');
         if(!state.banks[unit]) state.banks[unit]=[];
@@ -1196,7 +1252,7 @@ ${detail}
             }
 
             // TXT 讀到什麼就使用什麼；只補 TXT 完全沒有的 W1-W4。
-            state.banks = mergeFixedBanks(parsed);
+            state.banks = normalizeLegacyEarthInBanks(mergeFixedBanks(parsed));
 
             // 更新快取，避免舊版的 eart 殘留。
             setLocalJSON('hero_anson_txt_cache', state.banks);
@@ -1213,11 +1269,12 @@ ${detail}
     function loadLocalQuestionBank() {
         const saved = getLocalJSON('hero_question_bank', null);
         if (saved && typeof saved === 'object' && Object.keys(saved).length) {
-            state.banks = saved;
+            state.banks = normalizeLegacyEarthInBanks(saved);
+            saveUserQuestionBank();
             return;
         }
 
-        state.banks = banksFromPairs(getFixedBanks());
+        state.banks = normalizeLegacyEarthInBanks(banksFromPairs(getFixedBanks()));
         applyLocalQuestionChanges();
         saveUserQuestionBank();
     }
@@ -1232,6 +1289,26 @@ ${detail}
             if (next.length !== cached[unit].length) { cached[unit] = next; changed = true; }
         });
         if (changed) setLocalJSON('hero_anson_txt_cache', cached);
+    }
+
+    // 舊版本曾把 Earth 存成 eart；啟動時自動修正舊本機資料，避免畫面只產生 4 個字框。
+    function normalizeLegacyEarthInBanks(banks) {
+        const result = cloneBanks(banks || {});
+        Object.keys(result).forEach(unit => {
+            if (!Array.isArray(result[unit])) return;
+            result[unit] = result[unit].map(w => {
+                if (!w) return w;
+                const en = String(w.en || '').trim();
+                if (en.toLowerCase() === 'eart') return { ...w, en: 'Earth' };
+                return w;
+            });
+        });
+        return result;
+    }
+
+    function normalizeCurrentBank() {
+        state.banks = normalizeLegacyEarthInBanks(state.banks);
+        if (bankSourceMode === 'custom') saveUserQuestionBank();
     }
 
     async function initQuestionBank() {
@@ -1253,6 +1330,7 @@ ${detail}
         } else {
             loadLocalQuestionBank();
         }
+        normalizeCurrentBank();
         refreshUnitSelectors();
         updateBankSourceUI();
     }
@@ -1319,7 +1397,7 @@ ${detail}
         state.mode = m;
         state.tempPractice = false;
         state.index = 0;
-        state.sentenceEnabled = (m === 'practice');
+        state.sentenceEnabled = false;
         state.quizCompleted = 0;
         state.playerHP = 5;
         state.oppHP = 5;
@@ -1431,13 +1509,117 @@ ${detail}
     }
 
     function updateSentenceChoiceUI() {
+        // V1445：造句改為獨立單元，不再嵌在每個單字題目裡。
         const panel = document.getElementById('sentence-inline');
-        const wordEl = document.getElementById('sentence-inline-word');
-        const word = state.currentList && state.currentList[state.index];
-        const inPractice = state.mode === 'practice' || state.tempPractice === true;
-        if (panel) panel.style.display = inPractice ? 'block' : 'none';
-        if (wordEl) wordEl.textContent = inPractice && word ? String(word.en || '') : '';
+        if (panel) panel.style.display = 'none';
     }
+
+    function openPracticeMenu() {
+        switchView('view-practice-menu');
+    }
+
+    function startSentenceSession() {
+        const unit = document.getElementById('unit-selector').value;
+        if (!unit || !state.banks[unit] || state.banks[unit].length === 0) {
+            return alert('目前沒有可用的單字資料。');
+        }
+        state.sentenceList = [...state.banks[unit]].sort(() => Math.random() - 0.5);
+        state.sentenceIndex = 0;
+        state.sentenceUnitName = unit;
+        switchView('view-sentence-practice');
+        loadSentenceUnitWord();
+    }
+
+    function loadSentenceUnitWord() {
+        if (!state.sentenceList || state.sentenceIndex >= state.sentenceList.length) {
+            alert('🎉 這組單字的造句練習完成！');
+            switchView('view-practice-menu');
+            return;
+        }
+        const word = state.sentenceList[state.sentenceIndex];
+        sentenceTargetWord = String(word.en || '').trim();
+        const cn = document.getElementById('sentence-unit-cn');
+        const en = document.getElementById('sentence-unit-word');
+        const input = document.getElementById('sentence-unit-input');
+        const result = document.getElementById('sentence-unit-result');
+        const progress = document.getElementById('sentence-unit-progress');
+        const top = document.getElementById('sentence-unit-progress-top');
+        if (cn) cn.textContent = word.cn || localDict[sentenceTargetWord.toLowerCase()] || '';
+        if (en) en.textContent = sentenceTargetWord;
+        if (input) { input.value = ''; input.focus(); }
+        if (result) { result.style.display = 'none'; result.className = 'sentence-status'; result.innerHTML = ''; }
+        const text = `${state.sentenceIndex + 1} / ${state.sentenceList.length}`;
+        if (progress) progress.textContent = `第 ${text} 題｜使用單字：${sentenceTargetWord}`;
+        if (top) top.textContent = text;
+    }
+
+    function sentenceUnitPass() {
+        state.sentenceIndex = (state.sentenceIndex || 0) + 1;
+        loadSentenceUnitWord();
+    }
+
+    async function checkStandaloneSentenceGrammar() {
+        const input = document.getElementById('sentence-unit-input');
+        const result = document.getElementById('sentence-unit-result');
+        if (!input || !result) return;
+        await runSentenceGrammarCheck(input, result);
+    }
+
+    async function runSentenceGrammarCheck(input, result) {
+        const sentence = String(input.value || '').trim();
+        result.style.display = 'block';
+        result.className = 'sentence-status sentence-loading';
+        result.innerHTML = '⏳ 正在檢查文法與拼字……';
+
+        const localIssues = localSentenceChecks(sentence, sentenceTargetWord);
+        if (!sentence) {
+            result.className = 'sentence-status error';
+            result.innerHTML = '❌ 請先寫一句英文句子。';
+            return;
+        }
+
+        let matches = [];
+        let apiOK = false;
+        try {
+            const body = new URLSearchParams();
+            body.set('text', sentence);
+            body.set('language', 'en-US');
+            body.set('enabledOnly', 'false');
+            const response = await fetch('https://api.languagetool.org/v2/check', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            });
+            if (response.ok) {
+                const data = await response.json();
+                matches = Array.isArray(data.matches) ? data.matches : [];
+                apiOK = true;
+            }
+        } catch (e) { apiOK = false; }
+
+        const targetMissing = localIssues.some(x => x.includes('還沒有使用目標單字'));
+        const simpleIssues = localIssues.filter(x => !x.includes('還沒有使用目標單字'));
+        if (apiOK) {
+            const usefulMatches = matches.filter(m => m && m.message && m.rule);
+            if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
+                result.className = 'sentence-status good';
+                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字問題！</b><div class="sentence-example">很好，繼續保持。</div>';
+                return;
+            }
+            let html = '';
+            if (targetMissing) html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」。`)}</div>`;
+            if (usefulMatches.length) html += '<div style="margin-top:5px;">' + usefulMatches.slice(0,5).map((m,i) => `${i+1}. ${formatLanguageToolMessage(m)}`).join('<div style="margin-top:7px;"></div>') + '</div>';
+            if (simpleIssues.length) html += `<div style="margin-top:7px;">${simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>')}</div>`;
+            result.className = 'sentence-status warn';
+            result.innerHTML = html || '⚠️ 有一些地方建議再檢查。';
+            return;
+        }
+        result.className = 'sentence-status warn';
+        result.innerHTML = (!targetMissing && simpleIssues.length === 0)
+            ? '⚠️ 線上文法服務目前無法連線。<br>基本檢查沒有發現明顯問題，但這不代表文法已完整確認。'
+            : (targetMissing ? `⚠️ 句子裡還沒有使用目標單字「${escapeSentenceHtml(sentenceTargetWord)}」。<br>` : '') + (simpleIssues.length ? simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>') : '');
+    }
+
 
     function setSentencePracticeChoice(enabled) {
         // 舊版相容：現在每一題固定顯示造句區，因此不再需要本選項。
