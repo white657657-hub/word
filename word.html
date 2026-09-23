@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1445 - 練習模式：單字／造句獨立單元</title>
+    <title>Word Hero V1448 - 練習模式：複數判斷／下一題</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,7 +122,7 @@
         .pass-btn-inline { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
         .pass-btn-inline:active { transform:scale(.97); }
 
-        /* V1445：練習模式子單元 */
+        /* V1448：練習模式子單元 */
         .practice-unit-title { text-align:center; color:#f8fafc; font-size:1.35rem; font-weight:1000; margin:8px 0 4px; }
         .practice-unit-subtitle { text-align:center; color:#94a3b8; font-size:.85rem; line-height:1.5; margin-bottom:12px; }
         .practice-unit-grid { display:grid; grid-template-columns:1fr; gap:10px; margin:auto 0; }
@@ -138,7 +138,9 @@
         .sentence-unit-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:8px; }
         .sentence-unit-pass { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
         .sentence-unit-progress { text-align:center; color:#94a3b8; font-size:.78rem; margin-top:8px; }
+        /* V1448：文法說明後固定提供下一題 */
         .sentence-next-btn {
+            display:none;
             width:100%;
             margin-top:9px;
             padding:11px;
@@ -418,7 +420,7 @@
                 <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
             </div>
             <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
-            <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題</button>
+            <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
         </div>
         <button class="mode-btn sentence-unit-back" onclick="switchView('view-practice-menu')">結束造句練習</button>
@@ -1562,6 +1564,8 @@ ${detail}
         if (en) en.textContent = sentenceTargetWord;
         if (input) { input.value = ''; input.focus(); }
         if (result) { result.style.display = 'none'; result.className = 'sentence-status'; result.innerHTML = ''; }
+        const nextBtn = document.querySelector('.sentence-next-btn');
+        if (nextBtn) nextBtn.style.display = 'none';
         const text = `${state.sentenceIndex + 1} / ${state.sentenceList.length}`;
         if (progress) progress.textContent = `第 ${text} 題｜使用單字：${sentenceTargetWord}`;
         if (top) top.textContent = text;
@@ -1579,6 +1583,11 @@ ${detail}
         await runSentenceGrammarCheck(input, result);
     }
 
+    function showSentenceNextButton() {
+        const btn = document.querySelector('.sentence-next-btn');
+        if (btn) btn.style.display = 'block';
+    }
+
     async function runSentenceGrammarCheck(input, result) {
         const sentence = String(input.value || '').trim();
         result.style.display = 'block';
@@ -1591,7 +1600,6 @@ ${detail}
             result.innerHTML = '❌ 請先寫一句英文句子。';
             return;
         }
-
         let matches = [];
         let apiOK = false;
         try {
@@ -1618,6 +1626,7 @@ ${detail}
             if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
                 result.className = 'sentence-status good';
                 result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字問題！</b><div class="sentence-example">很好，繼續保持。</div>';
+                showSentenceNextButton();
                 return;
             }
             let html = '';
@@ -1626,12 +1635,14 @@ ${detail}
             if (simpleIssues.length) html += `<div style="margin-top:7px;">${simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>')}</div>`;
             result.className = 'sentence-status warn';
             result.innerHTML = html || '⚠️ 有一些地方建議再檢查。';
+            showSentenceNextButton();
             return;
         }
         result.className = 'sentence-status warn';
         result.innerHTML = (!targetMissing && simpleIssues.length === 0)
             ? '⚠️ 線上文法服務目前無法連線。<br>基本檢查沒有發現明顯問題，但這不代表文法已完整確認。'
             : (targetMissing ? `⚠️ 句子裡還沒有使用目標單字「${escapeSentenceHtml(sentenceTargetWord)}」。<br>` : '') + (simpleIssues.length ? simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>') : '');
+        showSentenceNextButton();
     }
 
 
@@ -2254,38 +2265,88 @@ ${detail}
         return String(text || '').trim().toLowerCase().replace(/[.,!?;:'"()[\]{}]/g, '');
     }
 
-    // 造句時接受合理的複數型，例如 dinosaur → dinosaurs。
-    // 多字單字則只將最後一個字做複數化，例如 picnic table → picnic tables。
+    // V1448：造句判斷必須同時接受「原形」與「合理複數型」。
+    // 例如：dinosaur → dinosaurs、lake → lakes、city → cities、box → boxes。
+    // 造句目標字判斷：接受合理複數，但避免把所有單字一律加 s 造成誤判。
+    // 目前課綱常用字先採明確字典；其他一般可數名詞再使用基本規則。
     function getSentenceTargetVariants(target) {
-        const normalized = normalizeSentenceWord(target);
+        const normalized = normalizeSentenceWord(target).replace(/\s+/g, ' ');
         if (!normalized) return [];
 
         const variants = new Set([normalized]);
-        const parts = normalized.split(/\s+/);
+        const parts = normalized.split(' ');
         const last = parts[parts.length - 1];
 
+        // 本題庫／國小常用字的明確複數型。
+        const explicitPlural = {
+            dinosaur:'dinosaurs', million:'millions', street:'streets', dance:'dances',
+            cloud:'clouds', lake:'lakes', valley:'valleys', yesterday:'yesterdays',
+            camp:'camps', map:'maps', star:'stars', hundred:'hundreds', ninety:'nineties',
+            east:'easts', north:'norths', south:'souths', west:'wests', far:'fars',
+            lizard:'lizards', castle:'castles', gold:'golds', american:'americans',
+            australian:'australians', country:'countries', flag:'flags',
+            'picnic table':'picnic tables', 'parking lot':'parking lots',
+            child:'children', person:'people', man:'men', woman:'women', mouse:'mice',
+            goose:'geese', tooth:'teeth', foot:'feet', louse:'lice', ox:'oxen'
+        };
+
+        // 這些在彥勛目前題庫中視為專有名詞／不可數或非名詞，不自動產生複數。
+        const noPlural = new Set([
+            'earth','today','near','gold','australia','china','egypt',
+            'eighty','fifty','forty','seventy','sixty','thirty','twenty',
+            'million','hundred','ninety'
+        ]);
+
+        if (explicitPlural[normalized]) {
+            variants.add(explicitPlural[normalized]);
+            return [...variants];
+        }
+        if (noPlural.has(normalized)) return [...variants];
+
+        // 多字單字只複數化最後一個字：picnic table → picnic tables。
+        let plural = last;
         if (/(?:s|x|z|ch|sh)$/.test(last)) {
-            parts[parts.length - 1] = last + 'es';
-            variants.add(parts.join(' '));
+            plural = last + 'es';
         } else if (/[^aeiou]y$/.test(last)) {
-            parts[parts.length - 1] = last.slice(0, -1) + 'ies';
-            variants.add(parts.join(' '));
+            plural = last.slice(0, -1) + 'ies';
+        } else if (/[^aeiou]o$/.test(last)) {
+            // 國小常見規則中部分字尾 o 加 es；不確定的字則保留單數即可。
+            plural = last + 'es';
+        } else if (/(?:f|fe)$/.test(last)) {
+            // f/fe 有許多例外，因此同時接受規則 +s 與常見 ves 型。
+            const p1 = [...parts]; p1[p1.length - 1] = last + 's'; variants.add(p1.join(' '));
+            plural = last.replace(/fe$/, 'ves').replace(/f$/, 'ves');
         } else {
-            parts[parts.length - 1] = last + 's';
-            variants.add(parts.join(' '));
+            plural = last + 's';
+        }
+        const pluralParts = [...parts];
+        pluralParts[pluralParts.length - 1] = plural;
+        variants.add(pluralParts.join(' '));
+
+        // 若題庫本身輸入的是複數字，也接受其對應的常見單數型。
+        if (/ies$/.test(last)) {
+            const p = [...parts]; p[p.length - 1] = last.slice(0, -3) + 'y'; variants.add(p.join(' '));
+        } else if (/(?:ches|shes|xes|zes|ses)$/.test(last)) {
+            const p = [...parts]; p[p.length - 1] = last.slice(0, -2); variants.add(p.join(' '));
+        } else if (/s$/.test(last) && !/ss$/.test(last)) {
+            const p = [...parts]; p[p.length - 1] = last.slice(0, -1); variants.add(p.join(' '));
         }
 
         return [...variants];
     }
 
     function sentenceContainsTarget(sentence, target) {
-        const s = String(sentence || '').toLowerCase();
+        const text = String(sentence || '').toLowerCase();
         const variants = getSentenceTargetVariants(target);
         if (!variants.length) return false;
 
-        return variants.some(t => {
-            const pattern = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            return new RegExp(`(^|[^a-z])${pattern}($|[^a-z])`, 'i').test(s);
+        // 以「完整英文單字」比對，不會把 lake 誤判成 lakeship。
+        return variants.some(variant => {
+            const pattern = variant
+                .split(' ')
+                .map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+                .join('\\s+');
+            return new RegExp(`(?:^|[^a-z])${pattern}(?:$|[^a-z])`, 'i').test(text);
         });
     }
 
@@ -2389,6 +2450,7 @@ ${detail}
 
             result.className = 'sentence-status warn';
             result.innerHTML = html || '⚠️ 有一些地方建議再檢查。';
+            showSentenceNextButton();
             return;
         }
 
