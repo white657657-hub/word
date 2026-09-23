@@ -138,6 +138,19 @@
         .sentence-unit-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:8px; }
         .sentence-unit-pass { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
         .sentence-unit-progress { text-align:center; color:#94a3b8; font-size:.78rem; margin-top:8px; }
+        .sentence-next-btn {
+            width:100%;
+            margin-top:9px;
+            padding:11px;
+            border:0;
+            border-radius:10px;
+            background:#0ea5e9;
+            color:#fff;
+            font-weight:1000;
+            font-size:1.05rem;
+            cursor:pointer;
+        }
+        .sentence-next-btn:active { transform:scale(.98); }
         .sentence-unit-back { margin-top:10px; background:#334155; }
 
         /* 造句功能 */
@@ -405,6 +418,7 @@
                 <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
             </div>
             <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
+            <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題</button>
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
         </div>
         <button class="mode-btn sentence-unit-back" onclick="switchView('view-practice-menu')">結束造句練習</button>
@@ -2240,12 +2254,39 @@ ${detail}
         return String(text || '').trim().toLowerCase().replace(/[.,!?;:'"()[\]{}]/g, '');
     }
 
+    // 造句時接受合理的複數型，例如 dinosaur → dinosaurs。
+    // 多字單字則只將最後一個字做複數化，例如 picnic table → picnic tables。
+    function getSentenceTargetVariants(target) {
+        const normalized = normalizeSentenceWord(target);
+        if (!normalized) return [];
+
+        const variants = new Set([normalized]);
+        const parts = normalized.split(/\s+/);
+        const last = parts[parts.length - 1];
+
+        if (/(?:s|x|z|ch|sh)$/.test(last)) {
+            parts[parts.length - 1] = last + 'es';
+            variants.add(parts.join(' '));
+        } else if (/[^aeiou]y$/.test(last)) {
+            parts[parts.length - 1] = last.slice(0, -1) + 'ies';
+            variants.add(parts.join(' '));
+        } else {
+            parts[parts.length - 1] = last + 's';
+            variants.add(parts.join(' '));
+        }
+
+        return [...variants];
+    }
+
     function sentenceContainsTarget(sentence, target) {
         const s = String(sentence || '').toLowerCase();
-        const t = normalizeSentenceWord(target);
-        if (!t) return false;
-        const pattern = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return new RegExp(`(^|[^a-z])${pattern}($|[^a-z])`, 'i').test(s);
+        const variants = getSentenceTargetVariants(target);
+        if (!variants.length) return false;
+
+        return variants.some(t => {
+            const pattern = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            return new RegExp(`(^|[^a-z])${pattern}($|[^a-z])`, 'i').test(s);
+        });
     }
 
     function localSentenceChecks(sentence, target) {
@@ -2257,7 +2298,7 @@ ${detail}
             return issues;
         }
         if (!sentenceContainsTarget(text, target)) {
-            issues.push(`句子裡還沒有使用目標單字「${target}」。`);
+            issues.push(`句子裡還沒有使用目標單字「${target}」（也可使用合理的複數型）。`);
         }
         if (!/[.!?]$/.test(text)) {
             issues.push('建議在句尾加上句號、問號或驚嘆號。');
