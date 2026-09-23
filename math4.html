@@ -46,126 +46,302 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 </div>
 
 <script>
-let n1=0,n2=0,op='+',correctVal=0,currentType=1,currentQ=1,totalPoints=0,currentQPoints=10,wrongCount=0,attempts=0;
+let n1=0,n2=0,op='+',correctVal=0,currentType=1,currentQ=1,totalPoints=0,currentQPoints=10,wrongCount=0;
+
 const praisePerfect=['太棒了！你把四位數直式算得又快又準！','千、百、十、個位都站對位置了，漂亮！','進位與退位都難不倒你！'];
 const praiseGood=['這次有完成挑戰！把錯題再算一次，會更穩。','計算方法已經掌握了，下一輪注意每一個位值。','很不錯！尤其是遇到 0 時，慢一步檢查就能更準。'];
 
 function initMenu(){
  const types=[
-  {id:1,n:'四位數加法',c:'add',d:'基本加法：含進位與不進位'},
-  {id:2,n:'四位數減法',c:'sub',d:'基本減法：含退位與不退位'},
+  {id:1,n:'四位數加法',c:'add',d:'基本加法：不進位＋進位'},
+  {id:2,n:'四位數減法',c:'sub',d:'基本減法：不退位＋退位'},
   {id:3,n:'減法連續退位',c:'borrow',d:'專練 5000－3 這類題型'},
-  {id:4,n:'加法進位挑戰',c:'carry',d:'多個位數需要進位'},
-  {id:5,n:'加減混合',c:'mix',d:'隨機判斷該用加法或減法'}
+  {id:4,n:'加法進位挑戰',c:'carry',d:'至少一次進位'},
+  {id:5,n:'加減混合',c:'mix',d:'隨機判斷加法或減法'}
  ];
- document.getElementById('menu-list').innerHTML=types.map(t=>`<button class="btn-menu ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;font-size:.78rem;opacity:.9;margin-top:5px">${t.d}</small></button>`).join('');
+ document.getElementById('menu-list').innerHTML=types.map(t=>
+  `<button class="btn-menu ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;font-size:.78rem;opacity:.9;margin-top:5px">${t.d}</small></button>`
+ ).join('');
 }
-function start(type){currentType=type;currentQ=1;totalPoints=0;wrongCount=0;attempts=0;show('game');document.getElementById('score').innerText=0;loadProblem();}
+
+function start(type){
+ currentType=type;currentQ=1;totalPoints=0;wrongCount=0;
+ show('game');
+ document.getElementById('score').innerText='0';
+ loadProblem();
+}
+
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function digits(n){return String(n).padStart(4,'0').split('').map(Number);}
-function hasCarry(a,b){let A=digits(a),B=digits(b),c=0;for(let i=3;i>=0;i--){if(A[i]+B[i]+c>=10)return true;c=A[i]+B[i]+c>=10?1:0;}return false;}
-function hasBorrow(a,b){let A=digits(a),B=digits(b),borrow=0,yes=false;for(let i=3;i>=0;i--){let x=A[i]-borrow;if(x<B[i]){yes=true;borrow=1;}else borrow=0;}return yes;}
+
+// ===== 加法判斷 =====
+function hasCarry(a,b){
+ const A=digits(a),B=digits(b);
+ let carry=0;
+ for(let i=3;i>=0;i--){
+  const sum=A[i]+B[i]+carry;
+  if(sum>=10)return true;
+  carry=0;
+ }
+ return false;
+}
+
+// 明確判斷「完全沒有進位」
+function noCarry(a,b){
+ const A=digits(a),B=digits(b);
+ let carry=0;
+ for(let i=3;i>=0;i--){
+  if(A[i]+B[i]+carry>=10)return false;
+  carry=0;
+ }
+ return true;
+}
+
+// ===== 減法判斷 =====
+function hasBorrow(a,b){
+ const A=digits(a),B=digits(b);
+ let borrow=0;
+ for(let i=3;i>=0;i--){
+  const x=A[i]-borrow;
+  if(x<B[i]){
+   borrow=1;
+   return true;
+  }
+  borrow=0;
+ }
+ return false;
+}
+
+function noBorrow(a,b){
+ const A=digits(a),B=digits(b);
+ let borrow=0;
+ for(let i=3;i>=0;i--){
+  if(A[i]-borrow<B[i])return false;
+  borrow=0;
+ }
+ return true;
+}
+
+// ===== 四位數加法 =====
+// mode：mixed / carry / noCarry
 function makeAddition(mode){
- let a,b;
- for(let k=0;k<500;k++){
-  // 三年級本單元不超過 10000；最多允許答案剛好 10000。
-  a=rand(1000,8999); b=rand(1000,9999-a);
-  if(b<1000 || a+b>10000)continue;
+ for(let k=0;k<1000;k++){
+  let a=rand(1000,8999);
+  let b=rand(1000,9999-a);
+  if(b<1000)continue;
+
   const carry=hasCarry(a,b);
   if(mode==='carry' && !carry)continue;
-  if(mode==='basic' && k<30 && carry)continue;
+  if(mode==='noCarry' && carry)continue;
+  if(a+b>10000)continue;
+
   return [a,b,'+'];
  }
- return [5000,5000,'+'];
+
+ // 理論上不會走到這裡；保底題也不超過 10000
+ if(mode==='carry')return [6379,3621,'+']; // 10000，必有進位
+ if(mode==='noCarry')return [1234,2345,'+'];
+ return [3210,4567,'+'];
 }
+
+// ===== 四位數減法 =====
+// mode：mixed / borrow / noBorrow / chain
 function makeSubtraction(mode){
- let a,b;
- for(let k=0;k<200;k++){
-  a=rand(1000,9999); b=rand(1,Math.min(9999,a));
+ for(let k=0;k<1000;k++){
+  let a=rand(1000,9999);
+  let b=rand(1,a);
+
   const borrow=hasBorrow(a,b);
+
+  if(mode==='borrow' && !borrow)continue;
+  if(mode==='noBorrow' && borrow)continue;
+
   if(mode==='chain'){
-   // 特別保留跨 0 的連續退位題，例如 5000-3、7000-8、4000-25
-   if(!(a%1000===0 || (Math.floor(a/100)%10===0 && b<100)))continue;
-   if(!borrow)continue;
+   // 必須真的跨過 0 借位，例如 5000－3、7000－8、4000－25。
+   const crossesZero=(a%1000===0 && b<1000) ||
+                     (Math.floor(a/100)%10===0 && b<100);
+   if(!crossesZero || !borrow)continue;
   }
-  if(mode==='basic' && k<40 && borrow)continue;
+
   return [a,b,'-'];
  }
- return [5000,3,'-'];
+
+ if(mode==='chain')return [5000,3,'-'];
+ if(mode==='borrow')return [6200,185,'-'];
+ if(mode==='noBorrow')return [8765,1234,'-'];
+ return [7654,3210,'-'];
 }
+
 function loadProblem(){
  let q;
- if(currentType===1)q=makeAddition('basic');
- else if(currentType===2)q=makeSubtraction('basic');
- else if(currentType===3)q=makeSubtraction('chain');
- else if(currentType===4)q=makeAddition('carry');
- else {if(Math.random()<.5)q=makeAddition('basic');else q=makeSubtraction('basic');}
- [n1,n2,op]=q;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+
+ if(currentType===1){
+  // 基本加法：明確混合「不進位」與「有進位」，不是靠嘗試次數碰運氣。
+  q=Math.random()<0.5?makeAddition('noCarry'):makeAddition('carry');
+ }else if(currentType===2){
+  // 基本減法：明確混合「不退位」與「有退位」。
+  q=Math.random()<0.5?makeSubtraction('noBorrow'):makeSubtraction('borrow');
+ }else if(currentType===3){
+  q=makeSubtraction('chain');
+ }else if(currentType===4){
+  q=makeAddition('carry');
+ }else{
+  q=Math.random()<0.5
+    ?(Math.random()<0.5?makeAddition('noCarry'):makeAddition('carry'))
+    :(Math.random()<0.5?makeSubtraction('noBorrow'):makeSubtraction('borrow'));
+ }
+
+ [n1,n2,op]=q;
+ correctVal=op==='+'?n1+n2:n1-n2;
+ currentQPoints=10;
+
  const labels={1:'四位數加法',2:'四位數減法',3:'連續退位',4:'進位挑戰',5:'加減混合'};
  document.getElementById('mode-label').innerText=labels[currentType];
- document.getElementById('instruction').innerText=op==='+'?'從個位開始，加起來滿 10 要進位。':'從個位開始，下面的數比較大時要退位；遇到 0 要繼續向前找可以借的位數。';
- document.getElementById('q1').innerText=n1;document.getElementById('qo').innerText=op;document.getElementById('q2').innerText=n2;
- document.getElementById('q-count').innerText=currentQ;document.getElementById('score').innerText=totalPoints;document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
- document.getElementById('final-ans').value='';document.getElementById('feedback').innerText='';
- renderGrid();renderExplain();
+ document.getElementById('instruction').innerText=
+  op==='+'
+   ?'從個位開始，加起來滿 10 要進位。'
+   :'從個位開始，下面的數比較大時要退位；遇到 0 要繼續向前找可以借的位數。';
+
+ document.getElementById('q1').innerText=n1;
+ document.getElementById('qo').innerText=op;
+ document.getElementById('q2').innerText=n2;
+ document.getElementById('q-count').innerText=currentQ;
+ document.getElementById('score').innerText=totalPoints;
+ document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
+ document.getElementById('final-ans').value='';
+ document.getElementById('feedback').innerText='';
+
+ renderGrid();
+ renderExplain();
 }
+
 function renderGrid(){
  const A=digits(n1),B=digits(n2);
- // 固定六欄：左側說明／運算符號 + 萬、千、百、十、個。
- // 四位數一定靠右對齊，因此 6379 與 6658 的個位會落在同一欄。
- const answerDigits=String(correctVal).padStart(4,'0').split('').map(Number);
  const isFive=correctVal===10000;
- let html=`<div></div><div class="header">萬</div><div class="header">千</div><div class="header">百</div><div class="header">十</div><div class="header">個</div>`;
- 
- // 進／退位：只需要在千、百、十、個位上方記錄，因此萬位留白。
- html+=`<div class="place">進/退<br>位</div><div></div>${[0,1,2,3].map(i=>`<div><input class="carry-cell" id="c-${i}" type="text" inputmode="numeric" maxlength="2" oninput="limitMark(this)"></div>`).join('')}`;
- 
- // 被加／減數：四位數靠右對齊到 千、百、十、個。
- html+=`<div></div><div class="cell"></div>${A.map((x,i)=>`<div class="cell" style="color:${i===3?'#2563eb':'#334155'}">${x}</div>`).join('')}`;
- html+=`<div class="op">${op}</div><div class="cell"></div>${B.map(x=>`<div class="cell">${x}</div>`).join('')}`;
- 
- html+='<div class="line"></div>';
- 
- // 答案列：答案若剛好 10000，才使用萬位；其餘四位答案仍與千、百、十、個對齊。
+
+ /*
+  固定 6 欄：說明／符號 + 萬 + 千 + 百 + 十 + 個
+  四位數一律放在「千、百、十、個」四欄。
+  因此 6379 + 6658 必定是：
+       萬 千 百 十 個
+          6  3  7  9
+          6  6  5  8
+  答案也完全使用同一組欄位。
+ */
+ let html='';
+ html+=`<div></div>
+         <div class="header">萬</div>
+         <div class="header">千</div>
+         <div class="header">百</div>
+         <div class="header">十</div>
+         <div class="header">個</div>`;
+
+ // 進／退位：萬位不需要輸入，千～個位各一格。
+ html+=`<div class="place">進/退<br>位</div>
+         <div></div>
+         <div><input class="carry-cell" id="c-0" type="text" inputmode="numeric" maxlength="1" oninput="limitMark(this)"></div>
+         <div><input class="carry-cell" id="c-1" type="text" inputmode="numeric" maxlength="1" oninput="limitMark(this)"></div>
+         <div><input class="carry-cell" id="c-2" type="text" inputmode="numeric" maxlength="1" oninput="limitMark(this)"></div>
+         <div><input class="carry-cell" id="c-3" type="text" inputmode="numeric" maxlength="1" oninput="limitMark(this)"></div>`;
+
+ // 第一個數：萬位留白，千～個位放四位數。
+ html+=`<div></div><div class="cell"></div>`;
+ A.forEach((x,i)=>{
+  html+=`<div class="cell" style="color:${i===3?'#2563eb':'#334155'}">${x}</div>`;
+ });
+
+ // 第二個數：同樣固定在千～個位。
+ html+=`<div class="op">${op}</div><div class="cell"></div>`;
+ B.forEach(x=>{html+=`<div class="cell">${x}</div>`;});
+
+ html+=`<div class="line"></div>`;
+
+ // 答案：只有剛好 10000 才使用萬位；其他全部四格，與千～個位完全對齊。
  if(isFive){
-   html+=`<div></div>${[1,0,0,0,0].map((x,i)=>`<div><input class="digit-input" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`).join('')}`;
+  html+=`<div></div>
+   <div><input class="digit-input" id="a-0" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
+   <div><input class="digit-input" id="a-1" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
+   <div><input class="digit-input" id="a-2" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
+   <div><input class="digit-input" id="a-3" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
+   <div><input class="digit-input" id="a-4" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
  }else{
-   html+=`<div></div><div class="cell"></div>${[0,1,2,3].map(i=>`<div><input class="digit-input" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`).join('')}`;
+  html+=`<div></div><div class="cell"></div>`;
+  for(let i=0;i<4;i++){
+   html+=`<div><input class="digit-input" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+  }
  }
+
  document.getElementById('grid').innerHTML=html;
 }
+
 function renderExplain(){
  const el=document.getElementById('explain');
- if(op==='-' && n2<100 && n1%1000===0)el.innerHTML='<b>本題提醒：</b>遇到像「5000－3」時，不能直接向 0 借。要從千位借到百位，再一路傳到個位，最後才算個位。';
- else if(op==='-')el.innerHTML='<b>檢查：</b>個位 → 十位 → 百位 → 千位。需要退位時，記得前一位要少 1。';
- else el.innerHTML='<b>檢查：</b>個位 → 十位 → 百位 → 千位。某一位加起來滿 10，就在左邊下一位記進位；本單元答案不超過 10000。';
+ if(op==='-' && n2<100 && n1%1000===0){
+  el.innerHTML='<b>本題提醒：</b>遇到像「5000－3」時，不能直接向 0 借。要從千位借到百位，再一路傳到個位，最後才算個位。';
+ }else if(op==='-'){
+  el.innerHTML='<b>檢查：</b>個位 → 十位 → 百位 → 千位。需要退位時，記得前一位要少 1。';
+ }else{
+  el.innerHTML='<b>檢查：</b>個位 → 十位 → 百位 → 千位。某一位加起來滿 10，就在左邊下一位記進位；本單元答案不超過 10000。';
+ }
 }
-function limitOne(el){el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);}
-function limitMark(el){el.value=el.value.replace(/[^0-9]/g,'').slice(0,2);}
+
+function limitOne(el){
+ el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);
+}
+function limitMark(el){
+ el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);
+}
+
 function moveAndSubmit(){
- let v='';
  const count=correctVal===10000?5:4;
- for(let i=0;i<count;i++){const x=document.getElementById('a-'+i)?.value||'';if(x!=='')v+=x;}
+ let v='';
+ for(let i=0;i<count;i++){
+  const x=document.getElementById(`a-${i}`)?.value||'';
+  if(x!=='')v+=x;
+ }
  if(v==='')return;
  document.getElementById('final-ans').value=String(parseInt(v,10));
  check();
 }
-function getEnteredDigits(){
- const count=correctVal===10000?5:4; let v='';
- for(let i=0;i<count;i++){const x=document.getElementById('a-'+i)?.value||'';if(x==='')return null;v+=x;}
- return parseInt(v,10);
-}
+
 function check(){
- const raw=document.getElementById('final-ans').value.trim();if(raw==='')return;
- const userVal=parseInt(raw,10);attempts++;
+ const raw=document.getElementById('final-ans').value.trim();
+ if(!/^\d+$/.test(raw))return;
+ const userVal=parseInt(raw,10);
  const msg=document.getElementById('feedback');
- if(userVal===correctVal){totalPoints+=currentQPoints;document.getElementById('score').innerText=totalPoints;msg.style.color=varGreen();msg.innerText='答對了！繼續下一題。';
-  setTimeout(()=>{if(currentQ<10){currentQ++;loadProblem();}else showResult();},650);
- }else{wrongCount++;currentQPoints=Math.max(2,currentQPoints-2);msg.style.color='var(--red)';msg.innerText='再檢查一次：先看個位，再往左算。';document.getElementById('final-ans').value='';setTimeout(()=>msg.innerText='',1300);}
+
+ if(userVal===correctVal){
+  totalPoints+=currentQPoints;
+  document.getElementById('score').innerText=totalPoints;
+  msg.style.color='var(--green)';
+  msg.innerText='答對了！繼續下一題。';
+  setTimeout(()=>{
+   if(currentQ<10){currentQ++;loadProblem();}
+   else showResult();
+  },650);
+ }else{
+  wrongCount++;
+  currentQPoints=Math.max(2,currentQPoints-2);
+  msg.style.color='var(--red)';
+  msg.innerText='再檢查一次：先看個位，再往左算。';
+  document.getElementById('final-ans').value='';
+  setTimeout(()=>msg.innerText='',1300);
+ }
 }
-function varGreen(){return 'var(--green)';}
-function showResult(){show('result');document.getElementById('result-score').innerText=`總積分：${totalPoints} / 100`;document.getElementById('result-title').innerText=totalPoints===100?'全部答對！':'挑戰完成！';document.getElementById('praise').innerText=(totalPoints===100?praisePerfect:praiseGood)[Math.floor(Math.random()*(totalPoints===100?praisePerfect.length:praiseGood.length))];document.getElementById('stats').innerText=`10 題完成｜需要重新計算的題目：${wrongCount} 題｜每題最多 10 分，重新嘗試會扣 2 分。`;}
-function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function showResult(){
+ show('result');
+ document.getElementById('result-score').innerText=`總積分：${totalPoints} / 100`;
+ document.getElementById('result-title').innerText=totalPoints===100?'全部答對！':'挑戰完成！';
+ const arr=totalPoints===100?praisePerfect:praiseGood;
+ document.getElementById('praise').innerText=arr[Math.floor(Math.random()*arr.length)];
+ document.getElementById('stats').innerText=`10 題完成｜需要重新計算的題目：${wrongCount} 題｜每題最多 10 分，重新嘗試會扣 2 分。`;
+}
+
+function show(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+}
 function goHome(){show('home');initMenu();}
 window.onload=initMenu;
 </script>
