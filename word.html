@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1436 - Natural Phonics Syllables</title>
+    <title>Word Hero V1440 - Natural Phonics Corrected Audio</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1651,38 +1651,58 @@ ${detail}
         flag: { parts:[['fl','/fl/'],['a','/æ/'],['g','/g/']] }
     };
 
-    // 點擊單一自然發音提示即可單獨播放。
-    // 瀏覽器 TTS 對孤立子音的表現各異，因此以最接近的學習示範音播放。
+    // 音節／自然發音的播放：不要把 IPA 字串直接交給瀏覽器 TTS。
+    // 瀏覽器 TTS 看到 /str/、/iː/ 這類符號時，可能把它當成文字或字母名稱念出來，會造成「看起來正確、實際聲音錯誤」。
+    // 因此每個可播放項目改用「可朗讀的英文示範詞／音節」；IPA 只負責畫面提示。
     const PHONICS_AUDIO_TEXT = {
-        '/str/':'street', '/st/':'stop', '/sp/':'spin', '/sk/':'skip', '/kl/':'clap', '/fl/':'flag',
-        '/pl/':'play', '/tr/':'tree', '/dr/':'drink', '/br/':'bring', '/cr/':'crab', '/gr/':'green',
-        '/pr/':'press', '/fr/':'frog', '/bl/':'blue', '/gl/':'glow', '/tw/':'twin', '/kw/':'quick',
-        '/iː/':'ee', '/ɪ/':'ih', '/e/':'eh', '/æ/':'a', '/ʌ/':'uh', '/ɑːr/':'car', '/ɜːr/':'bird',
-        '/ɔːr/':'more', '/ɔː/':'or', '/oʊ/':'go', '/aʊ/':'out', '/eɪ/':'say', '/aɪ/':'eye', '/ɪə/':'ear',
-        '/ɪər/':'ear', '/ə/':'uh', '/ər/':'er', '/ən/':'un', '/əl/':'ul', '/dʒɪpt/':'Egypt',
-        '/tʃaɪ/':'China', '/θ/':'think', '/ð/':'this', '/ŋ/':'sing', '/ʃ/':'ship', '/ʒ/':'vision',
-        '/j/':'yes', '/w/':'we', '/r/':'red', '/l/':'leg', '/m/':'map', '/n/':'no', '/p/':'pen',
-        '/b/':'book', '/t/':'top', '/d/':'dog', '/k/':'cat', '/g/':'go', '/f/':'fish', '/v/':'van',
-        '/s/':'see', '/z/':'zoo', '/h/':'hat', '/mp/':'camp', '/ld/':'old', '/md/':'and', '/nd/':'end',
-        '/ks/':'six', '/drəd/':'hundred', '/mɪl/':'mill', '/jən/':'million', '/nə/':'no', '/sɔːr/':'sore',
-        '/æ/':'cat', '/væl/':'val', '/i/':'happy', '/jes/':'yes', '/tər/':'ter', '/deɪ/':'day',
-        '/k/':'cat', '/p/':'pen', '/fɪf/':'fif', '/ti/':'tea', '/fɔːr/':'four', '/sev/':'seven',
-        '/sɪks/':'six', '/θ/':'think', '/ɜːr/':'bird', '/twen/':'twenty', '/hʌn/':'hundred',
-        '/drəd/':'dred', '/naɪn/':'nine', '/nɔːr/':'north', '/saʊ/':'south', '/pɪk/':'pick',
-        '/nɪk/':'nick', '/teɪ/':'table', '/bəl/':'bull', '/pɑːrk/':'park', '/ɪŋ/':'ing', '/lɑːt/':'lot',
-        '/lɪz/':'liz', '/ərd/':'erd', '/kæs/':'castle', '/goʊld/':'gold', '/gloʊ/':'glow',
-        '/dən/':'den', '/goʊld/':'gold', '/tə/':'to', '/mɛr/':'mer', '/kən/':'can', '/streɪ/':'Australia',
-        '/li/':'lee', '/dʒɪpt/':'Egypt', '/kʌn/':'country', '/tri/':'tree', '/fl/':'flag'
+        // W1
+        'di:/daɪ/':'die', 'no:/nə/':'nuh', 'saur:/sɔːr/':'sore',
+        'mil:/mɪl/':'mill', 'lion:/jən/':'yun',
+        'str:/str/':'street', 'ee:/iː/':'see', 't:/t/':'top',
+        'ear:/ɜːr/':'bird', 'th:/θ/':'think',
+        'd:/d/':'dog', 'a:/æ/':'cat', 'n:/n/':'no', 'ce:/s/':'see',
+        'cl:/kl/':'clap', 'ou:/aʊ/':'out', 'd:/d/':'dog',
+        'l:/l/':'leg', 'a_e:/eɪ/':'cake', 'k:/k/':'cat',
+        'e:/不發音':'', 'near:/ɪər/':'ear',
+        'val:/væl/':'val', 'ley:/i/':'happy',
+        'yes:/jes/':'yes', 'ter:/tər/':'term', 'day:/deɪ/':'day',
+        // W2
+        'c:/k/':'cat', 'mp:/mp/':'camp', 'p:/p/':'pen',
+        'eigh:/eɪ/':'eight', 'ty:/ti/':'tea', 'fif:/fɪf/':'fif',
+        'for:/fɔːr/':'four', 'st:/st/':'stop', 'sev:/sev/':'seven',
+        'en:/ən/':'open', 'six:/sɪks/':'six', 'thir:/θɜːr/':'third',
+        'twen:/twen/':'twenty',
+        // W3
+        'hun:/hʌn/':'hundred', 'dred:/drəd/':'hundred', 'nine:/naɪn/':'nine',
+        'ea:/iː/':'eat', 'nor:/nɔːr/':'north', 'sou:/saʊ/':'south',
+        'f:/f/':'fish', 'ar:/ɑːr/':'car',
+        'pic:/pɪk/':'pick', 'nic:/nɪk/':'nick', 'ta:/teɪ/':'table',
+        'ble:/bəl/':'table', 'park:/pɑːrk/':'park', 'ing:/ɪŋ/':'sing',
+        'lot:/lɑːt/':'lot', 'liz:/lɪz/':'liz', 'ard:/ərd/':'bird',
+        // W4
+        'cas:/kæs/':'castle', 'le:/əl/':'little',
+        'g:/g/':'go', 'o:/oʊ/':'go', 'ld:/ld/':'old',
+        'glo:/gloʊ/':'glow', 'den:/dən/':'den', 'gold:/goʊld/':'gold',
+        'en:/ən/':'open', 'to:/tə/':'today', 'mer:/mɛr/':'Mary',
+        'i:/ɪ/':'it', 'can:/kən/':'can', 'Aus:/ɔː/':'Australia',
+        'tra:/streɪ/':'Australia', 'li:/li/':'lee', 'an:/ən/':'open',
+        'Chi:/tʃaɪ/':'China', 'na:/nə/':'nuh', 'coun:/kʌn/':'country',
+        'try:/tri/':'tree', 'E:/iː/':'Egypt', 'gypt:/dʒɪpt/':'Egypt',
+        'fl:/fl/':'flag'
     };
 
     function playPhonicsPart(button, item) {
-        if (!item || item[1] === '不發音') return;
-        const sound = item[1];
-        const spoken = PHONICS_AUDIO_TEXT[sound] || item[0];
+        if (!item || item[2]) return;
         if (!('speechSynthesis' in window)) return;
+
+        const key = `${item[0]}:${item[1]}`;
+        const spoken = PHONICS_AUDIO_TEXT[key];
+        if (!spoken) return;
+
         window.speechSynthesis.cancel();
         document.querySelectorAll('.practice-phonics-item.is-playing').forEach(x => x.classList.remove('is-playing'));
         button.classList.add('is-playing');
+
         const utter = new SpeechSynthesisUtterance(spoken);
         utter.lang = 'en-US';
         utter.rate = 0.62;
@@ -1704,8 +1724,8 @@ ${detail}
             const box = document.createElement('button');
             box.type = 'button';
             box.className = 'practice-phonics-item';
-            box.title = item[2] ? '不發音' : '點一下聽這個發音';
-            box.setAttribute('aria-label', item[2] ? `${item[0]}：不發音` : `${item[0]}：播放發音`);
+            box.title = item[2] ? '不發音' : '點一下聽示範音';
+            box.setAttribute('aria-label', item[2] ? `${item[0]}：不發音` : `${item[0]}：播放示範音`);
             box.addEventListener('click', () => playPhonicsPart(box, item));
             const letters = document.createElement('span');
             letters.className = 'practice-phonics-letter' + (item[2] ? ' practice-silent' : '');
@@ -1743,7 +1763,7 @@ ${detail}
 
         const note = document.createElement('div');
         note.className = 'practice-phonics-note';
-        note.textContent = '自然發音：先看音節，再看字母／字母群怎麼發音；🔊 點一下可單獨聽';
+        note.textContent = '自然發音：先看音節，再看字母／字母群怎麼發音；🔊 點一下聽對應示範音';
         el.appendChild(note);
 
         const parts = fallbackSyllables(text);
