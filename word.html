@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1440 - Natural Phonics Corrected Audio</title>
+    <title>Word Hero V1441 - Natural Phonics Corrected Audio</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -605,7 +605,7 @@ ${detail}
 
         if (bankSourceMode === 'text') {
             if (isAnsonUser) {
-                note.innerHTML = '目前使用：<b>vocab/Anson.txt</b>。文字檔是基準題庫；若要自己新增、刪除或修改，請切換到「自行變更題庫」。';
+                note.innerHTML = '目前使用：<b>vocab/Anson.txt</b>。TXT 是唯一題庫來源；切換到此模式會重新讀取最新 TXT。若要自己新增、刪除或修改，請切換到「自行變更題庫」。';
             } else {
                 const imported = getLocalJSON('hero_text_bank', null);
                 note.innerHTML = imported
@@ -621,11 +621,15 @@ ${detail}
         if (isAnsonUser) {
             bankSourceMode = 'text';
             setHeroData('hero_bank_source_mode', bankSourceMode);
-            await loadAnsonTxtQuestionBank();
+            // 切回文字題庫時，強制重新抓取最新 Anson.txt。
+            setLocalJSON('hero_anson_txt_cache', null);
+            const ok = await loadAnsonTxtQuestionBank();
             refreshUnitSelectors();
             updateBankSourceUI();
             renderBankManager();
-            alert('📄 已切換到 Anson.txt 文字題庫。\n\n若要自己修改題目，請再切換「自行變更題庫」。');
+            alert(ok
+                ? '📄 已重新載入最新 Anson.txt 文字題庫。\n\nTXT 裡寫什麼，題目就使用什麼。'
+                : '⚠️ Anson.txt 目前無法讀取，已使用程式內建 W1-W4。\n\n請確認 vocab/Anson.txt 路徑與檔案名稱。');
             return;
         }
 
@@ -1009,23 +1013,28 @@ ${detail}
     }
 
     async function loadAnsonTxtQuestionBank() {
+        // Anson 的「📄 文字題庫」以 Anson.txt 為唯一來源。
+        // 成功讀取 TXT 後，直接使用 TXT 內容，不再混入舊 localStorage。
         try {
             const response = await fetch(`${ANSON_TXT_URL}?t=${Date.now()}`, {cache:'no-store'});
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const text = await response.text();
             const parsed = parseAnsonTxt(text);
+            if (!Object.keys(parsed).length || !Object.values(parsed).some(arr => arr.length)) {
+                throw new Error('Anson.txt 沒有讀到任何題目');
+            }
+
+            // TXT 讀到什麼就使用什麼；只補 TXT 完全沒有的 W1-W4。
             state.banks = mergeFixedBanks(parsed);
+
+            // 更新快取，避免舊版的 eart 殘留。
             setLocalJSON('hero_anson_txt_cache', state.banks);
             return true;
         } catch (e) {
-            const cached = getLocalJSON('hero_anson_txt_cache', null);
-            if (cached && Object.keys(cached).length) {
-                state.banks = mergeFixedBanks(cloneBanks(cached));
-                console.warn('Anson.txt 無法讀取，改用本機快取題庫：', e);
-                return true;
-            }
+            // 不再優先使用可能含有舊「eart」的快取。
+            // 離線／TXT 無法讀取時，至少使用目前程式內建的正確 W1-W4（Earth）。
             state.banks = banksFromPairs(getFixedBanks());
-            console.warn('Anson.txt 無法讀取，使用內建 W1-W4：', e);
+            console.warn('Anson.txt 無法讀取，改用目前內建 W1-W4：', e);
             return false;
         }
     }
@@ -1042,7 +1051,20 @@ ${detail}
         saveUserQuestionBank();
     }
 
+    function removeLegacyEartFromAnsonTextCache() {
+        const cached = getLocalJSON('hero_anson_txt_cache', null);
+        if (!cached || typeof cached !== 'object') return;
+        let changed = false;
+        Object.keys(cached).forEach(unit => {
+            if (!Array.isArray(cached[unit])) return;
+            const next = cached[unit].filter(item => String(item?.en || '').trim().toLowerCase() !== 'eart');
+            if (next.length !== cached[unit].length) { cached[unit] = next; changed = true; }
+        });
+        if (changed) setLocalJSON('hero_anson_txt_cache', cached);
+    }
+
     async function initQuestionBank() {
+        removeLegacyEartFromAnsonTextCache();
         const savedMode = getHeroData('hero_bank_source_mode');
         if (savedMode === 'text' || savedMode === 'custom') bankSourceMode = savedMode;
 
@@ -1518,7 +1540,6 @@ ${detail}
         dinosaur:['di','no','saur'],
         million:['mil','lion'],
         street:['street'],
-        eart:['eart'],
         earth:['earth'],
         dance:['dance'],
         cloud:['cloud'],
@@ -1610,7 +1631,6 @@ ${detail}
         million: { parts:[['mil','/mɪl/'],['lion','/jən/']] },
         street: { parts:[['str','/str/'],['ee','/iː/'],['t','/t/']] },
         earth: { parts:[['ear','/ɜːr/'],['th','/θ/']] },
-        eart: { parts:[['ear','/ɜːr/'],['t','/t/']] },
         dance: { parts:[['d','/d/'],['an','/æ/'],['ce','/s/']] },
         cloud: { parts:[['cl','/kl/'],['ou','/aʊ/'],['d','/d/']] },
         lake: { parts:[['l','/l/'],['a_e','/eɪ/'],['k','/k/'],['e','不發音',true]], rule:'a_e：magic e 讓 a 發長音，最後 e 不發音' },
