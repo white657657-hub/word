@@ -21,12 +21,12 @@ body{overflow-x:hidden}
 .top-question{display:flex;align-items:center;justify-content:center;gap:10px;margin:5px 0 14px}.q-text{font-size:2rem;font-weight:900;letter-spacing:1px}.final-ans{width:125px;height:54px;font-size:2rem;text-align:center;border:3px solid #333;border-radius:10px;background:#fff;outline:none;-moz-appearance:textfield}.final-ans::-webkit-outer-spin-button,.final-ans::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.btn-main{padding:11px 18px;font-size:1.08rem;font-weight:800;color:#fff;background:var(--green);border:0;border-radius:11px;box-shadow:0 4px 0 #219653;cursor:pointer}
 .practice-note{display:none;color:#536dfe;font-size:.9rem;font-weight:700;margin:-4px 0 10px}.practice-mode .practice-note{display:block}.practice-mode .top-answer{display:none}
 .math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}
-.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:"Courier New",monospace}.clickable-digit{position:relative;cursor:pointer;user-select:none}.clickable-digit.marked::after{content:"/";position:absolute;color:var(--red);font-size:2.7rem;font-weight:900;line-height:1;transform:rotate(-18deg);left:8px;top:0;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.06);border-radius:8px}
-.carry-cell{width:42px;height:30px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1rem;font-weight:800;color:var(--red);outline:none;background:#fff;-moz-appearance:textfield}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}
+.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:"Courier New",monospace}.clickable-digit{position:relative;cursor:pointer;user-select:none}.clickable-digit.marked::after{content:"/";position:absolute;color:var(--red);font-size:2.7rem;font-weight:900;line-height:1;transform:rotate(35deg);left:8px;top:-3px;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.06);border-radius:8px}
+.carry-cell{width:48px;height:30px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.05rem;font-weight:800;color:var(--red);outline:none;background:#fff;-moz-appearance:textfield}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}
 .digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:"Courier New",monospace;outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}
 .explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{min-height:34px;margin-top:12px;font-size:1.08rem;font-weight:800;text-align:center}.controls{display:flex;align-items:center;gap:10px;margin-top:4px}.btn-move{width:55px;height:55px;border:0;border-radius:50%;background:#f39c12;color:#fff;font-weight:900;font-size:1.25rem;box-shadow:0 4px 0 #d35400;cursor:pointer}.secondary{background:none;border:0;color:#8a94a6;cursor:pointer;margin-top:10px}
 .result{width:90%;background:#fff;border-radius:24px;padding:26px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.14);margin-top:30vh}.score{font-size:1.8rem;color:#f39c12;font-weight:900}.praise{font-size:1.15rem;line-height:1.7;margin:16px 0}.wrong-list{margin-top:12px;text-align:left;background:#f8fafc;border-radius:12px;padding:12px;font-size:.94rem;line-height:1.7}.balloon{position:fixed;bottom:-100px;width:38px;height:48px;border-radius:50%;animation:up 6s linear forwards;z-index:10}@keyframes up{to{transform:translateY(-120vh)}}
-@media(max-width:520px){.vertical{grid-template-columns:34px repeat(5,46px);gap:3px}.cell{width:46px;font-size:1.75rem}.digit-input{width:41px;height:42px;font-size:1.6rem}.carry-cell{width:36px}.math-card{padding:12px 4px}.q-text{font-size:1.65rem}.final-ans{width:100px;height:48px}.top-question{gap:6px}}
+@media(max-width:520px){.vertical{grid-template-columns:34px repeat(5,46px);gap:3px}.cell{width:46px;font-size:1.75rem}.digit-input{width:41px;height:42px;font-size:1.6rem}.carry-cell{width:42px}.math-card{padding:12px 4px}.q-text{font-size:1.65rem}.final-ans{width:100px;height:48px}.top-question{gap:6px}}
 </style>
 </head>
 <body>
@@ -186,7 +186,7 @@ function makeAddition(mode){
  }
  if(mode==='carry')return [6379,3621,'+','carry'];
  if(mode==='noCarry')return [1234,2345,'+','noCarry'];
- if(mode==='multiCarry')return [5876,4765,'+','multiCarry'];
+ if(mode==='multiCarry')return [5876,3124,'+','multiCarry'];
  return [3210,4567,'+','noCarry'];
 }
 function makeSubtraction(mode){
@@ -247,7 +247,7 @@ function renderGrid(){
  // 兩排完全空白的虛線格，不指定「進位」或「退位」，讓孩子自由使用。
  for(const row of ['c','d']){
   html+=`<div></div><div></div>`;
-  for(let i=0;i<4;i++)html+=`<div><input class="carry-cell" id="${row}-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitMark(this)"></div>`;
+  for(let i=0;i<4;i++)html+=`<div><input class="carry-cell" id="${row}-${i}" type="text" inputmode="numeric" maxlength="2" oninput="limitMark(this)"></div>`;
  }
  html+=`<div></div><div class="cell"></div>`;
  A.forEach((x,i)=>{html+=`<div class="cell clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)" style="color:${i===3?'#2563eb':'#334155'}">${x}</div>`});
@@ -271,7 +271,7 @@ function renderExplain(){
 
 function toggleBorrowMark(el){el.classList.toggle('marked')}
 function limitOne(el){el.value=el.value.replace(/[^0-9]/g,'').slice(0,1)}
-function limitMark(el){el.value=el.value.replace(/[^0-9]/g,'').slice(0,1)}
+function limitMark(el){el.value=el.value.replace(/[^0-9]/g,'').slice(0,2)}
 
 function moveAndSubmit(){
  const count=correctVal===10000?5:4;let v='';
