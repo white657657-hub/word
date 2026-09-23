@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1442 - 造句與文法檢查</title>
+    <title>Word Hero V1444 - 每題造句＋PASS</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,6 +110,17 @@
             #practice-guide { font-size:2.05rem !important; }
         }
 
+
+
+        /* 每一題都顯示造句區，PASS 與檢查文法並排 */
+        .sentence-inline { width:min(96%,520px); margin:8px auto 10px; padding:10px; border:1px solid #475569; border-radius:12px; background:rgba(15,23,42,.9); }
+        .sentence-inline-title { text-align:center; color:#fbbf24; font-weight:1000; font-size:.95rem; margin-bottom:3px; }
+        .sentence-inline-word { text-align:center; color:#38bdf8; font-size:1.15rem; font-weight:1000; margin-bottom:6px; }
+        #sentence-inline-input { width:100%; min-height:72px; resize:vertical; padding:9px; border-radius:9px; border:1px solid #475569; background:#020617; color:#fff; font-size:1rem; line-height:1.45; font-family:inherit; }
+        #sentence-inline-input:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,.15); }
+        .sentence-inline-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:7px; }
+        .pass-btn-inline { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
+        .pass-btn-inline:active { transform:scale(.97); }
 
         /* 造句功能 */
         .sentence-btn {
@@ -363,21 +374,24 @@
         <div style="text-align:center; min-height:65px;">
             <span id="display-cn">...</span>
             <span id="star-icon" style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px; vertical-align:middle;" onclick="toggleStar()">☆</span>
-            <button id="btn-pass" class="pass-btn" onclick="handlePass()">PASS</button>
+            
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:25px;"></div>
         <div id="letter-area" class="box-input-container"></div>
         
         <div style="display:flex; flex-direction:column; align-items:center;">
-            <button id="btn-voice" class="game-action-btn" onclick="playVoice()">🔊 再唸一次</button>
-            <div id="sentence-choice" class="sentence-choice">
-                <div class="sentence-choice-title">✍️ 這次要不要練習造句？</div>
-                <div class="sentence-choice-buttons">
-                    <button type="button" class="sentence-choice-btn yes" onclick="setSentencePracticeChoice(true)">要造句</button>
-                    <button type="button" class="sentence-choice-btn no" onclick="setSentencePracticeChoice(false)">不要造句</button>
+            <div id="sentence-inline" class="sentence-inline">
+                <div class="sentence-inline-title">✍️ 用這個單字造句</div>
+                <div id="sentence-inline-word" class="sentence-inline-word"></div>
+                <textarea id="sentence-inline-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子"></textarea>
+                <div class="sentence-inline-actions">
+                    <button type="button" class="sentence-check-btn" onclick="checkSentenceGrammar()">🔎 檢查文法</button>
+                    <button type="button" class="pass-btn-inline" onclick="handlePass()">PASS</button>
                 </div>
+                <div id="sentence-inline-result" class="sentence-status" style="display:none;"></div>
             </div>
-            <button id="btn-sentence" class="game-action-btn sentence-btn" onclick="openSentencePractice()">✍️ 造句</button>
+            <button id="btn-voice" class="game-action-btn" onclick="playVoice()">🔊 再唸一次</button>
+
             <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
         </div>
     </div>
@@ -1305,7 +1319,7 @@ ${detail}
         state.mode = m;
         state.tempPractice = false;
         state.index = 0;
-        state.sentenceEnabled = (m === 'practice') ? null : false;
+        state.sentenceEnabled = (m === 'practice');
         state.quizCompleted = 0;
         state.playerHP = 5;
         state.oppHP = 5;
@@ -1417,25 +1431,18 @@ ${detail}
     }
 
     function updateSentenceChoiceUI() {
-        const choice = document.getElementById('sentence-choice');
-        const btn = document.getElementById('btn-sentence');
-        if (!choice || !btn) return;
-
-        const inPractice = state.mode === 'practice';
-        const firstWord = state.index === 0;
-
-        // 只有練習模式的第一個單字會詢問是否要練造句。
-        choice.classList.toggle('show', inPractice && firstWord && state.sentenceEnabled === null);
-
-        // 選「要造句」後，本輪後續單字都保留造句按鈕；
-        // 選「不要造句」後，第二個單字起完全不顯示造句功能。
-        btn.style.display = (inPractice && state.sentenceEnabled === true) ? 'flex' : 'none';
+        const panel = document.getElementById('sentence-inline');
+        const wordEl = document.getElementById('sentence-inline-word');
+        const word = state.currentList && state.currentList[state.index];
+        const inPractice = state.mode === 'practice' || state.tempPractice === true;
+        if (panel) panel.style.display = inPractice ? 'block' : 'none';
+        if (wordEl) wordEl.textContent = inPractice && word ? String(word.en || '') : '';
     }
 
     function setSentencePracticeChoice(enabled) {
-        state.sentenceEnabled = !!enabled;
+        // 舊版相容：現在每一題固定顯示造句區，因此不再需要本選項。
+        state.sentenceEnabled = true;
         updateSentenceChoiceUI();
-        if (!enabled) closeSentencePractice();
     }
 
     async function loadWord() {
@@ -1451,6 +1458,11 @@ ${detail}
         document.getElementById('star-icon').style.color = isS ? "var(--gold)" : "#475569";
         document.getElementById('btn-force-practice').style.display = "none";
         updateSentenceChoiceUI();
+        const sentenceInput = document.getElementById('sentence-inline-input');
+        const sentenceResult = document.getElementById('sentence-inline-result');
+        if (sentenceInput) sentenceInput.value = '';
+        if (sentenceResult) { sentenceResult.style.display = 'none'; sentenceResult.className = 'sentence-status'; sentenceResult.innerHTML = ''; }
+        sentenceTargetWord = String(word.en || '').trim();
 
         const area = document.getElementById('letter-area');
         area.innerHTML = "";
@@ -2013,28 +2025,21 @@ ${detail}
 
     function openSentencePractice() {
         const word = state.currentList[state.index];
-        if (!word || !word.en) return;
-        sentenceTargetWord = String(word.en).trim();
-        const overlay = document.getElementById('sentence-overlay');
-        const wordEl = document.getElementById('sentence-word');
-        const input = document.getElementById('sentence-input');
-        const result = document.getElementById('sentence-result');
-        if (!overlay || !input) return;
-
-        wordEl.textContent = sentenceTargetWord;
-        input.value = '';
-        result.style.display = 'none';
-        result.className = 'sentence-status';
-        result.innerHTML = '';
-        overlay.classList.add('show');
-
-        setTimeout(() => input.focus(), 120);
+        const input = document.getElementById('sentence-inline-input');
+        const result = document.getElementById('sentence-inline-result');
+        const wordEl = document.getElementById('sentence-inline-word');
+        if (!word || !input) return;
+        sentenceTargetWord = String(word.en || '').trim();
+        if (wordEl) wordEl.textContent = sentenceTargetWord;
+        if (result) { result.style.display = 'none'; result.className = 'sentence-status'; result.innerHTML = ''; }
+        input.focus();
     }
 
     function closeSentencePractice() {
-        const overlay = document.getElementById('sentence-overlay');
-        if (overlay) overlay.classList.remove('show');
-        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        const input = document.getElementById('sentence-inline-input');
+        const result = document.getElementById('sentence-inline-result');
+        if (input) input.value = '';
+        if (result) { result.style.display = 'none'; result.className = 'sentence-status'; result.innerHTML = ''; }
     }
 
     function closeSentenceByBackdrop(event) {
@@ -2095,8 +2100,8 @@ ${detail}
     }
 
     async function checkSentenceGrammar() {
-        const input = document.getElementById('sentence-input');
-        const result = document.getElementById('sentence-result');
+        const input = document.getElementById('sentence-inline-input');
+        const result = document.getElementById('sentence-inline-result');
         if (!input || !result) return;
 
         const sentence = String(input.value || '').trim();
