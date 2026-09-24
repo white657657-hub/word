@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小小挑戰家｜兒童競賽獎學金辦法</title>
+<style>
+:root{
+  --ink:#3d4050;--muted:#707586;--pink:#f486aa;--pink-bg:#fff0f6;
+  --blue:#72bde8;--blue-bg:#eef9ff;--yellow:#f5c95b;--yellow-bg:#fff9df;
+  --green:#72cba2;--green-bg:#effbf5;--purple:#a995e6;--purple-bg:#f5f1ff;
+  --white:#fff;--line:#eee8eb;--shadow:0 8px 25px rgba(70,55,70,.08);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  background:#fffaf8;line-height:1.75;
+}
+.wrap{max-width:1080px;margin:auto;padding:24px 18px 55px}
+.hero{
+  position:relative;overflow:hidden;border-radius:30px;padding:34px 30px 28px;
+  background:linear-gradient(135deg,#fff0f6,#fff9df 50%,#eef9ff);
+  box-shadow:var(--shadow);border:2px solid #fff;
+}
+.hero:before{content:"🌟";position:absolute;right:38px;top:20px;font-size:42px;transform:rotate(10deg)}
+.hero:after{content:"✦  ✧  ✦";position:absolute;right:30px;bottom:22px;color:#efbd54;font-size:20px}
+.badge{display:inline-block;background:#fff;padding:5px 14px;border-radius:999px;color:#dd678f;font-weight:800;font-size:14px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:13px 0 7px;letter-spacing:.02em}
+.subtitle{margin:0;color:#687080;font-size:16px}
+.hero-message{
+  margin-top:20px;padding:15px 18px;background:rgba(255,255,255,.78);
+  border-radius:18px;font-weight:800;font-size:18px;text-align:center;
+}
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.principle{background:rgba(255,255,255,.82);border-radius:18px;padding:12px;text-align:center;font-weight:800}
+.emoji{font-size:25px;display:block}
+section{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;margin-top:19px;box-shadow:var(--shadow)}
+.section-title{display:flex;align-items:center;gap:10px;font-size:23px;margin:0 0 15px}
+.num{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--pink-bg);color:#d75f88;font-weight:900;flex:none}
+.note{background:var(--yellow-bg);border-left:5px solid var(--yellow);padding:12px 15px;border-radius:12px;margin-top:14px}
+.tables{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.table-card{border:1px solid var(--line);border-radius:19px;overflow:hidden}
+.table-head{padding:13px 16px;font-size:19px;font-weight:900}
+.large .table-head{background:var(--pink-bg);color:#d85f88}
+.normal .table-head{background:var(--blue-bg);color:#3987b4}
+table{width:100%;border-collapse:collapse}
+th,td{padding:11px 14px;border-top:1px solid #eee}
+th{text-align:left;color:var(--muted);font-size:13px;background:#fcfcfc}
+td:last-child,th:last-child{text-align:right}
+.money{font-size:18px;font-weight:900;color:#d65f87}
+.participation{background:linear-gradient(135deg,#fff5d9,#fff0f6);border:2px dashed #f0c968;border-radius:20px;padding:18px;margin-bottom:18px}
+.participation h3{margin:0 0 5px;font-size:21px}
+.participation p{margin:0}
+.rule-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.rule{display:flex;gap:11px;padding:14px 16px;border-radius:16px;background:#fafafa;border:1px solid #eee}
+.rule .icon{font-size:22px;line-height:1}
+.rule b{display:block;margin-bottom:2px}
+.special-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.special{padding:17px;border-radius:18px;background:var(--purple-bg);border:1px solid #e8e0ff}
+.special:nth-child(2){background:var(--green-bg);border-color:#d7f0e3}
+.special:nth-child(3){background:var(--yellow-bg);border-color:#f5e7a8}
+.special:nth-child(4){background:var(--blue-bg);border-color:#d9eefb}
+.special h3{margin:0 0 5px;font-size:18px}
+.special p{margin:0;color:#626977}
+.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:15px}
+.flow span{padding:9px 14px;border-radius:999px;background:#fff;border:2px solid #eee;font-weight:800}
+.arrow{color:#d9a1b6;font-size:19px}
+.footer{text-align:center;color:#7b808b;font-size:14px;margin-top:22px}
+.small{font-size:13px;color:var(--muted)}
+ul{margin:7px 0;padding-left:24px}
+@media(max-width:760px){
+  .principles,.tables,.rule-grid,.special-grid{grid-template-columns:1fr}
+  .hero{padding:28px 20px}.hero:before,.hero:after{display:none}
+  section{padding:20px 17px}
+}
+@media print{
+  body{background:#fff}.wrap{max-width:none;padding:0}
+  .hero,section{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <span class="badge">🌈 小小挑戰家計畫</span>
+  <h1>親友兒童競賽獎學金辦法</h1>
+  <p class="subtitle">讓孩子勇敢參賽、開心挑戰，每一次踏上賽場都值得被鼓勵。</p>
+
+  <div class="hero-message">💛 不一定要得獎，願意站上場，就值得一個大大的鼓掌！</div>
+
+  <div class="principles">
+    <div class="principle"><span class="emoji">🎈</span>參加就有獎</div>
+    <div class="principle"><span class="emoji">🌱</span>進步就鼓勵</div>
+    <div class="principle"><span class="emoji">🏆</span>得獎再加碼</div>
+  </div>
+</header>
+
+<section>
+  <h2 class="section-title"><span class="num">1</span>制度目的</h2>
+  <p>為鼓勵兒童積極參與學術、藝文、體育、棋藝及其他正當競賽，培養勇於挑戰、持續學習及追求卓越之精神，特設立本獎學金制度。</p>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">2</span>參加獎 🎈</h2>
+  <div class="participation">
+    <h3>🌟 只要願意參加，就有 100 元！</h3>
+    <p>凡完成報名並實際參加競賽者，不論比賽結果、名次或表現，均可獲得 <strong>100 元參加獎</strong>。</p>
+  </div>
+  <p>參加獎特別鼓勵平常比較害羞、第一次參賽，或還沒有把握取得名次的孩子。獎勵的不是輸贏，而是「我願意試試看」。</p>
+  <div class="note">📌 僅報名但未實際參賽者，不發參加獎；因生病或其他合理原因無法參賽者，得提出說明後個案認定。</div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">3</span>哪些比賽可以參加？</h2>
+  <div class="rule-grid">
+    <div class="rule"><span class="icon">🤸</span><div><b>運動競賽</b>體操、游泳、桌球、田徑、球類、武術、跆拳道等。</div></div>
+    <div class="rule"><span class="icon">🎨</span><div><b>藝術創作</b>繪畫、書法、音樂、舞蹈等各類正式競賽。</div></div>
+    <div class="rule"><span class="icon">📚</span><div><b>學習競賽</b>作文、數學、英文、閱讀、自然、科學、資訊等。</div></div>
+    <div class="rule"><span class="icon">♟️</span><div><b>棋藝競賽</b>圍棋、象棋、國際象棋等正式競賽。</div></div>
+  </div>
+  <div class="note">🌟 <strong>沒有列出的比賽也可以！</strong>只要是具有公開報名、正式競賽及成績評定機制的活動，都歡迎孩子來挑戰。</div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">4</span>比賽規模</h2>
+  <div class="rule-grid">
+    <div class="rule"><span class="icon">🏟️</span><div><b>大型賽事</b>全國性、縣市級以上公開競賽，或正式機構主辦之大型公開競賽。</div></div>
+    <div class="rule"><span class="icon">👥</span><div><b>50人門檻</b>同一競賽組別實際參賽人數達50人以上，原則上列為大型賽事。</div></div>
+    <div class="rule"><span class="icon">🌷</span><div><b>一般賽事</b>未符合大型賽事條件，但具有正式競賽性質者。</div></div>
+    <div class="rule"><span class="icon">🔎</span><div><b>認定方式</b>以孩子實際參加的組別為準，不以整場活動總人數計算。</div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">5</span>成績獎學金 🏆</h2>
+  <div class="tables">
+    <div class="table-card large">
+      <div class="table-head">🏆 大型賽事</div>
+      <table>
+        <tr><th>成績</th><th>獎學金</th></tr>
+        <tr><td>參加</td><td class="money">100 元</td></tr>
+        <tr><td>入選／優勝（未進前三）</td><td class="money">200 元</td></tr>
+        <tr><td>季軍</td><td class="money">300 元</td></tr>
+        <tr><td>亞軍</td><td class="money">500 元</td></tr>
+        <tr><td>冠軍</td><td class="money">1,000 元</td></tr>
+      </table>
+    </div>
+
+    <div class="table-card normal">
+      <div class="table-head">🌷 一般賽事</div>
+      <table>
+        <tr><th>成績</th><th>獎學金</th></tr>
+        <tr><td>參加</td><td class="money">100 元</td></tr>
+        <tr><td>入選／優勝（未進前三）</td><td class="money">200 元</td></tr>
+        <tr><td>季軍</td><td class="money">200 元</td></tr>
+        <tr><td>亞軍</td><td class="money">300 元</td></tr>
+        <tr><td>冠軍</td><td class="money">500 元</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="flow">
+    <span>🎈 參加 100</span><i class="arrow">→</i>
+    <span>⭐ 入選 200</span><i class="arrow">→</i>
+    <span>🥉 季軍</span><i class="arrow">→</i>
+    <span>🥈 亞軍</span><i class="arrow">→</i>
+    <span>🥇 冠軍</span>
+  </div>
+  <p class="small">※ 同一賽事之成績獎以最高成績計算，不重複累加。亦即「參加」是最低保障，取得更高成績則依該成績給獎。</p>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">6</span>額外鼓勵 🌟</h2>
+  <div class="special-grid">
+    <div class="special">
+      <h3>🚀 首次挑戰獎</h3>
+      <p>第一次參加某一類型正式競賽，可獲 100 元。</p>
+    </div>
+    <div class="special">
+      <h3>⬆️ 晉級獎</h3>
+      <p>正式晉級複賽、決賽或下一階段，可獲 100 元。</p>
+    </div>
+    <div class="special">
+      <h3>🌱 突破獎</h3>
+      <p>同項競賽較前次有明顯進步，可獲 100～300 元。</p>
+    </div>
+    <div class="special">
+      <h3>✨ 特別表現獎</h3>
+      <p>獲最佳解題、最佳進步、特殊表現等正式獎項，可比照入選／優勝。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">7</span>同一賽事怎麼算？</h2>
+  <ul>
+    <li>初賽、複賽、決賽屬同一賽事者，原則上視為同一場。</li>
+    <li>晉級後取得更高成績，以最高成績計算。</li>
+    <li>不同競賽項目、不同組別具有獨立排名及獨立獎項者，可以分別計算。</li>
+  </ul>
+  <div class="note">例如：個人組冠軍＋獨立計分的團體組亞軍，兩項可分別計算。</div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">8</span>團體賽 🤝</h2>
+  <div class="tables">
+    <div class="table-card large">
+      <div class="table-head">🏅 大型賽事團體獎</div>
+      <table>
+        <tr><th>成績</th><th>每人</th></tr>
+        <tr><td>入選</td><td class="money">100 元</td></tr>
+        <tr><td>季軍</td><td class="money">150 元</td></tr>
+        <tr><td>亞軍</td><td class="money">250 元</td></tr>
+        <tr><td>冠軍</td><td class="money">500 元</td></tr>
+      </table>
+    </div>
+    <div class="table-card normal">
+      <div class="table-head">🌼 一般賽事團體獎</div>
+      <table>
+        <tr><th>成績</th><th>每人</th></tr>
+        <tr><td>入選</td><td class="money">100 元</td></tr>
+        <tr><td>季軍</td><td class="money">100 元</td></tr>
+        <tr><td>亞軍</td><td class="money">200 元</td></tr>
+        <tr><td>冠軍</td><td class="money">300 元</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">9</span>代表資格與特殊賽事 🌏</h2>
+  <div class="rule-grid">
+    <div class="rule"><span class="icon">🇹🇼</span><div><b>縣市代表資格</b>另獎勵 200 元。</div></div>
+    <div class="rule"><span class="icon">🏅</span><div><b>全國代表資格</b>另獎勵 500 元。</div></div>
+    <div class="rule"><span class="icon">🌏</span><div><b>國際賽代表資格</b>另獎勵 1,000 元。</div></div>
+    <div class="rule"><span class="icon">⭐</span><div><b>特殊大型賽事</b>得依競賽難度及代表性另行加發特別獎學金。</div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">10</span>年度小小榮譽獎 🎖️</h2>
+  <p>除了比賽成績，也可以在每年度看見孩子不同面向的成長：</p>
+  <div class="special-grid">
+    <div class="special"><h3>🌟 首次挑戰獎</h3><p>第一次勇敢跨出舒適圈。</p></div>
+    <div class="special"><h3>📈 進步獎</h3><p>相較過去有明顯成長。</p></div>
+    <div class="special"><h3>🧭 多元挑戰獎</h3><p>勇於嘗試不同領域。</p></div>
+    <div class="special"><h3>🤝 運動家精神獎</h3><p>展現尊重、合作與堅持。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title"><span class="num">11</span>最後想告訴孩子 💛</h2>
+  <div class="hero-message" style="margin-top:0">
+    不需要每一次都第一名。<br>
+    願意試、願意練、願意站上場，<br>
+    <strong>每一次挑戰，都是自己的小小勝利。</strong>
+  </div>
+</section>
+
+<div class="footer">🌈 小小挑戰家｜一起比賽、一起成長、一起為每一次勇敢鼓掌。</div>
+
+</div>
+</body>
+</html>
