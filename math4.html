@@ -152,7 +152,28 @@ button,input{
  }
 }
 
+
+/* ===== 紙本銜接：降低顏色依賴，但保留位值結構 ===== */
+body.paper-mode .place-digit{color:#263238 !important}
+body.paper-mode .digit-input{border-color:#cbd5e0 !important}
+body.paper-mode .answer-wan,
+body.paper-mode .answer-qian,
+body.paper-mode .answer-bai,
+body.paper-mode .answer-shi,
+body.paper-mode .answer-ge{border-color:#cbd5e0 !important}
+body.paper-mode .clickable-digit.marked{background:#dbeafe}
 </style>
+
+/* ===== V3 學習優化 ===== */
+#game .context-card{order:1;margin-top:8px}
+#game .info-bar,#game .progress{order:2}
+#game .app-prompt,#game .operation-choice,#game .top-question,#game .math-card,#game .feedback,#game .paper-bridge,#game .secondary{order:3}
+.context-card{border-left-width:7px}
+.context-title{display:flex;align-items:center;gap:6px}
+.app-prompt{background:#f8fafc;border-radius:10px;padding:7px 10px}
+.practice-status:empty{display:none}
+@media(max-width:520px){#game .context-card{margin-top:4px}}
+
 </head>
 <body>
 <div class="page active" id="home">
@@ -164,16 +185,15 @@ button,input{
 
 <div class="page" id="game">
   <div class="practice-status" id="paper-mode-badge"></div>
-<div class="info-bar"><span>題次：<span id="q-count">1</span>/10</span><span>得分：<span id="score">0</span></span></div>
-  <div class="progress"><div class="bar" id="bar"></div></div>
   <div class="mode-label" id="mode-label"></div>
-  <div class="instruction" id="instruction" aria-hidden="true" style="display:none"></div>
   <div class="context-card app-hidden" id="context-card">
     <div class="context-title" id="context-title"></div>
     <div class="context-text" id="context-text"></div>
     <div class="context-fact" id="context-fact"></div>
     <div class="context-data-note">題目中的數量為練習用數據，用來練習四位數加減。</div>
   </div>
+  <div class="info-bar"><span>題次：<span id="q-count">1</span>/10</span><span>得分：<span id="score">0</span></span></div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
   <div class="app-prompt app-hidden" id="app-prompt">先讀懂情境，再判斷這題要用加法還是減法。</div>
   <div class="operation-choice app-hidden" id="operation-choice">
     <button class="op-choice add-choice" id="choose-add" onclick="chooseAppOp('+')">＋</button>
@@ -185,7 +205,7 @@ button,input{
     <button class="btn-move" title="把直式答案帶到上方答案框" aria-label="把直式答案帶到上方答案框" onclick="moveAndSubmit()">➜</button>
   </div>
   <div class="feedback" id="feedback"></div>
-<div id="arrow-help" style="font-size:.82rem;color:#94a3b8;text-align:center;margin-top:0">右箭頭：把直式答案帶到上方答案框</div>
+<div id="arrow-help" style="display:none"></div>
   <div class="paper-bridge" id="paper-bridge">
       <strong>紙上也可以這樣算：</strong> 直式位置、計算順序與現在相同。
     </div>
@@ -193,7 +213,7 @@ button,input{
 </div>
 
 <div class="page" id="result">
-  <div class="result"><h2 id="result-title"></h2><div class="score" id="result-score"></div><div class="praise" id="praise"></div><div class="wrong-list" id="stats"></div><button class="btn-main" onclick="goHome()">再挑戰一次</button></div>
+  <div class="result"><h2 id="result-title"></h2><div class="score" id="result-score"></div><div class="praise" id="praise"></div><div class="wrong-list" id="stats"></div><div id="retry-wrong-wrap" style="display:none;margin-top:12px"><button class="btn-main" onclick="retryWrong()">🔁 再挑戰錯題</button></div><button class="btn-main" style="margin-top:10px" onclick="goHome()">再挑戰一次</button></div>
 </div>
 
 <script>
@@ -234,6 +254,9 @@ function paperBridgeResetMarks(){
 
 let n1=0,n2=0,op='+',correctVal=0,currentType=1,currentQ=1,totalPoints=0,currentQPoints=10,wrongCount=0;
 let appProblem=null, appChosenOp=null;
+let appOpWrongCount=0, appCalcWrongCount=0;
+let wrongProblems=[];
+let sessionQuestionTotal=10;
 let appSessionUsed=new Set();
 let appRecentUsed=[];
 const APP_RECENT_LIMIT=120;
@@ -353,7 +376,7 @@ function initMenu(){
 }
 
 function start(type){
- currentType=type;currentQ=1;totalPoints=0;wrongCount=0;appProblem=null;appChosenOp=null;
+ currentType=type;currentQ=1;totalPoints=0;wrongCount=0;appProblem=null;appChosenOp=null;appOpWrongCount=0;appCalcWrongCount=0;wrongProblems=[];sessionQuestionTotal=10;window.__retryQueue=null;
  if(type===6) appSessionUsed=new Set();
  show('game');
  document.getElementById('score').innerText='0';
@@ -500,6 +523,7 @@ function loadProblem(){
    document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
    document.getElementById('final-ans').value='';
    document.getElementById('feedback').innerText='';
+   updatePaperBridge();
    return;
  }
 
@@ -540,6 +564,7 @@ function loadProblem(){
  document.getElementById('feedback').innerText='';
  renderGrid();
  renderExplain();
+ updatePaperBridge();
 }
 
 function renderContext(p){
@@ -569,10 +594,12 @@ function chooseAppOp(chosen){
  sub.classList.toggle('selected',chosen==='-');
  if(chosen!==appProblem.op){
    wrongCount++;
+   appOpWrongCount++;
+   recordWrongProblem();
    currentQPoints=Math.max(2,currentQPoints-2);
    const msg=document.getElementById('feedback');
    msg.style.color='var(--red)';
-   msg.innerText='先再讀一次情境，想想是「增加／合起來」還是「剩下／減少」。';
+   msg.innerText=appOpWrongCount===1?'再讀一次情境，想想數量最後是變多還是變少。':'再想一想：這兩個數量的關係是合在一起，還是從原來的數量拿走一部分？';
    return;
  }
  document.getElementById('feedback').style.color='var(--green)';
@@ -707,12 +734,13 @@ function limitMark(el){
 
 function moveAndSubmit(){
  const count=correctVal===10000?5:4;
- let v='';
+ const values=[];
  for(let i=0;i<count;i++){
   const x=document.getElementById(`a-${i}`)?.value||'';
-  if(x!=='')v+=x;
+  values.push(x);
  }
- if(v==='')return;
+ if(values.some(x=>x===''))return;
+ const v=values.join('');
  document.getElementById('final-ans').value=String(parseInt(v,10));
  check();
 }
@@ -766,6 +794,12 @@ function celebrateCorrect(){
   });
 }
 
+function recordWrongProblem(){
+ if(currentType!==6 || !appProblem)return;
+ const copy={...appProblem};
+ if(!wrongProblems.some(x=>appSignature(x)===appSignature(copy))) wrongProblems.push(copy);
+}
+
 function check(){
  if(currentType===6 && appChosenOp!==appProblem?.op)return;
  const raw=document.getElementById('final-ans').value.trim();
@@ -780,14 +814,30 @@ function check(){
   msg.style.color='var(--green)';
   msg.innerText='答對了！繼續下一題。';
   setTimeout(()=>{
-   if(currentQ<10){currentQ++;loadProblem();}
+   if(window.__retryQueue && Array.isArray(window.__retryQueue)){
+     if(currentQ < window.__retryQueue.length){
+       currentQ++;
+       appProblem={...window.__retryQueue[currentQ-1]};
+       appChosenOp=null; n1=appProblem.a;n2=appProblem.b;op=appProblem.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+       document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
+       renderContext(appProblem); renderAppChoices();
+       document.querySelector('.top-question').classList.add('app-hidden');
+       document.querySelector('.math-card').classList.add('app-hidden');
+       document.getElementById('q-count').innerText=currentQ;
+       document.getElementById('bar').style.width=((currentQ-1)/window.__retryQueue.length*100)+'%';
+     }else{
+       window.__retryQueue=null; showResult();
+     }
+   }else if(currentQ<10){currentQ++;loadProblem();}
    else showResult();
   },650);
  }else{
   wrongCount++;
+  appCalcWrongCount += currentType===6 ? 1 : 0;
+  recordWrongProblem();
   currentQPoints=Math.max(2,currentQPoints-2);
   msg.style.color='var(--red)';
-  msg.innerText='再檢查一次：先看個位，再往左算。';
+  msg.innerText='再試一次，仔細看看你的直式。';
   document.getElementById('final-ans').value='';
   setTimeout(()=>msg.innerText='',1300);
  }
@@ -796,11 +846,41 @@ function check(){
 function showResult(){
  show('result');
  document.getElementById('result-score').innerText=`總積分：${totalPoints} / 100`;
- document.getElementById('result-title').innerText=totalPoints===100?'全部答對！':'挑戰完成！';
+ document.getElementById('result-title').innerText=totalPoints===sessionQuestionTotal*10?'全部答對！':'挑戰完成！';
  const arr=totalPoints===100?praisePerfect:praiseGood;
  document.getElementById('praise').innerText=arr[Math.floor(Math.random()*arr.length)];
- document.getElementById('stats').innerText=`10 題完成｜需要重新計算的題目：${wrongCount} 題｜每題最多 10 分，重新嘗試會扣 2 分。`;
+ const stats=document.getElementById('stats');
+ if(currentType===6){
+   stats.innerHTML=`${sessionQuestionTotal} 題完成｜情境判斷錯誤：${appOpWrongCount} 次｜計算錯誤：${appCalcWrongCount} 次｜需要再練習的題目：${wrongProblems.length} 題`;
+ }else{
+   stats.innerText=`10 題完成｜需要重新計算的題目：${wrongCount} 題｜每題最多 10 分，重新嘗試會扣 2 分。`;
+ }
+ const wrap=document.getElementById('retry-wrong-wrap');
+ if(wrap)wrap.style.display=wrongProblems.length?'block':'none';
 }
+
+function retryWrong(){
+ if(!wrongProblems.length)return;
+ currentQ=1; totalPoints=0; wrongCount=0; appOpWrongCount=0; appCalcWrongCount=0;
+ const queue=wrongProblems.map(x=>({...x}));
+ sessionQuestionTotal=queue.length;
+ wrongProblems=[];
+ show('game');
+ document.getElementById('score').innerText='0';
+ document.getElementById('q-count').innerText='1';
+ document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
+ const p=queue[0];
+ appProblem=p; appChosenOp=null;
+ n1=p.a;n2=p.b;op=p.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+ renderContext(p); renderAppChoices();
+ document.getElementById('context-card').classList.remove('app-hidden');
+ document.getElementById('app-prompt').classList.remove('app-hidden');
+ document.querySelector('.top-question').classList.add('app-hidden');
+ document.querySelector('.math-card').classList.add('app-hidden');
+ window.__retryQueue=queue;
+ updatePaperBridge();
+}
+
 
 function show(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
