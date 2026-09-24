@@ -556,14 +556,15 @@ function loadProblem(){
 
  const labels={1:'四位數加法',2:'四位數減法',3:'連續退位',4:'進位挑戰',5:'加減混合'};
  document.getElementById('mode-label').innerText=labels[currentType];
- document.getElementById('instruction').innerText='';
+ document.querySelector('.top-question').classList.remove('app-hidden');
+ document.querySelector('.math-card').classList.remove('app-hidden');
+ renderGrid();
  renderTopQuestion();
  document.getElementById('q-count').innerText=currentQ;
  document.getElementById('score').innerText=totalPoints;
  document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
  document.getElementById('final-ans').value='';
  document.getElementById('feedback').innerText='';
- renderGrid();
  renderExplain();
  updatePaperBridge();
 }
@@ -629,20 +630,25 @@ function answerClass(index){
 }
 
 function colorizedNumberHTML(value){
-  const arr=digits(value);
-  let firstNonZero=arr.findIndex(x=>x!==0);
-  if(firstNonZero<0) firstNonZero=3;
+  // 橫式題目固定以四位數字處理，但不顯示前導 0。
+  // 這裡不依賴其他 DOM 狀態，避免題目區因輔助函式異常而整段空白。
+  const raw=String(value);
+  const num=Number.isFinite(Number(value)) ? Math.max(0,Math.trunc(Number(value))) : 0;
+  const text=String(num);
+  const arr=text.padStart(4,'0').slice(-4).split('');
+  const firstNonZero=arr.findIndex(x=>x!=='0');
+  const start=firstNonZero<0 ? 3 : firstNonZero;
+  const classes=['place-qian','place-bai','place-shi','place-ge'];
   return arr.map((x,i)=>{
-    const cls=placeClass(i);
-    // 題目橫式不補前導 0；但四位數本身的 0 仍保留在原位置。
-    if(i<firstNonZero) return '';
-    return `<span class="place-digit ${cls}">${x}</span>`;
+    if(i<start) return '';
+    return `<span class="place-digit ${classes[i]}">${x}</span>`;
   }).join('');
 }
 
 function renderTopQuestion(){
   const q1=document.getElementById('q1');
   const q2=document.getElementById('q2');
+  if(!q1 || !q2) return;
   q1.innerHTML=colorizedNumberHTML(n1);
   q2.innerHTML=colorizedNumberHTML(n2);
   document.getElementById('qo').innerText=op;
@@ -651,6 +657,10 @@ function renderTopQuestion(){
 function renderGrid(){
  const A=digits(n1),B=digits(n2);
  const isFive=correctVal===10000;
+ const placeClasses=['place-qian','place-bai','place-shi','place-ge'];
+ const answerClasses=isFive
+   ? ['answer-wan','answer-qian','answer-bai','answer-shi','answer-ge']
+   : ['answer-qian','answer-bai','answer-shi','answer-ge'];
 
  /*
   固定 6 欄：說明／符號 + 萬 + 千 + 百 + 十 + 個
@@ -687,7 +697,7 @@ function renderGrid(){
  // 第一個數：萬位留白，千～個位放四位數；每個數字都可點擊，在數字上加／取消紅色「／」標記。
  html+=`<div></div><div class="cell"></div>`;
  A.forEach((x,i)=>{
-  const cls=placeClass(i);
+  const cls=placeClasses[i];
   if(op==='-'){
     html+=`<div class="cell place-digit ${cls} clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)">${x}</div>`;
   }else{
@@ -697,7 +707,7 @@ function renderGrid(){
 
  // 第二個數：同樣固定在千～個位。
  html+=`<div class="op">${op}</div><div class="cell"></div>`;
- B.forEach((x,i)=>{html+=`<div class="cell place-digit ${placeClass(i)}">${x}</div>`;});
+ B.forEach((x,i)=>{html+=`<div class="cell place-digit ${placeClasses[i]}">${x}</div>`;});
 
  html+=`<div class="line"></div>`;
 
@@ -705,12 +715,12 @@ function renderGrid(){
  if(isFive){
   html+=`<div></div>`;
   for(let i=0;i<5;i++){
-   html+=`<div><input class="digit-input ${answerClass(i)}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+   html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
   }
  }else{
   html+=`<div></div><div class="cell"></div>`;
   for(let i=0;i<4;i++){
-   html+=`<div><input class="digit-input ${answerClass(i)}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+   html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
   }
  }
 
@@ -846,9 +856,10 @@ function check(){
 
 function showResult(){
  show('result');
- document.getElementById('result-score').innerText=`總積分：${totalPoints} / 100`;
+ const maxScore=sessionQuestionTotal*10;
+ document.getElementById('result-score').innerText=`總積分：${totalPoints} / ${maxScore}`;
  document.getElementById('result-title').innerText=totalPoints===sessionQuestionTotal*10?'全部答對！':'挑戰完成！';
- const arr=totalPoints===100?praisePerfect:praiseGood;
+ const arr=totalPoints===maxScore?praisePerfect:praiseGood;
  document.getElementById('praise').innerText=arr[Math.floor(Math.random()*arr.length)];
  const stats=document.getElementById('stats');
  if(currentType===6){
