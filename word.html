@@ -289,6 +289,29 @@
 
 
         /* 後台管理 UI：低干擾、灰色、小尺寸 */
+        /* V1450：8歲兒童首頁 UI/UX */
+        .home-header { text-align:center; margin:5px 0 10px; }
+        .home-title { color:var(--accent); font-size:1.55rem; font-weight:1000; letter-spacing:1px; }
+        .home-user { color:#94a3b8; font-size:.78rem; margin-top:2px; }
+        .unit-card { background:rgba(30,41,59,.75); border:1px solid #475569; border-radius:14px; padding:9px 10px; margin-bottom:10px; }
+        .unit-label { color:#cbd5e1; font-size:.8rem; font-weight:900; margin-bottom:4px; }
+        #unit-selector { width:100%; padding:10px 12px; border-radius:10px; background:#0f172a; color:var(--gold); border:1px solid #475569; font-weight:900; font-size:1.05rem; }
+        .home-main-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+        .home-action { min-height:105px; border:0; border-radius:16px; color:#fff; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,.22); font-weight:1000; font-size:1.12rem; }
+        .home-action small { font-size:.68rem; font-weight:700; opacity:.88; margin-top:4px; }
+        .home-action-icon { font-size:2rem; line-height:1; margin-bottom:4px; }
+        .home-action.challenge { background:linear-gradient(135deg,#ef4444,#f59e0b); }
+        .home-action.practice { background:#2563eb; }
+        .home-action.sentence { background:linear-gradient(135deg,#7c3aed,#a855f7); }
+        .home-action.star { background:#d99b00; color:#111827; }
+        .home-adventure-title { color:#94a3b8; font-size:.78rem; font-weight:900; text-align:center; margin:13px 0 6px; }
+        .home-secondary-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .home-secondary-actions button { min-height:52px; border:1px solid #475569; border-radius:12px; background:#1e293b; color:#fff; font-size:1rem; font-weight:900; cursor:pointer; }
+        .home-secondary-actions button span { margin-left:5px; }
+        .more-toggle { width:100%; margin-top:10px; padding:9px; border:1px solid #334155; border-radius:10px; background:transparent; color:#94a3b8; font-weight:800; cursor:pointer; }
+        .more-tools { grid-template-columns:1fr 1fr; gap:6px; margin-top:6px; padding:5px 0; }
+        @media screen and (max-width:600px) { .home-action { min-height:96px; } .home-action-icon { font-size:1.75rem; } }
+
         .admin-btn {
             width:auto !important;
             min-width:0;
@@ -377,21 +400,43 @@
 
 <div class="container">
     <div id="view-main" class="view-section" style="display:flex;">
-        <h2 style="text-align:center; color:var(--accent); margin:8px 0;">WORD HERO V1445</h2>
-        <div style="text-align:center;color:#94a3b8;font-size:.9rem;margin-bottom:8px;">使用者：<span id="main-child-name"></span></div>
-        <div style="flex:1;">
-            <select id="unit-selector" style="width:100%; padding:14px; border-radius:12px; background:#1e293b; color:var(--gold); border:1px solid #334155; font-weight:800; font-size:1.3rem; margin-bottom:10px;"></select>
-            <button class="mode-btn" style="background:linear-gradient(45deg,#ef4444,#f59e0b);" onclick="startSession('quiz')">🗡️ 魔王挑戰 (敗北扣級)</button>
-            <button class="mode-btn" style="background:#3b82f6;" onclick="openPracticeMenu()">🛡️ 練習模式</button>
-            <button class="mode-btn" style="background:var(--gold);color:#000;" onclick="startPrioritySession()">★ 星號練習 (不扣血)</button>
-            <button class="mode-btn admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
-            <button class="mode-btn admin-btn" onclick="downloadErrorLog()">📝 錯題 Log</button>
-            <button class="mode-btn admin-btn" onclick="downloadChildProgress()">📦 夥伴／圖鑑進度</button>
-            <button class="mode-btn admin-btn" onclick="switchUser()">👤 切換使用者</button>
+        <div class="home-header">
+            <div class="home-title">WORD HERO</div>
+            <div class="home-user">👤 <span id="main-child-name"></span></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <button class="mode-btn" style="background:#475569;" onclick="switchView('view-team')">🐲 我的夥伴</button>
-            <button class="mode-btn" style="background:#475569;" onclick="switchView('view-pokedex')">📸 寶可夢圖鑑</button>
+
+        <div class="unit-card">
+            <div class="unit-label">📚 今天學習</div>
+            <select id="unit-selector"></select>
+        </div>
+
+        <div class="home-main-actions">
+            <button class="home-action challenge" onclick="startSession('quiz')">
+                <span class="home-action-icon">🗡️</span><span>魔王挑戰</span><small>挑戰單字・收服寶可夢</small>
+            </button>
+            <button class="home-action practice" onclick="startSession('practice')">
+                <span class="home-action-icon">🔤</span><span>單字練習</span><small>拼字・自然拼音・朗讀</small>
+            </button>
+            <button class="home-action sentence" onclick="startSentenceSession()">
+                <span class="home-action-icon">✍️</span><span>單字造句</span><small>自己造句・文法提示</small>
+            </button>
+            <button class="home-action star" onclick="startPrioritySession()">
+                <span class="home-action-icon">⭐</span><span>星號複習</span><small>複習你標記的單字</small>
+            </button>
+        </div>
+
+        <div class="home-adventure-title">我的冒險</div>
+        <div class="home-secondary-actions">
+            <button onclick="switchView('view-team')">🐲<span>我的夥伴</span></button>
+            <button onclick="switchView('view-pokedex')">📸<span>寶可夢圖鑑</span></button>
+        </div>
+
+        <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">⚙️ 更多功能 <span id="more-arrow">⌄</span></button>
+        <div id="more-tools" class="more-tools" style="display:none;">
+            <button class="admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
+            <button class="admin-btn" onclick="downloadErrorLog()">📝 錯題 Log</button>
+            <button class="admin-btn" onclick="downloadChildProgress()">📦 進度下載</button>
+            <button class="admin-btn" onclick="switchUser()">👤 切換使用者</button>
         </div>
     </div>
 
@@ -423,7 +468,7 @@
             <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
         </div>
-        <button class="mode-btn sentence-unit-back" onclick="switchView('view-practice-menu')">結束造句練習</button>
+        <button class="mode-btn sentence-unit-back" onclick="switchView('view-main')">🏠 結束造句練習</button>
     </div>
 
     <div id="view-game" class="view-section">
@@ -560,7 +605,9 @@
 <script>
     const ANSON_USER = 'anson';
     const ANSON_TXT_URL = './vocab/Anson.txt';
-    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",25:"皮卡丘",26:"雷丘",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    const missingPKNames = Array.from({length:151},(_,i)=>i+1).filter(id => !PK_NAMES[id]);
+    if (missingPKNames.length) console.warn("PK_NAMES 缺少：", missingPKNames);
     const localDict = { "bell":"鈴","busy":"忙碌","first name":"名字","last name":"姓氏","bus driver":"公車司機","market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末","birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎","bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船","transportation":"交通工具","town":"城鎮","wheel":"輪子" };
     const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
     const DEFAULTS = [384, 150, 992];
@@ -1528,6 +1575,17 @@ ${detail}
         // V1445：造句改為獨立單元，不再嵌在每個單字題目裡。
         const panel = document.getElementById('sentence-inline');
         if (panel) panel.style.display = 'none';
+    }
+
+    function toggleMoreTools() {
+        const panel = document.getElementById('more-tools');
+        const btn = document.querySelector('.more-toggle');
+        const arrow = document.getElementById('more-arrow');
+        if (!panel) return;
+        const open = panel.style.display !== 'none';
+        panel.style.display = open ? 'none' : 'grid';
+        if (btn) btn.setAttribute('aria-expanded', String(!open));
+        if (arrow) arrow.textContent = open ? '⌄' : '⌃';
     }
 
     function openPracticeMenu() {
