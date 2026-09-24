@@ -16,7 +16,24 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"/";position:absolute;color:var(--red);font-size:3rem;font-weight:900;line-height:1;transform:rotate(35deg);left:50%;top:50%;translate:-50% -50%;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center}.controls{display:flex;align-items:center;gap:10px;margin-top:4px}.btn-move{width:55px;height:55px;border:0;border-radius:50%;background:#f39c12;color:#fff;font-weight:900;font-size:1.25rem;box-shadow:0 4px 0 #d35400;cursor:pointer}.secondary{background:none;border:0;color:#8a94a6;cursor:pointer;margin-top:10px}
 .result{width:90%;background:#fff;border-radius:24px;padding:26px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.14);margin-top:30vh}.score{font-size:1.8rem;color:#f39c12;font-weight:900}.praise{font-size:1.15rem;line-height:1.7;margin:16px 0}.wrong-list{margin-top:12px;text-align:left;background:#f8fafc;border-radius:12px;padding:12px;font-size:.94rem}.balloon{position:fixed;bottom:-100px;width:38px;height:48px;border-radius:50%;animation:up 6s linear forwards;z-index:1000}.confetti-piece{position:fixed;top:-18px;width:10px;height:16px;z-index:1001;pointer-events:none;animation:confetti-fall linear forwards}.celebrate-text{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.7);z-index:1002;background:#fff;border-radius:22px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:1.55rem;font-weight:900;text-align:center;white-space:nowrap;animation:pop .5s ease-out forwards}.celebrate-text.fade{animation:fade .5s ease-in forwards}@keyframes confetti-fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot));opacity:.95}}@keyframes pop{to{transform:translate(-50%,-50%) scale(1)}}@keyframes fade{to{opacity:0;transform:translate(-50%,-50%) scale(1.04)}}@keyframes up{to{transform:translateY(-120vh)}}
 @media(max-width:520px){.vertical{grid-template-columns:34px repeat(5,46px);gap:3px}.cell{width:46px;font-size:1.75rem}.digit-input{width:41px;height:42px;font-size:1.6rem}.carry-cell{width:46px}.math-card{padding:12px 4px}.q-text{font-size:1.5rem}.final-ans{width:96px;height:46px;font-size:1.7rem;font-family:var(--math-font)}.top-question{gap:6px}}
+
 .q-text span{color:#263238!important}
+
+/* ===== 跨領域情境題 ===== */
+.context-card{width:100%;background:#fff;border-radius:18px;padding:15px 16px 14px;margin:4px 0 12px;box-shadow:0 5px 18px rgba(0,0,0,.08);border-left:6px solid #16a085}
+.context-title{font-size:1.22rem;font-weight:900;margin-bottom:7px}
+.context-text{font-size:1.02rem;line-height:1.75;font-weight:700}
+.context-fact{margin-top:9px;padding:9px 11px;background:#f8fafc;border-radius:10px;font-size:.88rem;line-height:1.55;color:#475569}
+.context-data-note{margin-top:6px;font-size:.76rem;color:#94a3b8}
+.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}
+.op-choice{width:88px;height:48px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;font-size:1.55rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.op-choice.add-choice{color:#2563eb}.op-choice.sub-choice{color:#e67e22}
+.op-choice.selected{background:#eef6ff;border-color:#3498db;box-shadow:0 2px 0 rgba(52,152,219,.25)}
+.op-choice:disabled{opacity:.55;cursor:default}
+.app-prompt{font-size:.92rem;color:#64748b;text-align:center;font-weight:800;margin:2px 0 7px}
+.app-hidden{display:none!important}
+@media(max-width:520px){.context-card{padding:13px 12px}.context-title{font-size:1.08rem}.context-text{font-size:.96rem}.op-choice{width:78px}}
+
 
 /* ===== Paper Bridge / 人性化操作 ===== */
 :root{
@@ -140,9 +157,9 @@ button,input{
 <body>
 <div class="page active" id="home">
   <div class="title">三年級｜四位數加減</div>
-  <div class="subtitle">10000 以內的直式計算｜練習進位、退位與 0 的借位</div>
+  <div class="subtitle">10000 以內的直式計算｜把數學放進自然、社會與臺灣生活情境</div>
   <div id="menu-list"></div>
-  <div class="hint"><b>本單元重點</b><br>① 千、百、十、個位對齊　② 從個位開始計算　③ 加法要注意進位　④ 減法要注意退位　⑤ 特別練習「5000－3」這類連續退位。</div>
+  <div class="hint"><b>學習重點</b><br>① 千、百、十、個位對齊　② 練習進位、退位與連續退位　③ 情境題先讀懂，再判斷加法或減法　④ 題目會結合自然、社會、臺灣地理與孩子感興趣的主題。</div>
 </div>
 
 <div class="page" id="game">
@@ -151,13 +168,24 @@ button,input{
   <div class="progress"><div class="bar" id="bar"></div></div>
   <div class="mode-label" id="mode-label"></div>
   <div class="instruction" id="instruction" aria-hidden="true" style="display:none"></div>
+  <div class="context-card app-hidden" id="context-card">
+    <div class="context-title" id="context-title"></div>
+    <div class="context-text" id="context-text"></div>
+    <div class="context-fact" id="context-fact"></div>
+    <div class="context-data-note">題目中的數量為練習用數據，用來練習四位數加減。</div>
+  </div>
+  <div class="app-prompt app-hidden" id="app-prompt">先讀懂情境，再判斷這題要用加法還是減法。</div>
+  <div class="operation-choice app-hidden" id="operation-choice">
+    <button class="op-choice add-choice" id="choose-add" onclick="chooseAppOp('+')">＋</button>
+    <button class="op-choice sub-choice" id="choose-sub" onclick="chooseAppOp('-')">－</button>
+  </div>
   <div class="top-question"><div class="q-text"><span id="q1"></span> <span id="qo" style="color:#263238"></span> <span id="q2"></span> =</div><input class="final-ans" id="final-ans" type="text" inputmode="numeric" maxlength="5"><button class="btn-main" onclick="check()">送出</button></div>
   <div class="math-card">
     <div class="vertical" id="grid"></div>
     <button class="btn-move" title="把直式答案帶到上方答案框" aria-label="把直式答案帶到上方答案框" onclick="moveAndSubmit()">➜</button>
   </div>
   <div class="feedback" id="feedback"></div>
-<div style="font-size:.82rem;color:#94a3b8;text-align:center;margin-top:0">右箭頭：把直式答案帶到上方答案框</div>
+<div id="arrow-help" style="font-size:.82rem;color:#94a3b8;text-align:center;margin-top:0">右箭頭：把直式答案帶到上方答案框</div>
   <div class="paper-bridge" id="paper-bridge">
       <strong>紙上也可以這樣算：</strong> 直式位置、計算順序與現在相同。
     </div>
@@ -205,6 +233,107 @@ function paperBridgeResetMarks(){
 }
 
 let n1=0,n2=0,op='+',correctVal=0,currentType=1,currentQ=1,totalPoints=0,currentQPoints=10,wrongCount=0;
+let appProblem=null, appChosenOp=null;
+let appSessionUsed=new Set();
+let appRecentUsed=[];
+const APP_RECENT_LIMIT=120;
+
+function loadAppRecent(){
+  try{
+    const raw=localStorage.getItem('math_app_recent_v2');
+    const parsed=raw?JSON.parse(raw):[];
+    appRecentUsed=Array.isArray(parsed)?parsed.filter(x=>typeof x==='string').slice(-APP_RECENT_LIMIT):[];
+  }catch(e){appRecentUsed=[];}
+}
+function saveAppRecent(){
+  try{localStorage.setItem('math_app_recent_v2',JSON.stringify(appRecentUsed.slice(-APP_RECENT_LIMIT)));}
+  catch(e){}
+}
+function appSignature(p){return `${p.themeKey}|${p.op}|${p.a}|${p.b}`;}
+function rememberAppProblem(p){
+  const sig=appSignature(p);
+  appSessionUsed.add(sig);
+  appRecentUsed.push(sig);
+  if(appRecentUsed.length>APP_RECENT_LIMIT) appRecentUsed=appRecentUsed.slice(-APP_RECENT_LIMIT);
+  saveAppRecent();
+}
+loadAppRecent();
+
+const appThemes=[
+ {key:'butterfly',title:'🦋 紫斑蝶的季節旅行',fact:'紫斑蝶會在臺灣進行季節性的移動，秋冬可在南臺灣看到牠們的越冬族群，例如高雄茂林。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,8999), b=rand(1000,a-1);return {a,b,op:'-',text:`茂林觀察站今天記錄到 ${a.toLocaleString()} 隻紫斑蝶，其中 ${b.toLocaleString()} 隻已完成觀察。還有多少隻需要繼續觀察？`};}
+   const a=rand(1000,5000), b=rand(1000,10000-a);return {a,b,op:'+',text:`茂林觀察站上午記錄 ${a.toLocaleString()} 隻紫斑蝶，下午又記錄 ${b.toLocaleString()} 隻。今天一共記錄多少隻？`};
+ }},
+ {key:'spoonbill',title:'🐦 黑面琵鷺（冬候鳥）',fact:'黑面琵鷺是冬候鳥，臺南曾文溪口等濕地是重要的度冬地。',make(){
+   if(Math.random()<0.5){const a=rand(2000,7000),b=rand(1000,a-1);return {a,b,op:'-',text:`臺南濕地觀察站記錄到 ${a.toLocaleString()} 隻黑面琵鷺，之後有 ${b.toLocaleString()} 隻飛到另一個觀察區。原觀察區還有多少隻？`};}
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`清晨觀察到 ${a.toLocaleString()} 隻黑面琵鷺，傍晚又記錄 ${b.toLocaleString()} 隻。兩次記錄合計多少隻？`};
+ }},
+ {key:'hawk',title:'🦅 灰面鵟鷹（過境鳥）',fact:'灰面鵟鷹會在遷徙季節經過臺灣，因此可作為「過境鳥」的學習例子。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,8500),b=rand(1000,a-1);return {a,b,op:'-',text:`觀察站上午記錄 ${a.toLocaleString()} 隻灰面鵟鷹，其中 ${b.toLocaleString()} 隻已經飛離觀察區。還剩多少隻？`};}
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`上午觀察到 ${a.toLocaleString()} 隻灰面鵟鷹，下午又觀察到 ${b.toLocaleString()} 隻。共記錄多少隻？`};
+ }},
+ {key:'duck',title:'🦆 小水鴨（冬候鳥）',fact:'小水鴨可在臺灣冬季的河口、濕地等環境觀察到。',make(){
+   const a=rand(2000,8000),b=rand(1000,a-1);return {a,b,op:'-',text:`冬季濕地有 ${a.toLocaleString()} 隻小水鴨，下午有 ${b.toLocaleString()} 隻飛到附近水域。原來的濕地還有多少隻？`};
+ }},
+ {key:'forest',title:'🌲 阿里山森林觀察',fact:'森林生態可以從植物、動物、棲地與季節變化來觀察。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`自然觀察隊記錄了 ${a.toLocaleString()} 棵樹，其中 ${b.toLocaleString()} 棵完成標記。還有多少棵尚未標記？`};}
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`上午調查到 ${a.toLocaleString()} 棵樹，下午又調查到 ${b.toLocaleString()} 棵。今天共調查多少棵？`};
+ }},
+ {key:'river',title:'🌊 臺灣河川觀察',fact:'河川可以從上游、中游、下游以及不同測站來觀察水環境。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`河川觀察站今天收到 ${a.toLocaleString()} 筆水環境資料，其中 ${b.toLocaleString()} 筆已完成整理。還有多少筆？`};}
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`上游測站收到 ${a.toLocaleString()} 筆資料，下游測站收到 ${b.toLocaleString()} 筆。兩站共有多少筆資料？`};
+ }},
+ {key:'weather',title:'🌧️ 臺灣的季節與降雨',fact:'不同地區、不同季節的降雨情況可能不同，可以透過觀測資料來比較。',make(){
+   const a=rand(1000,6000),b=rand(1000,a-1);return {a,b,op:'-',text:`某地一段時間累積降雨資料為 ${a.toLocaleString()} 毫米，後來整理出其中 ${b.toLocaleString()} 毫米屬於另一段期間。剩下多少毫米？`};
+ }},
+ {key:'map',title:'🗺️ 臺灣地理小旅行',fact:'臺灣由許多縣市組成，地圖可以幫助我們理解位置、方向與不同地區。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`旅行地圖任務中，北部觀察點有 ${a.toLocaleString()} 位參加者，中部觀察點有 ${b.toLocaleString()} 位。兩地共有多少位？`};
+ }},
+ {key:'go',title:'⚫ 圍棋比賽',fact:'比賽資料也可以用數學整理，例如報名、出席、分組與完成比賽的人數。',make(){
+   const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`圍棋比賽共有 ${a.toLocaleString()} 人報名，其中 ${b.toLocaleString()} 人因故沒有到場。實際參加比賽有多少人？`};
+ }},
+ {key:'school',title:'🏫 校園人口統計',fact:'統計各年級人數，可以幫助學校了解校園人口的變化。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`學校統計資料中，三、四年級共有 ${a.toLocaleString()} 人，五、六年級共有 ${b.toLocaleString()} 人。四個年級共有多少人？`};
+ }},
+ {key:'dinosaur',title:'🦖 恐龍研究站',fact:'化石可以幫助科學家研究很久以前生活在地球上的生物。',make(){
+   const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`恐龍研究站整理了 ${a.toLocaleString()} 件化石資料，其中 ${b.toLocaleString()} 件已完成分類。還有多少件尚未分類？`};
+ }},
+ {key:'park',title:'🏞️ 國家公園探索隊',fact:'國家公園可以保護自然環境，也能讓人認識不同的地形與生態。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`探索隊上午完成 ${a.toLocaleString()} 筆自然觀察紀錄，下午又完成 ${b.toLocaleString()} 筆。今天共有多少筆紀錄？`};
+ }},
+ {key:'spoonbill_route',title:'🗺️ 黑面琵鷺的冬季旅行',fact:'黑面琵鷺秋冬來臺灣度冬，臺南沿海濕地是重要的棲息地。',make(){
+   const a=rand(2000,6000),b=rand(1000,a-1);return {a,b,op:'-',text:`臺南沿海兩個濕地觀察區共有 ${a.toLocaleString()} 隻黑面琵鷺，其中 ${b.toLocaleString()} 隻飛往另一個濕地。原觀察區還有多少隻？`};
+ }},
+ {key:'season_birds',title:'🍂 候鳥的季節',fact:'不同鳥類的遷徙時間不同，有冬候鳥、夏候鳥與過境鳥等分類。',make(){
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`秋季觀察站記錄到 ${a.toLocaleString()} 隻過境鳥，隔天又記錄到 ${b.toLocaleString()} 隻。兩天共記錄多少隻？`};
+ }},
+ {key:'eagle',title:'🦅 赤腹鷹（過境鳥）',fact:'赤腹鷹會在遷徙途中經過臺灣，是認識過境鳥的例子。',make(){
+   const a=rand(3000,8500),b=rand(1000,a-1);return {a,b,op:'-',text:`觀察站記錄到 ${a.toLocaleString()} 隻赤腹鷹，後來有 ${b.toLocaleString()} 隻飛離山區。觀察站還記錄到多少隻？`};
+ }},
+ {key:'typhoon',title:'🌀 臺灣的天氣觀察',fact:'臺灣常受到季風與颱風等天氣系統影響，可以透過觀測資料了解天氣變化。',make(){
+   const a=rand(2000,7000),b=rand(1000,a-1);return {a,b,op:'-',text:`氣象站整理了一段期間的 ${a.toLocaleString()} 筆觀測資料，其中 ${b.toLocaleString()} 筆已完成分析。還有多少筆資料等待分析？`};
+ }},
+ {key:'wetland',title:'🌿 濕地生態調查',fact:'濕地是許多鳥類、魚類與其他生物的重要棲地。',make(){
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`濕地上午完成 ${a.toLocaleString()} 筆鳥類觀察紀錄，下午又完成 ${b.toLocaleString()} 筆。今天共完成多少筆？`};
+ }},
+ {key:'national_park_route',title:'🥾 國家公園步道',fact:'國家公園有不同長度與難度的步道，可以從地圖認識地形與環境。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`探索隊上午完成 ${a.toLocaleString()} 公尺的路線調查，下午又完成 ${b.toLocaleString()} 公尺。兩次共調查多少公尺？`};
+ }},
+ {key:'taiwan_counties',title:'🗺️ 臺灣縣市探索',fact:'地圖可以幫助我們認識臺灣不同縣市的位置與方向。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`校外學習地圖上，北部行程有 ${a.toLocaleString()} 位參加者，中部行程有 ${b.toLocaleString()} 位。兩個行程共有多少位？`};
+ }},
+ {key:'museum',title:'🏛️ 自然科學博物館',fact:'博物館可以透過標本、化石與展覽，幫助我們認識自然與科學。',make(){
+   const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`自然科學博物館一天有 ${a.toLocaleString()} 位參觀者，其中 ${b.toLocaleString()} 位已經離館。館內還有多少位參觀者？`};
+ }},
+ {key:'sea_turtle',title:'🐢 海龜保育',fact:'海龜是海洋生態的一部分，海洋保育會關注牠們的棲地與生存環境。',make(){
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`海洋觀察隊上午整理 ${a.toLocaleString()} 筆海龜觀察資料，下午又整理 ${b.toLocaleString()} 筆。今天共整理多少筆？`};
+ }}
+];
+
 
 const praisePerfect=['太棒了！你把四位數直式算得又快又準！','千、百、十、個位都站對位置了，漂亮！','進位與退位都難不倒你！'];
 const praiseGood=['這次有完成挑戰！把錯題再算一次，會更穩。','計算方法已經掌握了，下一輪注意每一個位值。','很不錯！尤其是遇到 0 時，慢一步檢查就能更準。'];
@@ -215,7 +344,8 @@ function initMenu(){
   {id:2,n:'四位數減法',c:'sub',d:'基本減法：不退位＋退位'},
   {id:3,n:'減法連續退位',c:'borrow',d:'專練 5000－3 這類題型'},
   {id:4,n:'加法進位挑戰',c:'carry',d:'至少一次進位'},
-  {id:5,n:'加減混合',c:'mix',d:'隨機判斷加法或減法'}
+  {id:5,n:'加減混合',c:'mix',d:'隨機判斷加法或減法'},
+  {id:6,n:'🌏 情境應用題',c:'carry',d:'自然・社會・臺灣地理・興趣主題'}
  ];
  document.getElementById('menu-list').innerHTML=types.map(t=>
   `<button class="btn-menu ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;font-size:.78rem;opacity:.9;margin-top:5px">${t.d}</small></button>`
@@ -223,7 +353,8 @@ function initMenu(){
 }
 
 function start(type){
- currentType=type;currentQ=1;totalPoints=0;wrongCount=0;
+ currentType=type;currentQ=1;totalPoints=0;wrongCount=0;appProblem=null;appChosenOp=null;
+ if(type===6) appSessionUsed=new Set();
  show('game');
  document.getElementById('score').innerText='0';
  loadProblem();
@@ -332,12 +463,57 @@ function makeSubtraction(mode){
 
 function loadProblem(){
  let q;
+ appChosenOp=null;
+
+ if(currentType===6){
+   // 防重複：同一回合先避開本次作答紀錄，再避開最近使用過的題目。
+   let candidate=null, theme=null;
+   for(let attempt=0;attempt<120;attempt++){
+     theme=appThemes[rand(0,appThemes.length-1)];
+     candidate=theme.make();
+     candidate.themeKey=theme.key;
+     const sig=appSignature(candidate);
+     if(!appSessionUsed.has(sig) && !appRecentUsed.includes(sig)) break;
+   }
+   // 若極端情況下候選題仍重複，至少保證本次作答不重複。
+   if(!candidate || appSessionUsed.has(appSignature(candidate))){
+     for(const t of appThemes){
+       const c=t.make(); c.themeKey=t.key;
+       if(!appSessionUsed.has(appSignature(c))){candidate=c;break;}
+     }
+   }
+   appProblem=candidate;
+   rememberAppProblem(appProblem);
+   n1=appProblem.a;n2=appProblem.b;op=appProblem.op;
+   correctVal=op==='+'?n1+n2:n1-n2;
+   currentQPoints=10;
+   document.getElementById('mode-label').innerText='🌏 情境應用題';
+   renderContext(appProblem);
+   document.getElementById('paper-bridge').innerHTML='<strong>學習方法：</strong>先讀情境、判斷運算，再用直式完成計算。';
+   renderAppChoices();
+   renderTopQuestion();
+   document.querySelector('.top-question').classList.add('app-hidden');
+   document.querySelector('.math-card').classList.add('app-hidden');
+   document.getElementById('arrow-help').style.display='none';
+   document.getElementById('q-count').innerText=currentQ;
+   document.getElementById('score').innerText=totalPoints;
+   document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
+   document.getElementById('final-ans').value='';
+   document.getElementById('feedback').innerText='';
+   return;
+ }
+
+ document.getElementById('context-card').classList.add('app-hidden');
+ document.getElementById('app-prompt').classList.add('app-hidden');
+ document.getElementById('paper-bridge').innerHTML='<strong>紙上也可以這樣算：</strong>直式位置、計算順序與現在相同。';
+ document.getElementById('operation-choice').classList.add('app-hidden');
+ document.querySelector('.top-question').classList.remove('app-hidden');
+ document.querySelector('.math-card').classList.remove('app-hidden');
+ document.getElementById('arrow-help').style.display='block';
 
  if(currentType===1){
-  // 基本加法：明確混合「不進位」與「有進位」，不是靠嘗試次數碰運氣。
   q=Math.random()<0.5?makeAddition('noCarry'):makeAddition('carry');
  }else if(currentType===2){
-  // 基本減法：明確混合「不退位」與「有退位」。
   q=Math.random()<0.5?makeSubtraction('noBorrow'):makeSubtraction('borrow');
  }else if(currentType===3){
   q=makeSubtraction('chain');
@@ -355,20 +531,61 @@ function loadProblem(){
 
  const labels={1:'四位數加法',2:'四位數減法',3:'連續退位',4:'進位挑戰',5:'加減混合'};
  document.getElementById('mode-label').innerText=labels[currentType];
- document.getElementById('instruction').innerText=''; // 
-  op==='+'
-   ?'從個位開始，加起來滿 10 要進位。'
-   :'從個位開始往左算；需要退位時，自己留下記號。遇到 0 要繼續向前找可以借的位數。';
-
+ document.getElementById('instruction').innerText='';
  renderTopQuestion();
  document.getElementById('q-count').innerText=currentQ;
  document.getElementById('score').innerText=totalPoints;
  document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
  document.getElementById('final-ans').value='';
  document.getElementById('feedback').innerText='';
-
  renderGrid();
  renderExplain();
+}
+
+function renderContext(p){
+ document.getElementById('context-card').classList.remove('app-hidden');
+ document.getElementById('app-prompt').classList.remove('app-hidden');
+ // 以目前題目的 key 找回主題標題。
+ const theme=appThemes.find(t=>t.key===p.themeKey);
+ document.getElementById('context-title').innerText=theme?theme.title:'🌏 今日世界任務';
+ document.getElementById('context-text').innerText=p.text;
+ document.getElementById('context-fact').innerText='自然／社會小知識：'+(theme?theme.fact:'');
+}
+
+function renderAppChoices(){
+ const box=document.getElementById('operation-choice');
+ box.classList.remove('app-hidden');
+ document.getElementById('choose-add').disabled=false;
+ document.getElementById('choose-sub').disabled=false;
+ document.getElementById('choose-add').classList.remove('selected');
+ document.getElementById('choose-sub').classList.remove('selected');
+}
+
+function chooseAppOp(chosen){
+ if(currentType!==6 || !appProblem)return;
+ appChosenOp=chosen;
+ const add=document.getElementById('choose-add'), sub=document.getElementById('choose-sub');
+ add.classList.toggle('selected',chosen==='+');
+ sub.classList.toggle('selected',chosen==='-');
+ if(chosen!==appProblem.op){
+   wrongCount++;
+   currentQPoints=Math.max(2,currentQPoints-2);
+   const msg=document.getElementById('feedback');
+   msg.style.color='var(--red)';
+   msg.innerText='先再讀一次情境，想想是「增加／合起來」還是「剩下／減少」。';
+   return;
+ }
+ document.getElementById('feedback').style.color='var(--green)';
+ document.getElementById('feedback').innerText='判斷正確！接著完成直式計算。';
+ document.getElementById('operation-choice').classList.add('app-hidden');
+ document.getElementById('app-prompt').classList.add('app-hidden');
+ document.querySelector('.top-question').classList.remove('app-hidden');
+ document.querySelector('.math-card').classList.remove('app-hidden');
+ document.getElementById('arrow-help').style.display='block';
+ renderTopQuestion();
+ renderGrid();
+ renderExplain();
+ document.getElementById('final-ans').focus();
 }
 
 function placeClass(index){
@@ -473,14 +690,8 @@ function renderGrid(){
 }
 
 function renderExplain(){
- const el=document.getElementById('explain');
- if(op==='-' && n2<100 && n1%1000===0){
-  el.innerHTML='<b>本題提醒：</b>遇到像「5000－3」時，不能直接向 0 借。要從千位借到百位，再一路傳到個位，最後才算個位。';
- }else if(op==='-'){
-  el.innerHTML='<b>檢查：</b>個位 → 十位 → 百位 → 千位。需要退位時，記得前一位要少 1。';
- }else{
-  el.innerHTML='<b>檢查：</b>個位 → 十位 → 百位 → 千位。某一位加起來滿 10，就在左邊下一位記進位；本單元答案不超過 10000。';
- }
+ // 保留舊版函式名稱，但不再顯示固定解題提示；讓孩子自己決定如何計算。
+ return;
 }
 
 function toggleBorrowMark(el){
@@ -491,7 +702,7 @@ function limitOne(el){
  el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);
 }
 function limitMark(el){
- el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);
+ el.value=el.value.replace(/[^0-9]/g,'').slice(0,2);
 }
 
 function moveAndSubmit(){
@@ -556,6 +767,7 @@ function celebrateCorrect(){
 }
 
 function check(){
+ if(currentType===6 && appChosenOp!==appProblem?.op)return;
  const raw=document.getElementById('final-ans').value.trim();
  if(!/^\d+$/.test(raw))return;
  const userVal=parseInt(raw,10);
