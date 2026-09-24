@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>三年級｜10000以內四位數加減</title>
 <style>
-:root{--bg:#f3f6fa;--card:#fff;--text:#263238;--blue:#3498db;--orange:#e67e22;--green:#27ae60;--red:#e74c3c;--line:#333;--muted:#718096}
+:root{--bg:#f3f6fa;--card:#fff;--text:#263238;--blue:#3498db;--orange:#e67e22;--green:#27ae60;--red:#e74c3c;--line:#333;--muted:#718096;--math-font:"Courier New",Courier,monospace;--place-wan:#7c3aed;--place-qian:#2563eb;--place-bai:#16a34a;--place-shi:#0f9f8f;--place-ge:#f59e0b}
 *{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);font-family:"PingFang TC","Microsoft JhengHei",sans-serif;color:var(--text)}
 body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:100vh;margin:auto;padding:18px 14px 28px;flex-direction:column;align-items:center}.page.active{display:flex}
 .title{font-size:1.7rem;font-weight:800;margin:12px 0 6px}.subtitle{color:var(--muted);font-size:.98rem;text-align:center;margin-bottom:12px}
 #menu-list{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.btn-menu{padding:18px 8px;font-size:1.08rem;border:0;border-radius:14px;color:#fff;font-weight:800;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.16)}.btn-menu:active,.btn-main:active,.btn-move:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}.add{background:var(--blue)}.sub{background:var(--orange)}.mix{background:#8e44ad}.carry{background:#16a085}.borrow{background:#c0392b}.hint{margin-top:20px;background:#fff;border-radius:16px;padding:14px 16px;width:100%;line-height:1.7;font-size:.95rem;color:#4a5568}
 .info-bar{display:flex;justify-content:space-between;width:94%;font-weight:800;margin:4px 0 6px}.progress{width:94%;height:10px;background:#e2e8f0;border-radius:6px;overflow:hidden;margin-bottom:15px}.bar{height:100%;width:0;background:var(--green);transition:.3s}
 .mode-label{font-size:1rem;font-weight:800;padding:6px 14px;border-radius:20px;background:#fff;margin-bottom:8px}.instruction{min-height:30px;text-align:center;font-weight:700;color:#4a5568;margin-bottom:5px}
-.top-question{display:flex;align-items:center;justify-content:center;gap:10px;margin:5px 0 14px}.q-text{font-size:1.8rem;font-weight:900;letter-spacing:1px}.final-ans{width:115px;height:50px;font-size:1.85rem;text-align:center;border:3px solid #333;border-radius:10px;background:#fff;outline:none;-moz-appearance:textfield}.final-ans::-webkit-outer-spin-button,.final-ans::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.btn-main{padding:11px 18px;font-size:1.08rem;font-weight:800;color:#fff;background:var(--green);border:0;border-radius:11px;box-shadow:0 4px 0 #219653;cursor:pointer}
-.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:"Courier New",monospace}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"/";position:absolute;color:var(--red);font-size:3rem;font-weight:900;line-height:1;transform:rotate(35deg);left:50%;top:50%;translate:-50% -50%;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:"Courier New",monospace;outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center}.controls{display:flex;align-items:center;gap:10px;margin-top:4px}.btn-move{width:55px;height:55px;border:0;border-radius:50%;background:#f39c12;color:#fff;font-weight:900;font-size:1.25rem;box-shadow:0 4px 0 #d35400;cursor:pointer}.secondary{background:none;border:0;color:#8a94a6;cursor:pointer;margin-top:10px}
-.result{width:90%;background:#fff;border-radius:24px;padding:26px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.14);margin-top:30vh}.score{font-size:1.8rem;color:#f39c12;font-weight:900}.praise{font-size:1.15rem;line-height:1.7;margin:16px 0}.wrong-list{margin-top:12px;text-align:left;background:#f8fafc;border-radius:12px;padding:12px;font-size:.94rem}.balloon{position:fixed;bottom:-100px;width:38px;height:48px;border-radius:50%;animation:up 6s linear forwards;z-index:10}@keyframes up{to{transform:translateY(-120vh)}}
-@media(max-width:520px){.vertical{grid-template-columns:34px repeat(5,46px);gap:3px}.cell{width:46px;font-size:1.75rem}.digit-input{width:41px;height:42px;font-size:1.6rem}.carry-cell{width:46px}.math-card{padding:12px 4px}.q-text{font-size:1.5rem}.final-ans{width:96px;height:46px;font-size:1.7rem}.top-question{gap:6px}}
+.top-question{display:flex;align-items:center;justify-content:center;gap:10px;margin:5px 0 14px}.q-text{font-size:1.8rem;font-weight:900;letter-spacing:1px;font-family:var(--math-font)}.final-ans{width:115px;height:50px;font-size:1.85rem;font-family:var(--math-font);text-align:center;border:3px solid #333;border-radius:10px;background:#fff;outline:none;-moz-appearance:textfield}.final-ans::-webkit-outer-spin-button,.final-ans::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.btn-main{padding:11px 18px;font-size:1.08rem;font-weight:800;color:#fff;background:var(--green);border:0;border-radius:11px;box-shadow:0 4px 0 #219653;cursor:pointer}
+.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"/";position:absolute;color:var(--red);font-size:3rem;font-weight:900;line-height:1;transform:rotate(35deg);left:50%;top:50%;translate:-50% -50%;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center}.controls{display:flex;align-items:center;gap:10px;margin-top:4px}.btn-move{width:55px;height:55px;border:0;border-radius:50%;background:#f39c12;color:#fff;font-weight:900;font-size:1.25rem;box-shadow:0 4px 0 #d35400;cursor:pointer}.secondary{background:none;border:0;color:#8a94a6;cursor:pointer;margin-top:10px}
+.result{width:90%;background:#fff;border-radius:24px;padding:26px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.14);margin-top:30vh}.score{font-size:1.8rem;color:#f39c12;font-weight:900}.praise{font-size:1.15rem;line-height:1.7;margin:16px 0}.wrong-list{margin-top:12px;text-align:left;background:#f8fafc;border-radius:12px;padding:12px;font-size:.94rem}.balloon{position:fixed;bottom:-100px;width:38px;height:48px;border-radius:50%;animation:up 6s linear forwards;z-index:1000}.confetti-piece{position:fixed;top:-18px;width:10px;height:16px;z-index:1001;pointer-events:none;animation:confetti-fall linear forwards}.celebrate-text{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.7);z-index:1002;background:#fff;border-radius:22px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:1.55rem;font-weight:900;text-align:center;white-space:nowrap;animation:pop .5s ease-out forwards}.celebrate-text.fade{animation:fade .5s ease-in forwards}@keyframes confetti-fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot));opacity:.95}}@keyframes pop{to{transform:translate(-50%,-50%) scale(1)}}@keyframes fade{to{opacity:0;transform:translate(-50%,-50%) scale(1.04)}}@keyframes up{to{transform:translateY(-120vh)}}
+@media(max-width:520px){.vertical{grid-template-columns:34px repeat(5,46px);gap:3px}.cell{width:46px;font-size:1.75rem}.digit-input{width:41px;height:42px;font-size:1.6rem}.carry-cell{width:46px}.math-card{padding:12px 4px}.q-text{font-size:1.5rem}.final-ans{width:96px;height:46px;font-size:1.7rem;font-family:var(--math-font)}.top-question{gap:6px}}
 </style>
 </head>
 <body>
@@ -201,11 +201,9 @@ function loadProblem(){
  document.getElementById('instruction').innerText=
   op==='+'
    ?'從個位開始，加起來滿 10 要進位。'
-   :'從個位開始，下面的數比較大時要退位；遇到 0 要繼續向前找可以借的位數。';
+   :'從個位開始往左算；需要退位時，自己留下記號。遇到 0 要繼續向前找可以借的位數。';
 
- document.getElementById('q1').innerText=n1;
- document.getElementById('qo').innerText=op;
- document.getElementById('q2').innerText=n2;
+ renderTopQuestion();
  document.getElementById('q-count').innerText=currentQ;
  document.getElementById('score').innerText=totalPoints;
  document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
@@ -214,6 +212,38 @@ function loadProblem(){
 
  renderGrid();
  renderExplain();
+}
+
+function placeClass(index){
+  // digits() 回傳 [千,百,十,個]，index 0~3。
+  return ['place-qian','place-bai','place-shi','place-ge'][index];
+}
+
+function answerClass(index){
+  // 四位答案 index 0~3 = 千、百、十、個；10000 的 index 0~4 = 萬、千、百、十、個。
+  return correctVal===10000
+    ? ['answer-wan','answer-qian','answer-bai','answer-shi','answer-ge'][index]
+    : ['answer-qian','answer-bai','answer-shi','answer-ge'][index];
+}
+
+function colorizedNumberHTML(value){
+  const arr=digits(value);
+  let firstNonZero=arr.findIndex(x=>x!==0);
+  if(firstNonZero<0) firstNonZero=3;
+  return arr.map((x,i)=>{
+    const cls=placeClass(i);
+    // 題目橫式不補前導 0；但四位數本身的 0 仍保留在原位置。
+    if(i<firstNonZero) return '';
+    return `<span class="place-digit ${cls}">${x}</span>`;
+  }).join('');
+}
+
+function renderTopQuestion(){
+  const q1=document.getElementById('q1');
+  const q2=document.getElementById('q2');
+  q1.innerHTML=colorizedNumberHTML(n1);
+  q2.innerHTML=colorizedNumberHTML(n2);
+  document.getElementById('qo').innerText=op;
 }
 
 function renderGrid(){
@@ -255,27 +285,30 @@ function renderGrid(){
  // 第一個數：萬位留白，千～個位放四位數；每個數字都可點擊，在數字上加／取消紅色「／」標記。
  html+=`<div></div><div class="cell"></div>`;
  A.forEach((x,i)=>{
-  html+=`<div class="cell clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)" style="color:${i===3?'#2563eb':'#334155'}">${x}</div>`;
+  const cls=placeClass(i);
+  if(op==='-'){
+    html+=`<div class="cell place-digit ${cls} clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)">${x}</div>`;
+  }else{
+    html+=`<div class="cell place-digit ${cls}">${x}</div>`;
+  }
  });
 
  // 第二個數：同樣固定在千～個位。
  html+=`<div class="op">${op}</div><div class="cell"></div>`;
- B.forEach(x=>{html+=`<div class="cell">${x}</div>`;});
+ B.forEach((x,i)=>{html+=`<div class="cell place-digit ${placeClass(i)}">${x}</div>`;});
 
  html+=`<div class="line"></div>`;
 
  // 答案：只有剛好 10000 才使用萬位；其他全部四格，與千～個位完全對齊。
  if(isFive){
-  html+=`<div></div>
-   <div><input class="digit-input" id="a-0" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
-   <div><input class="digit-input" id="a-1" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
-   <div><input class="digit-input" id="a-2" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
-   <div><input class="digit-input" id="a-3" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>
-   <div><input class="digit-input" id="a-4" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+  html+=`<div></div>`;
+  for(let i=0;i<5;i++){
+   html+=`<div><input class="digit-input ${answerClass(i)}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+  }
  }else{
   html+=`<div></div><div class="cell"></div>`;
   for(let i=0;i<4;i++){
-   html+=`<div><input class="digit-input" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+   html+=`<div><input class="digit-input ${answerClass(i)}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
   }
  }
 
@@ -316,6 +349,55 @@ function moveAndSubmit(){
  check();
 }
 
+const praiseFast=[
+ '答對！！這題被你漂亮拿下！',
+ '太準了！位值全部對齊！',
+ '漂亮！這個答案完全正確！',
+ '哇！算得又準又穩！',
+ '太強了！這題完全難不倒你！',
+ '命中！你的計算超漂亮！',
+ '答對啦！數學腦正在發光！',
+ '這個計算很穩！漂亮！',
+ '正確！每一位都算對了！',
+ '太厲害！又解決一題！',
+ '完美命中！繼續保持！',
+ '漂亮的直式計算！',
+ '你抓到重點了！答對！',
+ '這題算得非常乾淨！',
+ '哇，這一題你處理得很好！',
+ '又一題！正確答案到手！',
+ '太棒了！位值概念很清楚！',
+ '這個答案完全正確，漂亮！',
+ '計算成功！再來一題！',
+ '數學小高手，繼續！'
+];
+
+function randomItem(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+function celebrateCorrect(){
+  const text=document.createElement('div');
+  text.className='celebrate-text';
+  text.textContent=randomItem(praiseFast);
+  document.body.appendChild(text);
+  setTimeout(()=>{text.classList.add('fade');setTimeout(()=>text.remove(),500)},850);
+
+  const pieces=Array.from({length:90},(_,i)=>{
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.left=(Math.random()*100)+'vw';
+    p.style.width=(6+Math.random()*8)+'px';
+    p.style.height=(8+Math.random()*13)+'px';
+    p.style.background=['#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899'][Math.floor(Math.random()*6)];
+    p.style.setProperty('--dx',((Math.random()-.5)*45)+'vw');
+    p.style.setProperty('--rot',(Math.random()*1080-540)+'deg');
+    p.style.animationDuration=(1.8+Math.random()*1.8)+'s';
+    p.style.animationDelay=(Math.random()*.25)+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),4500);
+    return p;
+  });
+}
+
 function check(){
  const raw=document.getElementById('final-ans').value.trim();
  if(!/^\d+$/.test(raw))return;
@@ -323,6 +405,7 @@ function check(){
  const msg=document.getElementById('feedback');
 
  if(userVal===correctVal){
+  celebrateCorrect();
   totalPoints+=currentQPoints;
   document.getElementById('score').innerText=totalPoints;
   msg.style.color='var(--green)';
