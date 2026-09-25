@@ -24,6 +24,19 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .correction-borrow-new{font-size:1.25rem;color:#dc2626;position:absolute;bottom:0;left:50%;transform:translateX(-45%);}
 .correction-borrow-label{font-family:system-ui,sans-serif;font-size:.82rem;color:#dc2626;font-weight:900;text-align:right;padding-right:5px;align-self:center;}
 .correction-borrow-note{font-family:system-ui,sans-serif;text-align:center;color:#b91c1c;font-size:.88rem;line-height:1.45;margin-top:2px;}
+.answer-borrow-wrap{margin:4px auto 8px;max-width:430px;}
+.answer-borrow-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900;}
+.answer-borrow-label{font-family:system-ui,sans-serif;font-size:.78rem;color:#b91c1c;text-align:right;padding-right:4px;}
+.answer-borrow-empty{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;box-sizing:border-box;}
+.answer-borrow-box{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:#dc2626;background:#fff;position:relative;box-sizing:border-box;}
+.answer-borrow-box.applied{border-color:#dc2626;background:#fff5f5;}
+.answer-borrow-box.applied::after{content:"";position:absolute;left:7px;right:7px;top:50%;height:3px;background:#dc2626;transform:rotate(135deg);transform-origin:center;}
+.answer-borrow-new{height:34px;display:flex;align-items:center;justify-content:center;font-size:1.18rem;color:#dc2626;position:relative;}
+.answer-borrow-original{height:38px;display:flex;align-items:center;justify-content:center;font-size:1.45rem;color:#263238;position:relative;}
+.answer-borrow-original.changed{color:#dc2626;}
+.answer-borrow-original.changed::after{content:"";position:absolute;left:9px;right:9px;top:50%;height:3px;background:#dc2626;transform:rotate(135deg);transform-origin:center;}
+.answer-borrow-caption{font-family:system-ui,sans-serif;text-align:center;color:#b91c1c;font-size:.84rem;font-weight:800;margin:0 0 4px;}
+@media(max-width:520px){.answer-borrow-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.answer-borrow-box{width:46px;height:32px;font-size:.95rem}.answer-borrow-new{font-size:1.02rem}.answer-borrow-original{font-size:1.25rem}.answer-borrow-original.changed::after{left:7px;right:7px}}
 .textbook-borrow{max-width:430px;margin:2px auto 9px;text-align:center;}
 .borrow-caption{font-family:system-ui,sans-serif;color:#b91c1c;font-size:.9rem;font-weight:900;margin:2px 0 5px;}
 .textbook-borrow-grid{display:grid;grid-template-columns:42px repeat(4,54px);gap:2px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900;}
@@ -1052,85 +1065,86 @@ function buildAnswerEquationHTML(userVal){
 }
 function buildBorrowVisualHTML(){
  if(op!=='-' || n1===null || n2===null) return '';
- const width=5;
  const A=String(n1).padStart(4,'0').split('').map(Number);
  const B=String(n2).padStart(4,'0').split('').map(Number);
  const work=A.slice();
  const events=[];
- const placeNames=['千位','百位','十位','個位'];
- 
- // 依紙本方式逐位退位：借 1 個高位 = 10 個低一位。
+ const changed=new Set();
+ const newValue=Array(4).fill(null);
+ const places=['千位','百位','十位','個位'];
+
+ // 與作答區完全相同的退位邏輯：從右往左，找到最近的非 0 位借 1，
+ // 中間經過的 0 變 9，接收位得到 10。這裡只呈現「正確解答」，不替孩子改原題。
  for(let i=3;i>=0;i--){
    if(work[i] < B[i]){
      let j=i-1;
      while(j>=0 && work[j]===0){
-       const old=work[j];
+       changed.add(j);
        work[j]=9;
-       events.push({source:j,sourceOld:old,sourceNew:9,receiver:i,ten:10,through:true});
+       newValue[j]=9;
+       events.push({source:j,receiver:i,sourceOld:0,sourceNew:9,kind:'through'});
        j--;
      }
      if(j<0) continue;
      const old=work[j];
+     changed.add(j);
      work[j]=old-1;
+     newValue[j]=work[j];
      work[i]+=10;
-     events.push({source:j,sourceOld:old,sourceNew:work[j],receiver:i,ten:10,through:false});
+     newValue[i]=work[i];
+     changed.add(i);
+     events.push({source:j,receiver:i,sourceOld:old,sourceNew:work[j],kind:'borrow',ten:10});
    }
  }
  if(!events.length) return '';
- 
- // 每個位置最後的借位結果；同一位置若經過多次借位，保留最後結果。
- const finalByPos={};
- events.forEach(e=>{
-   finalByPos[e.source]={old:e.sourceOld,new:e.sourceNew};
-   finalByPos[e.receiver]={old:A[e.receiver],new:work[e.receiver]};
- });
- 
- const visibleStart=A.findIndex(x=>x!==0);
- const aStart=visibleStart<0?3:visibleStart;
- const col=(i)=>i+1; // grid 第 0 格留給符號
- 
- let html='<div class="correction-borrow-wrap textbook-borrow">';
- html+='<div class="borrow-caption">借位：借 1 個高位，換成低一位的 10</div>';
- html+='<div class="textbook-borrow-grid">';
- 
- // 第一列：每次接到借位的欄位，上方寫 10。
- html+='<div class="borrow-side-label"></div>';
+
+ const receivers=new Set(events.map(e=>e.receiver));
+ const width=5;
+ let html='<div class="answer-borrow-wrap">';
+ html+='<div class="answer-borrow-caption">解答也照課本的退位方法：紅色／表示這個數字已經借位。</div>';
+ html+='<div class="answer-borrow-grid">';
+
+ // 第一列：與實際作答區第一列虛線格一致，保持空白，不製造額外步驟。
+ html+='<div class="answer-borrow-label"></div>';
+ html+='<div class="answer-borrow-empty"></div>'.repeat(5);
+
+ // 第二列：與孩子操作的 d-0~d-3 完全同邏輯；正確解答在需要退位的位置填 10，
+ // 並在「10」本身畫同方向的紅色 /。
+ html+='<div class="answer-borrow-label">退位</div>';
+ html+='<div class="answer-borrow-empty"></div>';
  for(let i=0;i<4;i++){
-   const got=events.some(e=>e.receiver===i);
-   html+=`<div class="borrow-ten ${got?'show':''}">${got?'10':''}</div>`;
+   const show=receivers.has(i);
+   html+=`<div class="answer-borrow-box ${show?'applied':''}">${show?'10':''}</div>`;
  }
- 
- // 第二列：借位後的數字；來源位顯示新值，接收位顯示 10/14/16/12 等。
- html+='<div class="borrow-side-label"></div>';
+
+ // 原數字的退位結果：被借出的位數劃掉，旁邊顯示借位後的數字。
+ html+='<div class="answer-borrow-label">變化</div>';
+ html+='<div class="answer-borrow-empty"></div>';
  for(let i=0;i<4;i++){
-   const info=finalByPos[i];
-   const active=!!info;
-   const val=active?info.new:'';
-   html+=`<div class="borrow-result ${active?'active':''}">${val}</div>`;
+   const ch=String(A[i]);
+   const nv=newValue[i];
+   html+=`<div class="answer-borrow-new">${nv!==null?nv:''}</div>`;
  }
- 
- // 第三列：原本的數字，發生借位的位置用紅色劃掉。
- html+='<div class="borrow-side-label"></div>';
+
+ html+='<div class="answer-borrow-label">原數</div>';
+ html+='<div class="answer-borrow-empty"></div>';
  for(let i=0;i<4;i++){
-   const info=finalByPos[i];
-   const crossed=!!info;
-   const ch=i<aStart?'':String(A[i]);
-   html+=`<div class="borrow-original ${crossed?'crossed':''}">${ch}</div>`;
+   const visible=A.findIndex(x=>x!==0);
+   const start=visible<0?3:visible;
+   const ch=i<start?'':String(A[i]);
+   html+=`<div class="answer-borrow-original ${changed.has(i)?'changed':''}">${ch}</div>`;
  }
  html+='</div>';
- 
- // 用文字逐步說明，保持和課本「借 1 換 10」一致。
- const stepLines=[];
+
+ const notes=[];
  events.slice().reverse().forEach(e=>{
-   const receiver=placeNames[e.receiver];
-   const source=placeNames[e.source];
-   if(e.through){
-     stepLines.push(`${source}的 0 借過去後變成 9，讓${receiver}可以繼續借位。`);
+   if(e.kind==='through'){
+     notes.push(`${places[e.source]}原本是 0，借位過程中變成 9。`);
    }else{
-     stepLines.push(`${source}借 1 給${receiver}，所以${source}的 ${e.sourceOld} 變 ${e.sourceNew}，${receiver}多 10。`);
+     notes.push(`${places[e.source]}借 1 給${places[e.receiver]}，${places[e.source]}的 ${e.sourceOld} 變成 ${e.sourceNew}，${places[e.receiver]}得到 10。`);
    }
  });
- html+=`<div class="borrow-step-note">${stepLines.join('<br>')}</div>`;
+ html+=`<div class="correction-borrow-note">${notes.join('<br>')}</div>`;
  html+='</div>';
  return html;
 }
