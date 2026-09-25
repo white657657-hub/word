@@ -1,217 +1,355 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>樂活英文｜老人單字學習</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>媽媽的樂活英文</title>
 <style>
-:root{
-  --bg:#f7f3e8; --card:#fffdf7; --ink:#263238; --muted:#66736d;
-  --green:#477a5a; --green2:#e7f1e8; --gold:#c68b25; --red:#b94a48;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;
+  background:#f6f3ed;
+  color:#403b35;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",sans-serif}
-.app{max-width:760px;margin:auto;min-height:100vh;padding:16px}
-header{text-align:center;padding:8px 0 14px}
-h1{font-size:30px;margin:0 0 6px;color:var(--green)}
-.subtitle{font-size:18px;color:var(--muted)}
-.panel{background:var(--card);border:2px solid #ddd5c5;border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 3px 12px #0000000d}
-.label{font-size:18px;font-weight:800;margin-bottom:8px}
-select{width:100%;padding:15px;border:2px solid #aaa18f;border-radius:14px;background:white;font-size:20px;color:var(--ink)}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tab{border:0;border-radius:16px;padding:15px;font-size:21px;font-weight:900;cursor:pointer}
-.tab.active{background:var(--green);color:white}.tab:not(.active){background:var(--green2);color:var(--green)}
-.word-card{text-align:center;padding:20px 10px}
-.cn{font-size:38px;font-weight:900;color:#76531b;margin-bottom:6px}
+.wrap{max-width:900px;margin:auto;padding:24px 18px 50px}
+header{text-align:center;margin-bottom:20px}
+h1{font-size:36px;margin:8px 0 4px}
+.subtitle{font-size:20px;color:#777}
+.card{
+  background:white;border-radius:24px;padding:24px;margin:16px 0;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+}
+h2{font-size:28px;margin:4px 0 18px}
+h3{font-size:23px}
+button{
+  border:0;border-radius:18px;padding:15px 18px;
+  font-size:21px;font-weight:700;cursor:pointer;
+  background:#eee8dc;color:#403b35;
+  min-height:58px;
+}
+button:active{transform:scale(.98)}
+button.primary{background:#7ca982;color:white}
+button.blue{background:#6d94b8;color:white}
+button.gold{background:#d9ad4b;color:white}
+button.star{background:#fff4c9;color:#8b6b00}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.topic{
+  text-align:left;background:#faf8f3;border:2px solid #e8e0d3;
+  min-height:92px;padding:18px
+}
+.topic .emoji{font-size:32px;display:block;margin-bottom:5px}
+.topic small{font-size:16px;color:#777}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.word-box{text-align:center;padding:15px}
+.cn{font-size:38px;font-weight:800;margin:10px 0}
 .en{font-size:48px;font-weight:900;letter-spacing:1px}
-.sound{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:15px;padding:14px 24px;border:0;border-radius:18px;background:#e7f1e8;color:#28553a;font-size:23px;font-weight:900;cursor:pointer}
-.hint{font-size:17px;color:var(--muted);margin-top:12px}
-.progress{font-size:18px;font-weight:800;color:var(--muted);text-align:center;margin:10px}
-.nav{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.nav button,.next{padding:14px;border:0;border-radius:14px;font-size:20px;font-weight:900;cursor:pointer}
-.prev{background:#e7e2d7;color:#555}.next{background:var(--green);color:#fff}
-.quiz-card{text-align:center}
-.quiz-en{font-size:52px;font-weight:900;margin:10px}
-.quiz-sound{border:0;background:#e7f1e8;color:#28553a;border-radius:14px;padding:11px 18px;font-size:20px;font-weight:900;cursor:pointer}
-.question{font-size:21px;font-weight:800;margin:18px 0 10px}
-.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.option{min-height:74px;border:2px solid #c9c0ae;background:#fff;border-radius:16px;font-size:25px;font-weight:900;cursor:pointer;color:var(--ink)}
-.option.correct{background:#dff2e1;border-color:#4c9b62;color:#245b32}
-.option.wrong{background:#f8dfdd;border-color:#c55b57;color:#8e302d}
-.result{min-height:32px;text-align:center;font-size:21px;font-weight:900;margin-top:12px}
+.pron{font-size:22px;color:#777;margin:8px 0 20px}
+.word-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.progress{height:14px;background:#eee;border-radius:10px;overflow:hidden;margin:12px 0 20px}
+.progress>div{height:100%;width:0;background:#7ca982;transition:.25s}
+.option{
+  background:#faf8f3;border:2px solid #e4ddd2;
+  font-size:25px;text-align:center;
+}
+.option.correct{background:#dff2df;border-color:#73ae78}
+.option.wrong{background:#f7dddd;border-color:#d37b7b}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.feedback{text-align:center;font-size:25px;font-weight:800;min-height:42px;margin:12px}
+.badge{
+  text-align:center;border-radius:24px;padding:25px;
+  background:#f7f1df;margin-top:18px
+}
+.badge .medal{font-size:70px}
+.badge .title{font-size:32px;font-weight:900}
 .hidden{display:none!important}
-.unit-list{display:grid;gap:9px}
-.unit-btn{display:flex;justify-content:space-between;align-items:center;text-align:left;border:2px solid #ddd5c5;background:#fffdf7;border-radius:15px;padding:14px 16px;font-size:20px;font-weight:800;cursor:pointer}
-.unit-btn span{font-size:16px;color:var(--muted)}
-footer{text-align:center;color:#7c837e;font-size:15px;padding:8px 0 24px}
-@media(max-width:560px){
- .app{padding:10px}.en{font-size:40px}.quiz-en{font-size:44px}.cn{font-size:34px}
- .options{grid-template-columns:1fr}.option{min-height:66px}
- h1{font-size:27px}.tab{font-size:19px}
+.small-btn{font-size:18px;min-height:48px;padding:10px 14px}
+.back{background:#eee;margin-bottom:10px}
+.status{text-align:center;color:#777;font-size:17px;min-height:26px}
+.review-item{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:14px 0;border-bottom:1px solid #eee;
+}
+.review-item .word{font-size:24px;font-weight:800}
+.confetti{
+  position:fixed;left:0;top:0;width:100%;height:100%;
+  pointer-events:none;overflow:hidden;z-index:99
+}
+.piece{position:absolute;top:-30px;font-size:28px;animation:fall 1.5s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(600deg);opacity:.9}}
+@media(max-width:600px){
+  h1{font-size:30px}.subtitle{font-size:18px}
+  h2{font-size:25px}.grid,.topic-grid,.actions,.quiz-options,.word-actions{grid-template-columns:1fr}
+  button{font-size:20px}.cn{font-size:34px}.en{font-size:42px}
 }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="wrap">
 <header>
-  <h1>🌿 樂活英文</h1>
-  <div class="subtitle">每天學一點，生活用得到的英文</div>
+  <h1>🌿 媽媽的樂活英文</h1>
+  <div class="subtitle">自己選、自己學、慢慢學也很棒</div>
 </header>
 
-<div class="panel">
-  <div class="label">📚 選擇今天的單元</div>
-  <select id="unitSelect"></select>
-</div>
+<section id="home" class="card">
+  <h2>🌱 今天想學什麼？</h2>
+  <p style="font-size:21px;line-height:1.6">
+    不知道也沒關係。先選一個有興趣的主題，聽聽看、玩玩看。
+    喜歡哪一類，以後就可以多學這一類。
+  </p>
+  <div class="topic-grid" id="topics"></div>
+  <button class="primary" style="width:100%;margin-top:15px" onclick="randomTopic()">🎁 不知道，幫我選一個</button>
+</section>
 
-<div class="panel">
-  <div class="tabs">
-    <button id="practiceTab" class="tab active" onclick="showMode('practice')">🔊 看單字・聽發音</button>
-    <button id="quizTab" class="tab" onclick="showMode('quiz')">📝 小測驗</button>
+<section id="unit" class="card hidden">
+  <button class="back small-btn" onclick="goHome()">← 回主題選擇</button>
+  <h2 id="unitTitle"></h2>
+  <div class="actions">
+    <button class="primary" onclick="startPractice()">🔊 看單字・聽發音</button>
+    <button class="blue" onclick="startQuiz()">📝 小測驗</button>
   </div>
-</div>
+</section>
 
-<section id="practice" class="panel">
-  <div class="progress" id="practiceProgress"></div>
-  <div class="word-card">
+<section id="practice" class="card hidden">
+  <button class="back small-btn" onclick="showUnit()">← 回上一頁</button>
+  <h2>🔊 聽單字</h2>
+  <div class="progress"><div id="practiceProgress"></div></div>
+  <div class="word-box">
     <div class="cn" id="practiceCn"></div>
     <div class="en" id="practiceEn"></div>
-    <button class="sound" onclick="speakCurrent()">🔊 再唸一次</button>
-    <div class="hint">不用輸入英文，只要看、聽、按發音。</div>
+    <div class="pron" id="practicePron"></div>
+    <div class="word-actions">
+      <button class="primary" onclick="speakCurrent()">🔊 再聽一次</button>
+      <button class="star" id="practiceStar" onclick="toggleStar()">☆ 想再練一次</button>
+    </div>
   </div>
-  <div class="nav">
-    <button class="prev" onclick="prevWord()">← 上一個</button>
-    <button class="next" onclick="nextWord()">下一個 →</button>
+  <div class="actions" style="margin-top:15px">
+    <button onclick="prevWord()">← 上一個</button>
+    <button onclick="nextWord()">下一個 →</button>
   </div>
+  <div class="status" id="voiceStatus"></div>
 </section>
 
-<section id="quiz" class="panel hidden">
-  <div class="progress" id="quizProgress"></div>
-  <div class="quiz-card">
-    <div class="quiz-en" id="quizEn"></div>
-    <button class="quiz-sound" onclick="speakQuiz()">🔊 再唸一次</button>
-    <div class="question">請問這個英文是什麼？</div>
-    <div class="options" id="options"></div>
-    <div class="result" id="result"></div>
-    <button class="next" id="quizNext" style="width:100%;margin-top:12px" onclick="nextQuiz()">下一題 →</button>
+<section id="quiz" class="card hidden">
+  <button class="back small-btn" onclick="showUnit()">← 回上一頁</button>
+  <h2>📝 小測驗</h2>
+  <div class="progress"><div id="quizProgress"></div></div>
+  <div class="word-box">
+    <div class="en" id="quizEn"></div>
+    <button class="blue small-btn" onclick="speakQuiz()">🔊 再聽一次</button>
+    <div class="feedback" id="feedback"></div>
+    <div class="quiz-options" id="options"></div>
+    <button class="star" style="width:100%;margin-top:15px" id="quizStar" onclick="toggleQuizStar()">☆ 我想再練一次</button>
   </div>
+  <div id="quizResult"></div>
 </section>
 
-<div class="panel">
-  <div class="label">📖 十個單元</div>
-  <div class="unit-list" id="unitList"></div>
+<section id="review" class="card">
+  <h2>⭐ 我想再練一次</h2>
+  <div id="reviewList"></div>
+</section>
 </div>
 
-<footer>字體放大、按鈕放大、不需要打字，適合長輩使用。</footer>
-</div>
+<div class="confetti" id="confetti"></div>
 
 <script>
-const units=[
- {name:"第一單元｜數字 1～10",words:[
-  ["one","一"],["two","二"],["three","三"],["four","四"],["five","五"],
-  ["six","六"],["seven","七"],["eight","八"],["nine","九"],["ten","十"]
+const topics = [
+ {id:"food",emoji:"🍎",name:"吃的東西",words:[
+  ["蘋果","apple"],["香蕉","banana"],["麵包","bread"],["蛋","egg"],["魚","fish"],
+  ["米飯","rice"],["牛奶","milk"],["水","water"],["茶","tea"],["咖啡","coffee"]
  ]},
- {name:"第二單元｜家裡常用品",words:[
-  ["chair","椅子"],["table","桌子"],["bed","床"],["door","門"],["window","窗戶"],
-  ["lamp","燈"],["phone","電話"],["clock","時鐘"],["key","鑰匙"],["cup","杯子"]
+ {id:"home",emoji:"🏠",name:"家裡的東西",words:[
+  ["椅子","chair"],["桌子","table"],["床","bed"],["門","door"],["窗戶","window"],
+  ["燈","lamp"],["電話","phone"],["時鐘","clock"],["鑰匙","key"],["杯子","cup"]
  ]},
- {name:"第三單元｜吃飯喝水",words:[
-  ["rice","飯"],["bread","麵包"],["egg","蛋"],["milk","牛奶"],["water","水"],
-  ["tea","茶"],["coffee","咖啡"],["apple","蘋果"],["banana","香蕉"],["fish","魚"]
+ {id:"family",emoji:"👨‍👩‍👧",name:"家人朋友",words:[
+  ["家人","family"],["爸爸","father"],["媽媽","mother"],["兒子","son"],["女兒","daughter"],
+  ["先生","husband"],["太太","wife"],["哥哥／弟弟","brother"],["姊姊／妹妹","sister"],["朋友","friend"]
  ]},
- {name:"第四單元｜家人",words:[
-  ["family","家人"],["father","爸爸"],["mother","媽媽"],["son","兒子"],["daughter","女兒"],
-  ["husband","丈夫"],["wife","妻子"],["brother","兄弟"],["sister","姊妹"],["friend","朋友"]
+ {id:"shopping",emoji:"🛍️",name:"買東西",words:[
+  ["錢","money"],["價格","price"],["商店","store"],["市場","market"],["便宜的","cheap"],
+  ["昂貴的","expensive"],["買","buy"],["賣","sell"],["袋子","bag"],["收據","receipt"]
  ]},
- {name:"第五單元｜穿著用品",words:[
-  ["shirt","襯衫"],["pants","褲子"],["shoes","鞋子"],["socks","襪子"],["hat","帽子"],
-  ["coat","外套"],["bag","包包"],["umbrella","雨傘"],["glasses","眼鏡"],["watch","手錶"]
+ {id:"transport",emoji:"🚗",name:"出門交通",words:[
+  ["汽車","car"],["公車","bus"],["火車","train"],["計程車","taxi"],["腳踏車","bike"],
+  ["摩托車","motorcycle"],["車站","station"],["道路","road"],["票","ticket"],["機場","airport"]
  ]},
- {name:"第六單元｜交通",words:[
-  ["car","汽車"],["bus","公車"],["train","火車"],["taxi","計程車"],["bike","腳踏車"],
-  ["motorcycle","機車"],["station","車站"],["road","道路"],["ticket","票"],["airport","機場"]
+ {id:"nature",emoji:"🌳",name:"公園與自然",words:[
+  ["樹","tree"],["花","flower"],["草","grass"],["鳥","bird"],["狗","dog"],
+  ["貓","cat"],["天空","sky"],["太陽","sun"],["月亮","moon"],["雨","rain"]
  ]},
- {name:"第七單元｜身體與健康",words:[
-  ["head","頭"],["eye","眼睛"],["ear","耳朵"],["nose","鼻子"],["mouth","嘴巴"],
-  ["hand","手"],["foot","腳"],["doctor","醫生"],["medicine","藥"],["hospital","醫院"]
+ {id:"health",emoji:"💊",name:"健康與看醫生",words:[
+  ["頭","head"],["眼睛","eye"],["耳朵","ear"],["鼻子","nose"],["嘴巴","mouth"],
+  ["手","hand"],["腳","foot"],["醫生","doctor"],["藥","medicine"],["醫院","hospital"]
  ]},
- {name:"第八單元｜時間生活",words:[
-  ["morning","早上"],["afternoon","下午"],["evening","晚上"],["today","今天"],["tomorrow","明天"],
-  ["yesterday","昨天"],["day","天"],["week","星期"],["month","月份"],["year","年"]
+ {id:"travel",emoji:"✈️",name:"旅遊",words:[
+  ["旅行","travel"],["飯店","hotel"],["房間","room"],["護照","passport"],["地圖","map"],
+  ["行李","luggage"],["海灘","beach"],["照片","photo"],["早餐","breakfast"],["咖啡店","cafe"]
  ]},
- {name:"第九單元｜生活場所",words:[
-  ["home","家"],["school","學校"],["market","市場"],["store","商店"],["bank","銀行"],
-  ["park","公園"],["restaurant","餐廳"],["church","教堂"],["library","圖書館"],["post office","郵局"]
+ {id:"phone",emoji:"📱",name:"手機與生活",words:[
+  ["手機","phone"],["照片","photo"],["訊息","message"],["電話","call"],["影片","video"],
+  ["音樂","music"],["網路","internet"],["電腦","computer"],["密碼","password"],["充電","charge"]
  ]},
- {name:"第十單元｜生活常用動作",words:[
-  ["eat","吃"],["drink","喝"],["go","去"],["come","來"],["sit","坐"],
-  ["stand","站"],["walk","走路"],["read","閱讀"],["sleep","睡覺"],["help","幫忙"]
+ {id:"time",emoji:"⏰",name:"時間與日期",words:[
+  ["早上","morning"],["下午","afternoon"],["晚上","evening"],["今天","today"],["明天","tomorrow"],
+  ["昨天","yesterday"],["一天","day"],["一週","week"],["一個月","month"],["一年","year"]
  ]}
 ];
 
-let unit=0,wi=0,quizIndex=0,quizAnswered=false;
-const $=id=>document.getElementById(id);
+const praise = [
+"媽媽也太強了吧！","你真是英文高手啊！","這你也會，太厲害了吧！",
+"哇！又答對了！","媽媽記得好清楚喔！","太厲害了，這個完全難不倒你！",
+"厲害喔！英文越來越好了！","哇塞！媽媽今天狀態超好！","這題也答對，太強了吧！",
+"妳真的很會記耶！","答對！這題漂亮！","太棒了！這個字已經記住了！",
+"厲害厲害！又拿下一題！","媽媽今天根本是英文達人！","哇！這個也難不倒妳！",
+"答對啦！是不是越來越有信心了？","太漂亮了！這題答得很好！",
+"媽媽真的很有學英文的天分耶！","又對！妳的英文進步得很快喔！","金牌候選人就是媽媽啦！"
+];
 
-function populate(){
-  $("unitSelect").innerHTML=units.map((u,i)=>`<option value="${i}">${u.name}</option>`).join("");
-  $("unitSelect").onchange=()=>{unit=+$("unitSelect").value;wi=0;quizIndex=0;quizAnswered=false;renderAll();};
-  $("unitList").innerHTML=units.map((u,i)=>`<button class="unit-btn" onclick="selectUnit(${i})"><b>${u.name}</b><span>10 個單字</span></button>`).join("");
+let currentTopic=null,currentIndex=0,quizIndex=0,score=0,answered=false;
+let stars=JSON.parse(localStorage.getItem("momEnglishStars")||"[]");
+
+function saveStars(){localStorage.setItem("momEnglishStars",JSON.stringify(stars));renderReview()}
+function show(id){document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));document.getElementById(id).classList.remove("hidden")}
+function goHome(){show("home")}
+function showUnit(){document.getElementById("unitTitle").textContent="🌱 "+currentTopic.emoji+" "+currentTopic.name;show("unit")}
+function renderTopics(){
+ const box=document.getElementById("topics");
+ box.innerHTML=topics.map(t=>`<button class="topic" onclick="selectTopic('${t.id}')">
+ <span class="emoji">${t.emoji}</span><b>${t.name}</b><br><small>10 個生活單字</small></button>`).join("");
 }
-function selectUnit(i){unit=i;wi=0;quizIndex=0;quizAnswered=false;$("unitSelect").value=i;renderAll();window.scrollTo({top:0,behavior:"smooth"});}
-function current(){return units[unit].words[wi];}
+function selectTopic(id){currentTopic=topics.find(t=>t.id===id);showUnit()}
+function randomTopic(){selectTopic(topics[Math.floor(Math.random()*topics.length)].id)}
+function startPractice(){currentIndex=0;show("practice");renderPractice();setTimeout(speakCurrent,250)}
 function renderPractice(){
- const [en,cn]=current();
- $("practiceCn").textContent=cn;$("practiceEn").textContent=en;
- $("practiceProgress").textContent=`第 ${wi+1} / 10 個`;
-}
-function renderQuiz(){
- const words=units[unit].words;
- const [en]=words[quizIndex];
- $("quizEn").textContent=en;
- $("quizProgress").textContent=`小測驗：第 ${quizIndex+1} / 10 題`;
- $("result").textContent="";quizAnswered=false;
- let choices=[words[quizIndex]];
- while(choices.length<4){
-   const w=words[Math.floor(Math.random()*words.length)];
-   if(!choices.includes(w))choices.push(w);
- }
- choices.sort(()=>Math.random()-.5);
- $("options").innerHTML=choices.map(w=>`<button class="option" onclick="answer('${w[0].replace(/'/g,"\\'")}',this)">${w[1]}</button>`).join("");
-}
-function renderAll(){renderPractice();renderQuiz();}
-function showMode(m){
- $("practice").classList.toggle("hidden",m!=="practice");
- $("quiz").classList.toggle("hidden",m!=="quiz");
- $("practiceTab").classList.toggle("active",m==="practice");
- $("quizTab").classList.toggle("active",m==="quiz");
- if(m==="quiz")renderQuiz();
+ const w=currentTopic.words[currentIndex];
+ document.getElementById("practiceCn").textContent=w[0];
+ document.getElementById("practiceEn").textContent=w[1];
+ document.getElementById("practicePron").textContent="";
+ document.getElementById("practiceProgress").style.width=((currentIndex+1)/currentTopic.words.length*100)+"%";
+ updatePracticeStar();
 }
 function speak(text){
- if(!("speechSynthesis" in window)){alert("這個瀏覽器不支援語音播放。");return;}
+ if(!("speechSynthesis" in window)){document.getElementById("voiceStatus").textContent="此瀏覽器不支援語音播放，請換 Chrome / Safari 試試看。";return}
  speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.78;u.pitch=1;
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang="en-US";u.rate=.72;u.pitch=1;
+ const voices=speechSynthesis.getVoices();
+ const v=voices.find(x=>/^en(-|_)/i.test(x.lang))||voices.find(x=>x.lang.includes("en"));
+ if(v)u.voice=v;
+ u.onstart=()=>document.getElementById("voiceStatus").textContent="🔊 正在播放英文發音";
+ u.onend=()=>document.getElementById("voiceStatus").textContent="可以再聽一次";
  speechSynthesis.speak(u);
 }
-function speakCurrent(){speak(current()[0]);}
-function speakQuiz(){speak(units[unit].words[quizIndex][0]);}
-function nextWord(){wi=(wi+1)%10;renderPractice();speakCurrent();}
-function prevWord(){wi=(wi+9)%10;renderPractice();speakCurrent();}
-function answer(en,btn){
- if(quizAnswered)return;
- quizAnswered=true;
- const correct=units[unit].words[quizIndex];
- document.querySelectorAll(".option").forEach(b=>{
-   if(b.textContent===correct[1])b.classList.add("correct");
- });
- if(en===correct[0]){
-   btn.classList.add("correct");$("result").textContent="✓ 答對了！很好！";$("result").style.color="#2e7442";
+function speakCurrent(){speak(currentTopic.words[currentIndex][1])}
+function prevWord(){currentIndex=(currentIndex-1+currentTopic.words.length)%currentTopic.words.length;renderPractice();speakCurrent()}
+function nextWord(){currentIndex=(currentIndex+1)%currentTopic.words.length;renderPractice();speakCurrent()}
+function keyFor(w){return currentTopic.id+"|"+w[1]}
+function updatePracticeStar(){
+ const on=stars.includes(keyFor(currentTopic.words[currentIndex]));
+ document.getElementById("practiceStar").textContent=on?"★ 已加入再練習":"☆ 想再練一次";
+}
+function toggleStar(){
+ const k=keyFor(currentTopic.words[currentIndex]);
+ if(stars.includes(k))stars=stars.filter(x=>x!==k);else stars.push(k);
+ saveStars();updatePracticeStar();
+}
+function startQuiz(){
+ quizIndex=0;score=0;answered=false;
+ document.getElementById("quizResult").innerHTML="";
+ show("quiz");renderQuiz();
+ setTimeout(speakQuiz,250);
+}
+function renderQuiz(){
+ answered=false;
+ const w=currentTopic.words[quizIndex];
+ document.getElementById("quizEn").textContent=w[1];
+ document.getElementById("feedback").textContent="";
+ document.getElementById("quizProgress").style.width=((quizIndex+1)/currentTopic.words.length*100)+"%";
+ updateQuizStar();
+ let pool=[w[0]];
+ while(pool.length<4){
+   const x=currentTopic.words[Math.floor(Math.random()*currentTopic.words.length)][0];
+   if(!pool.includes(x))pool.push(x);
+ }
+ pool.sort(()=>Math.random()-.5);
+ document.getElementById("options").innerHTML=pool.map(x=>`<button class="option" onclick="answer('${escapeAttr(x)}',this)">${x}</button>`).join("");
+}
+function escapeAttr(s){return s.replace(/'/g,"&#39;")}
+function speakQuiz(){speak(currentTopic.words[quizIndex][1])}
+function answer(choice,btn){
+ if(answered)return;
+ answered=true;
+ const correct=currentTopic.words[quizIndex][0];
+ const buttons=[...document.querySelectorAll(".option")];
+ buttons.forEach(b=>{if(b.textContent===correct)b.classList.add("correct")});
+ if(choice===correct){
+   score++;
+   btn.classList.add("correct");
+   document.getElementById("feedback").textContent="🎉 "+praise[Math.floor(Math.random()*praise.length)];
+   confetti();
  }else{
-   btn.classList.add("wrong");$("result").textContent=`再想一下：答案是「${correct[1]}」`;
-   $("result").style.color="#9b3d39";
-   speak(correct[0]);
+   btn.classList.add("wrong");
+   document.getElementById("feedback").textContent="沒關係，再聽一次就好 😊";
+ }
+ updateQuizStar();
+ setTimeout(()=>{
+   quizIndex++;
+   if(quizIndex<currentTopic.words.length)renderQuiz();else finishQuiz();
+ },1100);
+}
+function updateQuizStar(){
+ const k=keyFor(currentTopic.words[quizIndex]);
+ const on=stars.includes(k);
+ document.getElementById("quizStar").textContent=on?"★ 已加入再練習":"☆ 我想再練一次";
+}
+function toggleQuizStar(){
+ const k=keyFor(currentTopic.words[quizIndex]);
+ if(stars.includes(k))stars=stars.filter(x=>x!==k);else stars.push(k);
+ saveStars();updateQuizStar();
+}
+function finishQuiz(){
+ let medal,title;
+ if(score<5){medal="🥉";title="銅牌";}
+ else if(score<8){medal="🥈";title="銀牌";}
+ else{medal="🥇";title="金牌";}
+ document.getElementById("quizResult").innerHTML=`
+ <div class="badge">
+  <div class="medal">${medal}</div>
+  <div class="title">${title}</div>
+  <div style="font-size:24px;margin-top:8px">10 題答對 ${score} 題</div>
+  <p style="font-size:20px">今天願意來學，就是很棒的成就！</p>
+  <button class="primary" onclick="startQuiz()">🔄 再玩一次</button>
+  <button style="margin-left:8px" onclick="showUnit()">回主題</button>
+ </div>`;
+}
+function renderReview(){
+ const box=document.getElementById("reviewList");
+ if(!stars.length){box.innerHTML='<p style="font-size:20px;color:#777">目前還沒有單字。看到想再練的單字，按一下 ☆ 就會放到這裡。</p>';return}
+ box.innerHTML=stars.map(k=>{
+   const [tid,en]=k.split("|");const t=topics.find(x=>x.id===tid);const w=t?.words.find(x=>x[1]===en);
+   if(!w)return "";
+   return `<div class="review-item">
+    <div class="word">${w[0]}　<span style="color:#666">${w[1]}</span></div>
+    <button class="blue small-btn" onclick="speak('${en}')">🔊 聽</button>
+   </div>`;
+ }).join("");
+}
+function confetti(){
+ const box=document.getElementById("confetti");
+ const chars=["🎉","⭐","🌟","✨","🎊","👏"];
+ for(let i=0;i<22;i++){
+   const p=document.createElement("div");p.className="piece";
+   p.textContent=chars[Math.floor(Math.random()*chars.length)];
+   p.style.left=Math.random()*100+"%";
+   p.style.animationDelay=Math.random()*.25+"s";
+   box.appendChild(p);
+   setTimeout(()=>p.remove(),1800);
  }
 }
-function nextQuiz(){quizIndex=(quizIndex+1)%10;renderQuiz();}
-populate();renderAll();
+speechSynthesis?.addEventListener?.("voiceschanged",()=>{});
+renderTopics();renderReview();
 </script>
 </body>
 </html>
