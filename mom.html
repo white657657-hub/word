@@ -42,6 +42,14 @@ button.star{background:#fff4c9;color:#8b6b00}
 .topic .emoji{font-size:32px;display:block;margin-bottom:5px}
 .topic small{font-size:16px;color:#777}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+button.purple{background:#8f78b8;color:white}
+button.teal{background:#5f9e9a;color:white}
+button.orange{background:#d88955;color:white}
+button.pink{background:#c97c9a;color:white}
+button.green{background:#6d9d74;color:white}
+.mode-help{font-size:19px;color:#756d63;text-align:center;margin-top:12px}
+.game-prompt{text-align:center;padding:10px 0 18px}.big-icon{font-size:70px;margin:12px}.picture{font-size:110px;text-align:center;padding:15px}.life-text{font-size:25px;text-align:center;margin:12px 0 20px}.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.match-card.selected{outline:4px solid #d9ad4b}.memory-list{display:grid;gap:10px;margin:18px 0}.memory-list div{display:flex;justify-content:space-between;padding:14px 18px;background:#faf8f3;border-radius:14px;font-size:23px}.memory-cn{font-weight:800}
 .word-box{text-align:center;padding:15px}
 .cn{font-size:38px;font-weight:800;margin:10px 0}
 .en{font-size:48px;font-weight:900;letter-spacing:1px}
@@ -65,6 +73,24 @@ button.star{background:#fff4c9;color:#8b6b00}
 .badge .title{font-size:32px;font-weight:900}
 .hidden{display:none!important}
 .small-btn{font-size:18px;min-height:48px;padding:10px 14px}
+.star-inline{
+  min-width:58px;width:58px;height:58px;min-height:58px;
+  padding:0;border-radius:50%;font-size:38px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  vertical-align:middle;
+}
+.speed-plus{
+  width:62px;min-width:62px;height:58px;min-height:58px;
+  padding:0;font-size:34px;border-radius:18px;
+}
+.speed-menu{
+  margin-top:10px;padding:16px;border-radius:20px;
+  background:#f8f4ea;border:2px solid #e7ddcd;
+}
+.speed-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.speed-grid button{font-size:19px;min-height:55px}
+.speed-label{text-align:center;margin-top:10px;font-size:18px;color:#6f675d}
+@media(max-width:600px){.speed-grid{grid-template-columns:1fr}}
 .back{background:#eee;margin-bottom:10px}
 .status{text-align:center;color:#777;font-size:17px;min-height:26px}
 .review-item{
@@ -80,7 +106,7 @@ button.star{background:#fff4c9;color:#8b6b00}
 @keyframes fall{to{transform:translateY(110vh) rotate(600deg);opacity:.9}}
 @media(max-width:600px){
   h1{font-size:30px}.subtitle{font-size:18px}
-  h2{font-size:25px}.grid,.topic-grid,.actions,.quiz-options,.word-actions{grid-template-columns:1fr}
+  h2{font-size:25px}.grid,.topic-grid,.actions,.quiz-options,.word-actions,.mode-grid{grid-template-columns:1fr}
   button{font-size:20px}.cn{font-size:34px}.en{font-size:42px}
 }
 </style>
@@ -100,15 +126,39 @@ button.star{background:#fff4c9;color:#8b6b00}
   </p>
   <div class="topic-grid" id="topics"></div>
   <button class="primary" style="width:100%;margin-top:15px" onclick="randomTopic()">🎁 不知道，幫我選一個</button>
+  <button style="width:100%;margin-top:10px" onclick="startStarReview()">⭐ 複習我的練習庫</button>
 </section>
 
 <section id="unit" class="card hidden">
   <button class="back small-btn" onclick="goHome()">← 回主題選擇</button>
   <h2 id="unitTitle"></h2>
-  <div class="actions">
-    <button class="primary" onclick="startPractice()">🔊 看單字・聽發音</button>
-    <button class="blue" onclick="startQuiz()">📝 小測驗</button>
+  <p style="font-size:21px;line-height:1.6;text-align:center;margin:0 0 16px">
+    🌷 今天想怎麼玩英文？<br>
+    <b>自己選一種就可以，不用全部做。</b>
+  </p>
+  <button class="primary" style="width:100%;margin-bottom:14px;font-size:23px" onclick="startGuided()">🌷 幫我安排今天的練習</button>
+  <div class="mode-help" style="margin:-2px 0 14px">不知道玩什麼，就讓系統帶著做：先聽、再認字、最後小測驗。</div>
+  <div class="mode-grid">
+    <button class="primary" onclick="startMode('learn')">1. 🔊 看單字・慢慢聽</button>
+    <button class="blue" onclick="startMode('en2cn')">2. 🇬🇧 看英文猜中文</button>
+    <button class="purple" onclick="startMode('cn2en')">3. 🇨🇳 看中文猜英文</button>
+    <button class="teal" onclick="startMode('audio2cn')">4. 👂 聽英文猜意思</button>
+    <button class="pink" onclick="startMode('audio2en')">5. 🔊 聽聲音找英文</button>
+    <button class="green" onclick="startMode('match')">6. 🧩 單字配對</button>
+    <button class="gold" onclick="startMode('memory')">7. 🧠 記憶小遊戲</button>
+    <button class="blue" onclick="startMode('quiz')">8. 📝 10題小測驗</button>
   </div>
+  <div id="levelPanel" style="margin-top:18px"></div>
+  <p class="mode-help">💡 先玩這 4 個單字。覺得會了，就可以挑戰下一組；一個主題最多 20 個單字。</p>
+</section>
+
+<section id="game" class="card hidden">
+  <button class="back small-btn" onclick="showUnit()">← 回練習方式</button>
+  <h2 id="gameTitle">🎮 練習</h2>
+  <div class="progress"><div id="gameProgress"></div></div>
+  <div id="gameBody"></div>
+  <div class="feedback" id="gameFeedback"></div>
+  <div id="gameActions"></div>
 </section>
 
 <section id="practice" class="card hidden">
@@ -117,17 +167,31 @@ button.star{background:#fff4c9;color:#8b6b00}
   <div class="progress"><div id="practiceProgress"></div></div>
   <div class="word-box">
     <div class="cn" id="practiceCn"></div>
-    <div class="en" id="practiceEn"></div>
+    <div class="en" style="display:flex;align-items:center;justify-content:center;gap:14px">
+      <span id="practiceEn"></span>
+      <button class="star star-inline" id="practiceStar" onclick="toggleStar()" aria-label="加入或移出練習庫">☆</button>
+    </div>
     <div class="pron" id="practicePron"></div>
-    <div class="word-actions">
-      <button class="primary" onclick="speakCurrent()">🔊 再聽一次</button>
-      <button class="star" id="practiceStar" onclick="toggleStar()">☆ 想再練一次</button>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px">
+      <button class="primary" onclick="speakCurrent()">🔊 非常慢・再聽一次</button>
+      <button class="gold speed-plus" onclick="toggleSpeedMenu()" aria-label="選擇發音速度">＋</button>
+    </div>
+    <div id="speedMenu" class="speed-menu hidden">
+      <div style="font-size:20px;font-weight:800;margin-bottom:10px">🔊 選擇發音速度</div>
+      <div class="speed-grid">
+        <button onclick="setSpeechRate(.12)">🐢 超超慢</button>
+        <button onclick="setSpeechRate(.16)">🐢 非常慢</button>
+        <button onclick="setSpeechRate(.20)">🐢 慢</button>
+        <button onclick="setSpeechRate(.26)">🙂 稍慢</button>
+      </div>
+      <div id="speedLabel" class="speed-label"></div>
     </div>
   </div>
   <div class="actions" style="margin-top:15px">
     <button onclick="prevWord()">← 上一個</button>
     <button onclick="nextWord()">下一個 →</button>
   </div>
+  <button class="primary" style="width:100%;margin-top:12px" onclick="guidedNext()">完成這一關，下一步 →</button>
   <div class="status" id="voiceStatus"></div>
 </section>
 
@@ -136,17 +200,26 @@ button.star{background:#fff4c9;color:#8b6b00}
   <h2>📝 小測驗</h2>
   <div class="progress"><div id="quizProgress"></div></div>
   <div class="word-box">
-    <div class="en" id="quizEn"></div>
-    <button class="blue small-btn" onclick="speakQuiz()">🔊 再聽一次</button>
+    <div class="en" style="display:flex;align-items:center;justify-content:center;gap:14px">
+      <span id="quizEn"></span>
+      <button class="star star-inline" id="quizStar" onclick="toggleQuizStar()" aria-label="加入或移出練習庫">☆</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:10px;margin:12px 0">
+      <button class="blue small-btn" onclick="speakQuiz()">🔊 非常慢・再聽一次</button>
+      <button class="gold speed-plus" onclick="toggleSpeedMenu()" aria-label="選擇發音速度">＋</button>
+    </div>
     <div class="feedback" id="feedback"></div>
     <div class="quiz-options" id="options"></div>
-    <button class="star" style="width:100%;margin-top:15px" id="quizStar" onclick="toggleQuizStar()">☆ 我想再練一次</button>
   </div>
   <div id="quizResult"></div>
 </section>
 
 <section id="review" class="card">
-  <h2>⭐ 我想再練一次</h2>
+  <h2>⭐ 我的練習庫</h2>
+  <p style="font-size:20px;line-height:1.6;color:#666">
+    空心 ☆：還沒放進練習庫　　實心 ★：已放進練習庫<br>
+    按一下星號，就可以自由加入或移除。
+  </p>
   <div id="reviewList"></div>
 </section>
 </div>
@@ -155,45 +228,55 @@ button.star{background:#fff4c9;color:#8b6b00}
 
 <script>
 const topics = [
- {id:"food",emoji:"🍎",name:"吃的東西",words:[
+ {id:"food",name:"吃的東西",words:[
   ["蘋果","apple"],["香蕉","banana"],["麵包","bread"],["蛋","egg"],["魚","fish"],
   ["米飯","rice"],["牛奶","milk"],["水","water"],["茶","tea"],["咖啡","coffee"]
- ]},
- {id:"home",emoji:"🏠",name:"家裡的東西",words:[
+ ,
+  ["葡萄","grape"],["橘子","orange"],["雞肉","chicken"],["湯","soup"],["蛋糕","cake"],["糖","sugar"],["鹽","salt"],["果汁","juice"],["早餐","breakfast"],["晚餐","dinner"]]},
+ {id:"home",name:"家裡的東西",words:[
   ["椅子","chair"],["桌子","table"],["床","bed"],["門","door"],["窗戶","window"],
   ["燈","lamp"],["電話","phone"],["時鐘","clock"],["鑰匙","key"],["杯子","cup"]
- ]},
- {id:"family",emoji:"👨‍👩‍👧",name:"家人朋友",words:[
+ ,
+  ["沙發","sofa"],["電視","TV"],["冰箱","fridge"],["廚房","kitchen"],["浴室","bathroom"],["鏡子","mirror"],["毛巾","towel"],["書","book"],["筆","pen"],["眼鏡盒","glasses case"]]},
+ {id:"family",name:"家人朋友",words:[
   ["家人","family"],["爸爸","father"],["媽媽","mother"],["兒子","son"],["女兒","daughter"],
   ["先生","husband"],["太太","wife"],["哥哥／弟弟","brother"],["姊姊／妹妹","sister"],["朋友","friend"]
- ]},
- {id:"shopping",emoji:"🛍️",name:"買東西",words:[
+ ,
+  ["祖父","grandfather"],["祖母","grandmother"],["叔叔","uncle"],["阿姨","aunt"],["孩子","child"],["男孩","boy"],["女孩","girl"],["鄰居","neighbor"],["客人","guest"],["家","home"]]},
+ {id:"shopping",name:"買東西",words:[
   ["錢","money"],["價格","price"],["商店","store"],["市場","market"],["便宜的","cheap"],
   ["昂貴的","expensive"],["買","buy"],["賣","sell"],["袋子","bag"],["收據","receipt"]
- ]},
- {id:"transport",emoji:"🚗",name:"出門交通",words:[
+ ,
+  ["超市","supermarket"],["現金","cash"],["信用卡","credit card"],["尺寸","size"],["顏色","color"],["水果","fruit"],["蔬菜","vegetable"],["鞋子","shoes"],["衣服","clothes"],["折扣","discount"]]},
+ {id:"transport",name:"出門交通",words:[
   ["汽車","car"],["公車","bus"],["火車","train"],["計程車","taxi"],["腳踏車","bike"],
   ["摩托車","motorcycle"],["車站","station"],["道路","road"],["票","ticket"],["機場","airport"]
- ]},
- {id:"nature",emoji:"🌳",name:"公園與自然",words:[
+ ,
+  ["船","boat"],["飛機","plane"],["地鐵","subway"],["站牌","stop"],["方向","direction"],["地圖","map"],["左邊","left"],["右邊","right"],["快","fast"],["慢","slow"]]},
+ {id:"nature",name:"公園與自然",words:[
   ["樹","tree"],["花","flower"],["草","grass"],["鳥","bird"],["狗","dog"],
   ["貓","cat"],["天空","sky"],["太陽","sun"],["月亮","moon"],["雨","rain"]
- ]},
- {id:"health",emoji:"💊",name:"健康與看醫生",words:[
+ ,
+  ["山","mountain"],["河","river"],["湖","lake"],["海","sea"],["雲","cloud"],["風","wind"],["雪","snow"],["森林","forest"],["蝴蝶","butterfly"],["魚","fish"]]},
+ {id:"health",name:"健康與看醫生",words:[
   ["頭","head"],["眼睛","eye"],["耳朵","ear"],["鼻子","nose"],["嘴巴","mouth"],
   ["手","hand"],["腳","foot"],["醫生","doctor"],["藥","medicine"],["醫院","hospital"]
- ]},
- {id:"travel",emoji:"✈️",name:"旅遊",words:[
+ ,
+  ["身體","body"],["心臟","heart"],["背","back"],["腿","leg"],["膝蓋","knee"],["牙齒","tooth"],["疼痛","pain"],["休息","rest"],["水","water"],["健康","healthy"]]},
+ {id:"travel",name:"旅遊",words:[
   ["旅行","travel"],["飯店","hotel"],["房間","room"],["護照","passport"],["地圖","map"],
   ["行李","luggage"],["海灘","beach"],["照片","photo"],["早餐","breakfast"],["咖啡店","cafe"]
- ]},
- {id:"phone",emoji:"📱",name:"手機與生活",words:[
+ ,
+  ["機票","ticket"],["機場","airport"],["火車","train"],["行程","trip"],["旅行箱","suitcase"],["入口","entrance"],["出口","exit"],["海","sea"],["山","mountain"],["朋友","friend"]]},
+ {id:"phone",name:"手機與生活",words:[
   ["手機","phone"],["照片","photo"],["訊息","message"],["電話","call"],["影片","video"],
   ["音樂","music"],["網路","internet"],["電腦","computer"],["密碼","password"],["充電","charge"]
- ]},
- {id:"time",emoji:"⏰",name:"時間與日期",words:[
+ ,
+  ["螢幕","screen"],["相機","camera"],["照片","picture"],["鈴聲","ring"],["按鈕","button"],["電池","battery"],["電子郵件","email"],["網站","website"],["耳機","earphones"],["桌布","wallpaper"]]},
+ {id:"time",name:"時間與日期",words:[
   ["早上","morning"],["下午","afternoon"],["晚上","evening"],["今天","today"],["明天","tomorrow"],
-  ["昨天","yesterday"],["一天","day"],["一週","week"],["一個月","month"],["一年","year"]
+  ["昨天","yesterday"],["一天","day"],["一週","week"],["一個月","month"],["一年","year"],
+  ["星期一","Monday"],["星期二","Tuesday"],["星期三","Wednesday"],["星期四","Thursday"],["星期五","Friday"],["星期六","Saturday"],["星期日","Sunday"],["小時","hour"],["分鐘","minute"],["現在","now"]
  ]}
 ];
 
@@ -208,33 +291,132 @@ const praise = [
 ];
 
 let currentTopic=null,currentIndex=0,quizIndex=0,score=0,answered=false;
+let currentLevel=0;
+let unlockedLevels=JSON.parse(localStorage.getItem('momEnglishLevels')||'{}');
+let gameMode='',gameIndex=0,gameScore=0,gameAnswered=false;
+function lessonWords(){return currentTopic.words.slice(currentLevel*4,currentLevel*4+4)}
+function maxLevel(){return Math.ceil(currentTopic.words.length/4)-1}
+function saveLevels(){localStorage.setItem('momEnglishLevels',JSON.stringify(unlockedLevels))}
+function selectLevel(level){currentLevel=level;showUnit()}
+function levelLabel(){return `第 ${currentLevel+1} 組・${lessonWords().length} 個單字`}
+function markLevelComplete(){const key=currentTopic.id; const old=Number(unlockedLevels[key]||0); if(currentLevel>=old && currentLevel<maxLevel()){unlockedLevels[key]=currentLevel+1;saveLevels();}}
+
 let stars=JSON.parse(localStorage.getItem("momEnglishStars")||"[]");
 
 function saveStars(){localStorage.setItem("momEnglishStars",JSON.stringify(stars));renderReview()}
 function show(id){document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));document.getElementById(id).classList.remove("hidden")}
 function goHome(){show("home")}
-function showUnit(){document.getElementById("unitTitle").textContent="🌱 "+currentTopic.emoji+" "+currentTopic.name;show("unit")}
+function showUnit(){
+ document.getElementById("unitTitle").textContent=currentTopic.name+"｜"+levelLabel();
+ const panel=document.getElementById("levelPanel");
+ const unlocked=Number(unlockedLevels[currentTopic.id]||0);
+ let html='<div style="background:#f7f3e8;border-radius:18px;padding:14px;text-align:center">';
+ html+='<div style="font-size:21px;font-weight:800">目前學習：第 '+(currentLevel+1)+' 組（'+lessonWords().length+' 個）</div>';
+ html+='<div style="font-size:18px;color:#777;margin-top:4px">先把這 4 個單字玩熟；小測驗答對 8 題以上，就能解鎖下一組</div>';
+ if(currentLevel<maxLevel() && currentLevel<unlocked){ html+='<button class="primary" style="margin-top:10px" onclick="selectLevel('+(currentLevel+1)+')">🚀 進階到第 '+(currentLevel+2)+' 組</button>'; }
+ if(currentLevel>0){ html+='<button style="margin:10px 0 0 8px" onclick="selectLevel('+(currentLevel-1)+')">← 回上一組</button>'; }
+ html+='</div>';
+ panel.innerHTML=html;
+ show("unit");
+}
 function renderTopics(){
  const box=document.getElementById("topics");
  box.innerHTML=topics.map(t=>`<button class="topic" onclick="selectTopic('${t.id}')">
- <span class="emoji">${t.emoji}</span><b>${t.name}</b><br><small>10 個生活單字</small></button>`).join("");
+ <b>${t.name}</b><br><small>20 個生活單字・一次學 4 個</small></button>`).join("");
 }
 function selectTopic(id){currentTopic=topics.find(t=>t.id===id);showUnit()}
 function randomTopic(){selectTopic(topics[Math.floor(Math.random()*topics.length)].id)}
+function startGuided(){
+  // 每次只帶媽媽走一小段：4字聽讀 → 英文猜中文 → 中文猜英文 → 小測驗
+  startPractice();
+  guidedStep = 0;
+}
+let guidedStep = 0;
+function guidedNext(){
+  guidedStep++;
+  if(guidedStep===1) startMode('en2cn');
+  else if(guidedStep===2) startMode('cn2en');
+  else if(guidedStep===3) startMode('quiz');
+  else showUnit();
+}
+function startMode(mode){
+ gameMode=mode;gameIndex=0;gameScore=0;gameAnswered=false;
+ if(mode==='learn'){startPractice();return}
+ if(mode==='quiz'){startQuiz();return}
+ const titles={en2cn:'🇬🇧 看英文猜中文',cn2en:'🇨🇳 看中文猜英文',audio2cn:'👂 聽英文猜意思',audio2en:'🔊 聽聲音找英文',match:'🧩 單字配對',memory:'🧠 記憶小遊戲'};
+ document.getElementById('gameTitle').textContent=titles[mode]||'🎮 練習';
+ show('game');renderGame();
+}
+function gameOptions(correct, values){
+ let pool=[correct];while(pool.length<4){let x=values[Math.floor(Math.random()*values.length)];if(!pool.includes(x))pool.push(x)}
+ return pool.sort(()=>Math.random()-.5);
+}
+function renderGame(){
+ gameAnswered=false;
+ const words=lessonWords();
+ const w=words[gameIndex%words.length], total=words.length;
+ document.getElementById('gameProgress').style.width=((gameIndex+1)/total*100)+'%';
+ const body=document.getElementById('gameBody'), actions=document.getElementById('gameActions');
+ document.getElementById('gameFeedback').textContent='';actions.innerHTML='';
+ if(gameMode==='match'){renderMatch();return}
+ if(gameMode==='memory'){renderMemory();return}
+ let prompt='',correct='',values=[];
+ if(gameMode==='en2cn'){prompt='<div class="en">'+w[1]+'</div>';correct=w[0];values=words.map(x=>x[0])}
+ if(gameMode==='cn2en'){prompt='<div class="cn">'+w[0]+'</div>';correct=w[1];values=words.map(x=>x[1])}
+ if(gameMode==='audio2cn'){prompt='<div class="big-icon">🔊</div><button class="primary" onclick="speakGameWord()">🔊 再聽一次</button>';correct=w[0];values=words.map(x=>x[0]);setTimeout(speakGameWord,500)}
+ if(gameMode==='audio2en'){prompt='<div class="big-icon">🔊</div><button class="primary" onclick="speakGameWord()">🔊 再聽一次</button>';correct=w[1];values=words.map(x=>x[1]);setTimeout(speakGameWord,500)}
+ body.innerHTML='<div class="game-prompt">'+prompt+'</div><div class="quiz-options">'+gameOptions(correct,values).map(x=>'<button class="option" onclick="gameAnswer(\''+escapeAttr(x)+'\',this,\''+escapeAttr(correct)+'\')">'+x+'</button>').join('')+'</div>';
+}
+function speakGameWord(){const words=lessonWords();speak(words[gameIndex%words.length][1])}
+function emojiFor(word){const m={apple:'🍎',banana:'🍌',bread:'🍞',egg:'🥚',fish:'🐟',rice:'🍚',milk:'🥛',water:'💧',tea:'🍵',coffee:'☕',cat:'🐱',dog:'🐶',bird:'🐦',flower:'🌸',tree:'🌳',sun:'☀️',moon:'🌙',car:'🚗',bus:'🚌',train:'🚆',house:'🏠',chair:'🪑',book:'📖',phone:'📱',money:'💰',hospital:'🏥',doctor:'👨‍⚕️',bag:'👜',key:'🔑',clock:'🕐'};return m[word]||'🖼️'}
+function gameAnswer(choice,btn,correct){if(gameAnswered)return;gameAnswered=true;const buttons=[...document.querySelectorAll('#gameBody .option')];buttons.forEach(b=>{if(b.textContent===correct)b.classList.add('correct')});if(choice===correct){gameScore++;btn.classList.add('correct');document.getElementById('gameFeedback').textContent='🎉 '+praise[Math.floor(Math.random()*praise.length)];confetti()}else{btn.classList.add('wrong');document.getElementById('gameFeedback').textContent='沒關係～再聽一次就好 😊'};setTimeout(()=>{gameIndex++;if(gameIndex<lessonWords().length)renderGame();else finishGame()},1200)}
+function renderMatch(){
+ const body=document.getElementById('gameBody');const sample=lessonWords().sort(()=>Math.random()-.5);let selected=null,matched=0;
+ body.innerHTML='<div class="mode-help">把英文和中文一一配對。配對成功會出現星星！</div><div class="match-grid">'+sample.map((w,i)=>'<button class="option match-card" data-key="'+w[1]+'" onclick="pickMatch(this)">'+w[1]+'</button>').join('')+sample.sort(()=>Math.random()-.5).map(w=>'<button class="option match-card" data-key="'+w[1]+'" onclick="pickMatch(this)">'+w[0]+'</button>').join('')+'</div>';
+ window.matchState={selected:null,matched:0,total:sample.length};
+}
+function pickMatch(btn){const s=window.matchState;if(btn.disabled)return;if(!s.selected){s.selected=btn;btn.classList.add('selected');return}const a=s.selected,b=btn;if(a.dataset.key===b.dataset.key&&a!==b){a.classList.add('correct');b.classList.add('correct');a.disabled=b.disabled=true;s.matched++;s.selected=null;confetti();document.getElementById('gameFeedback').textContent='🌟 配對成功！';if(s.matched===s.total)setTimeout(finishGame,700)}else{a.classList.remove('selected');s.selected=null;document.getElementById('gameFeedback').textContent='再試一次～'} }
+function renderMemory(){const body=document.getElementById('gameBody');const words=lessonWords();body.innerHTML='<div class="mode-help">先看一下，記住這幾個單字。準備好後按「開始」。</div><div class="memory-list">'+words.map(w=>'<div><span class="memory-cn">'+w[0]+'</span><b>'+w[1]+'</b></div>').join('')+'</div><button class="gold" onclick="memoryQuestion()">🧠 我記好了</button>'}
+function memoryQuestion(){const words=lessonWords(); const w=words[Math.floor(Math.random()*words.length)];document.getElementById('gameBody').innerHTML='<div class="cn">'+w[0]+'</div><div class="mode-help">剛剛看到的英文是哪一個？</div><div class="quiz-options">'+gameOptions(w[1],lessonWords().map(x=>x[1])).map(x=>'<button class="option" onclick="gameAnswer(\''+x+'\',this,\''+w[1]+'\')">'+x+'</button>').join('')+'</div>';document.getElementById('gameProgress').style.width='100%'}
+function finishGame(){
+ document.getElementById('gameFeedback').textContent='🎉 今天完成 '+(gameMode==='match'?'配對遊戲':gameScore+' 個練習')+'！';
+ let next = guidedStep>0
+   ? '<button class="primary" onclick="guidedNext()">下一步 →</button>'
+   : '<button class="primary" onclick="startMode(gameMode)">🔄 再玩一次</button>';
+ document.getElementById('gameActions').innerHTML=next+' <button onclick="showUnit()">回練習方式</button>';
+}
+
 function startPractice(){currentIndex=0;show("practice");renderPractice();setTimeout(speakCurrent,250)}
 function renderPractice(){
- const w=currentTopic.words[currentIndex];
+ const w=lessonWords()[currentIndex];
  document.getElementById("practiceCn").textContent=w[0];
  document.getElementById("practiceEn").textContent=w[1];
  document.getElementById("practicePron").textContent="";
- document.getElementById("practiceProgress").style.width=((currentIndex+1)/currentTopic.words.length*100)+"%";
+ document.getElementById("practiceProgress").style.width=((currentIndex+1)/lessonWords().length*100)+"%";
  updatePracticeStar();
+}
+let speechRate=parseFloat(localStorage.getItem("momEnglishSpeechRate")||"0.16");
+const speedNames={".12":"🐢 極慢極慢",".16":"🐢 超超慢",".20":"🐢 非常慢",".26":"🐢 慢"};
+
+function updateSpeedLabel(){
+ const label=document.getElementById("speedLabel");
+ if(label) label.textContent="目前發音速度："+(speedNames[speechRate.toFixed(2)]||"自訂速度");
+}
+function toggleSpeedMenu(){
+ const menu=document.getElementById("speedMenu");
+ if(menu){menu.classList.toggle("hidden");updateSpeedLabel();}
+}
+function setSpeechRate(rate){
+ speechRate=rate;
+ localStorage.setItem("momEnglishSpeechRate",String(rate));
+ updateSpeedLabel();
+ document.getElementById("voiceStatus").textContent="已設定："+(speedNames[rate.toFixed(2)]||"自訂速度");
 }
 function speak(text){
  if(!("speechSynthesis" in window)){document.getElementById("voiceStatus").textContent="此瀏覽器不支援語音播放，請換 Chrome / Safari 試試看。";return}
  speechSynthesis.cancel();
  const u=new SpeechSynthesisUtterance(text);
- u.lang="en-US";u.rate=.72;u.pitch=1;
+ u.lang="en-US";u.rate=speechRate;u.pitch=1;
  const voices=speechSynthesis.getVoices();
  const v=voices.find(x=>/^en(-|_)/i.test(x.lang))||voices.find(x=>x.lang.includes("en"));
  if(v)u.voice=v;
@@ -242,91 +424,110 @@ function speak(text){
  u.onend=()=>document.getElementById("voiceStatus").textContent="可以再聽一次";
  speechSynthesis.speak(u);
 }
-function speakCurrent(){speak(currentTopic.words[currentIndex][1])}
-function prevWord(){currentIndex=(currentIndex-1+currentTopic.words.length)%currentTopic.words.length;renderPractice();speakCurrent()}
-function nextWord(){currentIndex=(currentIndex+1)%currentTopic.words.length;renderPractice();speakCurrent()}
+function speakCurrent(){setTimeout(()=>speak(lessonWords()[currentIndex][1]),450)}
+function prevWord(){currentIndex=(currentIndex-1+lessonWords().length)%lessonWords().length;renderPractice();speakCurrent()}
+function nextWord(){currentIndex=(currentIndex+1)%lessonWords().length;renderPractice();speakCurrent()}
 function keyFor(w){return currentTopic.id+"|"+w[1]}
 function updatePracticeStar(){
- const on=stars.includes(keyFor(currentTopic.words[currentIndex]));
- document.getElementById("practiceStar").textContent=on?"★ 已加入再練習":"☆ 想再練一次";
+ const on=stars.includes(keyFor(lessonWords()[currentIndex]));
+ document.getElementById("practiceStar").textContent=on?"★":"☆";
+ document.getElementById("practiceStar").title=on?"已在練習庫：按一下移出":"還沒加入：按一下放入練習庫";
 }
 function toggleStar(){
- const k=keyFor(currentTopic.words[currentIndex]);
+ const k=keyFor(lessonWords()[currentIndex]);
  if(stars.includes(k))stars=stars.filter(x=>x!==k);else stars.push(k);
  saveStars();updatePracticeStar();
 }
 function startQuiz(){
  quizIndex=0;score=0;answered=false;
+ // 10 題平均分配：4 個單字至少各出現 2 次，再隨機補 2 題。
+ const words=lessonWords();
+ let seq=[];
+ words.forEach(w=>{seq.push(w,w)});
+ while(seq.length<10) seq.push(words[Math.floor(Math.random()*words.length)]);
+ seq=seq.sort(()=>Math.random()-.5);
+ window.quizSequence=seq;
  document.getElementById("quizResult").innerHTML="";
  show("quiz");renderQuiz();
  setTimeout(speakQuiz,250);
 }
 function renderQuiz(){
  answered=false;
- const w=currentTopic.words[quizIndex];
+ const words=lessonWords();
+ const w=window.quizSequence[quizIndex];
+ window.quizCurrentWord=w;
  document.getElementById("quizEn").textContent=w[1];
  document.getElementById("feedback").textContent="";
- document.getElementById("quizProgress").style.width=((quizIndex+1)/currentTopic.words.length*100)+"%";
+ document.getElementById("quizProgress").style.width=((quizIndex+1)/10*100)+"%";
  updateQuizStar();
  let pool=[w[0]];
- while(pool.length<4){
-   const x=currentTopic.words[Math.floor(Math.random()*currentTopic.words.length)][0];
-   if(!pool.includes(x))pool.push(x);
- }
+ while(pool.length<4){const x=words[Math.floor(Math.random()*words.length)][0];if(!pool.includes(x))pool.push(x)}
  pool.sort(()=>Math.random()-.5);
  document.getElementById("options").innerHTML=pool.map(x=>`<button class="option" onclick="answer('${escapeAttr(x)}',this)">${x}</button>`).join("");
 }
-function escapeAttr(s){return s.replace(/'/g,"&#39;")}
-function speakQuiz(){speak(currentTopic.words[quizIndex][1])}
+function speakQuiz(){setTimeout(()=>speak(window.quizCurrentWord[1]),450)}
 function answer(choice,btn){
  if(answered)return;
  answered=true;
- const correct=currentTopic.words[quizIndex][0];
+ const correct=window.quizCurrentWord[0];
  const buttons=[...document.querySelectorAll(".option")];
  buttons.forEach(b=>{if(b.textContent===correct)b.classList.add("correct")});
- if(choice===correct){
-   score++;
-   btn.classList.add("correct");
-   document.getElementById("feedback").textContent="🎉 "+praise[Math.floor(Math.random()*praise.length)];
-   confetti();
- }else{
-   btn.classList.add("wrong");
-   document.getElementById("feedback").textContent="沒關係，再聽一次就好 😊";
- }
+ if(choice===correct){score++;btn.classList.add("correct");document.getElementById("feedback").textContent="🎉 "+praise[Math.floor(Math.random()*praise.length)];confetti();}
+ else{btn.classList.add("wrong");document.getElementById("feedback").textContent="沒關係，再聽一次就好 😊";}
  updateQuizStar();
- setTimeout(()=>{
-   quizIndex++;
-   if(quizIndex<currentTopic.words.length)renderQuiz();else finishQuiz();
- },1100);
+ setTimeout(()=>{quizIndex++;if(quizIndex<10)renderQuiz();else finishQuiz();},1100);
 }
 function updateQuizStar(){
- const k=keyFor(currentTopic.words[quizIndex]);
+ const k=window.quizCurrentWord?keyFor(window.quizCurrentWord):keyFor(lessonWords()[0]);
  const on=stars.includes(k);
- document.getElementById("quizStar").textContent=on?"★ 已加入再練習":"☆ 我想再練一次";
+ document.getElementById("quizStar").textContent=on?"★":"☆";
+ document.getElementById("quizStar").title=on?"已在練習庫：按一下移出":"還沒加入：按一下放入練習庫";
 }
 function toggleQuizStar(){
- const k=keyFor(currentTopic.words[quizIndex]);
+ const k=window.quizCurrentWord?keyFor(window.quizCurrentWord):keyFor(lessonWords()[0]);
  if(stars.includes(k))stars=stars.filter(x=>x!==k);else stars.push(k);
  saveStars();updateQuizStar();
 }
 function finishQuiz(){
  let medal,title;
- if(score<5){medal="🥉";title="銅牌";}
- else if(score<8){medal="🥈";title="銀牌";}
- else{medal="🥇";title="金牌";}
+ if(score<6){medal="🥉";title="完成挑戰";}
+ else if(score<8){medal="🥈";title="表現很好";}
+ else{medal="🥇";title="英文高手";}
+ const passed=score>=8;
+ if(passed) markLevelComplete();
+ let next='';
+ if(passed && currentLevel<maxLevel()){next='<button class="primary" style="margin-left:8px" onclick="selectLevel('+(currentLevel+1)+')">🚀 進階下一組</button>';}
  document.getElementById("quizResult").innerHTML=`
  <div class="badge">
   <div class="medal">${medal}</div>
   <div class="title">${title}</div>
   <div style="font-size:24px;margin-top:8px">10 題答對 ${score} 題</div>
-  <p style="font-size:20px">今天願意來學，就是很棒的成就！</p>
+  <p style="font-size:20px">${passed?'太棒了！這一組學會了，可以挑戰下一組！':'沒關係，今天已經完成練習。想再試一次，熟悉後就能進階。'}</p>
   <button class="primary" onclick="startQuiz()">🔄 再玩一次</button>
   <button style="margin-left:8px" onclick="showUnit()">回主題</button>
+  ${next}
  </div>`;
+}
+function startStarReview(){
+  if(!stars.length){
+    alert("目前還沒有放進練習庫的單字。看到想再練的單字，按旁邊的 ☆ 就可以加入。");
+    return;
+  }
+  const candidates=[];
+  stars.forEach(k=>{
+    const [tid,en]=k.split("|");
+    const t=topics.find(x=>x.id===tid);
+    const w=t?.words.find(x=>x[1]===en);
+    if(w) candidates.push(w);
+  });
+  if(!candidates.length) return;
+  currentTopic={id:"star-review",name:"我的練習庫",words:candidates};
+  currentLevel=0;
+  startPractice();
 }
 function renderReview(){
  const box=document.getElementById("reviewList");
- if(!stars.length){box.innerHTML='<p style="font-size:20px;color:#777">目前還沒有單字。看到想再練的單字，按一下 ☆ 就會放到這裡。</p>';return}
+ if(!stars.length){box.innerHTML='<p style="font-size:20px;color:#777">目前還沒有單字。看到想再練的單字，按旁邊的 ☆ 就可以放進來。</p>';return}
  box.innerHTML=stars.map(k=>{
    const [tid,en]=k.split("|");const t=topics.find(x=>x.id===tid);const w=t?.words.find(x=>x[1]===en);
    if(!w)return "";
@@ -349,7 +550,7 @@ function confetti(){
  }
 }
 speechSynthesis?.addEventListener?.("voiceschanged",()=>{});
-renderTopics();renderReview();
+renderTopics();renderReview();updateSpeedLabel();
 </script>
 </body>
 </html>
