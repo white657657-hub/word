@@ -215,7 +215,17 @@ button.green{background:#6d9d74;color:white}
     </div>
     <div style="display:grid;grid-template-columns:1fr auto;gap:10px;margin:12px 0">
       <button class="blue small-btn" onclick="speakQuiz()">🔊 非常慢・再聽一次</button>
-      <button class="gold speed-plus" onclick="toggleSpeedMenu()" aria-label="選擇發音速度">＋</button>
+      <button class="gold speed-plus" onclick="toggleQuizSpeedMenu()" aria-label="選擇發音速度">＋</button>
+    </div>
+    <div id="quizSpeedMenu" class="speed-menu hidden">
+      <div style="font-size:20px;font-weight:800;margin-bottom:10px">🔊 選擇發音速度</div>
+      <div class="speed-grid">
+        <button onclick="setSpeechRate(.12);toggleQuizSpeedMenu()">🐢 極慢極慢</button>
+        <button onclick="setSpeechRate(.16);toggleQuizSpeedMenu()">🐢 超超慢</button>
+        <button onclick="setSpeechRate(.20);toggleQuizSpeedMenu()">🐢 非常慢</button>
+        <button onclick="setSpeechRate(.26);toggleQuizSpeedMenu()">🙂 慢</button>
+      </div>
+      <div id="quizSpeedLabel" class="speed-label"></div>
     </div>
     <div class="feedback" id="feedback"></div>
     <div class="quiz-options" id="options"></div>
@@ -435,11 +445,18 @@ function toggleSpeedMenu(){
  const menu=document.getElementById("speedMenu");
  if(menu){menu.classList.toggle("hidden");updateSpeedLabel();}
 }
+function toggleQuizSpeedMenu(){
+ const menu=document.getElementById("quizSpeedMenu");
+ const label=document.getElementById("quizSpeedLabel");
+ if(menu){menu.classList.toggle("hidden");if(label)label.textContent="目前發音速度："+(speedNames[speechRate.toFixed(2)]||"自訂速度");}
+}
 function setSpeechRate(rate){
  speechRate=rate;
  localStorage.setItem("momEnglishSpeechRate",String(rate));
  updateSpeedLabel();
  document.getElementById("voiceStatus").textContent="已設定："+(speedNames[rate.toFixed(2)]||"自訂速度");
+ const ql=document.getElementById("quizSpeedLabel");
+ if(ql) ql.textContent="目前發音速度："+(speedNames[rate.toFixed(2)]||"自訂速度");
 }
 function speak(text){
  const status=document.getElementById("voiceStatus");
