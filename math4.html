@@ -13,7 +13,7 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .info-bar{display:flex;justify-content:space-between;width:94%;font-weight:800;margin:4px 0 6px}.progress{width:94%;height:10px;background:#e2e8f0;border-radius:6px;overflow:hidden;margin-bottom:15px}.bar{height:100%;width:0;background:var(--green);transition:.3s}
 .mode-label{font-size:1rem;font-weight:800;padding:6px 14px;border-radius:20px;background:#fff;margin-bottom:8px}.instruction{min-height:30px;text-align:center;font-weight:700;color:#4a5568;margin-bottom:5px}
 .top-question{display:flex;align-items:center;justify-content:center;gap:10px;margin:5px 0 14px}.q-text{font-size:1.8rem;font-weight:900;letter-spacing:1px;color:#263238}.final-ans{width:115px;height:50px;font-size:1.85rem;font-family:var(--math-font);text-align:center;border:3px solid #333;border-radius:10px;background:#fff;outline:none;-moz-appearance:textfield}.final-ans::-webkit-outer-spin-button,.final-ans::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.btn-main{padding:11px 18px;font-size:1.08rem;font-weight:800;color:#fff;background:var(--green);border:0;border-radius:11px;box-shadow:0 4px 0 #219653;cursor:pointer}
-.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"/";position:absolute;color:var(--red);font-size:3rem;font-weight:900;line-height:1;transform:rotate(35deg);left:50%;top:50%;translate:-50% -50%;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.08rem;font-weight:900;font-family:var(--math-font);color:var(--red);outline:none;background:#fff;cursor:pointer;padding:0;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}.borrow-action-cell:focus-visible{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell.active{border-color:var(--red);background:#fff5f5}.borrow-action-cell.active::after{content:"10"}.borrow-action-cell:active{transform:scale(.97)}.borrow-input-cell.applied{border-color:var(--red);background-color:#fff5f5;background-image:linear-gradient(135deg,transparent 46%,#dc2626 47%,#dc2626 53%,transparent 54%);box-shadow:0 0 0 2px rgba(220,38,38,.10)}.borrow-help{width:190px;font-size:.78rem;color:#64748b;line-height:1.5;margin:0;text-align:left;background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 9px;box-sizing:border-box}.borrow-help strong{color:#b91c1c}.math-card.borrow-layout{align-items:flex-start}.math-card.borrow-layout .vertical{flex:0 0 auto}@media(max-width:700px){.math-card.borrow-layout{flex-direction:column;align-items:center}.borrow-help{width:100%;max-width:430px;margin-top:4px;text-align:center}}.borrow-help strong{color:#b91c1c}@media(max-width:520px){.borrow-action-cell{width:46px;height:34px;font-size:1rem}}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center} .correction-under-problem{width:100%;margin-top:10px;background:#fff;border:2px solid #dbe3ec;border-radius:16px;padding:10px 10px 12px;box-sizing:border-box}.correction-under-problem.hidden{display:none}.correction-title{text-align:center;font-weight:900;color:#475569;font-size:1rem;margin-bottom:6px}.correction-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900}.correction-cell{width:54px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.65rem}.correction-op{font-family:system-ui,sans-serif;font-size:1.6rem;color:var(--red);text-align:center}.correction-line{grid-column:1/-1;border-bottom:3px solid #334155;height:2px;margin:0 0 1px}.correction-digit{min-width:34px;height:34px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}.correction-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 3px #ef4444}.correction-ok{background:#dcfce7;color:#15803d}.correction-note{text-align:center;margin-top:7px;color:#475569;font-size:.92rem;line-height:1.5}.correction-note strong{color:#b91c1c}.correction-note .right{color:#15803d;font-weight:900}@media(max-width:520px){.correction-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-cell{width:46px;height:34px;font-size:1.45rem}}
+.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"";position:absolute;width:42px;height:3px;background:var(--red);border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.08rem;font-weight:900;font-family:var(--math-font);color:var(--red);outline:none;background:#fff;cursor:pointer;padding:0;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}.borrow-action-cell:focus-visible{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell.active{border-color:var(--red);background:#fff5f5}.borrow-action-cell.active::after{content:"10"}.borrow-action-cell:active{transform:scale(.97)}.borrow-input-cell.applied{border-color:var(--red);background-color:#fff5f5;position:relative;box-shadow:0 0 0 2px rgba(220,38,38,.10)}.borrow-input-cell.applied::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.borrow-help{width:190px;font-size:.78rem;color:#64748b;line-height:1.5;margin:0;text-align:left;background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 9px;box-sizing:border-box}.borrow-help strong{color:#b91c1c}.math-card.borrow-layout{align-items:flex-start}.math-card.borrow-layout .vertical{flex:0 0 auto}@media(max-width:700px){.math-card.borrow-layout{flex-direction:column;align-items:center}.borrow-help{width:100%;max-width:430px;margin-top:4px;text-align:center}}.borrow-help strong{color:#b91c1c}@media(max-width:520px){.borrow-action-cell{width:46px;height:34px;font-size:1rem}}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center} .correction-under-problem{width:100%;margin-top:10px;background:#fff;border:2px solid #dbe3ec;border-radius:16px;padding:10px 10px 12px;box-sizing:border-box}.correction-under-problem.hidden{display:none}.correction-title{text-align:center;font-weight:900;color:#475569;font-size:1rem;margin-bottom:6px}.correction-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900}.correction-cell{width:54px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.65rem}.correction-op{font-family:system-ui,sans-serif;font-size:1.6rem;color:var(--red);text-align:center}.correction-line{grid-column:1/-1;border-bottom:3px solid #334155;height:2px;margin:0 0 1px}.correction-digit{min-width:34px;height:34px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}.correction-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 3px #ef4444}.correction-ok{background:#dcfce7;color:#15803d}.correction-note{text-align:center;margin-top:7px;color:#475569;font-size:.92rem;line-height:1.5}.correction-note strong{color:#b91c1c}.correction-note .right{color:#15803d;font-weight:900}@media(max-width:520px){.correction-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-cell{width:46px;height:34px;font-size:1.45rem}}
 /* V12 訂正借位視覺：在訂正區直接呈現紙本式紅色借位過程 */
 .correction-borrow-wrap{margin:2px auto 7px;max-width:430px;}
 .correction-borrow-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:end;justify-content:center;font-family:"Courier New",monospace;font-weight:900;position:relative;min-height:58px;}
@@ -30,13 +30,13 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .answer-borrow-empty{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;box-sizing:border-box;}
 .answer-borrow-box{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:#dc2626;background:#fff;position:relative;box-sizing:border-box;}
 .answer-borrow-box.applied{border-color:#dc2626;background:#fff5f5;}
-.answer-borrow-box.applied::after{content:"";position:absolute;left:7px;right:7px;top:50%;height:3px;background:#dc2626;transform:rotate(135deg);transform-origin:center;}
+.answer-borrow-box.applied::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;}
 .answer-borrow-new{height:34px;display:flex;align-items:center;justify-content:center;font-size:1.18rem;color:#dc2626;position:relative;}
 .answer-borrow-original{height:38px;display:flex;align-items:center;justify-content:center;font-size:1.45rem;color:#263238;position:relative;}
 .answer-borrow-original.changed{color:#dc2626;}
-.answer-borrow-original.changed::after{content:"";position:absolute;left:9px;right:9px;top:50%;height:3px;background:#dc2626;transform:rotate(135deg);transform-origin:center;}
+.answer-borrow-original.changed::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;}
 .answer-borrow-caption{font-family:system-ui,sans-serif;text-align:center;color:#b91c1c;font-size:.84rem;font-weight:800;margin:0 0 4px;}
-@media(max-width:520px){.answer-borrow-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.answer-borrow-box{width:46px;height:32px;font-size:.95rem}.answer-borrow-new{font-size:1.02rem}.answer-borrow-original{font-size:1.25rem}.answer-borrow-original.changed::after{left:7px;right:7px}}
+@media(max-width:520px){.answer-borrow-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.answer-borrow-box{width:46px;height:32px;font-size:.95rem}.answer-borrow-box.applied::after{width:34px}.answer-borrow-new{font-size:1.02rem}.answer-borrow-original{font-size:1.25rem}.answer-borrow-original.changed::after{width:34px}.clickable-digit.marked::after{width:34px}.borrow-input-cell.applied::after{width:34px}}
 .textbook-borrow{max-width:430px;margin:2px auto 9px;text-align:center;}
 .borrow-caption{font-family:system-ui,sans-serif;color:#b91c1c;font-size:.9rem;font-weight:900;margin:2px 0 5px;}
 .textbook-borrow-grid{display:grid;grid-template-columns:42px repeat(4,54px);gap:2px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900;}
@@ -47,9 +47,9 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .borrow-result.active{visibility:visible;}
 .borrow-original{height:34px;display:flex;align-items:center;justify-content:center;color:#263238;font-size:1.45rem;position:relative;}
 .borrow-original.crossed{color:#dc2626;}
-.borrow-original.crossed::after{content:"";position:absolute;width:34px;border-top:2px solid #dc2626;transform:rotate(-18deg);}
+.borrow-original.crossed::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;}
 .borrow-step-note{font-family:system-ui,sans-serif;color:#b91c1c;font-size:.88rem;line-height:1.5;margin-top:5px;}
-@media(max-width:520px){.textbook-borrow-grid{grid-template-columns:34px repeat(4,46px);gap:1px}.borrow-ten{font-size:.88rem}.borrow-result{font-size:1rem}.borrow-original{font-size:1.25rem}.borrow-original.crossed::after{width:29px}.borrow-step-note{font-size:.8rem;}}
+@media(max-width:520px){.textbook-borrow-grid{grid-template-columns:34px repeat(4,46px);gap:1px}.borrow-ten{font-size:.88rem}.borrow-result{font-size:1rem}.borrow-original{font-size:1.25rem}.borrow-original.crossed::after{width:34px}.borrow-step-note{font-size:.8rem;}}
 @media(max-width:520px){.correction-borrow-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-borrow-cell{height:34px;font-size:1rem}.correction-borrow-old{font-size:.86rem}.correction-borrow-new{font-size:1.08rem}}
 .answer-help{width:100%;margin-top:10px;background:#fffdf2;border:2px solid #f6c453;border-radius:14px;padding:12px 14px;color:#475569;font-size:.95rem;line-height:1.7;text-align:left}.answer-help .answer-title{font-weight:900;color:#9a6700;font-size:1.05rem;margin-bottom:4px}.answer-help .answer-number{font-family:"Courier New",monospace;font-size:1.25rem;font-weight:900;color:#263238}.answer-help .answer-error{color:#b91c1c;font-weight:800}.answer-help .answer-teach{margin-top:5px}.answer-help ol{margin:7px 0 0 20px;padding:0}.answer-help li{margin:2px 0}.answer-help.hidden{display:none}.answer-equation{margin:10px auto 8px;padding:10px 12px;background:#f8fafc;border:1px solid #dbe3ec;border-radius:12px;max-width:360px;font-family:"Courier New",monospace;font-weight:900}.answer-equation-title{font-family:system-ui,sans-serif;font-size:.9rem;color:#64748b;margin-bottom:5px}.ae-row{display:grid;grid-template-columns:24px repeat(5,1fr);align-items:center;min-height:30px;text-align:center;font-size:1.35rem}.ae-op{font-family:system-ui,sans-serif;color:#dc2626}.ae-digit{display:inline-flex;justify-content:center;align-items:center;min-width:26px;height:30px;border-radius:6px}.ae-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 2px #ef4444}.ae-correct{background:#dcfce7;color:#15803d}.ae-line{border-top:2px solid #334155;margin:3px 0 3px 24px}.ae-note{font-family:system-ui,sans-serif;font-size:.9rem;color:#475569;margin-top:6px;line-height:1.55}.answer-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:8px}.btn-answer{padding:9px 15px;font-size:1rem;font-weight:800;color:#9a6700;background:#fff7d6;border:2px solid #f6c453;border-radius:10px;cursor:pointer}.btn-answer:active{transform:translateY(2px)}.btn-answer:focus-visible{outline:3px solid rgba(246,196,83,.35);outline-offset:3px}.controls{display:flex;align-items:center;gap:10px;margin-top:4px}.btn-move{width:55px;height:55px;border:0;border-radius:50%;background:#f39c12;color:#fff;font-weight:900;font-size:1.25rem;box-shadow:0 4px 0 #d35400;cursor:pointer}.secondary{background:none;border:0;color:#8a94a6;cursor:pointer;margin-top:10px}
 .result{width:90%;background:#fff;border-radius:24px;padding:26px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.14);margin-top:30vh}.score{font-size:1.8rem;color:#f39c12;font-weight:900}.praise{font-size:1.15rem;line-height:1.7;margin:16px 0}.wrong-list{margin-top:12px;text-align:left;background:#f8fafc;border-radius:12px;padding:12px;font-size:.94rem}.balloon{position:fixed;bottom:-100px;width:38px;height:48px;border-radius:50%;animation:up 6s linear forwards;z-index:1000}.confetti-piece{position:fixed;top:-18px;width:10px;height:16px;z-index:1001;pointer-events:none;animation:confetti-fall linear forwards}.celebrate-text{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.7);z-index:1002;background:#fff;border-radius:22px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:1.55rem;font-weight:900;text-align:center;white-space:nowrap;animation:pop .5s ease-out forwards}.celebrate-text.fade{animation:fade .5s ease-in forwards}@keyframes confetti-fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot));opacity:.95}}@keyframes pop{to{transform:translate(-50%,-50%) scale(1)}}@keyframes fade{to{opacity:0;transform:translate(-50%,-50%) scale(1.04)}}@keyframes up{to{transform:translateY(-120vh)}}
@@ -952,11 +952,15 @@ function recordWrongProblem(){
  if(!wrongProblems.some(x=>appSignature(x)===appSignature(copy))) wrongProblems.push(copy);
 }
 
+function currentProblemKey(){
+ return `${n1}|${op}|${n2}|${correctVal}|${currentQ}|${currentType}`;
+}
+
 function resetAnswerHelp(){
  const correction=document.getElementById('correction-under-problem');
  if(correction){correction.classList.add('hidden');correction.innerHTML='';}
  const box=document.getElementById('answer-help');
- if(box){box.classList.add('hidden');box.innerHTML='';}
+ if(box){box.classList.add('hidden');box.innerHTML='';delete box.dataset.problemKey;}
  const btn=document.getElementById('show-answer-btn');
  const appBtn=document.getElementById('show-answer-app');
  if(btn)btn.innerText='💡 看答案';
@@ -992,33 +996,55 @@ function getDigitErrorText(userVal){
 function buildCalculationTeaching(){
  const A=String(n1).padStart(4,'0').split('').map(Number);
  const B=String(n2).padStart(4,'0').split('').map(Number);
- const places=['個位','十位','百位','千位'];
+ const places=['千位','百位','十位','個位'];
  const steps=[];
- let carry=0;
- let borrow=0;
  if(op==='+'){
+  let carry=0;
   for(let i=3;i>=0;i--){
    const sum=A[i]+B[i]+carry;
+   const carryText=carry?`＋${carry}`:'';
    const out=Math.floor(sum/10);
-   steps.push(`${places[3-i]}：${A[i]}＋${B[i]}${carry?`＋${carry}`:''}＝${sum}，這一位寫 ${sum%10}${out?'，並向左進 1':''}。`);
+   steps.push(`${places[i]}：${A[i]}＋${B[i]}${carryText}＝${sum}，這一位寫 ${sum%10}${out?'，並向左進 1':''}。`);
    carry=out;
   }
- }else{
-  for(let i=3;i>=0;i--){
-   const top=A[i]-borrow;
-   if(top<B[i]){
-    const shown=top+10;
-    if(A[i]===0 && borrow===1){
-      steps.push(`${places[3-i]}：這一位原本是 0，右邊需要借位，所以要繼續向左借 1；這個 0 會變成 9，讓右邊的位數可以繼續計算。`);
-    }else{
-      steps.push(`${places[3-i]}：${top} 不夠減 ${B[i]}，所以要從左邊借 1；這一位變成 ${shown}，${shown}－${B[i]}＝${shown-B[i]}。`);
-    }
-    borrow=1;
-   }else{
-    steps.push(`${places[3-i]}：${top}－${B[i]}＝${top-B[i]}。`);
-    borrow=0;
-   }
+  return steps;
+ }
+ // 減法：完全依照實際紙本退位順序計算，讓說明與算式中的每一位一致。
+ const work=A.slice();
+ for(let i=3;i>=0;i--){
+  const current=work[i];
+  const sub=B[i];
+  if(current>=sub){
+   steps.push(`${places[i]}：${current}－${sub}＝${current-sub}。`);
+   continue;
   }
+
+  // 找左邊最近的非 0 位；中間若有 0，依序變成 9。
+  let j=i-1;
+  while(j>=0 && work[j]===0) j--;
+  if(j<0){
+   steps.push(`${places[i]}：${current} 不夠減 ${sub}，這一位需要退位。`);
+   continue;
+  }
+
+  const sourceOld=work[j];
+  work[j]=sourceOld-1;
+  const through=[];
+  for(let k=j+1;k<i;k++){
+   work[k]=9;
+   through.push(`${places[k]}的 0 變成 9`);
+  }
+  work[i]=current+10;
+
+  let sentence=`${places[i]}：${current} 不夠減 ${sub}，要向左退位 1。`;
+  if(j===i-1){
+   sentence+=`${places[j]}的 ${sourceOld} 變成 ${work[j]}，${places[i]}得到 10，${work[i]}－${sub}＝${work[i]-sub}。`;
+  }else{
+   sentence+=`${places[j]}的 ${sourceOld} 變成 ${work[j]}，`;
+   sentence+=through.join('，') + '，';
+   sentence+=`${places[i]}得到 10，${work[i]}－${sub}＝${work[i]-sub}。`;
+  }
+  steps.push(sentence);
  }
  return steps;
 }
@@ -1197,6 +1223,12 @@ function showAnswer(){
  const btn=document.getElementById('show-answer-btn');
  const appBtn=document.getElementById('show-answer-app');
  if(!box)return;
+ const key=currentProblemKey();
+ if(box.dataset.problemKey!==key){
+   box.innerHTML='';
+   box.classList.add('hidden');
+ }
+ box.dataset.problemKey=key;
  answerRevealed=true;
  if(btn)btn.innerText='💡 答案已顯示';
  if(appBtn)appBtn.innerText='💡 答案已顯示';
@@ -1216,7 +1248,7 @@ function showAnswer(){
  }
  if(user.value!==null && user.value!==correctVal){
    const err=getDigitErrorText(user.value);
-   html+=`<div class="answer-error">你填的是 ${user.value.toLocaleString()}。${err||'答案和正確答案不同，請重新檢查每一位。'}</div>`;
+   html+=`<div class="answer-error">這一題是 <strong>${n1.toLocaleString()} ${op} ${n2.toLocaleString()} = ${correctVal.toLocaleString()}</strong>。你填的是 ${user.value.toLocaleString()}。${err||'答案和這個算式不同，請重新檢查每一位。'}</div>`;
  }else if(user.value===correctVal){
    html+='<div>你填的答案已經正確！可以直接送出。</div>';
  }else{
