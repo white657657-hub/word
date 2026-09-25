@@ -701,20 +701,31 @@ function renderGrid(){
          <div><input class="carry-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
          <div><input class="carry-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>`;
 
- // 第一個數：萬位留白，千～個位放四位數；每個數字都可點擊，在數字上加／取消紅色「／」標記。
+ // 第一個數：萬位留白，千～個位放四位數。
+ // 重要：前導 0 不顯示，但「中間的 0」必須保留。
+ // 例如 3 要顯示在個位：   3，而不是 0 0 0 3；
+ // 5000 則必須顯示：5 0 0 0，不能把有意義的 0 隱藏。
+ const visibleAStart=A.findIndex(x=>x!==0);
+ const visibleBStart=B.findIndex(x=>x!==0);
+ const aStart=visibleAStart<0 ? A.length-1 : visibleAStart;
+ const bStart=visibleBStart<0 ? B.length-1 : visibleBStart;
  html+=`<div></div><div class="cell"></div>`;
  A.forEach((x,i)=>{
   const cls=placeClasses[i];
+  const show=i>=aStart;
   if(op==='-'){
-    html+=`<div class="cell place-digit ${cls} clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)">${x}</div>`;
+    html+=`<div class="cell place-digit ${cls} clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)">${show?x:''}</div>`;
   }else{
-    html+=`<div class="cell place-digit ${cls}">${x}</div>`;
+    html+=`<div class="cell place-digit ${cls}">${show?x:''}</div>`;
   }
  });
 
- // 第二個數：同樣固定在千～個位。
+ // 第二個數：固定對齊千～個位；前導 0 不顯示。
  html+=`<div class="op">${op}</div><div class="cell"></div>`;
- B.forEach((x,i)=>{html+=`<div class="cell place-digit ${placeClasses[i]}">${x}</div>`;});
+ B.forEach((x,i)=>{
+  const show=i>=bStart;
+  html+=`<div class="cell place-digit ${placeClasses[i]}">${show?x:''}</div>`;
+ });
 
  html+=`<div class="line"></div>`;
 
