@@ -21,6 +21,11 @@
         .word-separator { width:10px; text-align:center; color:var(--accent); font-size:1.2rem; }
         @media screen and (max-width: 600px) { .letter-box { width: 35px; height: 60px; font-size: 1.6rem; line-height: 60px; } #display-cn { font-size: 2.5rem !important; } }
         .letter-box.wrong { border-color: var(--danger) !important; color: var(--danger); }
+    .letter-box.mismatch { border-color: var(--danger) !important; color: var(--danger) !important; background: rgba(248,113,113,.16) !important; animation: mismatchPulse .55s ease; }
+    .letter-box.correct-place { border-color: var(--success) !important; }
+    @keyframes mismatchPulse { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+    .spelling-feedback { margin: 8px auto 0; max-width: 760px; padding: 10px 14px; border-radius: 12px; background: rgba(15,23,42,.88); text-align:center; font-weight:800; color:#e2e8f0; }
+    .spelling-feedback b { color: var(--danger); }
 
         /* HP 頂部貼齊 */
         #combat-arena { height: 160px; background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/environments/grass.png') center/cover; border-radius: 12px; position: relative; border: 1px solid #334155; margin-bottom: 5px; flex-shrink: 0; }
@@ -289,7 +294,7 @@
 
 
         /* 後台管理 UI：低干擾、灰色、小尺寸 */
-        /* V1450：8歲兒童首頁 UI/UX */
+        /* V1451：8歲兒童首頁 UI/UX */
         .home-header { text-align:center; margin:5px 0 10px; }
         .home-title { color:var(--accent); font-size:1.55rem; font-weight:1000; letter-spacing:1px; }
         .home-user { color:#94a3b8; font-size:.78rem; margin-top:2px; }
@@ -384,6 +389,10 @@
         .grid-item.defeated { opacity:.42; filter:grayscale(.7); cursor:not-allowed !important; border-color:#64748b !important; }
         .grid-item.defeated .team-status { color:var(--danger); }
         .caught-badge { background:rgba(74,222,128,.15); color:var(--success); border:1px solid rgba(74,222,128,.35); border-radius:6px; padding:2px 5px; font-size:.65rem; font-weight:800; }
+    
+        .voice-status { display:inline-flex; align-items:center; margin-left:8px; color:#94a3b8; font-size:.78rem; min-height:28px; }
+        .game-action-btn:active { transform:scale(.97); }
+        @media screen and (max-width:600px){ .voice-status{display:block;margin:4px 0 0;text-align:center;font-size:.75rem;} }
     </style>
 </head>
 <body onload="initSystem()">
@@ -499,8 +508,9 @@
                 </div>
                 <div id="sentence-inline-result" class="sentence-status" style="display:none;"></div>
             </div>
-            <button id="btn-voice" class="game-action-btn" onclick="playVoice()">🔊 再唸一次</button>
+            <button id="btn-voice" class="game-action-btn" onclick="unlockAndPlayVoice()">🔊 再唸一次</button><span id="voice-status" class="voice-status" aria-live="polite">第一次使用請按 🔊</span>
 
+<div id="spelling-feedback" class="spelling-feedback" style="display:none"></div>
             <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
         </div>
     </div>
@@ -606,13 +616,59 @@
     const ANSON_USER = 'anson';
     const ANSON_TXT_URL = './vocab/Anson.txt';
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
+    // 寶可夢名稱安全查詢：任何畫面都優先走這裡，避免顯示 No.XX。
+    const PK_NAME_ALIASES = {
+        10079: "超級烈空坐",
+        10044: "超級超夢Y"
+    };
+    function getPokemonName(id) {
+        const n = PK_NAME_ALIASES[id] || PK_NAMES[id];
+        return n || "寶可夢";
+    }
+
     const missingPKNames = Array.from({length:151},(_,i)=>i+1).filter(id => !PK_NAMES[id]);
     if (missingPKNames.length) console.warn("PK_NAMES 缺少：", missingPKNames);
     const localDict = { "bell":"鈴","busy":"忙碌","first name":"名字","last name":"姓氏","bus driver":"公車司機","market":"市場","money":"錢","poor":"窮","sell":"賣","tub":"澡盆","splash":"濺水","funny-looking":"滑稽","holler":"大喊","a couple of":"一些","mustard":"芥末","birthday":"生日","call":"打電話","peanut butter":"花生醬","slug":"蛞蝓","knock over":"撞倒","wrestle":"摔跤","shake head":"搖頭","shook head":"搖頭","sigh":"嘆氣","attack":"攻擊","tire":"輪胎","bicycle":"腳踏車","bus":"公車","train":"火車","by bus":"搭公車","by car":"搭車","by train":"搭火車","motorcycle":"機車","on foot":"走路","sailing ship":"帆船","transportation":"交通工具","town":"城鎮","wheel":"輪子" };
     const CHAINS = [[1,2,3],[4,5,6],[7,8,9],[10,11,12],[25,26],[147,148,149]];
     const DEFAULTS = [384, 150, 992];
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 5, oppHP: 5, currentOppId: 1, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
+    // 戰力以寶可夢 Base Stat Total（BST）為基礎，再換算成適合本遊戲的 HP。
+    // HP 不直接照原作數值，避免三年級單字戰鬥需要答數十題才打倒一隻。
+    const POKE_BST = [318,405,525,309,405,534,314,405,530,195,205,395,195,205,395,251,349,479,253,413,262,442,288,448,320,485,300,450,275,365,505,273,365,505,323,483,299,505,270,435,245,455,320,395,490,285,405,305,450,265,425,290,440,320,500,305,455,350,555,300,385,510,310,400,500,305,405,505,300,390,490,335,515,300,390,495,410,500,315,490,325,465,377,310,470,325,475,325,500,305,525,310,405,500,385,328,483,325,475,330,490,325,530,320,425,455,455,385,340,490,345,485,450,435,490,295,440,320,450,340,520,460,500,455,490,495,500,490,200,540,535,288,325,525,525,525,395,355,495,355,495,515,540,580,580,580,300,420,600,680,600];
+    const SPECIAL_BST = {384:680, 992:570, 10079:780, 10044:780};
+
+    function getPokemonBST(id) {
+        return SPECIAL_BST[id] || POKE_BST[id - 1] || 350;
+    }
+
+    function getPokemonBattlePower(id) {
+        const bst = getPokemonBST(id);
+        if (bst >= 700) return 5;
+        if (bst >= 580) return 5;
+        if (bst >= 500) return 4;
+        if (bst >= 400) return 3;
+        if (bst >= 300) return 2;
+        return 1;
+    }
+
+    function getPokemonMaxHP(id, upgraded=false) {
+        // 戰力 1~5 → 基礎 HP 6~12。
+        const baseHP = [6,7,8,10,12][getPokemonBattlePower(id)-1];
+        const info = getEvoInfo(id);
+        // 每升一級增加耐久；LV3 再額外 +2。
+        const evolutionBonus = upgraded ? Math.max(0, info.lv - 1) * 2 : 0;
+        return baseHP + evolutionBonus;
+    }
+
+    function resetBattleHP() {
+        const playerInfo = getEvoInfo(state.activePokeId);
+        state.playerMaxHP = getPokemonMaxHP(playerInfo.displayId, true);
+        state.playerHP = state.playerMaxHP;
+        state.oppMaxHP = getPokemonMaxHP(state.currentOppId, false);
+        state.oppHP = state.oppMaxHP;
+    }
+
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
     let currentUserKey = '';
@@ -728,17 +784,17 @@
             '================================',
             '',
             '【目前出戰夥伴】',
-            `${PK_NAMES[active] || '寶可夢 #' + active}（ID: ${active}）`,
+            `${getPokemonName(active)}（ID: ${active}）`,
             '',
             '【夥伴】',
-            uniquePartners.map(id => `${id}. ${PK_NAMES[id] || '未知寶可夢'}`).join('\n') || '尚無',
+            uniquePartners.map(id => `${id}. ${getPokemonName(id)}`).join('\n') || '尚無',
             '',
             '【寶可夢圖鑑】',
             `已收服：${caught.length} / 151`,
             `尚未收服：${151 - caught.length} / 151`,
             '',
             '已收服寶可夢：',
-            caught.map(id => `${id}. ${PK_NAMES[id] || '未知寶可夢'}`).join('\n') || '尚無'
+            caught.map(id => `${id}. ${getPokemonName(id)}`).join('\n') || '尚無'
         ];
 
         const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
@@ -1462,12 +1518,14 @@ ${detail}
         state.index = 0;
         state.sentenceEnabled = false;
         state.quizCompleted = 0;
-        state.playerHP = 5;
-        state.oppHP = 5;
+        state.playerHP = 0;
+        state.oppHP = 0;
+        state.playerMaxHP = 6;
+        state.oppMaxHP = 6;
         switchView('view-game');
         initArena();
     }
-    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1; updateHPUI(); loadWord(); }
+    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1; resetBattleHP(); updateHPUI(); loadWord(); }
 
     function getPokeImageCandidates(id) {
         const base = (id === 10079) ? 384 : (id === 10044 ? 150 : id);
@@ -1529,7 +1587,7 @@ ${detail}
         if(!overlay || !img) return 0;
 
         sub.textContent=`${PK_NAMES[oldId] || '夥伴'} 的力量突破極限！`;
-        name.textContent=`✨ ${PK_NAMES[newId] || '新形態'} ✨`;
+        name.textContent=`✨ ${getPokemonName(newId)} ✨`;
         img.style.visibility='visible';
         img.src=getPokeImageUrl(newId,true);
         setPokeImageFallback(img,newId);
@@ -1545,12 +1603,12 @@ ${detail}
     }
 
     function updateHPUI() {
-        const playerPct=Math.max(0,state.playerHP)/5*100;
-        const oppPct=Math.max(0,state.oppHP)/5*100;
+        const playerPct=state.playerMaxHP ? Math.max(0,state.playerHP)/state.playerMaxHP*100 : 0;
+        const oppPct=state.oppMaxHP ? Math.max(0,state.oppHP)/state.oppMaxHP*100 : 0;
         document.getElementById('player-hp-bar').style.width=playerPct+'%';
         document.getElementById('opp-hp-bar').style.width=oppPct+'%';
-        document.getElementById('player-hp-label').textContent=`HP ${Math.max(0,state.playerHP)}/5`;
-        document.getElementById('opp-hp-label').textContent=`HP ${Math.max(0,state.oppHP)}/5`;
+        document.getElementById('player-hp-label').textContent=`HP ${Math.max(0,state.playerHP)}/${state.playerMaxHP}`;
+        document.getElementById('opp-hp-label').textContent=`HP ${Math.max(0,state.oppHP)}/${state.oppMaxHP}`;
 
         const info=getEvoInfo(state.activePokeId);
         const playerSprite=document.getElementById('player-sprite');
@@ -1822,6 +1880,9 @@ ${detail}
         const normalizedAnswer = word.en.replace(/[\s\/-]/g, '').toLowerCase();
 
         if (normalizedInput === normalizedAnswer) {
+            const spellingFeedback = document.getElementById('spelling-feedback');
+            if (spellingFeedback) { spellingFeedback.style.display = 'none'; spellingFeedback.innerHTML = ''; }
+            boxes.forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
             confetti({ particleCount: 30, spread: 50 });
 
             if (state.mode === 'quiz' && !state.tempPractice) {
@@ -1834,6 +1895,13 @@ ${detail}
                 let cur = Math.min((parseInt(getHeroData(expK)) || 0) + 1, 50);
                 setHeroData(expK, cur);
                 const afterEvo = getEvoInfo(state.activePokeId);
+                const oldMaxHP = state.playerMaxHP || 6;
+                const oldHP = state.playerHP;
+                state.playerMaxHP = getPokemonMaxHP(afterEvo.displayId, true);
+                if (afterEvo.lv > beforeEvo.lv) {
+                    // 升級時增加的最大 HP 直接補進目前 HP，讓升級有明顯獎勵。
+                    state.playerHP = Math.min(state.playerMaxHP, oldHP + (state.playerMaxHP - oldMaxHP));
+                }
                 const evolutionDelay = showEvolution(beforeEvo.displayId, afterEvo.displayId);
 
                 // 魔王挑戰：這個單字答對後就從本輪題目移除。
@@ -1865,7 +1933,8 @@ ${detail}
                         ? un[Math.floor(Math.random() * un.length)]
                         : Math.floor(Math.random() * 151) + 1;
 
-                    state.oppHP = 5;
+                    state.oppMaxHP = getPokemonMaxHP(state.currentOppId, false);
+                    state.oppHP = state.oppMaxHP;
                 }
 
                 updateHPUI();
@@ -1896,13 +1965,28 @@ ${detail}
                 setTimeout(loadWord, 600);
             }
         } else {
-            // 只記錄答錯；答對完全不寫 Log。
+            // 錯題仍記錄，但把「錯在哪一個字母」直接標出來。
             addErrorLog(word, ui || '(空白)');
 
-            boxes.forEach(b => {
-                b.classList.add('wrong');
-                setTimeout(() => b.classList.remove('wrong'), 800);
+            const answerChars = Array.from(word.en.replace(/[\s\/-]/g, '').toLowerCase());
+            const inputChars = Array.from(ui.replace(/[\s\/-]/g, '').toLowerCase());
+            boxes.forEach((b, i) => {
+                const typed = inputChars[i] || '';
+                const expected = answerChars[i] || '';
+                b.classList.remove('wrong','mismatch','correct-place');
+                if (typed && expected && typed === expected) {
+                    b.classList.add('correct-place');
+                } else {
+                    b.classList.add('mismatch');
+                }
             });
+
+            const feedback = document.getElementById('spelling-feedback');
+            if (feedback) {
+                const wrongCount = boxes.length - answerChars.reduce((n, ch, i) => n + ((inputChars[i] || '') === ch ? 1 : 0), 0);
+                feedback.style.display = 'block';
+                feedback.innerHTML = `💡 有 <b>${wrongCount}</b> 個字母需要再看看！紅色框就是需要修正的位置。`;
+            }
 
             if (state.mode === 'quiz' && !state.tempPractice) {
                 state.playerHP--;
@@ -2272,18 +2356,113 @@ ${detail}
         renderPracticePhonics(el, text);
     }
 
+    /*
+     * Chrome／平板語音相容層
+     * -----------------------
+     * Chrome 對 SpeechSynthesis 的語音清單與「使用者手勢」較敏感。
+     * 因此：
+     * 1. 先預熱 getVoices()。
+     * 2. 第一次由孩子點「🔊 再唸一次」時，視為使用者手勢，正式解鎖語音。
+     * 3. 自動播放若尚未解鎖，不強制播放，避免 Chrome 靜默封鎖。
+     * 4. voiceschanged 後重新取得語音。
+     * 5. speak 前先 cancel + resume，降低平板 Chrome 卡住不出聲的情況。
+     */
+    let voiceUnlocked = false;
+    let availableVoices = [];
+
+    function refreshSpeechVoices() {
+        if (!('speechSynthesis' in window)) return [];
+        try {
+            availableVoices = window.speechSynthesis.getVoices() || [];
+        } catch (e) {
+            availableVoices = [];
+        }
+        return availableVoices;
+    }
+
+    function chooseEnglishVoice() {
+        const voices = refreshSpeechVoices();
+        return voices.find(v => /^en-US$/i.test(v.lang))
+            || voices.find(v => /^en-/i.test(v.lang))
+            || null;
+    }
+
+    function warmUpSpeech() {
+        if (!('speechSynthesis' in window)) return;
+        refreshSpeechVoices();
+        // 部分 Chrome 平板要等 voiceschanged 才會有完整語音清單。
+        try {
+            window.speechSynthesis.onvoiceschanged = refreshSpeechVoices;
+        } catch (e) {}
+    }
+
+    function speakEnglish(text, options = {}) {
+        if (!('speechSynthesis' in window)) {
+            showVoiceStatus('⚠️ 這個瀏覽器不支援網頁語音。');
+            return false;
+        }
+        const spoken = String(text || '').trim();
+        if (!spoken) return false;
+
+        // 自動播放只有在使用者曾經操作過語音後才執行。
+        if (!options.userGesture && !voiceUnlocked) return false;
+        if (options.userGesture) voiceUnlocked = true;
+
+        const run = () => {
+            try {
+                const synth = window.speechSynthesis;
+                synth.cancel();
+                if (typeof synth.resume === 'function') synth.resume();
+
+                const utter = new SpeechSynthesisUtterance(spoken);
+                utter.lang = 'en-US';
+                const voice = chooseEnglishVoice();
+                if (voice) utter.voice = voice;
+                utter.rate = options.rate ?? 0.78;
+                utter.pitch = 1;
+                utter.volume = 1;
+                utter.onstart = () => showVoiceStatus('🔊 正在播放');
+                utter.onend = () => showVoiceStatus('🔊 可以再聽一次');
+                utter.onerror = () => {
+                    showVoiceStatus('⚠️ Chrome 沒有成功播放，請再按一次 🔊');
+                };
+                synth.speak(utter);
+            } catch (e) {
+                showVoiceStatus('⚠️ 語音播放失敗，請再按一次 🔊');
+            }
+        };
+
+        // Chrome 平板有時需要讓 cancel/resume 完成後再 speak。
+        if (options.userGesture) {
+            run();
+            setTimeout(() => {
+                if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) run();
+            }, 120);
+        } else {
+            run();
+        }
+        return true;
+    }
+
+    function showVoiceStatus(message) {
+        const el = document.getElementById('voice-status');
+        if (el) el.textContent = message || '';
+    }
+
+    function unlockAndPlayVoice() {
+        const word = state.currentList[state.index];
+        if (!word || !word.en) return;
+        voiceUnlocked = true;
+        speakEnglish(word.en, {userGesture:true, rate:0.72});
+    }
+
     function playVoice() {
         const word = state.currentList[state.index];
         if (!word || !word.en) return;
-        window.speechSynthesis.cancel();
-        const m = new SpeechSynthesisUtterance(word.en);
-        m.lang = 'en-US';
-        /* 比原本慢約 20%，方便孩子聽清楚每個音節。 */
-        m.rate = 0.78;
-        m.pitch = 1;
-        m.volume = 1;
-        window.speechSynthesis.speak(m);
+        speakEnglish(word.en, {userGesture:false, rate:0.78});
     }
+
+    warmUpSpeech();
     
 
     let sentenceTargetWord = '';
@@ -2534,7 +2713,7 @@ ${detail}
         const active=getEvoInfo(state.activePokeId);
         current.innerText=state.awaitingPartner
             ? '⚠️ 夥伴已倒下：請選擇另一隻夥伴繼續戰鬥'
-            : `目前出戰：${PK_NAMES[active.displayId] || 'No.'+active.displayId}（點擊其他寶可夢即可更換）`;
+            : `目前出戰：${getPokemonName(active.displayId)}（點擊其他寶可夢即可更換）`;
 
         let ids=[384,150,992];
         for(let i=1;i<=151;i++) if(state.pokedex[i-1]==='1' && !ids.includes(i)) ids.push(i);
@@ -2547,7 +2726,7 @@ ${detail}
             const status = blocked
                 ? '💥 已倒下・不可再次出戰'
                 : (state.activePokeId==id ? '⚔️ 出戰中' : '點擊設為出戰');
-            it.innerHTML=`<img src="${getPokeImageUrl(info.displayId,true)}"><div class="name-zh">${PK_NAMES[info.displayId]||'No.'+info.displayId}</div><div class="team-status">${status}</div>`;
+            it.innerHTML=`<img src="${getPokeImageUrl(info.displayId,true)}"><div class="name-zh">${getPokemonName(info.displayId)}</div><div class="team-status">${status}</div>`;
             const img = it.querySelector('img');
             setPokeImageFallback(img, info.displayId);
 
@@ -2560,7 +2739,9 @@ ${detail}
                 setHeroData('hero_myPoke',id);
                 if(state.awaitingPartner){
                     state.awaitingPartner=false;
-                    state.playerHP=5;
+                    const info = getEvoInfo(state.activePokeId);
+                    state.playerMaxHP = getPokemonMaxHP(info.displayId, true);
+                    state.playerHP = state.playerMaxHP;
                     updateHPUI();
                     switchView('view-game');
                     loadWord();
@@ -2581,7 +2762,7 @@ ${detail}
             const captured=state.pokedex[i-1]==='1'; if(captured) caught++;
             const it=document.createElement('div');
             it.className=`grid-item ${captured?'collected':'locked'}`;
-            it.innerHTML=`<img src="${getPokeImageUrl(i,true)}"><div class="name-zh">${PK_NAMES[i]||'No.'+i}</div>${captured?'<div class="caught-badge">已捕捉・可加入夥伴</div>':'<div style="color:#64748b;font-size:.7rem;">未捕捉</div>'}`;
+            it.innerHTML=`<img src="${getPokeImageUrl(i,true)}"><div class="name-zh">${getPokemonName(i)}</div>${captured?'<div class="caught-badge">已捕捉・可加入夥伴</div>':'<div style="color:#64748b;font-size:.7rem;">未捕捉</div>'}`;
             const img=it.querySelector('img');
             setPokeImageFallback(img,i);
             if(captured){
@@ -2595,3 +2776,4 @@ ${detail}
 </script>
 </body>
 </html>
+>
