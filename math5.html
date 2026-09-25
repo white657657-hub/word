@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>三年級｜第三單元 乘法</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--ink:#24324a;--muted:#718096;
+  --blue:#3478f6;--blue-soft:#edf4ff;--line:#dfe6ef;
+  --green:#18a05e;--orange:#ed9b28;--purple:#8067d9;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",sans-serif}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+body{padding-bottom:env(safe-area-inset-bottom)}
+.app{width:min(760px,100%);margin:auto;padding:18px 16px 32px}
+.hero{padding:8px 4px 18px}
+.kicker{font-size:14px;font-weight:700;color:var(--blue);letter-spacing:.08em}
+h1{font-size:31px;line-height:1.2;margin:7px 0 6px;letter-spacing:.01em}
+.hero p{margin:0;color:var(--muted);font-size:15px}
+.section-title{font-size:18px;font-weight:800;margin:18px 2px 10px}
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.level{
+  position:relative;min-height:116px;text-align:left;background:var(--card);
+  border:1px solid var(--line);border-radius:18px;padding:17px 15px 14px;
+  box-shadow:0 3px 12px rgba(31,45,61,.05);transition:.15s
+}
+.level:active{transform:scale(.98)}
+.level .num{font-size:13px;font-weight:800;color:var(--blue);margin-bottom:7px}
+.level .title{font-size:18px;font-weight:800;margin-bottom:6px}
+.level .desc{font-size:13px;line-height:1.45;color:var(--muted);padding-right:6px}
+.level .arrow{position:absolute;right:13px;bottom:12px;font-size:20px;color:#a8b4c4}
+.level[data-color="orange"] .num{color:var(--orange)}
+.level[data-color="purple"] .num{color:var(--purple)}
+.paper-card{margin-top:16px;background:var(--blue-soft);border-radius:18px;padding:16px 17px}
+.paper-card strong{display:block;margin-bottom:5px}
+.paper-card p{margin:0;color:#52657e;font-size:14px;line-height:1.55}
+.teacher{margin-top:14px}
+.teacher button{width:100%;background:transparent;border:0;color:#718096;padding:8px;font-size:13px}
+.info{display:none;background:white;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:6px;font-size:13px;line-height:1.7;color:#59687b}
+.info.open{display:block}
+
+#game,#result{display:none}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.back{border:0;background:white;border:1px solid var(--line);border-radius:11px;padding:8px 11px}
+.mode{font-size:13px;color:var(--muted);text-align:right}
+.progress{height:8px;background:#e8edf4;border-radius:99px;overflow:hidden;margin:8px 0 20px}
+.progress div{height:100%;background:var(--blue);transition:.25s}
+.game-card{background:white;border-radius:20px;padding:22px 17px;box-shadow:0 3px 16px rgba(31,45,61,.05)}
+.qtag{font-size:13px;color:var(--blue);font-weight:800}
+.qtitle{font-size:22px;font-weight:800;margin:7px 0 18px}
+.center{text-align:center}
+.big-equation{font-size:31px;font-weight:800;margin:25px 0}
+input{
+  width:100px;height:48px;border:2px solid #ccd6e2;border-radius:12px;
+  text-align:center;font-size:24px;outline:none
+}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3478f61c}
+.primary{border:0;background:var(--blue);color:white;border-radius:13px;padding:13px 25px;font-weight:800}
+.secondary{border:1px solid #ccd6e2;background:white;color:var(--ink);border-radius:13px;padding:11px 18px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
+.hint{background:#f6f9ff;border-left:4px solid var(--blue);border-radius:10px;padding:12px 13px;text-align:left;line-height:1.6;margin:15px 0}
+.split{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0}
+.split-box{border:1px solid var(--line);border-radius:14px;padding:13px;min-width:135px}
+.ten{color:#d47d00;font-weight:800}.one{color:#15945a;font-weight:800}
+.vertical{font-family:Georgia,"Times New Roman",serif;font-size:34px;font-weight:700;
+  line-height:1.12;display:inline-block;text-align:right;min-width:175px}
+.vertical .line{border-top:3px solid #29364a;margin:6px 0 8px}
+.paper-mode{border:1px dashed #aeb9c8;padding:24px 10px;border-radius:15px;background:#fff}
+.feedback{min-height:25px;text-align:center;font-weight:800;margin-top:14px}
+.good{color:var(--green)}.bad{color:#c53a3a}
+.result-card{background:white;border-radius:20px;padding:28px 20px;text-align:center}
+.result-card h2{margin:0 0 8px;font-size:27px}
+.stat{display:inline-block;background:#f5f8fc;border-radius:14px;padding:14px 22px;margin:8px}
+@media(max-width:560px){
+  .levels{grid-template-columns:1fr}
+  .level{min-height:94px}
+  h1{font-size:29px}
+  .qtitle{font-size:20px}
+}
+</style>
+</head>
+<body>
+<main class="app">
+<section id="home">
+  <div class="hero">
+    <div class="kicker">三年級數學</div>
+    <h1>第三單元｜乘法</h1>
+    <p>一步一步學會，最後拿紙筆也會算。</p>
+  </div>
+
+  <div class="section-title">今天要挑戰哪一關？</div>
+  <div class="levels">
+    <button class="level" onclick="start(0)">
+      <div class="num">01</div><div class="title">乘法是什麼？</div>
+      <div class="desc">幾組一樣多</div><div class="arrow">›</div>
+    </button>
+    <button class="level" onclick="start(1)">
+      <div class="num">02</div><div class="title">基本乘法</div>
+      <div class="desc">一位數 × 一位數</div><div class="arrow">›</div>
+    </button>
+    <button class="level" data-color="orange" onclick="start(2)">
+      <div class="num">03</div><div class="title">位值拆解</div>
+      <div class="desc">23 = 20 + 3</div><div class="arrow">›</div>
+    </button>
+    <button class="level" data-color="orange" onclick="start(3)">
+      <div class="num">04</div><div class="title">變成直式</div>
+      <div class="desc">從部分積走到紙本</div><div class="arrow">›</div>
+    </button>
+    <button class="level" data-color="purple" onclick="start(4)">
+      <div class="num">05</div><div class="title">進位挑戰</div>
+      <div class="desc">38 × 4</div><div class="arrow">›</div>
+    </button>
+    <button class="level" data-color="purple" onclick="start(5)">
+      <div class="num">06</div><div class="title">三位數乘法</div>
+      <div class="desc">從簡單到多次進位</div><div class="arrow">›</div>
+    </button>
+    <button class="level" onclick="start(6)">
+      <div class="num">07</div><div class="title">生活應用</div>
+      <div class="desc">讀題 → 列式 → 計算</div><div class="arrow">›</div>
+    </button>
+    <button class="level" data-color="purple" onclick="start(7)">
+      <div class="num">08</div><div class="title">紙本挑戰</div>
+      <div class="desc">拿掉提示，自己算</div><div class="arrow">›</div>
+    </button>
+  </div>
+
+  <div class="paper-card">
+    <strong>最後的目標</strong>
+    <p>App 不是要你一直依賴它，而是幫你練到最後，可以拿紙和鉛筆自己完成直式。</p>
+  </div>
+
+  <div class="teacher">
+    <button onclick="toggleInfo()">家長／老師設計說明　⌄</button>
+    <div id="info" class="info">
+      本版以「理解 → 位值 → 直式 → 進位 → 應用 → 撤除提示 → 紙本」為學習路徑。
+      前段提供鷹架，後段逐步降低顏色與操作提示，避免孩子只會在 App 裡答題。
+    </div>
+  </div>
+</section>
+
+<section id="game">
+  <div class="top">
+    <button class="back" onclick="home()">← 選單</button>
+    <div class="mode"><span id="stageName"></span><br><span id="qnum"></span></div>
+  </div>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="game-card">
+    <div id="content"></div>
+    <div id="feedback" class="feedback"></div>
+  </div>
+</section>
+
+<section id="result">
+  <div class="result-card">
+    <h2 id="resultTitle"></h2>
+    <p id="resultText"></p>
+    <div id="resultStats"></div>
+    <div class="actions">
+      <button class="primary" onclick="again()">再練一次</button>
+      <button class="secondary" onclick="home()">回選單</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const stages=[
+ {name:"01 乘法是什麼？",qs:[{g:4,e:3},{g:3,e:5},{g:5,e:4}]},
+ {name:"02 基本乘法",qs:[[6,7],[8,4],[9,3],[7,5]].map(x=>({a:x[0],b:x[1]}))},
+ {name:"03 位值拆解",qs:[[23,4],[32,3],[41,2]].map(x=>({a:x[0],b:x[1]}))},
+ {name:"04 變成直式",qs:[[23,4],[31,3],[42,2]].map(x=>({a:x[0],b:x[1]}))},
+ {name:"05 進位挑戰",qs:[[38,4],[27,3],[46,2]].map(x=>({a:x[0],b:x[1]}))},
+ {name:"06 三位數乘法",qs:[[123,2],[126,3],[236,4],[305,3],[408,2],[286,7]].map(x=>({a:x[0],b:x[1]}))},
+ {name:"07 生活應用",qs:[
+  {t:"一盒有 24 張貼紙，買了 3 盒，一共有幾張？",a:24,b:3},
+  {t:"每隊有 16 人，共有 4 隊，一共有幾人？",a:16,b:4},
+  {t:"每排有 125 個座位，共有 2 排，一共有幾個？",a:125,b:2}
+ ]},
+ {name:"08 紙本挑戰",qs:[[23,4],[38,4],[126,3],[305,3],[236,4]].map(x=>({a:x[0],b:x[1]}))}
+];
+let si=0,qi=0,score=0;
+
+function $(x){return document.getElementById(x)}
+function start(i){si=i;qi=0;score=0;$("home").style.display="none";$("result").style.display="none";$("game").style.display="block";render()}
+function home(){$("game").style.display="none";$("result").style.display="none";$("home").style.display="block"}
+function again(){start(si)}
+function toggleInfo(){$("info").classList.toggle("open")}
+function render(){
+ const s=stages[si],q=s.qs[qi];$("stageName").textContent=s.name;$("qnum").textContent=`${qi+1} / ${s.qs.length}`;
+ $("bar").style.width=(qi/s.qs.length*100)+"%";$("feedback").textContent="";$("feedback").className="feedback";
+ if(si===0) groups(q); else if(si===1) fact(q); else if(si===2) split(q); else if(si===3) partial(q); else if(si===4) carry(q); else if(si===5) vertical(q,false); else if(si===6) word(q); else vertical(q,true);
+}
+function input(id){return `<input id="${id}" inputmode="numeric" autocomplete="off">`}
+function submit(id,ans){let v=Number($(id).value);if(v===ans){score++;$("feedback").textContent="答對了！";$("feedback").className="feedback good";setTimeout(next,400)}else{$("feedback").textContent="再想一下，檢查你的計算步驟。";$("feedback").className="feedback bad"}}
+function next(){qi++;if(qi>=stages[si].qs.length){finish()}else render()}
+function finish(){
+ $("game").style.display="none";$("result").style.display="block";
+ let total=stages[si].qs.length,p=Math.round(score/total*100);
+ $("resultTitle").textContent=score===total?"這一關完成！":"這一關完成";
+ $("resultText").textContent=si===7?"很好！現在可以拿紙筆再算一次。":`這一關答對 ${score} / ${total} 題。`;
+ $("resultStats").innerHTML=`<span class="stat"><b>${p}%</b><br>正確率</span>`;
+}
+function groups(q){
+ $("content").innerHTML=`<div class="qtag">理解乘法</div><div class="qtitle">有 ${q.g} 組，每組 ${q.e} 個。</div><div class="center" style="font-size:25px;line-height:1.5">${Array(q.g).fill("●".repeat(q.e)).join("<br>")}</div><div class="big-equation">${q.g} × ${q.e} = ${input("a")}</div><div class="actions"><button class="primary" onclick="submit('a',${q.g*q.e})">檢查</button></div>`
+}
+function fact(q){$("content").innerHTML=`<div class="qtag">基本乘法</div><div class="qtitle center">${q.a} × ${q.b} =</div><div class="center">${input("a")}</div><div class="actions"><button class="primary" onclick="submit('a',${q.a*q.b})">檢查</button></div>`}
+function split(q){
+ let t=Math.floor(q.a/10)*10,o=q.a%10;
+ $("content").innerHTML=`<div class="qtag">位值拆解</div><div class="qtitle center"><span class="ten">${t}</span> + <span class="one">${o}</span> = ${q.a}</div><div class="split"><div class="split-box center"><span class="ten">${t}</span> × ${q.b}<br>${input("x")}</div><div class="split-box center"><span class="one">${o}</span> × ${q.b}<br>${input("y")}</div></div><div class="hint">把十位和個位分開想，再合起來。</div><div class="center">${t*q.b} + ${o*q.b} = ${input("a")}</div><div class="actions"><button class="primary" onclick="checkSplit(${t*q.b},${o*q.b},${q.a*q.b})">檢查</button></div>`
+}
+function checkSplit(x,y,a){if(Number($("x").value)!==x||Number($("y").value)!==y){$("feedback").textContent="先把十位、個位各自乘出來。";$("feedback").className="feedback bad";return}submit("a",a)}
+function partial(q){
+ $("content").innerHTML=`<div class="qtag">從部分積走到直式</div><div class="qtitle center">先想 ${q.a%10} × ${q.b} 和 ${Math.floor(q.a/10)*10} × ${q.b}</div><div class="vertical">${q.a}<br>× ${q.b}<div class="line"></div></div><div class="split"><div class="split-box center">個位部分<br>${input("x")}</div><div class="split-box center">十位部分<br>${input("y")}</div></div><div class="center">合起來 ${input("a")}</div><div class="actions"><button class="primary" onclick="checkPartial(${(q.a%10)*q.b},${Math.floor(q.a/10)*10*q.b},${q.a*q.b})">檢查</button></div>`
+}
+function checkPartial(x,y,a){if(Number($("x").value)!==x||Number($("y").value)!==y){$("feedback").textContent="先完成兩個部分積。";$("feedback").className="feedback bad";return}submit("a",a)}
+function carry(q){
+ let p=(q.a%10)*q.b,d=p%10,c=Math.floor(p/10),ten=Math.floor(q.a/10)*q.b+c;
+ $("content").innerHTML=`<div class="qtag">進位挑戰</div><div class="qtitle center">${q.a} × ${q.b}</div><div class="hint">第一步：先算個位。${q.a%10} × ${q.b} = ${input("p")}</div><div class="center">個位留下 ${input("d")}　進位 ${input("c")}</div><div class="center" style="margin-top:15px">十位：${Math.floor(q.a/10)} × ${q.b} ＋ 進位 = ${input("t")}</div><div class="center" style="margin-top:15px">完整答案 ${input("a")}</div><div class="actions"><button class="primary" onclick="checkCarry(${p},${d},${c},${ten},${q.a*q.b})">檢查</button></div>`
+}
+function checkCarry(p,d,c,t,a){if(Number($("p").value)!==p||Number($("d").value)!==d||Number($("c").value)!==c||Number($("t").value)!==t){$("feedback").textContent="再看一次：個位留下個位數，十位進位。";$("feedback").className="feedback bad";return}submit("a",a)}
+function vertical(q,paper){
+ $("content").innerHTML=`${paper?'<div class="qtag">紙本挑戰｜沒有位值提示</div>':'<div class="qtag">三位數 × 一位數</div><div class="hint">像在紙上算一樣，從個位開始。</div>'}<div class="paper-mode"><div class="vertical">${q.a}<br>× ${q.b}<div class="line"></div></div><div class="big-equation">= ${input("a")}</div></div><div class="actions"><button class="primary" onclick="submit('a',${q.a*q.b})">檢查</button></div>`
+}
+function word(q){
+ $("content").innerHTML=`<div class="qtag">生活應用</div><div class="qtitle">${q.t}</div><div class="center"><p>先選出正確的算式：</p><div class="actions"><button class="secondary" onclick="wordOp(${q.a},${q.b},'×')">${q.a} × ${q.b}</button><button class="secondary" onclick="wordOp(${q.a},${q.b},'+')">${q.a} + ${q.b}</button><button class="secondary" onclick="wordOp(${q.a},${q.b},'-')">${q.a} − ${q.b}</button></div></div>`
+}
+function wordOp(a,b,op){
+ if(op!=="×"){$("feedback").textContent="再讀一次：是幾組一樣多？";$("feedback").className="feedback bad";return}
+ $("content").innerHTML=`<div class="qtag">生活應用</div><div class="qtitle center">${a} × ${b} = ${input("a")}</div><div class="hint">列式後，再算出答案。</div><div class="actions"><button class="primary" onclick="submit('a',${a*b})">檢查</button></div>`
+}
+</script>
+</body>
+</html>
