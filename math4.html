@@ -63,14 +63,10 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .context-text{font-size:1.02rem;line-height:1.75;font-weight:700}
 .context-fact{margin-top:9px;padding:9px 11px;background:#f8fafc;border-radius:10px;font-size:.88rem;line-height:1.55;color:#475569}
 .context-data-note{margin-top:6px;font-size:.76rem;color:#94a3b8}
-.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}.app-builder-help{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:42px;height:50px;border:2px solid #cbd5e1;border-radius:8px;background:#fff7cc;color:#263238;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;box-sizing:border-box}.app-op-button.selected{border-color:#94a3b8;background:#fff7cc;color:#263238}.app-op-button:focus-visible{outline:3px solid rgba(37,99,235,.22);outline-offset:2px;border-radius:8px}.app-placement-status{width:100%;text-align:center;color:#475569;font-size:.88rem;margin-top:3px} .app-placement-status strong{color:#2563eb}.app-place-hint{font-family:system-ui,sans-serif;font-size:.72rem;color:#64748b;line-height:1.25;text-align:center}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:42px;height:46px;font-size:1.7rem}}
-.op-choice{width:88px;height:48px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;font-size:1.55rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.08)}
-.op-choice.add-choice{color:#2563eb}.op-choice.sub-choice{color:#e67e22}
-.op-choice.selected{background:#eef6ff;border-color:#3498db;box-shadow:0 2px 0 rgba(52,152,219,.25)}.app-answer-btn{align-self:center;padding:8px 12px;font-size:.92rem}
-.op-choice:disabled{opacity:.55;cursor:default}
+.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}.app-builder-help{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:42px;height:50px;border:0;border-radius:8px;color:#fff;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;box-sizing:border-box}.app-op-button.app-op-plus{background:#2563eb}.app-op-button.app-op-minus{background:#dc2626}.app-op-button:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:2px;border-radius:8px}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:42px;height:46px;font-size:1.7rem}}
 
 .app-hidden{display:none!important}
-@media(max-width:520px){.context-card{padding:13px 12px}.context-title{font-size:1.08rem}.context-text{font-size:.96rem}.op-choice{width:78px}}
+@media(max-width:520px){.context-card{padding:13px 12px}.context-title{font-size:1.08rem}.context-text{font-size:.96rem}}
 
 
 /* ===== Paper Bridge / 人性化操作 ===== */
@@ -262,7 +258,6 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
     <div class="app-builder-help" id="app-builder-help">
       <button class="btn-answer app-answer-btn" id="show-answer-app" onclick="showAnswer()">💡 看答案</button>
     </div>
-    <div class="app-placement-status" id="app-placement-status"></div>
   </div>
   <div class="top-question"><div class="q-text"><span id="q1"></span> <span id="qo" style="color:#263238"></span> <span id="q2"></span> =</div><input class="final-ans" id="final-ans" type="text" inputmode="numeric" maxlength="5"><button class="btn-main" onclick="check()">送出</button><button class="btn-answer" id="show-answer-btn" onclick="showAnswer()">💡 看答案</button></div>
   <div class="math-card">
@@ -744,7 +739,7 @@ function makeReverseAppQuestion(p){
 
 function loadProblem(){
  let q;
- appChosenOp=null;
+ appChosenOp=currentType===6?'+':null;
  appPlaced=[null,null];
  appTargetRow=null;
  appSelectedNumber=null;
@@ -783,7 +778,7 @@ function loadProblem(){
    document.querySelector('.math-card').classList.remove('app-hidden');
    document.getElementById('arrow-help').style.display='none';
    renderGrid();
-   updateAppBuilderStatus();
+   updateAppBuilderUI();
    document.getElementById('q-count').innerText=currentQ;
    document.getElementById('score').innerText=totalPoints;
    document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
@@ -857,17 +852,14 @@ function renderContext(p){
 function renderAppChoices(){
  const box=document.getElementById('operation-choice');
  box.classList.remove('app-hidden');
- updateAppBuilderStatus();
+ updateAppBuilderUI();
 }
 function appOpClick(){
  if(currentType!==6 || !appProblem)return;
- if(!appChosenOp) appChosenOp='+';
- else if(appChosenOp==='+') appChosenOp='-';
- else appChosenOp=null;
+ appChosenOp=appChosenOp==='+'?'-':'+';
  renderGrid();
- updateAppBuilderStatus();
+ updateAppBuilderUI();
 }
-function chooseAppOp(chosen){if(currentType===6){appChosenOp=chosen;renderGrid();updateAppBuilderStatus();}}
 function appPlacementReady(){return currentType===6 && !!appChosenOp && appPlaced[0]!==null && appPlaced[1]!==null;}
 function appNumberForRow(row){const idx=appPlaced[row];return idx===null||idx===undefined?'':String(idx===0?appProblem.a:appProblem.b);}
 function syncAppProblemFromBuilder(){
@@ -878,36 +870,56 @@ function syncAppProblemFromBuilder(){
  correctVal=op==='+'?n1+n2:n1-n2;
  return !(op==='-' && n1<n2);
 }
-function updateAppBuilderStatus(){
- const status=document.getElementById('app-placement-status'); if(!status)return;
- const opText=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'＋／－';
- const first=appPlaced[0]!==null?appNumberForRow(0).toLocaleString():'空白';
- const second=appPlaced[1]!==null?appNumberForRow(1).toLocaleString():'空白';
- status.innerHTML=`運算：<strong>${opText}</strong>　第一列：<strong>${first}</strong>　第二列：<strong>${second}</strong>`;
+function updateAppBuilderUI(){
  const ready=appPlacementReady();
- const modelReady=ready && syncAppProblemFromBuilder();
- const tq=document.querySelector('.top-question'); if(tq)tq.classList.toggle('app-hidden',!modelReady);
- if(modelReady) renderTopQuestion();
- document.querySelectorAll('.app-number').forEach(el=>{const idx=Number(el.dataset.appNum);el.classList.toggle('selected',appSelectedNumber===idx);el.classList.toggle('placed',appPlaced.includes(idx));});
+ // 只要運算符號與兩個數字都放好了，就顯示送出區。
+ // 若孩子選了減法但第一列較小，讓「送出」仍可見，
+ // 這樣孩子可以得到錯誤回饋，而不是被畫面卡住。
+ const tq=document.querySelector('.top-question');
+ if(tq)tq.classList.toggle('app-hidden',!ready);
+ if(ready)renderTopQuestion();
+ document.querySelectorAll('.app-number').forEach(el=>{
+   const idx=Number(el.dataset.appNum);
+   el.classList.toggle('selected',appSelectedNumber===idx);
+   el.classList.toggle('placed',appPlaced.includes(idx));
+ });
  const targets=document.querySelectorAll('.app-target');
  targets.forEach((el,i)=>el.classList.toggle('selected',appTargetRow!==null && Math.floor(i/4)===appTargetRow));
- if(ready && !modelReady && appChosenOp==='-') status.innerHTML+='　<span style="color:#b91c1c">減法第一列要放較大的數量。</span>';
+}
+function placeAppNumber(row,numIndex){
+ // 同一個題目中的每個數字只能放一次；若孩子把已放好的數字移到另一列，就先從原列移除。
+ const otherRow=row===0?1:0;
+ if(appPlaced[otherRow]===numIndex)appPlaced[otherRow]=null;
+ appPlaced[row]=numIndex;
 }
 function appNumberClick(numIndex){
  if(currentType!==6 || !appProblem)return;
- if(appTargetRow!==null){appPlaced[appTargetRow]=numIndex;appTargetRow=null;appSelectedNumber=null;renderGrid();updateAppBuilderStatus();return;}
- appSelectedNumber=numIndex;updateAppBuilderStatus();
+ if(appTargetRow!==null){
+   placeAppNumber(appTargetRow,numIndex);
+   appTargetRow=null;
+   appSelectedNumber=null;
+   renderGrid();
+   updateAppBuilderUI();
+   return;
+ }
+ appSelectedNumber=numIndex;
+ updateAppBuilderUI();
 }
 function appTargetClick(row){
  if(currentType!==6 || !appProblem)return;
  appTargetRow=row;
- if(appSelectedNumber!==null){appPlaced[row]=appSelectedNumber;appSelectedNumber=null;appTargetRow=null;renderGrid();}
- updateAppBuilderStatus();
+ if(appSelectedNumber!==null){
+   placeAppNumber(row,appSelectedNumber);
+   appSelectedNumber=null;
+   appTargetRow=null;
+   renderGrid();
+ }
+ updateAppBuilderUI();
 }
 function appNumberDragStart(e,numIndex){if(currentType!==6)return;appSelectedNumber=numIndex;e.dataTransfer.setData('text/plain',String(numIndex));e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('dragging');}
 function appNumberDragEnd(e){e.currentTarget.classList.remove('dragging');}
 function appTargetDragOver(e){if(currentType===6)e.preventDefault();}
-function appTargetDrop(e,row){if(currentType!==6||!appProblem)return;e.preventDefault();const idx=Number(e.dataTransfer.getData('text/plain'));if(idx===0||idx===1){appPlaced[row]=idx;appSelectedNumber=null;appTargetRow=null;renderGrid();updateAppBuilderStatus();}}
+function appTargetDrop(e,row){if(currentType!==6||!appProblem)return;e.preventDefault();const idx=Number(e.dataTransfer.getData('text/plain'));if(idx===0||idx===1){placeAppNumber(row,idx);appSelectedNumber=null;appTargetRow=null;renderGrid();updateAppBuilderUI();}}
 
 function placeClass(index){
   // digits() 回傳 [千,百,十,個]，index 0~3。
@@ -984,13 +996,12 @@ function renderGrid(){
    // 不另外顯示「第一列／第二列／運算」文字，避免破壞孩子已熟悉的紙本直式位置。
    html+=`<div></div><div class="cell"></div>`;
    firstDigits.forEach((x,i)=>{const show=first!==''&&i>=firstNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[0]!==null?'filled':''} ${appTargetRow===0?'selected':''}" aria-label="第一列${['千','百','十','個'][i]}位" onclick="appTargetClick(0)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,0)">${show?x:''}</div>`;});
-   html+=`<button class="app-op-button ${appChosenOp?'selected':''}" aria-label="選擇加法或減法" onclick="appOpClick()">${appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'＋／－'}</button><div class="cell"></div>`;
+   html+=`<button class="app-op-button ${appChosenOp==='+'?'app-op-plus':'app-op-minus'}" aria-label="點一下切換加法或減法" onclick="appOpClick()">${appChosenOp==='+'?'＋':'－'}</button><div class="cell"></div>`;
    secondDigits.forEach((x,i)=>{const show=second!==''&&i>=secondNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[1]!==null?'filled':''} ${appTargetRow===1?'selected':''}" aria-label="第二列${['千','百','十','個'][i]}位" onclick="appTargetClick(1)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,1)">${show?x:''}</div>`;});
    html+=`<div class="line"></div><div></div><div class="cell"></div>`;
    for(let i=0;i<4;i++)html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
    document.getElementById('grid').innerHTML=html;
    const oldHelp=document.querySelector('.borrow-help');if(oldHelp)oldHelp.remove();
-   if(appChosenOp==='-'){const help=document.createElement('div');help.className='borrow-help';help.innerHTML='<strong>退位操作</strong><br>① 點一下框框，輸入退位數字，例如 <b>10</b><br>② 再點一下，套用你輸入的數字<br>③ 上方數字會出現紅色退位斜線';document.getElementById('grid').parentElement.appendChild(help);}
    return;
  }
 
@@ -1588,7 +1599,7 @@ function check(){
      if(currentQ < window.__retryQueue.length){
        currentQ++;
        appProblem={...window.__retryQueue[currentQ-1]};
-       appChosenOp=null; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false; n1=appProblem.a;n2=appProblem.b;op=appProblem.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+       appChosenOp='+'; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false; n1=appProblem.a;n2=appProblem.b;op=appProblem.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
        answerRevealed=false; resetAnswerHelp();
        document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
        renderContext(appProblem); renderAppChoices();
@@ -1646,7 +1657,7 @@ function retryWrong(){
  document.getElementById('q-count').innerText='1';
  document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
  const p=queue[0];
- appProblem=p; appChosenOp=null; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false;
+ appProblem=p; appChosenOp='+'; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false;
  n1=p.a;n2=p.b;op=p.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
  renderContext(p); renderAppChoices();
  document.getElementById('context-card').classList.remove('app-hidden');
