@@ -63,7 +63,7 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .context-text{font-size:1.02rem;line-height:1.75;font-weight:700}
 .context-fact{margin-top:9px;padding:9px 11px;background:#f8fafc;border-radius:10px;font-size:.88rem;line-height:1.55;color:#475569}
 .context-data-note{margin-top:6px;font-size:.76rem;color:#94a3b8}
-.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}.app-builder-help{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:42px;height:50px;border:0;border-radius:8px;color:#fff;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;box-sizing:border-box}.app-op-button.app-op-plus{background:#2563eb}.app-op-button.app-op-minus{background:#dc2626}.app-op-button:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:2px;border-radius:8px}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:42px;height:46px;font-size:1.7rem}}
+app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:42px;height:50px;border:0;border-radius:8px;color:#fff;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;box-sizing:border-box}.app-op-button.app-op-plus{background:#2563eb}.app-op-button.app-op-minus{background:#dc2626}.app-op-button:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:2px;border-radius:8px}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:42px;height:46px;font-size:1.7rem}}
 
 .app-hidden{display:none!important}
 @media(max-width:520px){.context-card{padding:13px 12px}.context-title{font-size:1.08rem}.context-text{font-size:.96rem}}
@@ -200,7 +200,7 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
 /* ===== V3 學習優化 ===== */
 #game .context-card{order:1;margin-top:8px}
 #game .info-bar,#game .progress{order:2}
-#game .operation-choice,#game .top-question,#game .math-card,#game .paper-bridge,#game .secondary{order:3}
+#game .top-question,#game .math-card,#game .paper-bridge,#game .secondary{order:3}
 #game .answer-help{order:4}
 #game .correction-under-problem{order:5}
 #game .feedback{order:6}
@@ -210,28 +210,31 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
 .practice-status:empty{display:none}
 @media(max-width:520px){#game .context-card{margin-top:4px}}
 
-/* ===== 情境題示範動畫 ===== */
-.app-demo{margin:14px auto 2px;background:#f8fafc;border:1px solid #dbe3ec;border-radius:14px;padding:12px;max-width:560px}
-.app-demo-title{text-align:center;font-weight:900;color:#334155;margin-bottom:8px}
-.demo-stage{position:relative;height:178px;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0}
-.demo-card{position:absolute;inset:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;opacity:0;transform:translateY(8px);pointer-events:none}
-.demo-card.show{animation:demoShow .65s ease both}
-@keyframes demoShow{to{opacity:1;transform:translateY(0)}}
-.demo-text{font-size:1rem;font-weight:800;text-align:center;color:#334155}
-.demo-num{font-family:var(--math-font);font-size:1.45rem;font-weight:900}
-.demo-op{font-size:1.8rem;font-weight:900}
-.demo-grid{display:grid;grid-template-columns:72px repeat(4,48px);gap:4px;align-items:center;font-family:var(--math-font);font-weight:900}
-.demo-grid .cell{height:34px;border:1px dashed #94a3b8;border-radius:6px;display:flex;align-items:center;justify-content:center}
-.demo-grid .label{font-family:system-ui,sans-serif;font-size:.72rem;color:#64748b;text-align:right}
-.demo-arrow{font-size:1.25rem;color:#2563eb;font-weight:900}
-.demo-controls{display:flex;justify-content:center;gap:8px;margin-top:9px}
-.demo-controls button{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:7px 13px;font-weight:800;cursor:pointer}
-.demo-progress{height:5px;background:#e2e8f0;border-radius:4px;margin-top:8px;overflow:hidden}.demo-progress i{display:block;height:100%;width:0;background:#3b82f6}
-.app-log-note{font-size:.84rem;color:#64748b;text-align:center;margin-top:8px}
-
 /* ===== 寶可夢學習回饋：不取代數學主流程 ===== */
 .pokemon-card{width:100%;box-sizing:border-box;background:#fff;border:1px solid #dbe3ec;border-radius:20px;padding:18px;text-align:center;box-shadow:0 8px 20px rgba(15,23,42,.08);margin:4px 0 14px}.pokemon-hero{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}.pokemon-hero img{width:130px;height:130px;image-rendering:auto;object-fit:contain}.pokemon-name{font-size:1.45rem;font-weight:900;color:#334155}.pokemon-level{font-size:1.05rem;font-weight:800;color:#475569;margin-top:4px}.pokemon-hp-label{display:flex;justify-content:space-between;font-weight:800;color:#475569;margin-top:10px}.pokemon-hp{height:18px;background:#e2e8f0;border-radius:12px;overflow:hidden;margin:6px 0 8px}.pokemon-hp i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22c55e,#facc15);transition:width .5s ease}.pokemon-next{font-size:.9rem;color:#64748b}.pokemon-actions{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}.pokemon-actions button,.pokemon-choice{border:1px solid #cbd5e1;background:#fff;border-radius:12px;padding:9px 13px;font-weight:800;cursor:pointer}.pokemon-actions button.primary{background:#2563eb;color:#fff;border-color:#2563eb}.pokemon-note{width:100%;box-sizing:border-box;color:#64748b;font-size:.82rem;line-height:1.5;text-align:center;margin:0 0 12px}.pokemon-list{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;margin-bottom:14px}.pokemon-choice{min-height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.pokemon-choice img{width:58px;height:58px;object-fit:contain}.pokemon-choice.active{border:2px solid #2563eb;background:#eff6ff}.pokemon-choice small{color:#64748b}.pokemon-levelup{position:fixed;inset:0;background:rgba(15,23,42,.72);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px}.pokemon-levelup.hidden{display:none}.pokemon-levelup-box{background:#fff;border-radius:28px;padding:26px 22px;text-align:center;width:min(430px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.3);animation:pokemonLevelIn .55s ease both}.pokemon-levelup-box img{width:170px;height:170px;object-fit:contain;animation:pokemonGlow 1.2s ease-in-out infinite alternate}.pokemon-levelup-title{font-size:1.65rem;font-weight:1000;color:#7c3aed}.pokemon-levelup-sub{font-size:1.05rem;font-weight:800;color:#334155;margin:7px 0 14px}@keyframes pokemonLevelIn{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:scale(1)}}@keyframes pokemonGlow{from{filter:drop-shadow(0 0 4px rgba(124,58,237,.2));transform:scale(1)}to{filter:drop-shadow(0 0 24px rgba(124,58,237,.85));transform:scale(1.06)}}
 @media(max-width:520px){.pokemon-list{grid-template-columns:repeat(3,1fr)}.pokemon-choice{padding:6px 3px;font-size:.82rem}.pokemon-choice img{width:50px;height:50px}}
+
+/* ===== V34 首頁：降低視覺噪音，建立「先算數學、再看成長」層級 ===== */
+#home{padding-top:28px}
+#home .title{font-size:1.8rem;letter-spacing:.5px}
+#home .subtitle{margin-bottom:22px}
+#menu-list{display:block;width:100%;margin-top:0}
+.menu-section-title{font-size:.9rem;font-weight:900;color:#64748b;margin:10px 4px 8px;letter-spacing:.08em}
+.menu-primary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.menu-advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btn-menu{width:100%;box-shadow:none;transition:transform .12s ease,box-shadow .12s ease}
+.btn-menu:active{transform:translateY(1px);box-shadow:none}
+.btn-menu.primary-mode{background:#fff!important;color:#263238;border:2px solid #dbe3ec;box-shadow:0 3px 0 #dbe3ec;padding:20px 10px;font-size:1.12rem}
+.btn-menu.primary-mode.add{border-color:#bfdbfe;background:#f8fbff!important}
+.btn-menu.primary-mode.sub{border-color:#fed7aa;background:#fffaf5!important}
+.btn-menu.primary-mode small{color:#64748b;opacity:1!important}
+.btn-menu.advanced-mode{background:#fff!important;color:#475569;border:1px solid #dbe3ec;box-shadow:none;padding:13px 8px;font-size:.98rem}
+.btn-menu.advanced-mode small{color:#94a3b8;opacity:1!important;font-weight:700}
+.menu-app-card{margin-top:15px;width:100%;box-sizing:border-box;border:2px solid #b7e4d7;background:#f4fbf8;border-radius:16px;padding:14px 16px;text-align:center;cursor:pointer;color:#16695a;font-weight:900;box-shadow:none}
+.menu-app-card strong{display:block;font-size:1.02rem}.menu-app-card small{display:block;color:#64748b;font-size:.8rem;margin-top:4px}
+.menu-pokemon-card{margin-top:10px;width:100%;box-sizing:border-box;border:1px solid #ddd6fe;background:#faf8ff;border-radius:14px;padding:10px 14px;text-align:center;cursor:pointer;color:#6d28d9;font-weight:900}
+.menu-pokemon-card small{display:block;color:#64748b;font-size:.78rem;margin-top:3px}
+@media(max-width:520px){#home{padding-top:22px}.menu-primary-grid{gap:9px}.menu-advanced-grid{gap:8px}.btn-menu.primary-mode{padding:17px 7px}.btn-menu.advanced-mode{padding:12px 6px;font-size:.94rem}.menu-app-card{margin-top:13px}}
 </style>
 
 
@@ -254,11 +257,6 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
   </div>
   <div class="info-bar"><span>題次：<span id="q-count">1</span>/10</span><span>得分：<span id="score">0</span></span></div>
   <div class="progress"><div class="bar" id="bar"></div></div>
-  <div class="operation-choice app-hidden" id="operation-choice">
-    <div class="app-builder-help" id="app-builder-help">
-      <button class="btn-answer app-answer-btn" id="show-answer-app" onclick="showAnswer()">💡 看答案</button>
-    </div>
-  </div>
   <div class="top-question"><div class="q-text"><span id="q1"></span> <span id="qo" style="color:#263238"></span> <span id="q2"></span> =</div><input class="final-ans" id="final-ans" type="text" inputmode="numeric" maxlength="5"><button class="btn-main" onclick="check()">送出</button><button class="btn-answer" id="show-answer-btn" onclick="showAnswer()">💡 看答案</button></div>
   <div class="math-card">
     <div class="vertical" id="grid"></div>
@@ -516,18 +514,27 @@ const praisePerfect=['太棒了！你把四位數直式算得又快又準！','�
 const praiseGood=['這次有完成挑戰！把錯題再算一次，會更穩。','計算方法已經掌握了，下一輪注意每一個位值。','很不錯！尤其是遇到 0 時，慢一步檢查就能更準。'];
 
 function initMenu(){
- const types=[
-  {id:6,n:'🌏 情境應用題',c:'carry app-first',d:'讀題 → 排直式 → 算答案'},
-  {id:1,n:'四位數加法',c:'add',d:'基本加法：不進位＋進位'},
-  {id:2,n:'四位數減法',c:'sub',d:'基本減法：不退位＋退位'},
-  {id:3,n:'減法連續退位',c:'borrow',d:'專練 5000－3 這類題型'},
-  {id:4,n:'加法進位挑戰',c:'carry',d:'至少一次進位'},
-  {id:5,n:'加減混合',c:'mix',d:'隨機判斷加法或減法'}
+ const basic=[
+  {id:1,n:'四位數加法',c:'add',d:'不進位＋進位'},
+  {id:2,n:'四位數減法',c:'sub',d:'不退位＋退位'}
  ];
- document.getElementById('menu-list').innerHTML=types.map(t=>
-  `<button class="btn-menu ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;font-size:.78rem;opacity:.9;margin-top:5px">${t.d}</small></button>`
- ).join('') +
-  `<button class="btn-menu" style="grid-column:1/-1;background:#7c3aed" onclick="showPokemon()">📖 我的寶可夢圖鑑<small style="display:block;font-size:.78rem;opacity:.9;margin-top:5px">數學做題讓夥伴成長</small></button>`;
+ const advanced=[
+  {id:3,n:'減法連續退位',c:'borrow',d:'例如 5000－3'},
+  {id:4,n:'加法進位挑戰',c:'carry',d:'至少一次進位'},
+  {id:5,n:'加減混合',c:'mix',d:'自己判斷運算'}
+ ];
+ document.getElementById('menu-list').innerHTML=`
+  <div class="menu-section-title">基本練習</div>
+  <div class="menu-primary-grid">
+   ${basic.map(t=>`<button class="btn-menu primary-mode ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;font-size:.78rem;margin-top:5px">${t.d}</small></button>`).join('')}
+  </div>
+  <div class="menu-section-title">進階練習</div>
+  <div class="menu-advanced-grid">
+   ${advanced.map(t=>`<button class="btn-menu advanced-mode ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;margin-top:4px">${t.d}</small></button>`).join('')}
+  </div>
+  <button class="menu-app-card" onclick="start(6)"><strong>🌏 情境應用題</strong><small>讀題 → 排直式 → 算答案</small></button>
+  <button class="menu-pokemon-card" onclick="showPokemon()">📖 我的寶可夢圖鑑<small>數學做題讓夥伴成長</small></button>
+ `;
 }
 
 function start(type){
@@ -538,7 +545,7 @@ function start(type){
    show('game');
    document.getElementById('score').innerText='0';
    document.getElementById('info-bar')?.classList.remove('app-hidden');
-   document.getElementById('progress')?.classList.remove('app-hidden');
+   document.querySelector('.progress')?.classList.remove('app-hidden');
    loadProblem();
    return;
  }
@@ -790,9 +797,8 @@ function loadProblem(){
 
  document.getElementById('context-card').classList.add('app-hidden');
  document.getElementById('paper-bridge').innerHTML='<strong>紙上也可以這樣算：</strong>直式位置、計算順序與現在相同。';
- document.getElementById('operation-choice').classList.add('app-hidden');
  document.getElementById('info-bar')?.classList.remove('app-hidden');
- document.getElementById('progress')?.classList.remove('app-hidden');
+ document.querySelector('.progress')?.classList.remove('app-hidden');
  document.querySelector('.top-question').classList.remove('app-hidden');
  document.querySelector('.math-card').classList.remove('app-hidden');
  document.getElementById('arrow-help').style.display='block';
@@ -850,8 +856,6 @@ function renderContext(p){
 }
 
 function renderAppChoices(){
- const box=document.getElementById('operation-choice');
- box.classList.remove('app-hidden');
  updateAppBuilderUI();
 }
 function appOpClick(){
@@ -872,12 +876,20 @@ function syncAppProblemFromBuilder(){
 }
 function updateAppBuilderUI(){
  const ready=appPlacementReady();
- // 只要運算符號與兩個數字都放好了，就顯示送出區。
- // 若孩子選了減法但第一列較小，讓「送出」仍可見，
- // 這樣孩子可以得到錯誤回饋，而不是被畫面卡住。
+ // 情境題的上方橫式必須永遠跟孩子目前排出的直式同步。
+ // 這裡只更新「預覽」，真正送出時仍由 syncAppProblemFromBuilder() 驗證。
  const tq=document.querySelector('.top-question');
  if(tq)tq.classList.toggle('app-hidden',!ready);
- if(ready)renderTopQuestion();
+ if(ready){
+   const previewN1=appPlaced[0]===0?appProblem.a:appProblem.b;
+   const previewN2=appPlaced[1]===0?appProblem.a:appProblem.b;
+   const q1=document.getElementById('q1');
+   const q2=document.getElementById('q2');
+   if(q1)q1.innerHTML=colorizedNumberHTML(previewN1);
+   if(q2)q2.innerHTML=colorizedNumberHTML(previewN2);
+   const qo=document.getElementById('qo');
+   if(qo)qo.innerText=appChosenOp;
+ }
  document.querySelectorAll('.app-number').forEach(el=>{
    const idx=Number(el.dataset.appNum);
    el.classList.toggle('selected',appSelectedNumber===idx);
@@ -1232,9 +1244,7 @@ function resetAnswerHelp(){
  const box=document.getElementById('answer-help');
  if(box){box.classList.add('hidden');box.innerHTML='';delete box.dataset.problemKey;}
  const btn=document.getElementById('show-answer-btn');
- const appBtn=document.getElementById('show-answer-app');
  if(btn)btn.innerText='💡 看答案';
- if(appBtn)appBtn.innerText='💡 看答案';
  answerRevealed=false;
 }
 
@@ -1502,7 +1512,6 @@ function showAnswer(){
    }
  }
  const box=document.getElementById('answer-help');
- const appBtn=document.getElementById('show-answer-app');
  if(!box)return;
  const key=currentProblemKey();
  if(box.dataset.problemKey!==key){
@@ -1513,7 +1522,6 @@ function showAnswer(){
  answerRevealed=true;
  const answerBtn=document.getElementById('show-answer-btn');
  if(answerBtn)answerBtn.innerText='💡 答案已顯示';
- if(appBtn)appBtn.innerText='💡 答案已顯示';
  let html='<div class="answer-title">💡 一起看答案，不要卡住</div>';
  if(currentType===6 && appProblem){
    const reason=op==='+'?'兩個數量合在一起，所以用加法。':'原來的數量拿走一部分，所以用減法。';
