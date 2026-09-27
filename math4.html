@@ -13,7 +13,7 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .info-bar{display:flex;justify-content:space-between;width:94%;font-weight:800;margin:4px 0 6px}.progress{width:94%;height:10px;background:#e2e8f0;border-radius:6px;overflow:hidden;margin-bottom:15px}.bar{height:100%;width:0;background:var(--green);transition:.3s}
 .mode-label{font-size:1rem;font-weight:800;padding:6px 14px;border-radius:20px;background:#fff;margin-bottom:8px}.instruction{min-height:30px;text-align:center;font-weight:700;color:#4a5568;margin-bottom:5px}
 .top-question{display:flex;align-items:center;justify-content:center;gap:10px;margin:5px 0 14px}.q-text{font-size:1.8rem;font-weight:900;letter-spacing:1px;color:#263238}.final-ans{width:115px;height:50px;font-size:1.85rem;font-family:var(--math-font);text-align:center;border:3px solid #333;border-radius:10px;background:#fff;outline:none;-moz-appearance:textfield}.final-ans::-webkit-outer-spin-button,.final-ans::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.btn-main{padding:11px 18px;font-size:1.08rem;font-weight:800;color:#fff;background:var(--green);border:0;border-radius:11px;box-shadow:0 4px 0 #219653;cursor:pointer}
-.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"";position:absolute;width:42px;height:3px;background:var(--red);border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.08rem;font-weight:900;font-family:var(--math-font);color:var(--red);outline:none;background:#fff;cursor:pointer;padding:0;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}.borrow-action-cell:focus-visible{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell.active{border-color:var(--red);background:#fff5f5}.borrow-action-cell.active::after{content:"10"}.borrow-action-cell:active{transform:scale(.97)}.borrow-input-cell.applied{border-color:var(--red);background-color:#fff5f5;position:relative;box-shadow:0 0 0 2px rgba(220,38,38,.10)}.borrow-input-cell.applied::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.borrow-help{width:190px;font-size:.78rem;color:#64748b;line-height:1.5;margin:0;text-align:left;background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 9px;box-sizing:border-box}.borrow-help strong{color:#b91c1c}.math-card.borrow-layout{align-items:flex-start}.math-card.borrow-layout .vertical{flex:0 0 auto}@media(max-width:700px){.math-card.borrow-layout{flex-direction:column;align-items:center}.borrow-help{width:100%;max-width:430px;margin-top:4px;text-align:center}}.borrow-help strong{color:#b91c1c}@media(max-width:520px){.borrow-action-cell{width:46px;height:34px;font-size:1rem}}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:var(--red);text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center} .correction-under-problem{width:100%;margin-top:10px;background:#fff;border:2px solid #dbe3ec;border-radius:16px;padding:10px 10px 12px;box-sizing:border-box}.correction-under-problem.hidden{display:none}.correction-title{text-align:center;font-weight:900;color:#475569;font-size:1rem;margin-bottom:6px}.correction-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900}.correction-cell{width:54px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.65rem}.correction-op{font-family:system-ui,sans-serif;font-size:1.6rem;color:var(--red);text-align:center}.correction-line{grid-column:1/-1;border-bottom:3px solid #334155;height:2px;margin:0 0 1px}.correction-digit{min-width:34px;height:34px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}.correction-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 3px #ef4444}.correction-ok{background:#dcfce7;color:#15803d}.correction-note{text-align:center;margin-top:7px;color:#475569;font-size:.92rem;line-height:1.5}.correction-note strong{color:#b91c1c}.correction-note .right{color:#15803d;font-weight:900}@media(max-width:520px){.correction-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-cell{width:46px;height:34px;font-size:1.45rem}}
+.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"";position:absolute;width:42px;height:3px;background:var(--red);border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.08rem;font-weight:900;font-family:var(--math-font);color:var(--red);outline:none;background:#fff;cursor:pointer;padding:0;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}.borrow-action-cell:focus-visible{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell.active{border-color:var(--red);background:#fff5f5}.borrow-action-cell.active::after{content:"10"}.borrow-action-cell:active{transform:scale(.97)}.borrow-input-cell.applied{border-color:var(--red);background-color:#fff5f5;position:relative;box-shadow:0 0 0 2px rgba(220,38,38,.10)}.borrow-input-cell.applied::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.borrow-help{width:190px;font-size:.78rem;color:#64748b;line-height:1.5;margin:0;text-align:left;background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 9px;box-sizing:border-box}.borrow-help strong{color:#b91c1c}.math-card.borrow-layout{align-items:flex-start}.math-card.borrow-layout .vertical{flex:0 0 auto}@media(max-width:700px){.math-card.borrow-layout{flex-direction:column;align-items:center}.borrow-help{width:100%;max-width:430px;margin-top:4px;text-align:center}}.borrow-help strong{color:#b91c1c}@media(max-width:520px){.borrow-action-cell{width:46px;height:34px;font-size:1rem}}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:#263238;text-align:center}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center} .correction-under-problem{width:100%;margin-top:10px;background:#fff;border:2px solid #dbe3ec;border-radius:16px;padding:10px 10px 12px;box-sizing:border-box}.correction-under-problem.hidden{display:none}.correction-title{text-align:center;font-weight:900;color:#475569;font-size:1rem;margin-bottom:6px}.correction-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900}.correction-cell{width:54px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.65rem}.correction-op{font-family:system-ui,sans-serif;font-size:1.6rem;color:var(--red);text-align:center}.correction-line{grid-column:1/-1;border-bottom:3px solid #334155;height:2px;margin:0 0 1px}.correction-digit{min-width:34px;height:34px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}.correction-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 3px #ef4444}.correction-ok{background:#dcfce7;color:#15803d}.correction-note{text-align:center;margin-top:7px;color:#475569;font-size:.92rem;line-height:1.5}.correction-note strong{color:#b91c1c}.correction-note .right{color:#15803d;font-weight:900}@media(max-width:520px){.correction-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-cell{width:46px;height:34px;font-size:1.45rem}}
 /* V12 訂正借位視覺：在訂正區直接呈現紙本式紅色借位過程 */
 .correction-borrow-wrap{margin:2px auto 7px;max-width:430px;}
 .correction-borrow-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:end;justify-content:center;font-family:"Courier New",monospace;font-weight:900;position:relative;min-height:58px;}
@@ -63,12 +63,12 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .context-text{font-size:1.02rem;line-height:1.75;font-weight:700}
 .context-fact{margin-top:9px;padding:9px 11px;background:#f8fafc;border-radius:10px;font-size:.88rem;line-height:1.55;color:#475569}
 .context-data-note{margin-top:6px;font-size:.76rem;color:#94a3b8}
-.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}.app-builder-help{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:54px;height:50px;border:2px dashed #94a3b8;border-radius:8px;background:#fff;color:#dc2626;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation}.app-op-button.selected{border-style:solid;border-color:#94a3b8;background:#f8fafc}.app-placement-status{width:100%;text-align:center;color:#475569;font-size:.88rem;margin-top:3px} .app-placement-status strong{color:#2563eb}.app-intro{width:100%;max-width:680px;margin:0 auto 14px;background:#fff;border:1px solid #dbe3ec;border-radius:16px;padding:18px 20px;box-sizing:border-box;text-align:left}.app-intro-title{text-align:center;font-size:1.25rem;font-weight:900;color:#334155;margin-bottom:10px}.app-intro-text{color:#475569;font-size:.95rem;line-height:1.75}.app-intro-text b{color:#1d4ed8}.app-intro-start{display:block;margin:14px auto 0}.app-op-button{border-color:#94a3b8!important;background:#fff!important;color:#334155!important;box-shadow:none!important}.app-op-button.selected{border-style:dashed!important;border-color:#94a3b8!important;background:#fff!important;color:#334155!important;box-shadow:none!important}.app-place-hint{font-family:system-ui,sans-serif;font-size:.72rem;color:#64748b;line-height:1.25;text-align:center}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:46px;height:46px;font-size:1.7rem}}
+.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}.app-builder-help{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:54px;height:50px;border:0;border-radius:0;background:transparent;color:#263238;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}.app-op-button.selected{border:0;background:transparent;color:#263238}.app-op-button:focus-visible{outline:3px solid rgba(37,99,235,.22);outline-offset:2px;border-radius:8px}.app-placement-status{width:100%;text-align:center;color:#475569;font-size:.88rem;margin-top:3px} .app-placement-status strong{color:#2563eb}.app-op-button{border:0!important;background:transparent!important;color:#263238!important;box-shadow:none!important}.app-op-button.selected{border:0!important;background:transparent!important;color:#263238!important;box-shadow:none!important}.app-place-hint{font-family:system-ui,sans-serif;font-size:.72rem;color:#64748b;line-height:1.25;text-align:center}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:34px;height:46px;font-size:1.7rem}}
 .op-choice{width:88px;height:48px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;font-size:1.55rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.08)}
 .op-choice.add-choice{color:#2563eb}.op-choice.sub-choice{color:#e67e22}
 .op-choice.selected{background:#eef6ff;border-color:#3498db;box-shadow:0 2px 0 rgba(52,152,219,.25)}.app-answer-btn{align-self:center;padding:8px 12px;font-size:.92rem}
 .op-choice:disabled{opacity:.55;cursor:default}
-.app-prompt{font-size:.92rem;color:#64748b;text-align:center;font-weight:800;margin:2px 0 7px}
+
 .app-hidden{display:none!important}
 @media(max-width:520px){.context-card{padding:13px 12px}.context-title{font-size:1.08rem}.context-text{font-size:.96rem}.op-choice{width:78px}}
 
@@ -204,13 +204,13 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
 /* ===== V3 學習優化 ===== */
 #game .context-card{order:1;margin-top:8px}
 #game .info-bar,#game .progress{order:2}
-#game .app-prompt,#game .operation-choice,#game .top-question,#game .math-card,#game .paper-bridge,#game .secondary{order:3}
+#game .operation-choice,#game .top-question,#game .math-card,#game .paper-bridge,#game .secondary{order:3}
 #game .answer-help{order:4}
 #game .correction-under-problem{order:5}
 #game .feedback{order:6}
 .context-card{border-left-width:7px}
 .context-title{display:flex;align-items:center;gap:6px}
-.app-prompt{background:#f8fafc;border-radius:10px;padding:7px 10px}
+
 .practice-status:empty{display:none}
 @media(max-width:520px){#game .context-card{margin-top:4px}}
 
@@ -245,7 +245,6 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
   <div class="title">三年級｜四位數加減</div>
   <div class="subtitle">10000 以內的直式計算｜快速練習，不必一直拿紙</div>
   <div id="menu-list"></div>
-  <div class="hint"><b>這個 App 是做什麼的？</b><br>把平常要一直拿紙寫的計算，先在這裡快速練習；直式位置、進位、退位和答案格式都跟紙上保持一樣；答案一格一格輸入，輸入後會自動到下一格，讓你不用一直拿紙。<br><br><b>今天要挑戰什麼？</b><br>① 先看懂題目　② 把數字排成直式　③ 自己決定要用＋還是－　④ 再把答案算出來。</div>
 </div>
 
 <div class="page" id="game">
@@ -257,32 +256,13 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
     <div class="context-fact" id="context-fact"></div>
     <div class="context-data-note">題目中的數量為練習用數據，用來練習四位數加減。</div>
   </div>
-  <div class="app-intro app-hidden" id="app-intro">
-    <div class="app-intro-title">🌏 情境應用題</div>
-    <div class="app-intro-text">先看一次示範，等一下照著做就可以了。</div>
-    <div class="app-demo" aria-label="情境應用題做題示範">
-      <div class="app-demo-title" id="demo-title">① 先看懂題目</div>
-      <div class="demo-stage" id="demo-stage">
-        <div class="demo-card" data-step="1"><div class="demo-text">原來有 3,450 元，現在有 8,000 元。<br>增加多少元？</div><div class="demo-arrow">↓ 找出兩個數字</div></div>
-        <div class="demo-card" data-step="2"><div class="demo-text">按直式前面的 □</div><div class="demo-op">□　→　＋　→　－</div><div class="demo-arrow">↓ 這題要自己判斷</div></div>
-        <div class="demo-card" data-step="3"><div class="demo-text">把題目中的數字放進直式</div><div class="demo-grid"><div class="label">第一列</div><div class="cell">8</div><div class="cell">0</div><div class="cell">0</div><div class="cell">0</div><div class="label">第二列</div><div class="cell">3</div><div class="cell">4</div><div class="cell">5</div><div class="cell">0</div></div></div>
-        <div class="demo-card" data-step="4"><div class="demo-text">最後自己算</div><div class="demo-num">8,000 − 3,450 = 4,550</div><div class="demo-arrow">✓ 算完再按送出</div></div>
-      </div>
-      <div class="demo-progress"><i id="demo-progress-bar"></i></div>
-      <div class="demo-controls"><button type="button" onclick="replayAppDemo()">▶ 再看一次</button><button type="button" onclick="demoNextStep()">下一步</button></div>
-    </div>
-    <div class="app-intro-text"><b>減法要退位時</b>，上面的兩列框框跟以前一樣使用。</div>
-    <button class="btn-main app-intro-start" onclick="beginAppPractice()">開始第一題</button>
-  </div>
   <div class="info-bar"><span>題次：<span id="q-count">1</span>/10</span><span>得分：<span id="score">0</span></span></div>
   <div class="progress"><div class="bar" id="bar"></div></div>
-  <div class="app-prompt app-hidden" id="app-prompt">先讀懂情境，再判斷這題要用加法還是減法。</div>
   <div class="operation-choice app-hidden" id="operation-choice">
     <div class="app-builder-help" id="app-builder-help">
-      <div class="app-builder-text">先按 □ 選 ＋／－，再把兩個數字放進直式。</div>
       <button class="btn-answer app-answer-btn" id="show-answer-app" onclick="showAnswer()">💡 看答案</button>
     </div>
-    <div class="app-placement-status" id="app-placement-status">先按 □ 選 ＋／－。</div>
+    <div class="app-placement-status" id="app-placement-status"></div>
   </div>
   <div class="top-question"><div class="q-text"><span id="q1"></span> <span id="qo" style="color:#263238"></span> <span id="q2"></span> =</div><input class="final-ans" id="final-ans" type="text" inputmode="numeric" maxlength="5"><button class="btn-main" onclick="check()">送出</button><button class="btn-answer" id="show-answer-btn" onclick="showAnswer()">💡 看答案</button></div>
   <div class="math-card">
@@ -562,7 +542,9 @@ function start(type){
    appSessionUsed=new Set();
    show('game');
    document.getElementById('score').innerText='0';
-   showAppIntro();
+   document.getElementById('info-bar')?.classList.remove('app-hidden');
+   document.getElementById('progress')?.classList.remove('app-hidden');
+   loadProblem();
    return;
  }
  show('game');
@@ -578,7 +560,7 @@ function getChildEquation(){
   if(currentType===6){
     const left=appPlaced[0]===null?'＿':appNumberForRow(0).toLocaleString();
     const right=appPlaced[1]===null?'＿':appNumberForRow(1).toLocaleString();
-    const sign=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'□';
+    const sign=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'＋／－';
     return `${left} ${sign} ${right}`;
   }
   return `${n1.toLocaleString()} ${op==='+'?'＋':'－'} ${n2.toLocaleString()}`;
@@ -633,47 +615,6 @@ function logAnswerViewed(){
     detail:'孩子主動查看答案與解題步驟'
   });
 }
-function replayAppDemo(){
-  appDemoStep=1;
-  const cards=document.querySelectorAll('#demo-stage .demo-card');
-  cards.forEach(c=>{c.classList.remove('show');});
-  setTimeout(()=>showDemoStep(),40);
-}
-function showDemoStep(){
-  const cards=document.querySelectorAll('#demo-stage .demo-card');
-  cards.forEach(c=>c.classList.remove('show'));
-  const card=document.querySelector(`#demo-stage .demo-card[data-step="${appDemoStep}"]`);
-  if(card)card.classList.add('show');
-  const titles=['① 先看懂題目','② 選擇＋或－','③ 把數字放進直式','④ 自己算答案'];
-  const title=document.getElementById('demo-title'); if(title)title.innerText=titles[appDemoStep-1]||titles[0];
-  const bar=document.getElementById('demo-progress-bar'); if(bar)bar.style.width=(appDemoStep/4*100)+'%';
-}
-function demoNextStep(){
-  appDemoStep=appDemoStep>=4?1:appDemoStep+1;
-  showDemoStep();
-}
-
-function showAppIntro(){
- const ids=['context-card','info-bar','progress','app-prompt','operation-choice'];
- ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('app-hidden');});
- document.querySelector('.top-question')?.classList.add('app-hidden');
- document.querySelector('.math-card')?.classList.add('app-hidden');
- document.getElementById('app-intro')?.classList.remove('app-hidden');
- document.getElementById('mode-label').innerText='🌏 情境應用題';
- document.getElementById('q-count').innerText='1';
- document.getElementById('bar').style.width='0%';
- document.getElementById('feedback').innerText='';
-  replayAppDemo();
-}
-
-function beginAppPractice(){
- answerViewLogged=false;
- document.getElementById('app-intro')?.classList.add('app-hidden');
- document.getElementById('info-bar')?.classList.remove('app-hidden');
- document.getElementById('progress')?.classList.remove('app-hidden');
- loadProblem();
-}
-
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function digits(n){return String(n).padStart(4,'0').split('').map(Number);}
 
@@ -810,7 +751,6 @@ function loadProblem(){
  appOpWrongRecorded=false;
 
  if(currentType===6){
-   document.getElementById('app-intro')?.classList.add('app-hidden');
    // 防重複：同一回合先避開本次作答紀錄，再避開最近使用過的題目。
    let candidate=null, theme=null;
    for(let attempt=0;attempt<120;attempt++){
@@ -837,7 +777,7 @@ function loadProblem(){
    answerRevealed=false; answerViewLogged=false; resetAnswerHelp();
    document.getElementById('mode-label').innerText='🌏 情境應用題';
    renderContext(appProblem);
-   document.getElementById('paper-bridge').innerHTML='<strong>學習方法：</strong>先讀情境、自己建立直式，再完成計算。';
+   document.getElementById('paper-bridge').innerHTML='';
    renderAppChoices();
    document.querySelector('.top-question').classList.add('app-hidden');
    document.querySelector('.math-card').classList.remove('app-hidden');
@@ -853,9 +793,7 @@ function loadProblem(){
    return;
  }
 
- document.getElementById('app-intro')?.classList.add('app-hidden');
  document.getElementById('context-card').classList.add('app-hidden');
- document.getElementById('app-prompt').classList.add('app-hidden');
  document.getElementById('paper-bridge').innerHTML='<strong>紙上也可以這樣算：</strong>直式位置、計算順序與現在相同。';
  document.getElementById('operation-choice').classList.add('app-hidden');
  document.getElementById('info-bar')?.classList.remove('app-hidden');
@@ -910,7 +848,6 @@ function interactiveAppText(p){
 }
 function renderContext(p){
  document.getElementById('context-card').classList.remove('app-hidden');
- document.getElementById('app-prompt').classList.remove('app-hidden');
  const theme=appThemes.find(t=>t.key===p.themeKey);
  document.getElementById('context-title').innerText=theme?theme.title:'🌏 今日世界任務';
  document.getElementById('context-text').innerHTML=interactiveAppText(p);
@@ -943,7 +880,7 @@ function syncAppProblemFromBuilder(){
 }
 function updateAppBuilderStatus(){
  const status=document.getElementById('app-placement-status'); if(!status)return;
- const opText=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'□';
+ const opText=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'＋／－';
  const first=appPlaced[0]!==null?appNumberForRow(0).toLocaleString():'空白';
  const second=appPlaced[1]!==null?appNumberForRow(1).toLocaleString():'空白';
  status.innerHTML=`運算：<strong>${opText}</strong>　第一列：<strong>${first}</strong>　第二列：<strong>${second}</strong>`;
@@ -1047,7 +984,7 @@ function renderGrid(){
    // 不另外顯示「第一列／第二列／運算」文字，避免破壞孩子已熟悉的紙本直式位置。
    html+=`<div></div><div class="cell"></div>`;
    firstDigits.forEach((x,i)=>{const show=first!==''&&i>=firstNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[0]!==null?'filled':''} ${appTargetRow===0?'selected':''}" aria-label="第一列${['千','百','十','個'][i]}位" onclick="appTargetClick(0)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,0)">${show?x:''}</div>`;});
-   html+=`<button class="app-op-button ${appChosenOp?'selected':''}" aria-label="選擇加法或減法" onclick="appOpClick()">${appChosenOp||'□'}</button><div class="cell"></div><div></div><div></div><div></div><div></div>`;
+   html+=`<div></div><button class="app-op-button ${appChosenOp?'selected':''}" aria-label="選擇加法或減法" onclick="appOpClick()">${appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'＋／－'}</button><div></div><div></div><div></div><div></div>`;
    html+=`<div></div><div class="cell"></div>`;
    secondDigits.forEach((x,i)=>{const show=second!==''&&i>=secondNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[1]!==null?'filled':''} ${appTargetRow===1?'selected':''}" aria-label="第二列${['千','百','十','個'][i]}位" onclick="appTargetClick(1)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,1)">${show?x:''}</div>`;});
    html+=`<div class="line"></div><div></div><div class="cell"></div>`;
@@ -1087,7 +1024,7 @@ function renderGrid(){
  });
 
  // 第二個數：固定對齊千～個位；前導 0 不顯示。
- html+=`<div class="op">${op}</div><div class="cell"></div>`;
+ html+=`<div></div><div class="op">${op}</div>`;
  B.forEach((x,i)=>{
   const show=i>=bStart;
   html+=`<div class="cell place-digit ${placeClasses[i]}">${show?x:''}</div>`;
@@ -1545,7 +1482,7 @@ function showAnswer(){
  if(currentType===6){
    if(!appPlacementReady()){
      const box=document.getElementById('answer-help');
-     if(box){box.innerHTML='<div class="answer-title">💡 先把題目變成直式</div><div>先按直式的 □ 選擇＋或－，再把題目中的兩個數字放到第一列和第二列。</div>';box.classList.remove('hidden');}
+     if(box){box.innerHTML='<div class="answer-title">💡 先把題目變成直式</div><div>先選擇＋或－，再把題目中的兩個數字放到第一列和第二列。</div>';box.classList.remove('hidden');}
      return;
    }
    if(!syncAppProblemFromBuilder()){
@@ -1714,7 +1651,6 @@ function retryWrong(){
  n1=p.a;n2=p.b;op=p.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
  renderContext(p); renderAppChoices();
  document.getElementById('context-card').classList.remove('app-hidden');
- document.getElementById('app-prompt').classList.remove('app-hidden');
  document.querySelector('.top-question').classList.add('app-hidden');
  document.querySelector('.math-card').classList.add('app-hidden');
  window.__retryQueue=queue;
