@@ -602,6 +602,11 @@
         <select id="question-unit" style="width:100%;padding:12px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
         <label style="margin-top:12px;color:#94a3b8;">English</label>
         <input id="question-en" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
+        <div style="display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap;">
+            <button type="button" class="bank-edit" onclick="autoFillQuestionTranslation()">✨ 自動取得中文</button>
+            <button type="button" class="bank-edit" onclick="playBankWord(document.getElementById('question-en')?.value || '')">🔊 發音</button>
+            <span id="question-auto-info" style="font-size:.78rem;color:#94a3b8;"></span>
+        </div>
         <label style="margin-top:12px;color:#94a3b8;">中文</label>
         <input id="question-cn" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
         <div style="flex:1;"></div>
@@ -1094,6 +1099,7 @@ ${detail}
     }
 
     let bulkValidatedWords = [];
+    let bulkValidatedDetails = [];
     let bulkValidationPassed = false;
 
     function updateBulkSubmitState() {
@@ -1106,20 +1112,102 @@ ${detail}
         btn.style.background = ok ? '#16a34a' : '#334155';
     }
 
+    async function fetchWordInfo(word) {
+        const clean = String(word || '').trim();
+        if (!clean) return { en: '', cn: '', audio: '' };
+        let cn = localDict[clean.toLowerCase()] || '';
+        if (!cn) cn = await fetchTranslation(clean);
+        let audio = '';
+        // 優先取得字典提供的真人／標準英文發音音檔；失敗時由瀏覽器 TTS 播放。
+        try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3500);
+            const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(clean)}`, {
+                cache: 'no-store', signal: controller.signal
+            });
+            clearTimeout(timer);
+            if (r.ok) {
+                const data = await r.json();
+                const phonetics = Array.isArray(data) ? data.flatMap(x => Array.isArray(x.phonetics) ? x.phonetics : []) : [];
+                const hit = phonetics.find(x => x && x.audio) || phonetics.find(x => x && x.text);
+                if (hit && hit.audio) audio = hit.audio;
+            }
+        } catch (e) {}
+        return { en: clean, cn: cn || '', audio };
+    }
+
+    function playBankWord(word, audioUrl='') {
+        const text = String(word || '').trim();
+        if (!text) return;
+        if (audioUrl) {
+            try {
+                const audio = new Audio(audioUrl);
+                audio.play().catch(() => speakEnglish(text, {userGesture:true, rate:0.72}));
+                return;
+            } catch (e) {}
+        }
+        speakEnglish(text, {userGesture:true, rate:0.72});
+    }
+
+    function renderBulkWordInfo(details, notFound=[], unavailable=[]) {
+        const result = document.getElementById('bulk-check-result');
+        if (!result) return;
+        let html = '<div style="color:#4ade80;font-weight:900;font-size:1rem;margin-bottom:6px;">✅ 單字已檢查，並自動取得中文與發音</div>';
+        if (details.length) {
+            html += '<div style="display:flex;flex-direction:column;gap:6px;margin-top:7px;">';
+            details.forEach((d, i) => {
+                html += `<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:7px 8px;background:#111827;border:1px solid #334155;border-radius:9px;">` +
+                    `<span style="font-weight:900;color:#f8fafc;min-width:120px;">${escapeHtml(d.en)}</span>` +
+                    `<span style="color:#fbbf24;">${escapeHtml(d.cn || '尚未取得中文')}</span>` +
+                    `<button type="button" class="bank-edit" onclick="playBankWord(${JSON.stringify(d.en)}, ${JSON.stringify(d.audio || '')})">🔊 發音</button>` +
+                    `</div>`;
+            });
+            html += '</div>';
+        }
+        if (notFound.length) html += '<div style="margin-top:7px;color:#fbbf24;">⚠️ 線上字典沒有找到：' + notFound.map(escapeHtml).join('、') + '</div>';
+        if (unavailable.length) html += '<div style="margin-top:5px;color:#94a3b8;">ℹ️ 部分線上服務無法連線；中文可稍後再補，發音仍可用瀏覽器播放。</div>';
+        html += '<div style="margin-top:7px;color:#94a3b8;">中文與發音是自動輔助資料；儲存後仍可在「編輯」中修改中文。</div>';
+        result.innerHTML = html;
+        result.style.display = 'block';
+    }
+
+    async function autoFillQuestionTranslation() {
+        const enEl = document.getElementById('question-en');
+        const cnEl = document.getElementById('question-cn');
+        const hint = document.getElementById('question-auto-info');
+        const word = String(enEl?.value || '').trim();
+        if (!word || !cnEl) return;
+        if (hint) hint.textContent = '⏳ 正在取得中文……';
+        const info = await fetchWordInfo(word);
+        if (!cnEl.value.trim() && info.cn) cnEl.value = info.cn;
+        if (hint) hint.textContent = info.cn ? '✅ 已自動填入中文；按「🔊 發音」可聽單字。' : 'ℹ️ 暫時沒有取得中文，可手動輸入。';
+        return info;
+    }
+
     async function validateBulkWords() {
-        if (bankSourceMode !== 'custom') { alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。'); return; }
+        if (bankSourceMode !== 'custom') {
+            alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+            return;
+        }
+
         const box = document.getElementById('bulk-words');
         const result = document.getElementById('bulk-check-result');
         const wrap = document.getElementById('bulk-confirm-wrap');
         const cb = document.getElementById('bulk-confirm');
 
         bulkValidatedWords = [];
+        bulkValidatedDetails = [];
         bulkValidationPassed = false;
         if (cb) cb.checked = false;
         if (wrap) wrap.style.display = 'none';
         updateBulkSubmitState();
 
-        const words = (box?.value || '').split(/\r?\n/).map(w => w.trim()).filter(Boolean);
+        // 一行一個單字；保留 apostrophe、空白與連字號，支援 don't / picnic table / well-known。
+        const words = (box?.value || '')
+            .split(/\r?\n/)
+            .map(w => w.trim())
+            .filter(Boolean);
+
         if (!words.length) {
             if (result) {
                 result.style.display = 'block';
@@ -1128,47 +1216,83 @@ ${detail}
             return;
         }
 
+        // 第一層：本機格式檢查。這是唯一會「阻止儲存」的拼字前置檢查。
+        // 不再把線上字典 API 當成絕對真相，避免 swim、專有名詞、複數、變化形或網路異常被誤判。
         const invalidFormat = words.filter(w => !/^[A-Za-z][A-Za-z' -]*$/.test(w));
         const normalized = words.map(w => w.toLowerCase());
         const duplicates = normalized.filter((w, i) => normalized.indexOf(w) !== i);
+
         if (invalidFormat.length) {
             result.style.display = 'block';
-            result.innerHTML = '<span style="color:#f87171;font-weight:800;">格式有問題，請修正：</span><br>' + invalidFormat.map(escapeHtml).join('<br>');
+            result.innerHTML =
+                '<span style="color:#f87171;font-weight:800;">❌ 有些內容不是英文單字格式：</span><br>' +
+                invalidFormat.map(escapeHtml).join('<br>') +
+                '<br><span style="color:#94a3b8;">請只輸入英文字母；可使用 apostrophe、空格或連字號。</span>';
             return;
         }
-
-        result.style.display = 'block';
-        result.innerHTML = '<span style="color:#fbbf24;">正在查字典確認拼字，請稍候……</span>';
 
         const unique = [...new Map(words.map(w => [w.toLowerCase(), w])).values()];
-        const checks = await Promise.all(unique.map(async word => {
-            const parts = word.split(/[\s-]+/).filter(Boolean);
-            const results = await Promise.all(parts.map(async part => {
-                try {
-                    const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(part)}`, { cache: 'no-store' });
-                    return r.ok;
-                } catch (e) {
-                    return false;
-                }
-            }));
-            return { word, ok: results.every(Boolean) };
-        }));
-
-        const bad = checks.filter(x => !x.ok).map(x => x.word);
-        if (bad.length) {
-            result.innerHTML = '<span style="color:#f87171;font-weight:900;">❌ 發現可能的拼字問題，不能送出：</span><br>' + bad.map(w => `• ${escapeHtml(w)}`).join('<br>') + '<br><span style="color:#94a3b8;">請修正後再按「檢查單字」。</span>';
-            return;
-        }
-
         const unit = document.getElementById('bank-manage-unit')?.value?.trim();
         const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
         const newWords = unique.filter(w => !existing.has(w.toLowerCase()));
         const repeated = unique.filter(w => existing.has(w.toLowerCase()));
-        bulkValidatedWords = newWords;
+
+        // 第二層：線上字典僅作「參考提醒」，不再直接判定錯字。
+        // 這樣即使 Chrome 平板無法連線 dictionaryapi.dev，正常單字仍然可以加入題庫。
+        if (result) {
+            result.style.display = 'block';
+            result.innerHTML = '<span style="color:#fbbf24;">🔎 正在做輔助拼字檢查……</span>';
+        }
+
+        const dictionaryResults = await Promise.all(unique.map(async word => {
+            // 已經存在於題庫中的字，視為已確認過，不必再次依賴外部服務。
+            if (existing.has(word.toLowerCase())) return { word, status: 'known' };
+
+            const parts = word.split(/[\s-]+/).filter(Boolean);
+            const partResults = [];
+            for (const part of parts) {
+                try {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 3500);
+                    const r = await fetch(
+                        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(part)}`,
+                        { cache: 'no-store', signal: controller.signal }
+                    );
+                    clearTimeout(timer);
+                    partResults.push(r.ok ? 'found' : 'not-found');
+                } catch (e) {
+                    partResults.push('unavailable');
+                }
+            }
+
+            if (partResults.every(x => x === 'found')) return { word, status: 'found' };
+            if (partResults.some(x => x === 'unavailable')) return { word, status: 'unavailable' };
+            return { word, status: 'not-found' };
+        }));
+
+        const notFound = dictionaryResults.filter(x => x.status === 'not-found').map(x => x.word);
+        const unavailable = dictionaryResults.filter(x => x.status === 'unavailable').map(x => x.word);
+
+        // 新單字自動取得中文；發音優先抓音檔，沒有音檔時仍可用瀏覽器 TTS。
+        const details = [];
+        for (const word of newWords) {
+            details.push(await fetchWordInfo(word));
+        }
+        bulkValidatedDetails = details;
+        bulkValidatedWords = details.map(x => x.en);
+        // 通過本機格式檢查即可進入確認流程；外部服務只是輔助。
         bulkValidationPassed = true;
 
-        result.innerHTML = '<span style="color:#4ade80;font-weight:900;">✅ 拼字檢查完成</span><br>' + `共 ${unique.length} 個單字；新單字 ${newWords.length} 個` + (repeated.length ? `；已存在 ${repeated.length} 個，送出時會跳過。` : '。');
-        if (duplicates.length) result.innerHTML += `<br><span style="color:#94a3b8;">重複輸入 ${duplicates.length} 個，已自動合併。</span>`;
+        renderBulkWordInfo(details, notFound, unavailable);
+        if (repeated.length) {
+            const resultEl = document.getElementById('bulk-check-result');
+            if (resultEl) resultEl.innerHTML += `<div style="margin-top:6px;color:#94a3b8;">已存在 ${repeated.length} 個，送出時會跳過。</div>`;
+        }
+        if (duplicates.length) {
+            const resultEl = document.getElementById('bulk-check-result');
+            if (resultEl) resultEl.innerHTML += `<div style="margin-top:4px;color:#94a3b8;">重複輸入 ${duplicates.length} 個，已自動合併。</div>`;
+        }
+
         if (wrap) wrap.style.display = 'flex';
         updateBulkSubmitState();
     }
@@ -1183,6 +1307,7 @@ ${detail}
         if (wrap) wrap.style.display = 'none';
         if (result) result.style.display = 'none';
         bulkValidatedWords = [];
+        bulkValidatedDetails = [];
         bulkValidationPassed = false;
         updateBulkSubmitState();
     }
@@ -1192,19 +1317,20 @@ ${detail}
         if (!unit || !state.banks[unit]) return alert('請先選擇要加入的單元。');
         if (!bulkValidationPassed || !bulkValidatedWords.length) return alert('請先按「檢查單字」，確認拼字正確後才能送出。');
 
-        const words = [...bulkValidatedWords];
-        words.forEach(en => {
+        const details = [...bulkValidatedDetails];
+        const words = details.map(x => x.en);
+        details.forEach(d => {
             state.banks[unit].push({
-                en,
-                cn: '',
+                en: d.en,
+                cn: d.cn || '',
                 ref: `LOCAL_BULK_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
             });
         });
 
         const custom = getLocalJSON('hero_custom_questions', []);
-        words.forEach(en => {
-            const ref = state.banks[unit][state.banks[unit].length - words.length + words.indexOf(en)].ref;
-            custom.push({unit, en, cn:'', ref});
+        details.forEach((d, i) => {
+            const ref = state.banks[unit][state.banks[unit].length - details.length + i].ref;
+            custom.push({unit, en:d.en, cn:d.cn || '', ref});
         });
         setLocalJSON('hero_custom_questions', custom);
         saveUserQuestionBank();
