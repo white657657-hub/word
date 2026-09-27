@@ -375,6 +375,55 @@
             font-size:.85rem !important;
         }
 
+        /* V1455：題庫管理重新設計 */
+        .bank-page-head { display:flex; justify-content:space-between; align-items:center; margin:2px 0 10px; }
+        .bank-page-title { font-size:1.45rem; font-weight:1000; color:#f8fafc; }
+        .bank-page-subtitle { color:#94a3b8; font-size:.78rem; margin-top:2px; }
+        .bank-storage-card { background:rgba(124,58,237,.10); border:1px solid rgba(124,58,237,.45); border-radius:12px; padding:9px 10px; margin-bottom:9px; font-size:.8rem; color:#ddd6fe; line-height:1.5; }
+        .bank-source-panel-new { padding:10px; margin-bottom:9px; }
+        .bank-control-card, .bank-entry-card, .bank-existing-card { background:rgba(15,23,42,.78); border:1px solid #334155; border-radius:14px; padding:11px; margin-bottom:9px; }
+        .bank-control-label { color:#f8fafc; font-weight:1000; font-size:.92rem; margin-bottom:7px; }
+        .bank-control-row { display:grid; grid-template-columns:1fr auto; gap:7px; }
+        #bank-manage-unit { width:100%; min-width:0; padding:10px 11px; border-radius:9px; background:#1e293b; color:var(--gold); border:1px solid #475569; font-weight:900; box-sizing:border-box; }
+        .bank-add-unit-btn { border:1px solid #475569; border-radius:9px; padding:0 12px; background:#334155; color:#fff; font-weight:900; cursor:pointer; }
+        .bank-tip { color:#94a3b8; font-size:.74rem; line-height:1.5; margin-top:7px; }
+        .question-unit-bulk { width:100%; box-sizing:border-box; padding:10px 11px; border-radius:9px; background:#1e293b; color:var(--gold); border:1px solid #475569; font-weight:900; margin:7px 0 8px; }
+        .question-entry-header-row { margin-top:5px; }
+
+        .bank-entry-head, .bank-existing-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
+        .bank-entry-title, .bank-existing-title { color:#f8fafc; font-weight:1000; font-size:1rem; }
+        .bank-entry-subtitle, .bank-existing-subtitle { color:#94a3b8; font-size:.72rem; margin-top:2px; }
+        .bank-entry-count { min-width:58px; text-align:center; padding:5px 7px; border-radius:999px; background:rgba(56,189,248,.12); border:1px solid rgba(56,189,248,.35); color:#7dd3fc; font-size:.75rem; font-weight:1000; }
+        .bank-entry-header-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:8px; color:#94a3b8; font-size:.72rem; font-weight:900; padding:0 34px 5px 31px; }
+        .twenty-bank-grid { display:grid; gap:6px; }
+        .twenty-bank-row { display:grid; grid-template-columns:28px minmax(0,1fr) minmax(0,1fr); gap:6px; align-items:center; }
+        .twenty-bank-no { text-align:center; color:#64748b; font-size:.72rem; font-weight:900; }
+        .twenty-bank-input { width:100%; min-width:0; box-sizing:border-box; padding:9px 10px; border-radius:9px; background:#0b1220; color:#fff; border:1px solid #334155; font-size:.96rem; outline:none; }
+        .twenty-bank-input:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,.12); }
+        .twenty-bank-input.cn { color:#fbbf24; background:#111827; }
+        .twenty-bank-input.cn[readonly] { cursor:default; }
+        .twenty-bank-speak { width:28px; height:28px; padding:0; border:0; border-radius:7px; background:#1e293b; color:#7dd3fc; cursor:pointer; font-size:.82rem; }
+        .twenty-bank-status { min-height:22px; margin-top:7px; color:#94a3b8; font-size:.74rem; line-height:1.5; }
+        .bank-entry-actions { display:grid; grid-template-columns:1fr 1.5fr; gap:7px; margin-top:7px; }
+        .bank-clear-btn, .bank-save-btn { min-height:42px; border:0; border-radius:10px; color:#fff; font-weight:1000; font-size:.92rem; cursor:pointer; }
+        .bank-clear-btn { background:#334155; }
+        .bank-save-btn { background:linear-gradient(135deg,#2563eb,#0284c7); }
+        .bank-existing-head input { width:min(220px,48%); box-sizing:border-box; padding:9px 10px; border-radius:9px; background:#0b1220; color:#fff; border:1px solid #334155; }
+        .bank-bottom-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+        .bank-back-btn { margin-top:7px; }
+        @media screen and (max-width:600px){
+            .bank-control-row { grid-template-columns:1fr; }
+            .bank-add-unit-btn { min-height:40px; }
+            .bank-entry-header-row { padding-left:31px; padding-right:34px; }
+            .twenty-bank-row { grid-template-columns:24px minmax(0,1fr) minmax(0,1fr); gap:5px; }
+            .twenty-bank-input { padding:8px 7px; font-size:.88rem; }
+            .bank-existing-head { align-items:stretch; flex-direction:column; }
+            .bank-existing-head input { width:100%; }
+        }
+
+        .sentence-auto-puncture { display:flex; align-items:center; justify-content:flex-end; gap:7px; margin:0 0 7px; color:#cbd5e1; font-size:.8rem; font-weight:800; cursor:pointer; }
+        .sentence-auto-puncture input { width:18px; height:18px; accent-color:#38bdf8; }
+
         /* 題庫管理 */
         .bank-row { background:rgba(255,255,255,0.04); border:1px solid #334155; border-radius:10px; padding:9px; margin-bottom:6px; }
         .bank-row-main { display:flex; justify-content:space-between; gap:8px; align-items:center; }
@@ -468,7 +517,11 @@
             <div style="text-align:center;color:#fbbf24;font-weight:1000;font-size:1rem;margin-bottom:2px;">✍️ 單字造句</div>
             <div id="sentence-unit-cn" class="sentence-unit-cn"></div>
             <div id="sentence-unit-word" class="sentence-unit-word"></div>
-            <textarea id="sentence-unit-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子"></textarea>
+            <label class="sentence-auto-puncture">
+                <input id="sentence-auto-period" type="checkbox">
+                <span>自動補句點「.」</span>
+            </label>
+            <textarea id="sentence-unit-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子" oninput="capitalizeSentenceInput(this)" onblur="maybeAutoPunctuateSentence(this)"></textarea>
             <div class="sentence-unit-actions">
                 <button type="button" class="sentence-check-btn" onclick="checkStandaloneSentenceGrammar()">🔎 檢查文法</button>
                 <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
@@ -531,11 +584,17 @@
     </div>
 
     <div id="view-bank" class="view-section">
-        <h2 style="text-align:center;margin:8px 0;">📚 題庫管理</h2>
-        <div id="bank-storage-info" style="background:rgba(124,58,237,.12);border:1px solid #7c3aed;border-radius:10px;padding:8px;margin-bottom:8px;font-size:.82rem;color:#c4b5fd;">題庫儲存方式載入中……</div>
+        <div class="bank-page-head">
+            <div>
+                <div class="bank-page-title">📚 題庫管理</div>
+                <div class="bank-page-subtitle">一次輸入 20 個英文單字，中文會自動帶入</div>
+            </div>
+        </div>
 
-        <div class="bank-source-panel">
-            <div class="bank-source-title">📚 選擇題庫方式</div>
+        <div id="bank-storage-info" class="bank-storage-card">題庫儲存方式載入中……</div>
+
+        <div class="bank-source-panel bank-source-panel-new">
+            <div class="bank-source-title">① 題庫方式</div>
             <div class="bank-source-buttons">
                 <button id="bank-source-text" class="bank-source-btn" onclick="useTextQuestionBank()">📄 文字題庫</button>
                 <button id="bank-source-custom" class="bank-source-btn" onclick="useCustomQuestionBank()">✏️ 自行變更題庫</button>
@@ -544,39 +603,52 @@
             <input id="txt-file-input" type="file" accept=".txt,text/plain" onchange="handleTxtFile(event)">
         </div>
 
-        <div style="display:flex;gap:6px;margin-bottom:8px;">
-            <select id="bank-manage-unit" onchange="renderBankManager()" style="flex:1;padding:10px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
-            <button class="pass-btn" style="margin-left:0;background:#7c3aed;" onclick="addBankUnit()">＋單元</button>
-        </div>
-        <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManager()" style="width:100%;padding:11px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;margin-bottom:8px;">
-
-        <div class="admin-panel">
-            <div class="admin-title">📋 一次輸入多個單字</div>
-            <div class="admin-subtitle">
-                一行一個單字。先按「檢查單字」，確認拼字正確後，才能送出。
+        <div class="bank-control-card">
+            <div class="bank-control-label">② 選擇要編輯的單元</div>
+            <div class="bank-control-row">
+                <select id="bank-manage-unit" onchange="renderTwentyBankInputs();renderBankManagerList();"></select>
+                <button class="bank-add-unit-btn" onclick="addBankUnit()">＋新增單元</button>
             </div>
-            <textarea id="bulk-words" placeholder="dinosaur&#10;yesterday&#10;valley" style="width:100%;height:130px;box-sizing:border-box;resize:vertical;padding:10px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1rem;line-height:1.6;"></textarea>
-
-            <button class="mode-btn" style="background:#f59e0b;margin:7px 0 0 0;" onclick="validateBulkWords()">🔎 檢查單字</button>
-
-            <div id="bulk-check-result" style="display:none;margin-top:8px;padding:9px;border-radius:9px;background:#0f172a;font-size:.85rem;line-height:1.7;"></div>
-
-            <label id="bulk-confirm-wrap" style="display:none;align-items:center;gap:8px;margin-top:8px;color:#e2e8f0;font-size:.88rem;">
-                <input id="bulk-confirm" type="checkbox" onchange="updateBulkSubmitState()" style="width:18px;height:18px;">
-                我已確認上面的單字拼字正確
-            </label>
-
-            <button id="bulk-submit" class="mode-btn" disabled style="background:#334155;margin:7px 0 0 0;opacity:.55;" onclick="addBulkWords()">💾 儲存到本機題庫</button>
+            <div class="bank-tip">只要輸入英文即可。按 Enter 會自動跳到下一格英文；離開欄位時會自動取得中文。</div>
         </div>
 
-        <div id="bank-list" style="flex:1;overflow-y:auto;"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+        <div class="bank-entry-card">
+            <div class="bank-entry-head">
+                <div>
+                    <div class="bank-entry-title">③ 輸入單字</div>
+                    <div class="bank-entry-subtitle">英文在左、中文在右，共 20 格</div>
+                </div>
+                <div class="bank-entry-count" id="bank-entry-count">0 / 20</div>
+            </div>
+            <div class="bank-entry-header-row">
+                <div>英文 English</div>
+                <div>中文 Chinese</div>
+            </div>
+            <div id="twenty-bank-grid" class="twenty-bank-grid"></div>
+            <div id="twenty-bank-status" class="twenty-bank-status"></div>
+            <div class="bank-entry-actions">
+                <button type="button" class="bank-clear-btn" onclick="clearTwentyBankInputs()">清除這 20 格</button>
+                <button type="button" class="bank-save-btn" onclick="saveTwentyBankWords()">💾 儲存這 20 格</button>
+            </div>
+        </div>
+
+        <div class="bank-existing-card">
+            <div class="bank-existing-head">
+                <div>
+                    <div class="bank-existing-title">④ 已有題目</div>
+                    <div class="bank-existing-subtitle">可以搜尋、編輯或刪除</div>
+                </div>
+                <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManagerList()">
+            </div>
+            <div id="bank-list"></div>
+        </div>
+
+        <div class="bank-bottom-actions">
             <button class="mode-btn admin-btn" onclick="openQuestionEditor()">＋單個新增</button>
-            <button class="mode-btn admin-btn" onclick="exportQuestionCSV()">📤匯出題庫</button>
+            <button class="mode-btn admin-btn" onclick="exportQuestionCSV()">📤 匯出題庫</button>
         </div>
-        <button class="mode-btn admin-btn" style="margin-top:8px;" onclick="switchView('view-main')">返回主畫面</button>
+        <button class="mode-btn admin-btn bank-back-btn" onclick="switchView('view-main')">🏠 返回主畫面</button>
     </div>
-
 
     <div id="sentence-overlay" class="sentence-overlay" onclick="closeSentenceByBackdrop(event)">
         <div class="sentence-card" role="dialog" aria-modal="true" aria-labelledby="sentence-title">
@@ -597,25 +669,52 @@
     </div>
 
     <div id="view-question-editor" class="view-section">
-        <h2 id="question-editor-title" style="text-align:center;margin:8px 0;">＋新增題目</h2>
-        <label style="margin-top:8px;color:#94a3b8;">單元</label>
-        <select id="question-unit" style="width:100%;padding:12px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
-        <label style="margin-top:12px;color:#94a3b8;">English</label>
-        <input id="question-en" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
-        <div style="display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap;">
-            <button type="button" class="bank-edit" onclick="autoFillQuestionTranslation()">✨ 自動取得中文</button>
-            <button type="button" class="bank-edit" onclick="playBankWord(document.getElementById('question-en')?.value || '')">🔊 發音</button>
-            <span id="question-auto-info" style="font-size:.78rem;color:#94a3b8;"></span>
+        <div class="bank-page-head">
+            <div>
+                <div id="question-editor-title" class="bank-page-title">＋新增題目</div>
+                <div class="bank-page-subtitle">英文在左、中文在右；只輸入英文也可以</div>
+            </div>
         </div>
-        <label style="margin-top:12px;color:#94a3b8;">中文</label>
-        <input id="question-cn" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;">
-        <div style="flex:1;"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <button class="mode-btn admin-btn" onclick="switchView('view-bank')">取消</button>
-            <button class="mode-btn admin-btn" onclick="saveQuestion()">儲存</button>
+
+        <div id="question-editor-bulk" class="bank-entry-card">
+            <div class="bank-control-label">① 選擇單元</div>
+            <select id="question-unit-bulk" class="question-unit-bulk"></select>
+            <div class="bank-tip">輸入英文後，中文會自動取得。按 Enter 會直接跳到下一格英文。</div>
+
+            <div class="bank-entry-header-row question-entry-header-row">
+                <div>英文 English</div>
+                <div>中文 Chinese</div>
+            </div>
+            <div id="question-entry-grid" class="twenty-bank-grid"></div>
+            <div id="question-entry-status" class="twenty-bank-status"></div>
+
+            <div class="bank-entry-actions">
+                <button type="button" class="bank-clear-btn" onclick="clearQuestionEntryInputs()">清除 20 格</button>
+                <button type="button" class="bank-save-btn" onclick="saveQuestionEntries()">💾 儲存這 20 格</button>
+            </div>
         </div>
+
+        <div id="question-editor-single" class="bank-entry-card" style="display:none;">
+            <div class="bank-control-label">編輯單一題目</div>
+            <label style="margin-top:8px;color:#94a3b8;display:block;">單元</label>
+            <select id="question-unit" style="width:100%;padding:12px;border-radius:10px;background:#1e293b;color:var(--gold);border:1px solid #475569;font-weight:800;"></select>
+            <label style="margin-top:12px;color:#94a3b8;display:block;">English</label>
+            <input id="question-en" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;box-sizing:border-box;">
+            <div style="display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap;">
+                <button type="button" class="bank-edit" onclick="autoFillQuestionTranslation()">✨ 自動取得中文</button>
+                <button type="button" class="bank-edit" onclick="playBankWord(document.getElementById('question-en')?.value || '')">🔊 發音</button>
+                <span id="question-auto-info" style="font-size:.78rem;color:#94a3b8;"></span>
+            </div>
+            <label style="margin-top:12px;color:#94a3b8;display:block;">中文</label>
+            <input id="question-cn" autocomplete="off" style="width:100%;padding:12px;border-radius:10px;background:#0f172a;color:white;border:1px solid #475569;font-size:1.1rem;box-sizing:border-box;">
+            <div class="bank-entry-actions" style="margin-top:12px;">
+                <button type="button" class="bank-clear-btn" onclick="switchView('view-bank')">取消</button>
+                <button type="button" class="bank-save-btn" onclick="saveQuestion()">💾 儲存修改</button>
+            </div>
+        </div>
+
+        <button class="mode-btn admin-btn bank-back-btn" onclick="switchView('view-bank')">返回題庫管理</button>
     </div>
-</div>
 
 <script>
     const ANSON_USER = 'anson';
@@ -1086,7 +1185,142 @@ ${detail}
         });
     }
 
-    function renderBankManager() {
+    function renderTwentyBankInputs() {
+        const grid = document.getElementById('twenty-bank-grid');
+        if (!grid) return;
+        const unit = document.getElementById('bank-manage-unit')?.value || '';
+        const existing = unit && state.banks[unit] ? state.banks[unit] : [];
+        grid.innerHTML = Array.from({length:20}, (_, i) => {
+            return `<div class="twenty-bank-row">
+                <div class="twenty-bank-no">${i+1}</div>
+                <div style="display:flex;gap:5px;min-width:0;align-items:center;">
+                    <input id="tw-en-${i}" class="twenty-bank-input en" autocomplete="off" autocapitalize="none" spellcheck="false" value="" placeholder="英文單字" oninput="handleTwentyEnglishInput(${i})" onkeydown="handleTwentyEnglishKeydown(event,${i})" onblur="autoFillTwentyRow(${i})">
+                    <button type="button" class="twenty-bank-speak" title="播放發音" onclick="playBankWord(document.getElementById('tw-en-${i}')?.value || '')">🔊</button>
+                </div>
+                <input id="tw-cn-${i}" class="twenty-bank-input cn" autocomplete="off" value="" placeholder="自動取得中文" readonly>
+            </div>`;
+        }).join('');
+        updateTwentyBankCount();
+    }
+
+    function updateTwentyBankCount() {
+        const count = [...document.querySelectorAll('#twenty-bank-grid .twenty-bank-input.en')].filter(el => el.value.trim()).length;
+        const el = document.getElementById('bank-entry-count');
+        if (el) el.textContent = `${count} / 20`;
+    }
+
+    function handleTwentyEnglishInput(index) {
+        updateTwentyBankCount();
+        const input = document.getElementById(`tw-en-${index}`);
+        const cn = document.getElementById(`tw-cn-${index}`);
+        if (input && !input.value.trim() && cn) cn.value = '';
+        // 使用者開始改字時，清除舊中文，避免顯示上一個單字的翻譯。
+        if (input && input.dataset.lastValue && input.value.trim().toLowerCase() !== input.dataset.lastValue.toLowerCase() && cn) cn.value = '';
+    }
+
+    function handleTwentyEnglishKeydown(event, index) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            autoFillTwentyRow(index, true);
+        }
+    }
+
+    async function autoFillTwentyRow(index, moveNext = false) {
+        const enEl = document.getElementById(`tw-en-${index}`);
+        const cnEl = document.getElementById(`tw-cn-${index}`);
+        if (!enEl || !cnEl) return;
+        const word = String(enEl.value || '').trim();
+        if (!word) {
+            cnEl.value = '';
+            if (moveNext) {
+                const next = document.getElementById(`tw-en-${index + 1}`);
+                if (next) { next.focus(); next.select(); }
+            }
+            return;
+        }
+        enEl.dataset.lastValue = word;
+        // 按 Enter 時先立刻跳到下一個英文格，不讓孩子等網路翻譯。
+        if (moveNext) {
+            const next = document.getElementById(`tw-en-${index + 1}`);
+            if (next) { next.focus(); next.select(); }
+        }
+        cnEl.value = '取得中…';
+        const info = await fetchWordInfo(word);
+        // 使用者在等待期間若改了英文，不要把舊結果寫回來。
+        if (String(enEl.value || '').trim() !== word) return;
+        cnEl.value = info.cn || '';
+        const status = document.getElementById('twenty-bank-status');
+        if (status) status.textContent = info.cn ? `✅ 第 ${index+1} 格：已取得「${info.cn}」` : `ℹ️ 第 ${index+1} 格：沒有取得中文，可以先留白，儲存後再編輯。`;
+    }
+
+    async function saveTwentyBankWords() {
+        if (bankSourceMode !== 'custom') {
+            alert('目前是「文字題庫」模式。請先切換到「✏️ 自行變更題庫」。');
+            return;
+        }
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        if (!unit || !state.banks[unit]) { alert('請先選擇要加入的單元。'); return; }
+        const rows = Array.from({length:20}, (_, i) => {
+            const en = document.getElementById(`tw-en-${i}`)?.value.trim() || '';
+            const cn = document.getElementById(`tw-cn-${i}`)?.value.trim() || '';
+            return {en, cn, i};
+        }).filter(x => x.en);
+        if (!rows.length) { alert('請至少輸入 1 個英文單字。'); return; }
+
+        const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
+        const seen = new Set();
+        const toAdd = [];
+        const skipped = [];
+        rows.forEach(row => {
+            const key = row.en.toLowerCase();
+            if (existing.has(key) || seen.has(key)) skipped.push(row.en);
+            else { seen.add(key); toAdd.push(row); }
+        });
+        if (!toAdd.length) { alert('這 20 格裡的單字都已經在題庫中，沒有新增。'); return; }
+
+        // 儲存前補一次中文，讓只輸入英文也能正常建立題目。
+        const status = document.getElementById('twenty-bank-status');
+        if (status) status.textContent = `⏳ 正在補齊 ${toAdd.length} 個單字的中文……`;
+        for (const row of toAdd) {
+            if (!row.cn) {
+                const info = await fetchWordInfo(row.en);
+                row.cn = info.cn || '';
+            }
+        }
+
+        const custom = getLocalJSON('hero_custom_questions', []);
+        toAdd.forEach(row => {
+            const ref = `LOCAL_20_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+            state.banks[unit].push({en:row.en, cn:row.cn, ref});
+            custom.push({unit, en:row.en, cn:row.cn, ref});
+        });
+        setLocalJSON('hero_custom_questions', custom);
+        saveUserQuestionBank();
+
+        const skippedText = skipped.length ? `
+已跳過重複：${skipped.join('、')}` : '';
+        alert(`✅ 已加入 ${unit} 題庫 ${toAdd.length} 個單字。${skippedText}`);
+        renderTwentyBankInputs();
+        renderBankManagerList();
+        const status2 = document.getElementById('twenty-bank-status');
+        if (status2) status2.textContent = `已儲存 ${toAdd.length} 個單字。可以繼續輸入下一批。`;
+    }
+
+    function clearTwentyBankInputs() {
+        for (let i=0;i<20;i++) {
+            const en=document.getElementById(`tw-en-${i}`);
+            const cn=document.getElementById(`tw-cn-${i}`);
+            if(en) { en.value=''; en.dataset.lastValue=''; }
+            if(cn) cn.value='';
+        }
+        updateTwentyBankCount();
+        const status=document.getElementById('twenty-bank-status');
+        if(status) status.textContent='已清除這 20 格。';
+        const first=document.getElementById('tw-en-0');
+        if(first) first.focus();
+    }
+
+    function renderBankManagerList() {
         const unit = document.getElementById('bank-manage-unit')?.value;
         const list = document.getElementById('bank-list'); if (!list) return;
         const key = (document.getElementById('bank-search')?.value || '').trim().toLowerCase();
@@ -1353,22 +1587,136 @@ ${detail}
         renderBankManager();
     }
 
+    function renderQuestionEntryGrid() {
+        const grid = document.getElementById('question-entry-grid');
+        const unit = document.getElementById('question-unit-bulk')?.value || '';
+        if (!grid) return;
+        grid.innerHTML = Array.from({length:20}, (_, i) => `<div class="twenty-bank-row">
+            <div class="twenty-bank-no">${i+1}</div>
+            <div style="display:flex;gap:5px;min-width:0;align-items:center;">
+                <input id="qe-en-${i}" class="twenty-bank-input en" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="英文單字" oninput="updateQuestionEntryCount()" onkeydown="handleQuestionEntryKeydown(event,${i})" onblur="autoFillQuestionEntry(${i})">
+                <button type="button" class="twenty-bank-speak" title="播放發音" onclick="playBankWord(document.getElementById('qe-en-${i}')?.value || '')">🔊</button>
+            </div>
+            <input id="qe-cn-${i}" class="twenty-bank-input cn" autocomplete="off" placeholder="自動取得中文" readonly>
+        </div>`).join('');
+        updateQuestionEntryCount();
+        const first=document.getElementById('qe-en-0');
+        if(first) setTimeout(()=>first.focus(),80);
+    }
+
+    function updateQuestionEntryCount() {
+        const count=[...document.querySelectorAll('#question-entry-grid .twenty-bank-input.en')].filter(el=>el.value.trim()).length;
+        const el=document.getElementById('question-entry-status');
+        if(el && !el.textContent.startsWith('⏳') && !el.textContent.startsWith('✅')) el.textContent=`目前已輸入 ${count} / 20 格`;
+    }
+
+    function handleQuestionEntryKeydown(event,index) {
+        if(event.key==='Enter') {
+            event.preventDefault();
+            autoFillQuestionEntry(index,true);
+        }
+    }
+
+    async function autoFillQuestionEntry(index,moveNext=false) {
+        const en=document.getElementById(`qe-en-${index}`);
+        const cn=document.getElementById(`qe-cn-${index}`);
+        if(!en||!cn) return;
+        const word=String(en.value||'').trim();
+        if(!word) {
+            cn.value='';
+            if(moveNext) { const next=document.getElementById(`qe-en-${index+1}`); if(next){next.focus();next.select();} }
+            return;
+        }
+        en.dataset.lastValue=word;
+        if(moveNext) { const next=document.getElementById(`qe-en-${index+1}`); if(next){next.focus();next.select();} }
+        cn.value='取得中…';
+        const info=await fetchWordInfo(word);
+        if(String(en.value||'').trim()!==word) return;
+        cn.value=info.cn||'';
+        const status=document.getElementById('question-entry-status');
+        if(status) status.textContent=info.cn ? `✅ 第 ${index+1} 格：已取得「${info.cn}」` : `ℹ️ 第 ${index+1} 格：沒有取得中文，可儲存後再編輯。`;
+    }
+
+    function clearQuestionEntryInputs() {
+        for(let i=0;i<20;i++){
+            const en=document.getElementById(`qe-en-${i}`), cn=document.getElementById(`qe-cn-${i}`);
+            if(en){en.value='';en.dataset.lastValue='';}
+            if(cn) cn.value='';
+        }
+        const status=document.getElementById('question-entry-status');
+        if(status) status.textContent='已清除 20 格。';
+        const first=document.getElementById('qe-en-0'); if(first) first.focus();
+    }
+
+    async function saveQuestionEntries() {
+        if(bankSourceMode!=='custom') {
+            const copied=cloneBanks(state.banks);
+            state.banks=normalizeLegacyEarthInBanks(copied);
+            setLocalJSON('hero_question_bank',state.banks);
+            bankSourceMode='custom';
+            setHeroData('hero_bank_source_mode',bankSourceMode);
+        }
+        const unit=document.getElementById('question-unit-bulk')?.value?.trim();
+        if(!unit || !state.banks[unit]) { alert('請先選擇單元。'); return; }
+        const rows=Array.from({length:20},(_,i)=>({
+            en:(document.getElementById(`qe-en-${i}`)?.value||'').trim(),
+            cn:(document.getElementById(`qe-cn-${i}`)?.value||'').trim()
+        })).filter(x=>x.en);
+        if(!rows.length){ alert('請至少輸入 1 個英文單字。'); return; }
+        const existing=new Set((state.banks[unit]||[]).map(w=>w.en.toLowerCase()));
+        const seen=new Set(), toAdd=[], skipped=[];
+        rows.forEach(row=>{const k=row.en.toLowerCase(); if(existing.has(k)||seen.has(k)) skipped.push(row.en); else {seen.add(k);toAdd.push(row);}});
+        if(!toAdd.length){ alert('這 20 格裡的單字都已經在題庫中，沒有新增。'); return; }
+        const status=document.getElementById('question-entry-status');
+        if(status) status.textContent=`⏳ 正在補齊 ${toAdd.length} 個單字的中文……`;
+        for(const row of toAdd){ if(!row.cn){const info=await fetchWordInfo(row.en);row.cn=info.cn||'';} }
+        const custom=getLocalJSON('hero_custom_questions',[]);
+        toAdd.forEach(row=>{const ref=`LOCAL_20E_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;state.banks[unit].push({en:row.en,cn:row.cn,ref});custom.push({unit,en:row.en,cn:row.cn,ref});});
+        setLocalJSON('hero_custom_questions',custom);
+        saveUserQuestionBank();
+        const skippedText=skipped.length?`\n已跳過重複：${skipped.join('、')}`:'';
+        alert(`✅ 已加入 ${unit} 題庫 ${toAdd.length} 個單字。${skippedText}`);
+        clearQuestionEntryInputs();
+        refreshUnitSelectors();
+        document.getElementById('bank-manage-unit').value=unit;
+        renderBankManager();
+    }
+
     function openQuestionEditor(encodedRef='') {
         editingQuestionRef = encodedRef ? decodeURIComponent(encodedRef) : null;
         refreshUnitSelectors();
-        const unitEl=document.getElementById('question-unit'), enEl=document.getElementById('question-en'), cnEl=document.getElementById('question-cn'), title=document.getElementById('question-editor-title');
-        const units=Object.keys(state.banks).sort(); if (!units.length) return alert('請先建立單元。');
-        unitEl.innerHTML=units.map(u=>`<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
-        if (editingQuestionRef) {
-            let found=null, foundUnit=null;
-            Object.keys(state.banks).some(u => { const w=state.banks[u].find(x=>x.ref===editingQuestionRef); if(w){found=w;foundUnit=u;return true;} return false; });
+        const bulk=document.getElementById('question-editor-bulk');
+        const single=document.getElementById('question-editor-single');
+        const title=document.getElementById('question-editor-title');
+        const units=Object.keys(state.banks).sort();
+        if(!units.length) return alert('請先建立單元。');
+
+        if(editingQuestionRef) {
+            const unitEl=document.getElementById('question-unit');
+            const enEl=document.getElementById('question-en');
+            const cnEl=document.getElementById('question-cn');
+            let found=null,foundUnit=null;
+            Object.keys(state.banks).some(u=>{const w=state.banks[u].find(x=>x.ref===editingQuestionRef);if(w){found=w;foundUnit=u;return true;}return false;});
             if(!found) return alert('找不到這筆題目。');
-            title.innerText='✏️ 編輯題目'; unitEl.value=foundUnit; enEl.value=found.en; cnEl.value=found.cn||'';
+            title.innerText='✏️ 編輯題目';
+            bulk.style.display='none';
+            single.style.display='block';
+            unitEl.innerHTML=units.map(u=>`<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+            unitEl.value=foundUnit;
+            enEl.value=found.en;
+            cnEl.value=found.cn||'';
+            setTimeout(()=>enEl.focus(),100);
         } else {
-            title.innerText='＋新增題目'; enEl.value=''; cnEl.value='';
-            const current=document.getElementById('bank-manage-unit')?.value; if(current && state.banks[current]) unitEl.value=current;
+            title.innerText='＋新增 20 個題目';
+            single.style.display='none';
+            bulk.style.display='block';
+            const unitEl=document.getElementById('question-unit-bulk');
+            unitEl.innerHTML=units.map(u=>`<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+            const current=document.getElementById('bank-manage-unit')?.value;
+            if(current && state.banks[current]) unitEl.value=current;
+            renderQuestionEntryGrid();
         }
-        switchView('view-question-editor'); setTimeout(()=>enEl.focus(),100);
+        switchView('view-question-editor');
     }
 
     function saveQuestion() {
@@ -1615,6 +1963,11 @@ ${detail}
         return { baseId, displayId: curId, lv, exp, progress, target };
     }
 
+    function renderBankManager() {
+        renderTwentyBankInputs();
+        renderBankManagerList();
+    }
+
     async function initSystem() {
         ensureChildName();
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
@@ -1788,10 +2141,36 @@ ${detail}
         loadSentenceUnitWord();
     }
 
+    function capitalizeSentenceInput(input) {
+        if (!input) return;
+        const value = String(input.value || '');
+        // 只把句子的第一個英文字母自動變成大寫，不改動後面的內容。
+        const next = value.replace(/^(\s*)([a-z])/, (m, spaces, ch) => spaces + ch.toUpperCase());
+        if (next !== value) {
+            const pos = input.selectionStart;
+            input.value = next;
+            if (typeof pos === 'number') input.setSelectionRange(pos, pos);
+        }
+    }
+
+    function maybeAutoPunctuateSentence(input) {
+        if (!input) return;
+        const cb = document.getElementById('sentence-auto-period');
+        if (!cb || !cb.checked) return;
+        let value = String(input.value || '').trim();
+        if (!value) return;
+        value = value.replace(/[\s]+$/, '');
+        if (!/[.!?]$/.test(value)) {
+            input.value = value + '.';
+        } else {
+            input.value = value;
+        }
+    }
+
     function loadSentenceUnitWord() {
         if (!state.sentenceList || state.sentenceIndex >= state.sentenceList.length) {
             alert('🎉 這組單字的造句練習完成！');
-            switchView('view-practice-menu');
+            switchView('view-main');
             return;
         }
         const word = state.sentenceList[state.sentenceIndex];
@@ -1814,6 +2193,11 @@ ${detail}
     }
 
     function sentenceUnitPass() {
+        const input = document.getElementById('sentence-unit-input');
+        if (input) {
+            capitalizeSentenceInput(input);
+            maybeAutoPunctuateSentence(input);
+        }
         state.sentenceIndex = (state.sentenceIndex || 0) + 1;
         loadSentenceUnitWord();
     }
@@ -1822,6 +2206,8 @@ ${detail}
         const input = document.getElementById('sentence-unit-input');
         const result = document.getElementById('sentence-unit-result');
         if (!input || !result) return;
+        capitalizeSentenceInput(input);
+        maybeAutoPunctuateSentence(input);
         await runSentenceGrammarCheck(input, result);
     }
 
