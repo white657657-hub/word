@@ -63,7 +63,7 @@ body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:
 .context-text{font-size:1.02rem;line-height:1.75;font-weight:700}
 .context-fact{margin-top:9px;padding:9px 11px;background:#f8fafc;border-radius:10px;font-size:.88rem;line-height:1.55;color:#475569}
 .context-data-note{margin-top:6px;font-size:.76rem;color:#94a3b8}
-.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}
+.operation-choice{display:flex;justify-content:center;gap:12px;margin:2px 0 10px}.app-builder-help{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-button{width:54px;height:50px;border:2px dashed #94a3b8;border-radius:8px;background:#fff;color:#dc2626;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation}.app-op-button.selected{border-style:solid;border-color:#dc2626;background:#fff5f5}.app-placement-status{width:100%;text-align:center;color:#475569;font-size:.88rem;margin-top:3px}.app-placement-status strong{color:#2563eb}.app-place-hint{font-family:system-ui,sans-serif;font-size:.72rem;color:#64748b;line-height:1.25;text-align:center}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-button{width:46px;height:46px;font-size:1.7rem}}
 .op-choice{width:88px;height:48px;border:2px solid #cbd5e1;background:#fff;border-radius:12px;font-size:1.55rem;font-weight:900;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.08)}
 .op-choice.add-choice{color:#2563eb}.op-choice.sub-choice{color:#e67e22}
 .op-choice.selected{background:#eef6ff;border-color:#3498db;box-shadow:0 2px 0 rgba(52,152,219,.25)}.app-answer-btn{align-self:center;padding:8px 12px;font-size:.92rem}
@@ -238,9 +238,11 @@ body.paper-mode .clickable-digit.marked{background:#dbeafe}
   <div class="progress"><div class="bar" id="bar"></div></div>
   <div class="app-prompt app-hidden" id="app-prompt">先讀懂情境，再判斷這題要用加法還是減法。</div>
   <div class="operation-choice app-hidden" id="operation-choice">
-    <button class="op-choice add-choice" id="choose-add" onclick="chooseAppOp('+')">＋</button>
-    <button class="op-choice sub-choice" id="choose-sub" onclick="chooseAppOp('-')">－</button>
-    <button class="btn-answer app-answer-btn" id="show-answer-app" onclick="showAnswer()">💡 看答案</button>
+    <div class="app-builder-help" id="app-builder-help">
+      <div class="app-builder-text">① 先按直式最前面的 □ 選＋或－　② 點第一列或第二列，再點題目中的數字放進去　③ 也可以直接把數字拖到對應列</div>
+      <button class="btn-answer app-answer-btn" id="show-answer-app" onclick="showAnswer()">💡 看答案</button>
+    </div>
+    <div class="app-placement-status" id="app-placement-status">先建立直式：選運算，再放入兩個數字。</div>
   </div>
   <div class="top-question"><div class="q-text"><span id="q1"></span> <span id="qo" style="color:#263238"></span> <span id="q2"></span> =</div><input class="final-ans" id="final-ans" type="text" inputmode="numeric" maxlength="5"><button class="btn-main" onclick="check()">送出</button><button class="btn-answer" id="show-answer-btn" onclick="showAnswer()">💡 看答案</button></div>
   <div class="math-card">
@@ -300,6 +302,10 @@ function paperBridgeResetMarks(){
 let n1=0,n2=0,op='+',correctVal=0,currentType=1,currentQ=1,totalPoints=0,currentQPoints=10,wrongCount=0;
 let answerRevealed=false;
 let appProblem=null, appChosenOp=null;
+let appPlaced=[null,null];
+let appTargetRow=null;
+let appSelectedNumber=null;
+let appOpWrongRecorded=false;
 let appOpWrongCount=0, appCalcWrongCount=0;
 let wrongProblems=[];
 let sessionQuestionTotal=10;
@@ -534,6 +540,10 @@ function makeSubtraction(mode){
 function loadProblem(){
  let q;
  appChosenOp=null;
+ appPlaced=[null,null];
+ appTargetRow=null;
+ appSelectedNumber=null;
+ appOpWrongRecorded=false;
 
  if(currentType===6){
    // 防重複：同一回合先避開本次作答紀錄，再避開最近使用過的題目。
@@ -560,12 +570,13 @@ function loadProblem(){
    answerRevealed=false; resetAnswerHelp();
    document.getElementById('mode-label').innerText='🌏 情境應用題';
    renderContext(appProblem);
-   document.getElementById('paper-bridge').innerHTML='<strong>學習方法：</strong>先讀情境、判斷運算，再用直式完成計算。';
+   document.getElementById('paper-bridge').innerHTML='<strong>學習方法：</strong>先讀情境、自己建立直式，再完成計算。';
    renderAppChoices();
-   renderTopQuestion();
    document.querySelector('.top-question').classList.add('app-hidden');
-   document.querySelector('.math-card').classList.add('app-hidden');
+   document.querySelector('.math-card').classList.remove('app-hidden');
    document.getElementById('arrow-help').style.display='none';
+   renderGrid();
+   updateAppBuilderStatus();
    document.getElementById('q-count').innerText=currentQ;
    document.getElementById('score').innerText=totalPoints;
    document.getElementById('bar').style.width=((currentQ-1)/10*100)+'%';
@@ -617,54 +628,79 @@ function loadProblem(){
  updatePaperBridge();
 }
 
+function escapeHTML(str){return String(str).replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
+function interactiveAppText(p){
+ let text=escapeHTML(p.text);
+ const a=escapeHTML(p.a.toLocaleString()), b=escapeHTML(p.b.toLocaleString());
+ const tokenA=`<span class="app-number" draggable="true" data-app-num="0" onclick="appNumberClick(0)" ondragstart="appNumberDragStart(event,0)" ondragend="appNumberDragEnd(event)">${a}</span>`;
+ const tokenB=`<span class="app-number" draggable="true" data-app-num="1" onclick="appNumberClick(1)" ondragstart="appNumberDragStart(event,1)" ondragend="appNumberDragEnd(event)">${b}</span>`;
+ if(a===b) text=text.replace(a,'@@APP_A@@').replace(a,'@@APP_B@@');
+ else text=text.replace(a,'@@APP_A@@').replace(b,'@@APP_B@@');
+ return text.replace('@@APP_A@@',tokenA).replace('@@APP_B@@',tokenB);
+}
 function renderContext(p){
  document.getElementById('context-card').classList.remove('app-hidden');
  document.getElementById('app-prompt').classList.remove('app-hidden');
- // 以目前題目的 key 找回主題標題。
  const theme=appThemes.find(t=>t.key===p.themeKey);
  document.getElementById('context-title').innerText=theme?theme.title:'🌏 今日世界任務';
- document.getElementById('context-text').innerText=p.text;
+ document.getElementById('context-text').innerHTML=interactiveAppText(p);
  document.getElementById('context-fact').innerText='自然／社會小知識：'+(theme?theme.fact:'');
 }
 
 function renderAppChoices(){
  const box=document.getElementById('operation-choice');
  box.classList.remove('app-hidden');
- document.getElementById('choose-add').disabled=false;
- document.getElementById('choose-sub').disabled=false;
- document.getElementById('choose-add').classList.remove('selected');
- document.getElementById('choose-sub').classList.remove('selected');
+ updateAppBuilderStatus();
 }
-
-function chooseAppOp(chosen){
+function appOpClick(){
  if(currentType!==6 || !appProblem)return;
- appChosenOp=chosen;
- const add=document.getElementById('choose-add'), sub=document.getElementById('choose-sub');
- add.classList.toggle('selected',chosen==='+');
- sub.classList.toggle('selected',chosen==='-');
- if(chosen!==appProblem.op){
-   wrongCount++;
-   appOpWrongCount++;
-   recordWrongProblem();
-   currentQPoints=Math.max(2,currentQPoints-2);
-   const msg=document.getElementById('feedback');
-   msg.style.color='var(--red)';
-   msg.innerText=appOpWrongCount===1?'再讀一次情境，想想數量最後是變多還是變少。':'再想一想：這兩個數量的關係是合在一起，還是從原來的數量拿走一部分？';
-   return;
- }
- document.getElementById('feedback').style.color='var(--green)';
- document.getElementById('feedback').innerText='判斷正確！接著完成直式計算。';
- resetAnswerHelp();
- document.getElementById('operation-choice').classList.add('app-hidden');
- document.getElementById('app-prompt').classList.add('app-hidden');
- document.querySelector('.top-question').classList.remove('app-hidden');
- document.querySelector('.math-card').classList.remove('app-hidden');
- document.getElementById('arrow-help').style.display='block';
- renderTopQuestion();
+ if(!appChosenOp) appChosenOp='+';
+ else if(appChosenOp==='+') appChosenOp='-';
+ else appChosenOp=null;
  renderGrid();
- renderExplain();
- document.getElementById('final-ans').focus();
+ updateAppBuilderStatus();
 }
+function chooseAppOp(chosen){if(currentType===6){appChosenOp=chosen;renderGrid();updateAppBuilderStatus();}}
+function appPlacementReady(){return currentType===6 && !!appChosenOp && appPlaced[0]!==null && appPlaced[1]!==null;}
+function appNumberForRow(row){const idx=appPlaced[row];return idx===null||idx===undefined?'':String(idx===0?appProblem.a:appProblem.b);}
+function syncAppProblemFromBuilder(){
+ if(!appPlacementReady())return false;
+ n1=appPlaced[0]===0?appProblem.a:appProblem.b;
+ n2=appPlaced[1]===0?appProblem.a:appProblem.b;
+ op=appChosenOp;
+ correctVal=op==='+'?n1+n2:n1-n2;
+ return !(op==='-' && n1<n2);
+}
+function updateAppBuilderStatus(){
+ const status=document.getElementById('app-placement-status'); if(!status)return;
+ const opText=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'□';
+ const first=appPlaced[0]!==null?appNumberForRow(0).toLocaleString():'空白';
+ const second=appPlaced[1]!==null?appNumberForRow(1).toLocaleString():'空白';
+ status.innerHTML=`運算：<strong>${opText}</strong>　第一列：<strong>${first}</strong>　第二列：<strong>${second}</strong>`;
+ const ready=appPlacementReady();
+ const modelReady=ready && syncAppProblemFromBuilder();
+ const tq=document.querySelector('.top-question'); if(tq)tq.classList.toggle('app-hidden',!modelReady);
+ if(modelReady) renderTopQuestion();
+ document.querySelectorAll('.app-number').forEach(el=>{const idx=Number(el.dataset.appNum);el.classList.toggle('selected',appSelectedNumber===idx);el.classList.toggle('placed',appPlaced.includes(idx));});
+ const targets=document.querySelectorAll('.app-target');
+ targets.forEach((el,i)=>el.classList.toggle('selected',appTargetRow!==null && Math.floor(i/4)===appTargetRow));
+ if(ready && !modelReady && appChosenOp==='-') status.innerHTML+='　<span style="color:#b91c1c">減法第一列要放較大的數量。</span>';
+}
+function appNumberClick(numIndex){
+ if(currentType!==6 || !appProblem)return;
+ if(appTargetRow!==null){appPlaced[appTargetRow]=numIndex;appTargetRow=null;appSelectedNumber=null;renderGrid();updateAppBuilderStatus();return;}
+ appSelectedNumber=numIndex;updateAppBuilderStatus();
+}
+function appTargetClick(row){
+ if(currentType!==6 || !appProblem)return;
+ appTargetRow=row;
+ if(appSelectedNumber!==null){appPlaced[row]=appSelectedNumber;appSelectedNumber=null;appTargetRow=null;renderGrid();}
+ updateAppBuilderStatus();
+}
+function appNumberDragStart(e,numIndex){if(currentType!==6)return;appSelectedNumber=numIndex;e.dataTransfer.setData('text/plain',String(numIndex));e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('dragging');}
+function appNumberDragEnd(e){e.currentTarget.classList.remove('dragging');}
+function appTargetDragOver(e){if(currentType===6)e.preventDefault();}
+function appTargetDrop(e,row){if(currentType!==6||!appProblem)return;e.preventDefault();const idx=Number(e.dataTransfer.getData('text/plain'));if(idx===0||idx===1){appPlaced[row]=idx;appSelectedNumber=null;appTargetRow=null;renderGrid();updateAppBuilderStatus();}}
 
 function placeClass(index){
   // digits() 回傳 [千,百,十,個]，index 0~3。
@@ -748,6 +784,29 @@ function renderGrid(){
               <div><input class="carry-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
               <div><input class="carry-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
               <div><input class="carry-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>`}`;
+
+ if(currentType===6){
+   const first=appNumberForRow(0), second=appNumberForRow(1);
+   const firstDigits=first?digits(Number(first)):['','','',''];
+   const secondDigits=second?digits(Number(second)):['','','',''];
+   const firstNZ=firstDigits.findIndex(v=>v!==0), secondNZ=secondDigits.findIndex(v=>v!==0);
+   // 應用題保留之前練習的兩列虛線框。
+   html+=`<div></div><div></div><div><input class="carry-cell" id="c-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="c-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="c-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="c-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>`;
+   html+=`<div></div><div></div>${appChosenOp==='-'?`<div><input class="carry-cell borrow-input-cell" id="d-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="千位退位紀錄" onclick="borrowInputClick(this,0)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="百位退位紀錄" onclick="borrowInputClick(this,1)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="十位退位紀錄" onclick="borrowInputClick(this,2)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="個位退位紀錄" onclick="borrowInputClick(this,3)" oninput="limitMark(this)"></div>`:`<div><input class="carry-cell" id="d-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>`}`;
+   // 應用題直式版型與一般練習完全一致：運算符號固定在最左欄。
+   // 不另外顯示「第一列／第二列／運算」文字，避免破壞孩子已熟悉的紙本直式位置。
+   html+=`<div></div><div class="cell"></div>`;
+   firstDigits.forEach((x,i)=>{const show=first!==''&&i>=firstNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[0]!==null?'filled':''} ${appTargetRow===0?'selected':''}" aria-label="第一列${['千','百','十','個'][i]}位" onclick="appTargetClick(0)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,0)">${show?x:''}</div>`;});
+   html+=`<button class="app-op-button ${appChosenOp?'selected':''}" aria-label="選擇加法或減法" onclick="appOpClick()">${appChosenOp||'□'}</button><div class="cell"></div><div></div><div></div><div></div><div></div>`;
+   html+=`<div></div><div class="cell"></div>`;
+   secondDigits.forEach((x,i)=>{const show=second!==''&&i>=secondNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[1]!==null?'filled':''} ${appTargetRow===1?'selected':''}" aria-label="第二列${['千','百','十','個'][i]}位" onclick="appTargetClick(1)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,1)">${show?x:''}</div>`;});
+   html+=`<div class="line"></div><div></div><div class="cell"></div>`;
+   for(let i=0;i<4;i++)html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+   document.getElementById('grid').innerHTML=html;
+   const oldHelp=document.querySelector('.borrow-help');if(oldHelp)oldHelp.remove();
+   if(appChosenOp==='-'){const help=document.createElement('div');help.className='borrow-help';help.innerHTML='<strong>退位操作</strong><br>① 點一下框框，輸入退位數字，例如 <b>10</b><br>② 再點一下，套用你輸入的數字<br>③ 上方數字會出現紅色退位斜線';document.getElementById('grid').parentElement.appendChild(help);}
+   return;
+ }
 
  // 第一個數：萬位留白，千～個位放四位數。
  // 重要：前導 0 不顯示，但「中間的 0」必須保留。
@@ -1219,8 +1278,19 @@ function buildCorrectionUnderProblemHTML(userVal){
 }
 
 function showAnswer(){
+ if(currentType===6){
+   if(!appPlacementReady()){
+     const box=document.getElementById('answer-help');
+     if(box){box.innerHTML='<div class="answer-title">💡 先把題目變成直式</div><div>先按直式的 □ 選擇＋或－，再把題目中的兩個數字放到第一列和第二列。</div>';box.classList.remove('hidden');}
+     return;
+   }
+   if(!syncAppProblemFromBuilder()){
+     const box=document.getElementById('answer-help');
+     if(box){box.innerHTML='<div class="answer-title">💡 先檢查直式</div><div>如果是減法，第一列要放較大的數量，第二列放較小的數量。</div>';box.classList.remove('hidden');}
+     return;
+   }
+ }
  const box=document.getElementById('answer-help');
- const btn=document.getElementById('show-answer-btn');
  const appBtn=document.getElementById('show-answer-app');
  if(!box)return;
  const key=currentProblemKey();
@@ -1263,7 +1333,18 @@ function showAnswer(){
  box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function check(){
- if(currentType===6 && appChosenOp!==appProblem?.op)return;
+ if(currentType===6){
+   if(!syncAppProblemFromBuilder()){
+     const msg=document.getElementById('feedback');
+     if(msg){msg.style.color='var(--red)';msg.innerText='先選擇＋或－，再把兩個數字放進直式；減法時第一列要放較大的數量。';}
+     return;
+   }
+   if(appChosenOp!==appProblem?.op && !appOpWrongRecorded){
+     appOpWrongRecorded=true;wrongCount++;appOpWrongCount++;recordWrongProblem();currentQPoints=Math.max(2,currentQPoints-2);
+     const msg=document.getElementById('feedback');if(msg){msg.style.color='var(--red)';msg.innerText='運算判斷還要再想一想：數量是合在一起，還是從原來的數量拿走一部分？';}
+     return;
+   }
+ }
  const finalInput=document.getElementById('final-ans');
  let raw=(finalInput?.value||'').trim();
  // 上方送出與直式送出共用同一套答案解析：
@@ -1296,7 +1377,7 @@ function check(){
      if(currentQ < window.__retryQueue.length){
        currentQ++;
        appProblem={...window.__retryQueue[currentQ-1]};
-       appChosenOp=null; n1=appProblem.a;n2=appProblem.b;op=appProblem.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+       appChosenOp=null; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false; n1=appProblem.a;n2=appProblem.b;op=appProblem.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
        answerRevealed=false; resetAnswerHelp();
        document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
        renderContext(appProblem); renderAppChoices();
@@ -1351,7 +1432,7 @@ function retryWrong(){
  document.getElementById('q-count').innerText='1';
  document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
  const p=queue[0];
- appProblem=p; appChosenOp=null;
+ appProblem=p; appChosenOp=null; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false;
  n1=p.a;n2=p.b;op=p.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
  renderContext(p); renderAppChoices();
  document.getElementById('context-card').classList.remove('app-hidden');
