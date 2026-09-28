@@ -577,10 +577,20 @@
     </div>
 
     <div id="view-pokedex" class="view-section">
-        <h2 style="text-align:center;margin:8px 0;">📸 寶可夢圖鑑</h2><div style="font-size:.9rem;color:#94a3b8;margin-bottom:8px;">小朋友：<span id="dex-child-name"></span></div>
+        <h2 style="text-align:center;margin:8px 0;">📸 寶可夢圖鑑</h2>
+        <button id="dex-opponent-toggle" class="mode-btn" style="background:#7c3aed;" onclick="toggleOpponentPickMode()">⚔️ 選擇對戰對手</button>
+        <div id="dex-mode-note" style="text-align:center;color:#c4b5fd;font-size:.82rem;margin:4px 0 8px;">點擊已收服寶可夢可設為自己的夥伴；按上方按鈕可改選對手。</div><div style="font-size:.9rem;color:#94a3b8;margin-bottom:8px;">小朋友：<span id="dex-child-name"></span></div>
         <div id="dex-count" style="text-align:center;color:var(--gold);font-weight:800;margin-bottom:8px;"></div>
         <div class="grid-view" id="dex-grid"></div>
         <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">返回</button>
+    </div>
+
+    <div id="view-victory" class="view-section" style="text-align:center;align-items:center;justify-content:center;gap:12px;">
+        <div style="font-size:3rem;">🏆✨</div><h2 style="color:var(--gold);margin:0;">單字全數答對！</h2>
+        <div id="victory-message" style="line-height:1.8;"></div>
+        <div style="font-size:1.1rem;font-weight:800;">下一關：用今天的單字來造句吧！</div>
+        <button class="mode-btn" style="background:#16a34a;" onclick="startSentenceSession()">✍️ 前往造句練習</button>
+        <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">稍後再造句／回首頁</button>
     </div>
 
     <div id="view-bank" class="view-section">
@@ -773,7 +783,7 @@
     }
 
     let wrongAttemptsThisQuestion = 0;
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, chosenOppId: 0, opponentPickMode: false, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
     let currentUserKey = '';
@@ -1975,6 +1985,7 @@ ${detail}
         ensureChildName();
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
         state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
+        state.chosenOppId = parseInt(getHeroData('hero_opponent_id')) || 0;
         const mainName = document.getElementById('main-child-name');
         if (mainName) mainName.textContent = getChildName();
         const storageInfo = document.getElementById('bank-storage-info');
@@ -2007,7 +2018,7 @@ ${detail}
         switchView('view-game');
         initArena();
     }
-    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1; resetBattleHP(); updateHPUI(); loadWord(); }
+    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = state.chosenOppId || (un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1); resetBattleHP(); updateHPUI(); loadWord(); }
 
     function getPokeImageCandidates(id) {
         const base = (id === 10079) ? 384 : (id === 10044 ? 150 : id);
@@ -2196,6 +2207,8 @@ ${detail}
     }
 
     function sentenceUnitPass() {
+        const passedWord = state.sentenceList && state.sentenceList[state.sentenceIndex];
+        if (passedWord) recordWordReview(passedWord, 'pass_sentence', 'sentence');
         const input = document.getElementById('sentence-unit-input');
         if (input) {
             capitalizeSentenceInput(input);
@@ -2530,6 +2543,8 @@ ${detail}
 
     function handlePass() {
         if (state.index >= state.currentList.length) return;
+        const skippedWord = state.currentList[state.index];
+        recordWordReview(skippedWord, 'pass', state.mode);
 
         if (state.mode === 'quiz' && !state.tempPractice) {
             // 魔王挑戰不能用 PASS 把單字永久跳掉；放到隊伍最後，之後仍會考到。
@@ -2545,6 +2560,19 @@ ${detail}
         loadWord();
     }
     function startInGamePractice() { state.tempPractice = true; loadWord(); }
+
+    // PASS 代表「先跳過」，不是已學會；保存待複習清單，供之後再次練習。
+    function recordWordReview(word, result, mode) {
+        if (!word || !word.ref) return;
+        try {
+            const key = 'hero_word_review_queue';
+            const rows = JSON.parse(getHeroData(key) || '[]');
+            const old = rows.find(x => x.ref === word.ref);
+            const entry = { ref: word.ref, en: word.en || '', cn: word.cn || '', result, mode, at: Date.now(), passCount: (old && old.passCount || 0) + (result === 'pass' ? 1 : 0) };
+            const next = [entry, ...rows.filter(x => x.ref !== word.ref)].slice(0, 300);
+            setHeroData(key, JSON.stringify(next));
+        } catch (e) { /* 記錄失敗不阻斷孩子繼續練習 */ }
+    }
 
     function handlePlayerDeath() {
         state.awaitingPartner = true;
@@ -2580,7 +2608,10 @@ ${detail}
             }
 
             confetti({ particleCount: 200, spread: 100 });
-            alert(`🎉 ${state.unit} 魔王挑戰完成！\n共完成 ${state.quizCompleted} 個單字。\n所有單字都已考完！`);
+            const vm = document.getElementById('victory-message');
+            if (vm) vm.textContent = `🎉 ${state.unit} 魔王挑戰完成！共完成 ${state.quizCompleted} 個單字，全部答對！`;
+            switchView('view-victory');
+            return;
         } else if (state.mode === 'practice') {
             alert("練習完成！");
         } else if (state.mode === 'priority') {
@@ -3269,6 +3300,8 @@ ${detail}
         });
     }
 
+    function toggleOpponentPickMode() { state.opponentPickMode = !state.opponentPickMode; const b=document.getElementById('dex-opponent-toggle'); const n=document.getElementById('dex-mode-note'); if(b) b.textContent=state.opponentPickMode?'✓ 對手選擇模式（再按一次取消）':'⚔️ 選擇對戰對手'; if(n) n.textContent=state.opponentPickMode?'點選圖鑑中的寶可夢，設定為下一場魔王挑戰的對手。':'點擊已收服寶可夢可設為自己的夥伴；按上方按鈕可改選對手。'; }
+
     function renderDex() {
         const nameEl = document.getElementById('dex-child-name');
         if (nameEl) nameEl.textContent = getChildName();
@@ -3281,13 +3314,11 @@ ${detail}
             it.innerHTML=`<img src="${getPokeImageUrl(i,true)}"><div class="name-zh">${getPokemonName(i)}</div>${captured?'<div class="caught-badge">已捕捉・可加入夥伴</div>':'<div style="color:#64748b;font-size:.7rem;">未捕捉</div>'}`;
             const img=it.querySelector('img');
             setPokeImageFallback(img,i);
-            if(captured){
-                it.style.cursor='pointer';
-                it.onclick=()=>{ state.activePokeId=i; setHeroData('hero_myPoke',i); switchView('view-team'); };
-            }
+            it.style.cursor='pointer';
+            it.onclick=()=>{ if(state.opponentPickMode){ state.chosenOppId=i; setHeroData('hero_opponent_id',i); state.opponentPickMode=false; const b=document.getElementById('dex-opponent-toggle'); if(b)b.textContent='⚔️ 選擇對戰對手'; alert(`已選擇 ${getPokemonName(i)} 作為下一場對手。回首頁開始魔王挑戰即可。`); renderDex(); return; } if(!captured){ alert('這隻尚未收服，先在魔王挑戰中擊敗牠，才能設為自己的夥伴。'); return; } state.activePokeId=i; setHeroData('hero_myPoke',i); switchView('view-team'); };
             grid.appendChild(it);
         }
-        document.getElementById('dex-count').innerText=`已捕捉 ${caught} / 151｜捕捉後可加入「我的夥伴」並在下一場出戰`;
+        document.getElementById('dex-count').innerText=`已捕捉 ${caught} / 151｜目前指定對手：${state.chosenOppId ? getPokemonName(state.chosenOppId) : '隨機'}｜已收服者可設為夥伴；對手選擇模式可指定已收服寶可夢`;
     }
 </script>
 </body>
