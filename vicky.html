@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>旅遊英文｜情境句發音練習</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#1f2937;font-family:Arial,"Noto Sans TC",sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}
+.card{width:min(100%,520px);background:#fff;border-radius:22px;padding:28px;box-shadow:0 12px 36px #20304a18}
+.tag{display:inline-block;background:#e7f1ff;color:#245ca6;padding:6px 11px;border-radius:99px;font-size:13px;font-weight:700}
+h1{font-size:24px;margin:16px 0 8px}.en{font-size:clamp(24px,5vw,32px);font-weight:700;line-height:1.4;margin:22px 0 10px}.zh{color:#64748b;font-size:17px;margin-bottom:24px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}button{border:0;border-radius:13px;padding:14px 12px;font-size:15px;font-weight:700;cursor:pointer;background:#2563eb;color:#fff}button.secondary{background:#e8eef7;color:#26364d}button.stop{grid-column:1/-1;background:#fff0f0;color:#a33b3b;border:1px solid #f3d0d0}
+.status{font-size:13px;color:#64748b;margin-top:16px;min-height:20px}.note{font-size:13px;color:#64748b;line-height:1.65;margin-top:18px}
+</style>
+</head>
+<body>
+<main class="card">
+  <span class="tag">AIRPORT｜機場報到</span>
+  <h1>聽情境句，練習開口</h1>
+  <div class="en" id="sentence">Where is the check-in counter?</div>
+  <div class="zh" id="translation">請問報到櫃檯在哪裡？</div>
+  <div class="controls">
+    <button id="slow">🔊 慢速播放</button>
+    <button id="normal" class="secondary">▶ 正常速度</button>
+    <button id="stop" class="stop">■ 停止播放</button>
+  </div>
+  <div class="status" id="status" aria-live="polite">按下按鈕即可聆聽英文句子。</div>
+  <div class="note">語音使用裝置／瀏覽器提供的英文語音。首次播放前請確認裝置音量；不同手機或瀏覽器的聲音可能略有差異。</div>
+</main>
+<script>
+(() => {
+  const sentence = document.getElementById('sentence').textContent.trim();
+  const status = document.getElementById('status');
+  const supported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+
+  function stopSpeech() {
+    if (supported) window.speechSynthesis.cancel();
+    status.textContent = '已停止播放。';
+  }
+
+  function speak(rate) {
+    if (!supported) {
+      status.textContent = '此瀏覽器不支援語音播放，請改用最新版 Safari 或 Chrome。';
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(sentence);
+    utterance.lang = 'en-US';
+    utterance.rate = rate;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    utterance.onstart = () => status.textContent = rate < 1 ? '正在慢速播放…' : '正在正常速度播放…';
+    utterance.onend = () => status.textContent = '播放完成。可以再聽一次或跟讀。';
+    utterance.onerror = () => status.textContent = '語音播放未成功，請再按一次或檢查裝置語音設定。';
+    window.speechSynthesis.speak(utterance);
+  }
+
+  document.getElementById('slow').addEventListener('click', () => speak(0.75));
+  document.getElementById('normal').addEventListener('click', () => speak(1));
+  document.getElementById('stop').addEventListener('click', stopSpeech);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && supported) window.speechSynthesis.cancel();
+  });
+})();
+</script>
+</body>
+</html>
