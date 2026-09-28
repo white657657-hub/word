@@ -375,7 +375,7 @@
             font-size:.85rem !important;
         }
 
-        /* V1455：題庫管理重新設計 */
+        /* V1456：題庫管理重新設計 */
         .bank-page-head { display:flex; justify-content:space-between; align-items:center; margin:2px 0 10px; }
         .bank-page-title { font-size:1.45rem; font-weight:1000; color:#f8fafc; }
         .bank-page-subtitle { color:#94a3b8; font-size:.78rem; margin-top:2px; }
@@ -772,6 +772,7 @@
         state.oppHP = state.oppMaxHP;
     }
 
+    let wrongAttemptsThisQuestion = 0;
     let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, quizCompleted: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
@@ -1006,7 +1007,7 @@ ${detail}
             'W4': [
                 ['castle','城堡'],
                 ['gold','黃金'],
-                ['gloden','金色的'],
+                ['golden','金色的'],
                 ['today','今天'],
                 ['American','美國的'],
                 ['Australia','澳洲'],
@@ -1197,7 +1198,7 @@ ${detail}
                     <input id="tw-en-${i}" class="twenty-bank-input en" autocomplete="off" autocapitalize="none" spellcheck="false" value="" placeholder="英文單字" oninput="handleTwentyEnglishInput(${i})" onkeydown="handleTwentyEnglishKeydown(event,${i})" onblur="autoFillTwentyRow(${i})">
                     <button type="button" class="twenty-bank-speak" title="播放發音" onclick="playBankWord(document.getElementById('tw-en-${i}')?.value || '')">🔊</button>
                 </div>
-                <input id="tw-cn-${i}" class="twenty-bank-input cn" autocomplete="off" value="" placeholder="自動取得中文" readonly>
+                <input id="tw-cn-${i}" class="twenty-bank-input cn" autocomplete="off" value="" placeholder="自動取得中文（可修改）">
             </div>`;
         }).join('');
         updateTwentyBankCount();
@@ -1597,7 +1598,7 @@ ${detail}
                 <input id="qe-en-${i}" class="twenty-bank-input en" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="英文單字" oninput="updateQuestionEntryCount()" onkeydown="handleQuestionEntryKeydown(event,${i})" onblur="autoFillQuestionEntry(${i})">
                 <button type="button" class="twenty-bank-speak" title="播放發音" onclick="playBankWord(document.getElementById('qe-en-${i}')?.value || '')">🔊</button>
             </div>
-            <input id="qe-cn-${i}" class="twenty-bank-input cn" autocomplete="off" placeholder="自動取得中文" readonly>
+            <input id="qe-cn-${i}" class="twenty-bank-input cn" autocomplete="off" placeholder="自動取得中文（可修改）">
         </div>`).join('');
         updateQuestionEntryCount();
         const first=document.getElementById('qe-en-0');
@@ -1886,6 +1887,8 @@ ${detail}
 
     // 舊版本曾把 Earth 存成 eart；啟動時自動修正舊本機資料，避免畫面只產生 4 個字框。
     function normalizeLegacyEarthInBanks(banks) {
+        if (banks && typeof banks === 'object') { Object.keys(banks).forEach(k => { (banks[k] || []).forEach(w => { if (w && String(w.en || '').trim().toLowerCase() === 'gloden') w.en = 'golden'; }); }); }
+        // 將舊版常見誤字 gloden 統一修正為 golden。
         const result = cloneBanks(banks || {});
         Object.keys(result).forEach(unit => {
             if (!Array.isArray(result[unit])) return;
@@ -2235,11 +2238,16 @@ ${detail}
             body.set('text', sentence);
             body.set('language', 'en-US');
             body.set('enabledOnly', 'false');
-            const response = await fetch('https://api.languagetool.org/v2/check', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: body.toString()
-            });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 7000);
+            let response;
+            try {
+                response = await fetch('https://api.languagetool.org/v2/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body.toString(), signal: controller.signal
+                });
+            } finally { clearTimeout(timeoutId); }
             if (response.ok) {
                 const data = await response.json();
                 matches = Array.isArray(data.matches) ? data.matches : [];
@@ -2253,7 +2261,7 @@ ${detail}
             const usefulMatches = matches.filter(m => m && m.message && m.rule);
             if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
                 result.className = 'sentence-status good';
-                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字問題！</b><div class="sentence-example">很好，繼續保持。</div>';
+                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">做得好！這是自動檢查建議，仍可請家長一起看看。</div>';
                 showSentenceNextButton();
                 return;
             }
@@ -2281,6 +2289,7 @@ ${detail}
     }
 
     async function loadWord() {
+        wrongAttemptsThisQuestion = 0;
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         const word = state.currentList[state.index], display = document.getElementById('display-cn');
         let tip = localDict[word.en.toLowerCase()] || word.cn;
@@ -2501,13 +2510,17 @@ ${detail}
             }
 
             if (state.mode === 'quiz' && !state.tempPractice) {
-                state.playerHP--;
-                showDamage('player',1);
-                document.getElementById('btn-force-practice').style.display = "flex";
-
-                if (state.playerHP <= 0) {
-                    handlePlayerDeath();
-                    return;
+                wrongAttemptsThisQuestion++;
+                const forcePractice = document.getElementById('btn-force-practice');
+                if (forcePractice) forcePractice.style.display = 'flex';
+                if (wrongAttemptsThisQuestion >= 3) {
+                    state.playerHP = Math.max(0, state.playerHP - 1);
+                    showDamage('player',1);
+                    if (feedback) feedback.innerHTML += '<br>🛡️ 已嘗試 3 次，本題扣除 1 HP。可以繼續練習或使用 PASS。';
+                    wrongAttemptsThisQuestion = 0;
+                    if (state.playerHP <= 0) { handlePlayerDeath(); return; }
+                } else if (feedback) {
+                    feedback.innerHTML += `<br>🌱 第 ${wrongAttemptsThisQuestion} 次嘗試：先不扣 HP，再檢查紅色位置。`;
                 }
             }
 
@@ -2627,7 +2640,6 @@ ${detail}
 
         castle:['cas','tle'],
         gold:['gold'],
-        gloden:['glo','den'],
         golden:['gold','en'],
         today:['to','day'],
         american:['a','mer','i','can'],
@@ -2682,15 +2694,15 @@ ${detail}
      * 與孩子可以模仿的音值並排顯示。W1-W4 使用明確設定，其餘單字維持原本音節分色。
      */
     const PHONICS_HINTS = {
-        dinosaur: { parts:[['di','/daɪ/'],['no','/nə/'],['saur','/sɔːr/']] },
-        million: { parts:[['mil','/mɪl/'],['lion','/jən/']] },
-        street: { parts:[['str','/str/'],['ee','/iː/'],['t','/t/']] },
-        earth: { parts:[['ear','/ɜːr/'],['th','/θ/']] },
+        dinosaur: { parts:[['di','/ˈdaɪ/'],['no','/nə/'],['saur','/sɔːr/']], rule:'美式發音重音在第一音節；分色是音節提示，不代表每段都能獨立拼讀。' },
+        million: { parts:[['mil','/ˈmɪl/'],['lion','/jən/']], rule:'注意第一音節重音；lion 這組字母在此不等於一般的 l-i-o-n 逐字母發音。' },
+        street: { parts:[['str','/str/'],['ee','/iː/'],['t','/t/']], rule:'str 是子音連綴，ee 常表示長 e 音；此處只顯示提示，不播放假造的單獨音素。' },
+        earth: { parts:[['ear','/ɝː/'],['th','/θ/']], rule:'美式英語提示；th 在 earth 結尾發清音 /θ/。' },
         dance: { parts:[['d','/d/'],['an','/æ/'],['ce','/s/']] },
         cloud: { parts:[['cl','/kl/'],['ou','/aʊ/'],['d','/d/']] },
         lake: { parts:[['l','/l/'],['a_e','/eɪ/'],['k','/k/'],['e','不發音',true]], rule:'a_e：magic e 讓 a 發長音，最後 e 不發音' },
-        near: { parts:[['n','/n/'],['ear','/ɪər/']] },
-        valley: { parts:[['val','/væl/'],['ley','/i/']] },
+        near: { parts:[['n','/n/'],['ear','/ɪr/']], rule:'美式英語中 near 的母音與 r 連在一起；英美口音會有差異。' },
+        valley: { parts:[['val','/ˈvæl/'],['ley','/i/']], rule:'重音在第一音節；ey 在這個字尾常發長 e 音。' },
         yesterday: { parts:[['yes','/jes/'],['ter','/tər/'],['day','/deɪ/']] },
         camp: { parts:[['c','/k/'],['a','/æ/'],['mp','/mp/']] },
         map: { parts:[['m','/m/'],['a','/æ/'],['p','/p/']] },
@@ -2714,15 +2726,14 @@ ${detail}
         lizard: { parts:[['liz','/lɪz/'],['ard','/ərd/']] },
         castle: { parts:[['cas','/kæs/'],['t','不發音',true],['le','/əl/']], rule:'castle：t 不發音' },
         gold: { parts:[['g','/g/'],['o','/oʊ/'],['ld','/ld/']] },
-        gloden: { parts:[['glo','/gloʊ/'],['den','/dən/']] },
         golden: { parts:[['gold','/goʊld/'],['en','/ən/']] },
-        today: { parts:[['to','/tə/'],['day','/deɪ/']] },
-        american: { parts:[['a','/ə/'],['mer','/mɛr/'],['i','/ɪ/'],['can','/kən/']] },
-        australia: { parts:[['Aus','/ɔː/'],['tra','/streɪ/'],['li','/li/'],['a','/ə/']] },
-        australian: { parts:[['Aus','/ɔː/'],['tra','/streɪ/'],['li','/li/'],['an','/ən/']] },
+        today: { parts:[['to','/tə/'],['day','/ˈdeɪ/']], rule:'美式常見讀音重音在第二音節。' },
+        american: { parts:[['a','/ə/'],['mer','/ˈmɛr/'],['i','/ɪ/'],['can','/kən/']], rule:'美式常見讀音重音在第二音節。' },
+        australia: { parts:[['Aus','/ɔː/'],['tra','/ˈstreɪ/'],['li','/li/'],['a','/ə/']], rule:'美式常見讀音約四音節，重音在第二音節；這是發音提示，不是固定自然發音規則。' },
+        australian: { parts:[['Aus','/ɔː/'],['tra','/ˈstreɪ/'],['li','/li/'],['an','/ən/']], rule:'重音在第二音節；字母分組只作記憶提示。' },
         china: { parts:[['Chi','/tʃaɪ/'],['na','/nə/']] },
         country: { parts:[['coun','/kʌn/'],['try','/tri/']] },
-        egypt: { parts:[['E','/iː/'],['gypt','/dʒɪpt/']] },
+        egypt: { parts:[['E','/ˈiː/'],['gypt','/dʒɪpt/']], rule:'專有地名，重音在第一音節；建議以完整單字發音為準。' },
         flag: { parts:[['fl','/fl/'],['a','/æ/'],['g','/g/']] }
     };
 
@@ -2792,16 +2803,16 @@ ${detail}
         const key = String(text || '').toLowerCase();
         const data = PHONICS_HINTS[key];
         if (!data) return;
-
+        const label = document.createElement('div');
+        label.className = 'practice-phonics-note';
+        label.textContent = '字母／字母群提示（點「🔊 聽整個單字」聽完整發音）';
+        el.appendChild(label);
         const row = document.createElement('div');
         row.className = 'practice-phonics-row';
         data.parts.forEach(item => {
-            const box = document.createElement('button');
-            box.type = 'button';
+            const box = document.createElement('span');
             box.className = 'practice-phonics-item';
-            box.title = item[2] ? '不發音' : '點一下聽示範音';
-            box.setAttribute('aria-label', item[2] ? `${item[0]}：不發音` : `${item[0]}：播放示範音`);
-            box.addEventListener('click', () => playPhonicsPart(box, item));
+            box.setAttribute('aria-label', `${item[0]}：發音提示 ${item[1]}`);
             const letters = document.createElement('span');
             letters.className = 'practice-phonics-letter' + (item[2] ? ' practice-silent' : '');
             letters.textContent = item[0];
@@ -2812,20 +2823,13 @@ ${detail}
             sound.className = 'practice-phonics-sound';
             sound.textContent = item[1];
             box.append(letters, arrow, sound);
-            if (!item[2]) {
-                const speaker = document.createElement('span');
-                speaker.className = 'practice-phonics-speaker';
-                speaker.textContent = '🔊';
-                box.appendChild(speaker);
-            }
             row.appendChild(box);
         });
         el.appendChild(row);
-
         if (data.rule) {
             const rule = document.createElement('div');
             rule.className = 'practice-rule';
-            rule.textContent = '💡 ' + data.rule;
+            rule.textContent = data.rule;
             el.appendChild(rule);
         }
     }
@@ -2838,7 +2842,7 @@ ${detail}
 
         const note = document.createElement('div');
         note.className = 'practice-phonics-note';
-        note.textContent = '自然發音：先看音節，再看字母／字母群怎麼發音；🔊 點一下聽對應示範音';
+        note.textContent = '先看音節與字母群提示；🔊 聽完整單字。音節分色是輔助，不等於每段都能獨立拼讀。';
         el.appendChild(note);
 
         const parts = fallbackSyllables(text);
@@ -3180,7 +3184,7 @@ ${detail}
             const usefulMatches = matches.filter(m => m && m.message && m.rule);
             if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
                 result.className = 'sentence-status good';
-                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字問題！</b><div class="sentence-example">很好，繼續用這個單字造句。</div>';
+                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">很好，繼續用這個單字造句。</div>';
                 return;
             }
 
