@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>三年級｜10000以內四位數加減</title>
+<style>
+:root{--bg:#f3f6fa;--card:#fff;--text:#263238;--blue:#3498db;--orange:#e67e22;--green:#27ae60;--red:#e74c3c;--line:#333;--muted:#718096;--math-font:"Courier New",Courier,monospace;--place-wan:#7c3aed;--place-qian:#2563eb;--place-bai:#16a34a;--place-shi:#0f9f8f;--place-ge:#f59e0b}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);font-family:"PingFang TC","Microsoft JhengHei",sans-serif;color:var(--text)}
+body{overflow-x:hidden}.page{display:none;width:100%;max-width:700px;min-height:100vh;margin:auto;padding:18px 14px 28px;flex-direction:column;align-items:center}.page.active{display:flex}
+.title{font-size:1.7rem;font-weight:800;margin:12px 0 6px}.subtitle{color:var(--muted);font-size:.98rem;text-align:center;margin-bottom:12px}
+#menu-list{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.btn-menu{padding:18px 8px;font-size:1.08rem;border:0;border-radius:14px;color:#fff;font-weight:800;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.16)}.btn-menu:active,.btn-main:active,.btn-move:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}.btn-menu.app-first{grid-column:1 / -1;padding:20px 10px;font-size:1.15rem} .btn-menu.app-first small{font-size:.82rem!important}.add{background:var(--blue)}.sub{background:var(--orange)}.mix{background:#8e44ad}.carry{background:#16a085}.borrow{background:#c0392b}.hint{margin-top:20px;background:#fff;border-radius:16px;padding:14px 16px;width:100%;line-height:1.7;font-size:.95rem;color:#4a5568}
+.info-bar{display:flex;justify-content:space-between;width:94%;font-weight:800;margin:4px 0 6px}.progress{width:94%;height:10px;background:#e2e8f0;border-radius:6px;overflow:hidden;margin-bottom:15px}.bar{height:100%;width:0;background:var(--green);transition:.3s}
+.mode-label{font-size:1rem;font-weight:800;padding:6px 14px;border-radius:20px;background:#fff;margin-bottom:8px}.instruction{min-height:30px;text-align:center;font-weight:700;color:#4a5568;margin-bottom:5px}
+.top-question{display:flex;align-items:center;justify-content:center;gap:10px;margin:5px 0 14px}.q-text{font-size:1.8rem;font-weight:900;letter-spacing:1px;color:#263238}.final-ans{width:115px;height:50px;font-size:1.85rem;font-family:var(--math-font);text-align:center;border:3px solid #333;border-radius:10px;background:#fff;outline:none;-moz-appearance:textfield}.final-ans::-webkit-outer-spin-button,.final-ans::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.btn-main{padding:11px 18px;font-size:1.08rem;font-weight:800;color:#fff;background:var(--green);border:0;border-radius:11px;box-shadow:0 4px 0 #219653;cursor:pointer}
+.math-card{background:var(--card);padding:16px 12px 14px;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.1);width:100%;display:flex;justify-content:center;align-items:center;gap:12px}.vertical{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center}.app-builder-grid{grid-template-columns:42px repeat(5,54px);grid-auto-flow:row;align-items:center}.app-builder-grid .app-op-wrap{grid-column:1;width:84px;justify-self:start;position:relative;z-index:2}.app-builder-grid .app-op-label{display:inline-block}.header{font-weight:800;color:#64748b;font-size:1rem;text-align:center;height:25px}.place{font-size:.72rem;color:#94a3b8;text-align:center;height:18px}.cell{width:54px;height:50px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;font-family:var(--math-font)}.place-digit{font-family:var(--math-font);font-weight:900}.place-wan{color:var(--place-wan)}.place-qian{color:var(--place-qian)}.place-bai{color:var(--place-bai)}.place-shi{color:var(--place-shi)}.place-ge{color:var(--place-ge)}.answer-wan{border-color:var(--place-wan)!important}.answer-qian{border-color:var(--place-qian)!important}.answer-bai{border-color:var(--place-bai)!important}.answer-shi{border-color:var(--place-shi)!important}.answer-ge{border-color:var(--place-ge)!important}.clickable-digit{position:relative;cursor:pointer;user-select:none;border-radius:8px;transition:.12s}.clickable-digit.marked{background:#dbeafe}.clickable-digit.marked::after{content:"";position:absolute;width:42px;height:3px;background:var(--red);border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.clickable-digit:hover{background:rgba(52,152,219,.08)}.carry-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.15rem;font-weight:900;font-family:var(--math-font);color:var(--red);letter-spacing:-1px;outline:none;background:#fff;-moz-appearance:textfield;padding:0 2px}.carry-cell::-webkit-outer-spin-button,.carry-cell::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.carry-cell:focus,.digit-input:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;text-align:center;font-size:1.08rem;font-weight:900;font-family:var(--math-font);color:var(--red);outline:none;background:#fff;cursor:pointer;padding:0;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent}.borrow-action-cell:focus-visible{border-color:var(--blue);box-shadow:0 0 0 2px rgba(52,152,219,.12)}.borrow-action-cell.active{border-color:var(--red);background:#fff5f5}.borrow-action-cell.active::after{content:"10"}.borrow-action-cell:active{transform:scale(.97)}.borrow-input-cell.applied{border-color:var(--red);background-color:#fff5f5;position:relative;box-shadow:0 0 0 2px rgba(220,38,38,.10)}.borrow-input-cell.applied::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;pointer-events:none}.borrow-help{width:190px;font-size:.78rem;color:#64748b;line-height:1.5;margin:0;text-align:left;background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 9px;box-sizing:border-box}.borrow-help strong{color:#b91c1c}.math-card.borrow-layout{align-items:flex-start}.math-card.borrow-layout .vertical{flex:0 0 auto}@media(max-width:700px){.math-card.borrow-layout{flex-direction:column;align-items:center}.borrow-help{width:100%;max-width:430px;margin-top:4px;text-align:center}}.borrow-help strong{color:#b91c1c}@media(max-width:520px){.borrow-action-cell{width:46px;height:34px;font-size:1rem}}.carry-row{display:contents}.digit-input{width:48px;height:46px;border:2px solid #cbd5e0;border-radius:8px;text-align:center;font-size:1.8rem;font-weight:900;font-family:var(--math-font);outline:none;background:#fff;-moz-appearance:textfield}.digit-input::-webkit-outer-spin-button,.digit-input::-webkit-inner-spin-button{ -webkit-appearance:none;margin:0 }.op{font-size:2rem;font-weight:900;color:#263238;text-align:center}.op-box{width:42px;height:50px;display:flex;align-items:center;justify-content:center;border:2px solid #cbd5e1;border-radius:8px;background:#fff7cc;color:#263238;font-size:2rem;font-weight:900;font-family:system-ui,sans-serif;box-sizing:border-box}.line{grid-column:1/-1;border-bottom:3px solid #333;height:4px;margin:1px 0 2px}.explain{width:100%;margin-top:12px;background:#fff;border-radius:14px;padding:11px 14px;color:#475569;font-size:.94rem;line-height:1.65}.feedback{height:34px;margin-top:12px;font-size:1.1rem;font-weight:800;text-align:center} .correction-under-problem{width:100%;margin-top:10px;background:#fff;border:2px solid #dbe3ec;border-radius:16px;padding:10px 10px 12px;box-sizing:border-box}.correction-under-problem.hidden{display:none}.correction-title{text-align:center;font-weight:900;color:#475569;font-size:1rem;margin-bottom:6px}.correction-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900}.correction-cell{width:54px;height:38px;display:flex;align-items:center;justify-content:center;font-size:1.65rem}.correction-op{font-family:system-ui,sans-serif;font-size:1.6rem;color:var(--red);text-align:center}.correction-line{grid-column:1/-1;border-bottom:3px solid #334155;height:2px;margin:0 0 1px}.correction-digit{min-width:34px;height:34px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center}.correction-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 3px #ef4444}.correction-ok{background:#dcfce7;color:#15803d}.correction-note{text-align:center;margin-top:7px;color:#475569;font-size:.92rem;line-height:1.5}.correction-note strong{color:#b91c1c}.correction-note .right{color:#15803d;font-weight:900}
+.correction-borrow-text{max-width:430px;margin:9px auto 2px;padding:0 4px;color:#b91c1c;font-family:system-ui,sans-serif;font-size:.9rem;font-weight:700;line-height:1.65;text-align:left}.correction-borrow-text div{margin:2px 0}.correction-borrow-text div::before{content:"";display:inline-block;width:6px;height:6px;background:#dc2626;border-radius:50%;margin:0 7px 2px 0}@media(max-width:520px){.correction-borrow-text{font-size:.84rem;line-height:1.6}}@media(max-width:520px){.correction-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-cell{width:46px;height:34px;font-size:1.45rem}}
+/* V12 訂正借位視覺：在訂正區直接呈現紙本式紅色借位過程 */
+.correction-borrow-wrap{margin:2px auto 7px;max-width:430px;}
+.correction-borrow-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:end;justify-content:center;font-family:"Courier New",monospace;font-weight:900;position:relative;min-height:58px;}
+.correction-borrow-cell{height:38px;display:flex;align-items:flex-end;justify-content:center;position:relative;color:#dc2626;font-size:1.15rem;}
+.correction-borrow-cell.changed::before{content:"";position:absolute;left:8px;right:8px;bottom:10px;border-top:2px solid #dc2626;transform:rotate(-18deg);transform-origin:center;}
+.correction-borrow-cell.changed::after{content:"";position:absolute;right:5px;bottom:4px;width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:9px solid #dc2626;transform:rotate(-18deg);}
+.correction-borrow-old{font-size:1rem;text-decoration:line-through;color:#dc2626;position:absolute;top:0;left:50%;transform:translateX(-55%);}
+.correction-borrow-new{font-size:1.25rem;color:#dc2626;position:absolute;bottom:0;left:50%;transform:translateX(-45%);}
+.correction-borrow-label{font-family:system-ui,sans-serif;font-size:.82rem;color:#dc2626;font-weight:900;text-align:right;padding-right:5px;align-self:center;}
+.correction-borrow-note{font-family:system-ui,sans-serif;text-align:center;color:#b91c1c;font-size:.88rem;line-height:1.45;margin-top:2px;}
+.answer-borrow-wrap{margin:4px auto 8px;max-width:430px;}
+.answer-borrow-grid{display:grid;grid-template-columns:42px repeat(5,54px);gap:4px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900;}
+.answer-borrow-label{font-family:system-ui,sans-serif;font-size:.78rem;color:#b91c1c;text-align:right;padding-right:4px;}
+.answer-borrow-empty{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;box-sizing:border-box;}
+.answer-borrow-box{width:54px;height:34px;border:1.5px dashed #aaa;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:#dc2626;background:#fff;position:relative;box-sizing:border-box;}
+.answer-borrow-box.applied{border-color:#dc2626;background:#fff5f5;}
+.answer-borrow-box.applied::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;}
+.answer-borrow-new{height:34px;display:flex;align-items:center;justify-content:center;font-size:1.18rem;color:#dc2626;position:relative;}
+.answer-borrow-caption{font-family:system-ui,sans-serif;text-align:center;color:#b91c1c;font-size:.84rem;font-weight:800;margin:0 0 4px;}
+@media(max-width:520px){.answer-borrow-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.answer-borrow-box{width:46px;height:32px;font-size:.95rem}.answer-borrow-box.applied::after{width:34px}.answer-borrow-new{font-size:1.02rem}.clickable-digit.marked::after{width:34px}.borrow-input-cell.applied::after{width:34px}}
+.textbook-borrow{max-width:430px;margin:2px auto 9px;text-align:center;}
+.borrow-caption{font-family:system-ui,sans-serif;color:#b91c1c;font-size:.9rem;font-weight:900;margin:2px 0 5px;}
+.textbook-borrow-grid{display:grid;grid-template-columns:42px repeat(4,54px);gap:2px;align-items:center;justify-content:center;font-family:"Courier New",monospace;font-weight:900;}
+.borrow-side-label{height:30px;}
+.borrow-ten{height:30px;display:flex;align-items:center;justify-content:center;color:#dc2626;font-size:1rem;visibility:hidden;}
+.borrow-ten.show{visibility:visible;}
+.borrow-result{height:34px;display:flex;align-items:center;justify-content:center;color:#dc2626;font-size:1.15rem;visibility:hidden;}
+.borrow-result.active{visibility:visible;}
+.borrow-original{height:34px;display:flex;align-items:center;justify-content:center;color:#263238;font-size:1.45rem;position:relative;}
+.borrow-original.crossed{color:#dc2626;}
+.borrow-original.crossed::after{content:"";position:absolute;width:40px;height:3px;background:#dc2626;border-radius:2px;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-45deg);transform-origin:center;}
+.borrow-step-note{font-family:system-ui,sans-serif;color:#b91c1c;font-size:.88rem;line-height:1.5;margin-top:5px;}
+@media(max-width:520px){.textbook-borrow-grid{grid-template-columns:34px repeat(4,46px);gap:1px}.borrow-ten{font-size:.88rem}.borrow-result{font-size:1rem}.borrow-original{font-size:1.25rem}.borrow-original.crossed::after{width:34px}.borrow-step-note{font-size:.8rem;}}
+@media(max-width:520px){.correction-borrow-grid{grid-template-columns:34px repeat(5,46px);gap:3px}.correction-borrow-cell{height:34px;font-size:1rem}.correction-borrow-old{font-size:.86rem}.correction-borrow-new{font-size:1.08rem}}
+.answer-help{width:100%;margin-top:10px;background:#fffdf2;border:2px solid #f6c453;border-radius:14px;padding:12px 14px;color:#475569;font-size:.95rem;line-height:1.7;text-align:left}.answer-help .answer-title{font-weight:900;color:#9a6700;font-size:1.05rem;margin-bottom:4px}.answer-help .answer-number{font-family:"Courier New",monospace;font-size:1.25rem;font-weight:900;color:#263238}.answer-help .answer-error{color:#b91c1c;font-weight:800}.answer-help .answer-teach{margin-top:5px}.answer-help ol{margin:7px 0 0 20px;padding:0}.answer-help li{margin:2px 0}.answer-help.hidden{display:none}.answer-equation{margin:10px auto 8px;padding:10px 12px;background:#f8fafc;border:1px solid #dbe3ec;border-radius:12px;max-width:360px;font-family:"Courier New",monospace;font-weight:900}.answer-equation-title{font-family:system-ui,sans-serif;font-size:.9rem;color:#64748b;margin-bottom:5px}.ae-row{display:grid;grid-template-columns:24px repeat(5,1fr);align-items:center;min-height:30px;text-align:center;font-size:1.35rem}.ae-op{font-family:system-ui,sans-serif;color:#dc2626}.ae-digit{display:inline-flex;justify-content:center;align-items:center;min-width:26px;height:30px;border-radius:6px}.ae-wrong{background:#fee2e2;color:#b91c1c;box-shadow:inset 0 0 0 2px #ef4444}.ae-correct{background:#dcfce7;color:#15803d}.ae-line{border-top:2px solid #334155;margin:3px 0 3px 24px}.ae-note{font-family:system-ui,sans-serif;font-size:.9rem;color:#475569;margin-top:6px;line-height:1.55}.answer-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:8px}.btn-answer{padding:9px 15px;font-size:1rem;font-weight:800;color:#9a6700;background:#fff7d6;border:2px solid #f6c453;border-radius:10px;cursor:pointer}.btn-answer:active{transform:translateY(2px)}.btn-answer:focus-visible{outline:3px solid rgba(246,196,83,.35);outline-offset:3px}.controls{display:flex;align-items:center;gap:10px;margin-top:4px}.btn-move{width:55px;height:55px;border:0;border-radius:50%;background:#f39c12;color:#fff;font-weight:900;font-size:1.25rem;box-shadow:0 4px 0 #d35400;cursor:pointer}.secondary{background:none;border:0;color:#8a94a6;cursor:pointer;margin-top:10px}
+.back-home-btn{width:min(230px,92%);min-height:46px;padding:10px 18px;margin:16px auto 4px;background:#fff;border:2px solid #64748b;border-radius:12px;color:#334155;font-size:1.05rem;font-weight:800;cursor:pointer;box-shadow:0 3px 0 #cbd5e1;display:flex;align-items:center;justify-content:center;gap:6px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.back-home-btn:hover{background:#f8fafc}.back-home-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #cbd5e1}.back-home-btn:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:3px}
+.result{width:90%;background:#fff;border-radius:24px;padding:26px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.14);margin-top:30vh}.score{font-size:1.8rem;color:#f39c12;font-weight:900}.praise{font-size:1.15rem;line-height:1.7;margin:16px 0}.wrong-list{margin-top:12px;text-align:left;background:#f8fafc;border-radius:12px;padding:12px;font-size:.94rem}.balloon{position:fixed;bottom:-100px;width:38px;height:48px;border-radius:50%;animation:up 6s linear forwards;z-index:1000}.confetti-piece{position:fixed;top:-18px;width:10px;height:16px;z-index:1001;pointer-events:none;animation:confetti-fall linear forwards}.celebrate-text{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%) scale(.7);z-index:1002;background:#fff;border-radius:22px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:1.55rem;font-weight:900;text-align:center;white-space:nowrap;animation:pop .5s ease-out forwards}.celebrate-text.fade{animation:fade .5s ease-in forwards}@keyframes confetti-fall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--rot));opacity:.95}}@keyframes pop{to{transform:translate(-50%,-50%) scale(1)}}@keyframes fade{to{opacity:0;transform:translate(-50%,-50%) scale(1.04)}}@keyframes up{to{transform:translateY(-120vh)}}
+@media(max-width:520px){.top-question{flex-wrap:wrap}.vertical{grid-template-columns:34px repeat(5,46px);gap:3px}.cell{width:46px;font-size:1.75rem}.digit-input{width:41px;height:42px;font-size:1.6rem}.carry-cell{width:46px}.math-card{padding:12px 4px}.q-text{font-size:1.5rem}.final-ans{width:96px;height:46px;font-size:1.7rem;font-family:var(--math-font)}.top-question{gap:6px}}
+
+.q-text span{color:#263238!important}
+
+/* ===== 跨領域情境題 ===== */
+.context-card{width:100%;background:#fff;border-radius:18px;padding:15px 16px 14px;margin:4px 0 12px;box-shadow:0 5px 18px rgba(0,0,0,.08);border-left:6px solid #16a085}
+.context-title{font-size:1.22rem;font-weight:900;margin-bottom:7px}
+.context-text{font-size:1.02rem;line-height:1.75;font-weight:700}
+.context-fact{margin-top:9px;padding:9px 11px;background:#f8fafc;border-radius:10px;font-size:.88rem;line-height:1.55;color:#475569}
+.context-data-note{margin-top:6px;font-size:.76rem;color:#94a3b8}
+app-builder-text{background:#f8fafc;border:1px solid #dbe3ec;border-radius:10px;padding:8px 11px;color:#475569;font-size:.9rem;line-height:1.5;text-align:center}.app-number{display:inline-flex;align-items:center;justify-content:center;padding:1px 5px;border-radius:7px;background:#eef6ff;border:2px solid #93c5fd;color:#1d4ed8;font-family:var(--math-font);font-weight:900;cursor:pointer;user-select:none;touch-action:manipulation}.app-number.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-number.placed{background:#ecfdf5;border-color:#10b981;color:#047857}.app-number.dragging{opacity:.55}.app-target{cursor:pointer;border:2px dashed #94a3b8;border-radius:8px;background:#fff}.app-target.selected{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 2px rgba(37,99,235,.12)}.app-target.filled{border-style:solid;border-color:#10b981;background:#ecfdf5;color:#047857}.app-op-wrap{display:flex;align-items:center;justify-content:center;gap:5px;width:84px;height:50px;box-sizing:border-box}.app-op-label{font-size:.72rem;font-weight:800;color:#64748b;white-space:nowrap;line-height:1}.app-op-button{width:42px;height:50px;border:0;border-radius:8px;color:#fff;font-size:2rem;font-weight:900;cursor:pointer;touch-action:manipulation;padding:0;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;box-sizing:border-box}.app-op-button.app-op-plus{background:#2563eb}.app-op-button.app-op-minus{background:#dc2626}.app-op-button:focus-visible{outline:3px solid rgba(37,99,235,.25);outline-offset:2px;border-radius:8px}@media(max-width:520px){.app-builder-text{font-size:.82rem}.app-op-wrap{width:78px;height:46px;gap:4px}.app-op-label{font-size:.68rem}.app-op-button{width:38px;height:46px;font-size:1.7rem}}
+
+.app-hidden{display:none!important}
+@media(max-width:520px){.context-card{padding:13px 12px}.context-title{font-size:1.08rem}.context-text{font-size:.96rem}}
+
+
+/* ===== Paper Bridge / 人性化操作 ===== */
+:root{
+ --place-thousand:#2563eb;
+ --place-hundred:#059669;
+ --place-ten:#0891b2;
+ --place-one:#f59e0b;
+ --place-ten-thousand:#7c3aed;
+ --focus:#3b82f6;
+}
+
+body{
+ -webkit-tap-highlight-color:transparent;
+}
+
+button,input{
+ font-family:inherit;
+}
+
+.q-text,
+.q-text span{
+ color:#263238 !important;
+ font-family:"Courier New",monospace;
+ font-variant-numeric:tabular-nums;
+}
+
+.vertical-math,
+.vertical,
+.math-card{
+ touch-action:manipulation;
+}
+
+.cell{
+ font-family:"Courier New",monospace;
+ font-variant-numeric:tabular-nums;
+}
+
+.digit-input,
+.final-ans,
+.carry-cell{
+ font-family:"Courier New",monospace;
+ font-variant-numeric:tabular-nums;
+}
+
+.digit-input{
+ transition:border-color .12s ease, background-color .12s ease, box-shadow .12s ease;
+}
+
+.digit-input:focus,
+.final-ans:focus,
+.carry-cell:focus{
+ outline:3px solid rgba(59,130,246,.18);
+ outline-offset:1px;
+}
+
+.clickable-digit{
+ transition:background-color .12s ease, box-shadow .12s ease;
+}
+
+.clickable-digit:active{
+ background:#bfdbfe;
+}
+
+.clickable-digit.marked{
+ background:#dbeafe !important;
+ box-shadow:inset 0 0 0 2px rgba(37,99,235,.16);
+}
+
+.paper-bridge{
+ width:100%;
+ margin-top:12px;
+ background:#fff;
+ border-radius:14px;
+ padding:10px 14px;
+ color:#64748b;
+ font-size:.86rem;
+ line-height:1.55;
+ text-align:center;
+}
+
+.paper-bridge strong{
+ color:#475569;
+}
+
+.practice-status{
+ min-height:28px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ font-size:.95rem;
+ font-weight:800;
+}
+
+.practice-status.correct{
+ color:#15803d;
+}
+
+.practice-status.wrong{
+ color:#b91c1c;
+}
+
+.btn-main:focus-visible,
+.btn-move:focus-visible,
+.secondary:focus-visible,
+.btn-menu:focus-visible{
+ outline:3px solid rgba(59,130,246,.35);
+ outline-offset:3px;
+}
+
+@media (prefers-reduced-motion:reduce){
+ *,*::before,*::after{
+  animation-duration:.001ms !important;
+  animation-iteration-count:1 !important;
+  transition-duration:.001ms !important;
+ }
+}
+
+
+/* ===== 紙本銜接：降低顏色依賴，但保留位值結構 ===== */
+body.paper-mode .place-digit{color:#263238 !important}
+body.paper-mode .digit-input{border-color:#cbd5e0 !important}
+body.paper-mode .answer-wan,
+body.paper-mode .answer-qian,
+body.paper-mode .answer-bai,
+body.paper-mode .answer-shi,
+body.paper-mode .answer-ge{border-color:#cbd5e0 !important}
+body.paper-mode .clickable-digit.marked{background:#dbeafe}
+
+/* ===== V3 學習優化 ===== */
+#game .context-card{order:1;margin-top:8px}
+#game .info-bar,#game .progress{order:2}
+#game .top-question,#game .math-card,#game .paper-bridge,#game .secondary{order:3}
+#game .answer-help{order:7}
+#game .correction-under-problem{order:5}
+#game .feedback{order:6}#game .observe-tools,#game .observe-tool-panel{order:6.5}
+.context-card{border-left-width:7px}
+.context-title{display:flex;align-items:center;gap:6px}
+
+.practice-status:empty{display:none}
+@media(max-width:520px){#game .context-card{margin-top:4px}}
+
+/* ===== 寶可夢學習回饋：不取代數學主流程 ===== */
+.pokemon-card{width:100%;box-sizing:border-box;background:#fff;border:1px solid #dbe3ec;border-radius:20px;padding:18px;text-align:center;box-shadow:0 8px 20px rgba(15,23,42,.08);margin:4px 0 14px}.pokemon-hero{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}.pokemon-hero img{width:130px;height:130px;image-rendering:auto;object-fit:contain}.pokemon-name{font-size:1.45rem;font-weight:900;color:#334155}.pokemon-level{font-size:1.05rem;font-weight:800;color:#475569;margin-top:4px}.pokemon-hp-label{display:flex;justify-content:space-between;font-weight:800;color:#475569;margin-top:10px}.pokemon-hp{height:18px;background:#e2e8f0;border-radius:12px;overflow:hidden;margin:6px 0 8px}.pokemon-hp i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22c55e,#facc15);transition:width .5s ease}.pokemon-next{font-size:.9rem;color:#64748b}.pokemon-actions{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}.pokemon-actions button,.pokemon-choice{border:1px solid #cbd5e1;background:#fff;border-radius:12px;padding:9px 13px;font-weight:800;cursor:pointer}.pokemon-actions button.primary{background:#2563eb;color:#fff;border-color:#2563eb}.pokemon-note{width:100%;box-sizing:border-box;color:#64748b;font-size:.82rem;line-height:1.5;text-align:center;margin:0 0 12px}.pokemon-list{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;margin-bottom:14px}.pokemon-choice{min-height:105px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.pokemon-choice img{width:58px;height:58px;object-fit:contain}.pokemon-choice.active{border:2px solid #2563eb;background:#eff6ff}.pokemon-choice small{color:#64748b}.pokemon-levelup{position:fixed;inset:0;background:rgba(15,23,42,.72);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px}.pokemon-levelup.hidden{display:none}.pokemon-levelup-box{background:#fff;border-radius:28px;padding:26px 22px;text-align:center;width:min(430px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.3);animation:pokemonLevelIn .55s ease both}.pokemon-levelup-box img{width:170px;height:170px;object-fit:contain;animation:pokemonGlow 1.2s ease-in-out infinite alternate}.pokemon-levelup-title{font-size:1.65rem;font-weight:1000;color:#7c3aed}.pokemon-levelup-sub{font-size:1.05rem;font-weight:800;color:#334155;margin:7px 0 14px}@keyframes pokemonLevelIn{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:scale(1)}}@keyframes pokemonGlow{from{filter:drop-shadow(0 0 4px rgba(124,58,237,.2));transform:scale(1)}to{filter:drop-shadow(0 0 24px rgba(124,58,237,.85));transform:scale(1.06)}}
+@media(max-width:520px){.pokemon-list{grid-template-columns:repeat(3,1fr)}.pokemon-choice{padding:6px 3px;font-size:.82rem}.pokemon-choice img{width:50px;height:50px}}
+
+/* ===== V34 首頁：降低視覺噪音，建立「先算數學、再看成長」層級 ===== */
+#home{padding-top:28px}
+#home .title{font-size:1.8rem;letter-spacing:.5px}
+#home .subtitle{margin-bottom:22px}
+#menu-list{display:block;width:100%;margin-top:0}
+.menu-section-title{font-size:.9rem;font-weight:900;color:#64748b;margin:10px 4px 8px;letter-spacing:.08em}
+.menu-primary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.menu-advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btn-menu{width:100%;box-shadow:none;transition:transform .12s ease,box-shadow .12s ease}
+.btn-menu:active{transform:translateY(1px);box-shadow:none}
+.btn-menu.primary-mode{background:#fff!important;color:#263238;border:2px solid #dbe3ec;box-shadow:0 3px 0 #dbe3ec;padding:20px 10px;font-size:1.12rem}
+.btn-menu.primary-mode.add{border-color:#bfdbfe;background:#f8fbff!important}
+.btn-menu.primary-mode.sub{border-color:#fed7aa;background:#fffaf5!important}
+.btn-menu.primary-mode small{color:#64748b;opacity:1!important}
+.btn-menu.advanced-mode{background:#fff!important;color:#475569;border:1px solid #dbe3ec;box-shadow:none;padding:13px 8px;font-size:.98rem}
+.btn-menu.advanced-mode small{color:#94a3b8;opacity:1!important;font-weight:700}
+.menu-app-card{margin-top:15px;width:100%;box-sizing:border-box;border:2px solid #b7e4d7;background:#f4fbf8;border-radius:16px;padding:14px 16px;text-align:center;cursor:pointer;color:#16695a;font-weight:900;box-shadow:none}
+.menu-app-card strong{display:block;font-size:1.02rem}.menu-app-card small{display:block;color:#64748b;font-size:.8rem;margin-top:4px}
+.menu-pokemon-card{margin-top:10px;width:100%;box-sizing:border-box;border:1px solid #ddd6fe;background:#faf8ff;border-radius:14px;padding:10px 14px;text-align:center;cursor:pointer;color:#6d28d9;font-weight:900}
+.menu-pokemon-card small{display:block;color:#64748b;font-size:.78rem;margin-top:3px}
+@media(max-width:520px){#home{padding-top:22px}.menu-primary-grid{gap:9px}.menu-advanced-grid{gap:8px}.btn-menu.primary-mode{padding:17px 7px}.btn-menu.advanced-mode{padding:12px 6px;font-size:.94rem}.menu-app-card{margin-top:13px}}
+.observe-card{width:100%;background:#fff;border-radius:16px;padding:15px 16px;margin:9px 0;box-shadow:0 4px 14px rgba(0,0,0,.06);line-height:1.7}.observe-card b{font-size:1.08rem}.observe-card{color:#334155}
+
+/* ===== 數學答題行為觀察：輕量工具，不增加主要操作壓力 ===== */
+.observe-tools{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:2px 0 4px}.observe-tool-btn{font-size:.82rem;padding:6px 10px;min-height:34px;border:1px solid #cbd5e1;background:#fff;border-radius:9px;color:#475569;cursor:pointer}.observe-tool-panel{display:none;width:100%;background:#f8fafc;border:1px solid #dbe3ec;border-radius:12px;padding:9px 10px;margin:6px 0;line-height:1.5}.observe-tool-panel.show{display:block}.observe-tool-panel button{font-size:.8rem;padding:6px 8px;margin:3px 2px;border:1px solid #cbd5e1;background:#fff;border-radius:8px}.observe-report-section{margin:10px 0;padding:12px 13px;background:#fff;border-radius:14px;border:1px solid #e2e8f0}.observe-report-title{font-weight:900;font-size:1.02rem;margin-bottom:6px}.observe-metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.observe-metric{background:#f8fafc;border-radius:10px;padding:8px 9px;line-height:1.45}.observe-metric b{font-size:1.05rem}.observe-table{width:100%;border-collapse:collapse;font-size:.82rem}.observe-table th,.observe-table td{padding:6px 4px;border-bottom:1px solid #e2e8f0;text-align:left}.observe-tag{display:inline-block;padding:3px 6px;border-radius:7px;background:#f1f5f9;margin:2px}.observe-neutral{color:#475569}.observe-limit{font-size:.78rem;color:#64748b;line-height:1.5}.observe-matrix{display:grid;grid-template-columns:1fr 1fr;gap:7px}.observe-matrix>div{padding:10px;border-radius:10px;background:#f8fafc}.observe-matrix .strong{font-weight:900;font-size:1rem}@media(max-width:520px){.observe-metric-grid,.observe-matrix{grid-template-columns:1fr}}
+</style>
+
+
+</head>
+<body>
+<div class="page active" id="home">
+  <div class="title">三年級｜四位數加減</div>
+  <div class="subtitle">10000 以內的直式計算｜快速練習，不必一直拿紙</div>
+  <div id="menu-list"></div>
+</div>
+
+<div class="page" id="game">
+  <div class="practice-status" id="paper-mode-badge"></div>
+  <div class="mode-label" id="mode-label"></div>
+  <div class="context-card app-hidden" id="context-card">
+    <div class="context-title" id="context-title"></div>
+    <div class="context-text" id="context-text"></div>
+    <div class="context-fact" id="context-fact"></div>
+    <div class="context-data-note">題目中的數量為練習用數據，用來練習四位數加減。</div>
+  </div>
+  <div class="info-bar"><span>題次：<span id="q-count">1</span>/10</span><span>得分：<span id="score">0</span></span></div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="top-question"><div class="q-text"><span id="q1"></span> <span id="qo" style="color:#263238"></span> <span id="q2"></span> =</div><input class="final-ans" id="final-ans" type="text" inputmode="numeric" maxlength="5"><button class="btn-main" onclick="check()">送出</button><button class="btn-answer" id="show-answer-btn" onclick="showAnswer()">💡 看答案</button></div>
+  <div class="math-card">
+    <div class="vertical" id="grid"></div>
+    <button class="btn-move" title="把直式答案帶到上方答案框" aria-label="把直式答案帶到上方答案框" onclick="moveAndSubmit()">➜</button>
+  </div>
+  <div class="answer-help hidden" id="answer-help"></div>
+  <div class="correction-under-problem hidden" id="correction-under-problem"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="observe-tools" id="observe-tools">
+    <button class="observe-tool-btn" onclick="repeatQuestionObserved()">再念一次</button>
+    <button class="observe-tool-btn" onclick="toggleStrategyObserved()">怎麼算？</button>
+    <button class="observe-tool-btn" onclick="toggleParentHelpObserved()">家長協助</button>
+  </div>
+  <div class="observe-tool-panel" id="strategy-observed-panel"><b>剛剛怎麼算？</b><br>
+    <button onclick="chooseObservedStrategy('standard_vertical')">標準直式</button><button onclick="chooseObservedStrategy('decomposition')">拆解</button><button onclick="chooseObservedStrategy('compensation')">補數</button><button onclick="chooseObservedStrategy('mental_math')">心算</button><button onclick="chooseObservedStrategy('counting')">逐步數</button><button onclick="chooseObservedStrategy('place_value')">位值思考</button><button onclick="chooseObservedStrategy('repeated_calculation')">重新計算</button><button onclick="chooseObservedStrategy('other')">其他</button>
+  </div>
+  <div class="observe-tool-panel" id="parent-help-observed-panel"><b>家長協助</b><br>
+    <button onclick="parentHelpObserved('重新念題目')">重新念題目</button><button onclick="parentHelpObserved('提醒看清楚數字')">看清楚數字</button><button onclick="parentHelpObserved('提醒個十百千位')">提醒位值</button><button onclick="parentHelpObserved('提醒進位')">提醒進位</button><button onclick="parentHelpObserved('提醒借位')">提醒借位</button><button onclick="parentHelpObserved('提醒重新計算')">重新計算</button><button onclick="parentHelpObserved('給計算策略提示')">計算策略</button><button onclick="parentHelpObserved('示範第一步')">示範第一步</button><button onclick="parentHelpObserved('直接告訴答案')">直接告訴答案</button>
+  </div>
+<div id="arrow-help" style="display:none"></div>
+  <div class="paper-bridge" id="paper-bridge">
+      <strong>紙上也可以這樣算：</strong> 直式位置、計算順序與現在相同。
+    </div>
+  <button class="back-home-btn" onclick="goHome()" aria-label="返回選單">↩ 返回選單</button>
+</div>
+
+<div class="page" id="pokemon-page">
+  <div class="mode-label">📖 我的寶可夢圖鑑</div>
+  <div class="pokemon-card" id="pokemon-card"></div>
+  <div class="pokemon-note">這裡的 HP 是「數學訓練 HP」，是本 App 自訂的成長值，不是官方遊戲數值。</div>
+  <div class="pokemon-list" id="pokemon-list"></div>
+  <button class="back-home-btn" onclick="goHome()" aria-label="回到數學選單">↩ 回到數學</button>
+</div>
+
+<div class="page" id="result">
+  <div class="result"><h2 id="result-title"></h2><div class="score" id="result-score"></div><div class="praise" id="praise"></div><div class="wrong-list" id="stats"></div><div id="retry-wrong-wrap" style="display:none;margin-top:12px"><button class="btn-main" onclick="retryWrong()">🔁 再挑戰錯題</button></div><button class="btn-main" style="margin-top:10px" onclick="goHome()">再挑戰一次</button></div>
+</div>
+
+<div class="page" id="observe"><div class="title">學習觀察</div><div class="subtitle">最近 7 天｜只記錄實際操作，不做診斷或排名</div><div id="observe-content" style="width:100%"></div><button class="secondary" onclick="goHome()">↩ 返回選單</button></div>
+
+<script>
+
+function updatePaperBridge(){
+    const badge = document.getElementById('paper-mode-badge');
+    const bridge = document.getElementById('paper-bridge');
+
+    if(!badge) return;
+
+    // 前 8 題：完整位值顏色輔助。
+    // 第 9、10 題：保留直式，但降低顏色依賴，模擬紙本過渡。
+    if(currentQ >= 9){
+        badge.innerText = '紙本銜接';
+        badge.style.color = '#64748b';
+
+        if(bridge){
+            bridge.innerHTML =
+              '<strong>最後兩題：</strong>試著先看位置，再看顏色。紙上計算也能用同樣的方法。';
+        }
+
+        document.body.classList.add('paper-mode');
+    }else{
+        badge.innerText = '';
+        if(bridge){
+            bridge.innerHTML =
+              '<strong>紙上也可以這樣算：</strong>直式位置、計算順序與現在相同。';
+        }
+        document.body.classList.remove('paper-mode');
+    }
+}
+
+function paperBridgeResetMarks(){
+    document.querySelectorAll('.clickable-digit.marked').forEach(el=>{
+        el.classList.remove('marked');
+    });
+}
+
+let n1=0,n2=0,op='+',correctVal=0,currentType=1,currentQ=1,totalPoints=0,currentQPoints=10,wrongCount=0;
+let answerRevealed=false;
+let appProblem=null, appChosenOp=null;
+let appPlaced=[null,null];
+let appTargetRow=null;
+let appSelectedNumber=null;
+let appOpWrongRecorded=false;
+let appOpWrongCount=0, appCalcWrongCount=0;
+let wrongProblems=[];
+let sessionQuestionTotal=10;
+let appSessionUsed=new Set();
+let appRecentUsed=[];
+let appDemoStep=1;
+let answerViewLogged=false;
+let sessionErrorLogCount=0;
+let sessionAnswerViewCount=0;
+const APP_RECENT_LIMIT=120;
+
+// ===== 數學答題行為觀察資料層：描述行為，不做診斷 =====
+const OBS_KEY='math4_observation_v3';
+let qId='',qStartTime=0,qAttemptCount=0,qInitialAnswer='',qFinalAnswer='',qAnswerChangeCount=0,qRepeatedQuestionCount=0,qHintUsed=false,qParentHelpCount=0,qParentHelpTypes=[];
+let qBorrowUsed=false,qCarryUsed=false,qCrossZero=false,qBorrowActions=[],qCarryActions=[];
+let qEvents=[],qLastActivity=0,qHesitationCount=0,qHesitationDurationMs=0,qLongestPauseMs=0,qRestartCount=0,qReviewBeforeSubmit=false;
+let currentStrategy='unknown',currentTransfer='not_observable',lastObservationIndex=-1;
+let qInputStarted=false,qProcessActionCount=0,qFirstInputAt=null,qSubmittedAt=null,qLastAnswerValue='';
+function getObs(){try{const a=JSON.parse(localStorage.getItem(OBS_KEY)||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
+function saveObs(a){try{localStorage.setItem(OBS_KEY,JSON.stringify(a.slice(-2000)))}catch(e){}}
+function obsDate(){return new Date().toISOString().slice(0,10)}
+function obsOp(o){return o==='+'?'addition':'subtraction'}
+function obsCrossZero(a,b){if(a<=b)return false;const A=String(a),B=String(b).padStart(A.length,'0');for(let i=A.length-1;i>=0;i--){if(Number(A[i])<Number(B[i])){let j=i-1;while(j>=0&&A[j]==='0')j--;return j>=0&&j<i;}}return false}
+function obsDigits(a,b){return Math.max(String(a).length,String(b).length)}
+function obsComplexity(){
+ if(currentType===6)return 6;
+ if(op==='-'&&qCrossZero)return 5;
+ if(op==='-'){const A=digits(n1),B=digits(n2);let borrow=0,count=0;for(let i=3;i>=0;i--){if(A[i]-borrow<B[i]){count++;borrow=1}else borrow=0}return count>=2?4:count===1?2:1;}
+ if(op==='+'){const A=digits(n1),B=digits(n2);let c=0,count=0;for(let i=3;i>=0;i--){if(A[i]+B[i]+c>=10){count++;c=1}else c=0}return count>=2?3:count===1?2:1;}
+ return 1;
+}
+function obsErrorType(correct){if(correct)return null;if(currentType===6&&appChosenOp!==appProblem?.op)return 'operation_selection';if(op==='+'&&qCarryUsed)return 'carry_error';if(op==='-'&&qCrossZero&&qBorrowUsed)return 'cross_zero_error';if(op==='-'&&qBorrowUsed)return 'borrow_error';if(qAnswerChangeCount>1)return 'repeated_calculation_error';return 'calculation_error'}
+function obsRecordEvent(type,detail={}){const now=Date.now();if(qLastActivity){const gap=now-qLastActivity;if(gap>=4000){qHesitationCount++;qHesitationDurationMs+=gap;qLongestPauseMs=Math.max(qLongestPauseMs,gap);qEvents.push({type:'pause',time:now-qStartTime,durationMs:gap});}}qLastActivity=now;qEvents.push({type,time:now-qStartTime,...detail})}
+function obsBaselineTimes(operation,complexity){return getObs().filter(x=>x.correct&&x.operation===operation&&x.complexityLevel===complexity&&x.responseTimeMs>0).slice(-30).map(x=>x.responseTimeMs)}
+function obsMedian(a){if(!a.length)return 0;const b=[...a].sort((x,y)=>x-y),m=Math.floor(b.length/2);return b.length%2?b[m]:Math.round((b[m-1]+b[m])/2)}
+function obsBehaviorLabel(correct,responseMs){const base=obsMedian(obsBaselineTimes(obsOp(op),obsComplexity())),rapidThreshold=base?Math.max(8000,base*.55):12000,slowThreshold=base?Math.max(30000,base*1.6):45000;if(correct&&responseMs<=rapidThreshold)return 'rapid_correct';if(correct&&responseMs>=slowThreshold)return 'slow_correct';if(!correct&&responseMs<=rapidThreshold)return 'rapid_error';if(!correct&&responseMs>=slowThreshold)return 'slow_error';return correct?'careful_correct':'hesitant'}
+function obsPreAnswerBehavior(correct,responseMs){if(qParentHelpCount)return 'help_seeking';if(qRepeatedQuestionCount)return 'repeat_question';if(qAnswerChangeCount>=2)return 'multiple_revisions';if(qHesitationCount>=2||qLongestPauseMs>=8000)return 'hesitant';if(!qReviewBeforeSubmit&&qFirstInputAt!==null&&qSubmittedAt-qFirstInputAt<3000)return 'unreviewed_quick_submit';return responseMs<15000?'rapid_direct':'short_think_then_answer'}
+function obsImpulsiveBehavior(correct,responseMs){const out=[],base=obsMedian(obsBaselineTimes(obsOp(op),obsComplexity())),rapid=(base?responseMs<Math.max(8000,base*.55):responseMs<12000),noReview=!qReviewBeforeSubmit;if(!correct&&rapid)out.push('rapid_submit');if(!correct&&rapid&&qProcessActionCount===0&&obsComplexity()>=2)out.push('premature_answer');if(!correct&&rapid&&noReview)out.push('answer_without_review');if(!correct&&rapid&&qInitialAnswer&&qInitialAnswer.length<=1)out.push('careless_input');if(qAnswerChangeCount>=3&&rapid)out.push('random_change');const prior=getObs().slice(-8).filter(x=>x.operation===obsOp(op)&&x.errorType===obsErrorType(false));if(prior.length>=2)out.push('repeated_same_error');return out.length?out:['none']}
+function obsStrategyTransfer(strategy){if(strategy==='unknown')return 'not_observable';const prior=getObs().some(x=>x.strategy===strategy&&x.correct);if(!prior)return 'not_observable';return qHintUsed?'transfer_after_hint':'spontaneous_transfer'}
+function recordObservation(correct){
+ const responseTimeMs=Math.max(1,Date.now()-qStartTime),responseTime=Math.max(1,Math.round(responseTimeMs/1000));qSubmittedAt=Date.now();const finalGap=qLastActivity?Date.now()-qLastActivity:responseTimeMs;if(finalGap>=4000){qHesitationCount++;qHesitationDurationMs+=finalGap;qLongestPauseMs=Math.max(qLongestPauseMs,finalGap);qEvents.push({type:'pause',time:responseTimeMs,durationMs:finalGap})}
+ const errorType=obsErrorType(correct),complexityLevel=obsComplexity();
+ const rec={questionId:qId,question:`${n1}${op}${n2}`,operation:obsOp(op),digits:obsDigits(n1,n2),complexityLevel,needsCarry:hasCarry(n1,n2),needsBorrow:hasBorrow(n1,n2),continuousBorrow:complexityLevel>=4,crossZero:qCrossZero,startTime:new Date(qStartTime).toISOString(),finishTime:new Date().toISOString(),responseTime,responseTimeMs,firstAnswer:qInitialAnswer||null,finalAnswer:qFinalAnswer||null,answerChangeCount:qAnswerChangeCount,attemptCount:qAttemptCount,correct,repeatQuestion:qRepeatedQuestionCount>0,repeatedQuestionCount:qRepeatedQuestionCount,hintUsed:qHintUsed,hintTypes:qParentHelpTypes.filter(x=>x!=='重新念題目'),hesitationCount:qHesitationCount,hesitationDurationMs:qHesitationDurationMs,longestPauseMs:qLongestPauseMs,restartCount:qRestartCount,processActionCount:qProcessActionCount,processModified:qProcessActionCount>1,reviewBeforeSubmit:qReviewBeforeSubmit,preAnswerBehavior:obsPreAnswerBehavior(correct,responseTimeMs),strategy:currentStrategy,nonstandardButCorrect:correct&&currentStrategy!=='standard_vertical'&&currentStrategy!=='unknown',strategyTransfer:currentTransfer||obsStrategyTransfer(currentStrategy),errorType,impulsiveBehavior:obsImpulsiveBehavior(correct,responseTimeMs),behaviorLabel:obsBehaviorLabel(correct,responseTimeMs),mode:currentType,date:obsDate(),parentHelpCount:qParentHelpCount,parentHelpTypes:qParentHelpTypes,borrowUsed:qBorrowUsed,carryUsed:qCarryUsed,borrowActions:qBorrowActions,carryActions:qCarryActions,eventLog:qEvents.slice(),performanceChannel:'paper_app',oralComparison:'not_available'};
+ const all=getObs();all.push(rec);lastObservationIndex=all.length-1;saveObs(all);return rec;
+}
+function resetObservationQuestion(){qId=`${Date.now()}_${currentQ}_${Math.random().toString(36).slice(2,8)}`;qStartTime=Date.now();qAttemptCount=0;qInitialAnswer='';qFinalAnswer='';qAnswerChangeCount=0;qRepeatedQuestionCount=0;qHintUsed=false;qParentHelpCount=0;qParentHelpTypes=[];qBorrowUsed=false;qCarryUsed=false;qCrossZero=obsCrossZero(n1,n2);qBorrowActions=[];qCarryActions=[];qEvents=[];qLastActivity=qStartTime;qHesitationCount=0;qHesitationDurationMs=0;qLongestPauseMs=0;qRestartCount=0;qReviewBeforeSubmit=false;currentStrategy='unknown';currentTransfer='not_observable';lastObservationIndex=-1;qInputStarted=false;qProcessActionCount=0;qFirstInputAt=null;qSubmittedAt=null;qLastAnswerValue='';obsRecordEvent('start')}
+function repeatQuestionObserved(){qRepeatedQuestionCount++;qHintUsed=true;obsRecordEvent('repeat_question',{count:qRepeatedQuestionCount});const text=getCurrentQuestionText();if('speechSynthesis' in window){try{window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';u.rate=.88;window.speechSynthesis.speak(u);document.getElementById('feedback').innerText='再念一次題目。'}catch(e){document.getElementById('feedback').innerText='已記錄重新讀題。'}}else document.getElementById('feedback').innerText='已記錄重新讀題。'}
+function toggleStrategyObserved(){document.getElementById('strategy-observed-panel')?.classList.toggle('show');document.getElementById('parent-help-observed-panel')?.classList.remove('show')}
+function toggleParentHelpObserved(){document.getElementById('parent-help-observed-panel')?.classList.toggle('show');document.getElementById('strategy-observed-panel')?.classList.remove('show')}
+function chooseObservedStrategy(strategy){currentStrategy=strategy;currentTransfer=obsStrategyTransfer(strategy);obsRecordEvent('strategy',{strategy});if(lastObservationIndex>=0){const all=getObs();if(all[lastObservationIndex]?.questionId===qId){all[lastObservationIndex].strategy=strategy;all[lastObservationIndex].strategyTransfer=currentTransfer;all[lastObservationIndex].nonstandardButCorrect=all[lastObservationIndex].correct&&strategy!=='standard_vertical';all[lastObservationIndex].eventLog=qEvents.slice();saveObs(all)}}document.getElementById('strategy-observed-panel')?.classList.remove('show');document.getElementById('feedback').innerText='已記錄計算方式。'}
+function parentHelpObserved(type){qParentHelpCount++;qParentHelpTypes.push(type);qHintUsed=true;obsRecordEvent('hint',{hintType:type});document.getElementById('parent-help-observed-panel')?.classList.remove('show');document.getElementById('feedback').innerText='已記錄這次家長協助。'}
+function renderObservation(){
+ const raw=getObs(),now=Date.now(),msDay=86400000;function inDays(x,d){const t=new Date(x.date+'T00:00:00').getTime();return now-t<d*msDay&&now-t>=0}function latest(list){const m=new Map();list.forEach(x=>{const old=m.get(x.questionId);if(!old||x.correct||x.attemptCount>(old.attemptCount||0))m.set(x.questionId,x)});return [...m.values()]}
+ const qs=latest(raw.filter(x=>inDays(x,7))),q30=latest(raw.filter(x=>inDays(x,30))),q90=latest(raw.filter(x=>inDays(x,90)));const avg=a=>a.length?Math.round(a.reduce((s,x)=>s+(x.responseTime||0),0)/a.length):0,pct=(a,f)=>a.length?Math.round(a.filter(f).length/a.length*100):0;const behavior=(a,k)=>a.filter(x=>x.impulsiveBehavior?.includes(k)).length;const summarize=a=>({n:a.length,correct:pct(a,x=>x.correct),time:avg(a),rapidError:pct(a,x=>x.behaviorLabel==='rapid_error'),repeat:a.reduce((s,x)=>s+(x.repeatedQuestionCount||0),0),help:a.reduce((s,x)=>s+(x.parentHelpCount||0),0),selfReview:pct(a,x=>x.reviewBeforeSubmit),transfer:pct(a,x=>x.strategyTransfer==='spontaneous_transfer')});
+ const s7=summarize(qs),s30=summarize(q30),s90=summarize(q90);const byLevel=l=>{const arr=qs.filter(x=>x.complexityLevel===l);return {n:arr.length,correct:pct(arr,x=>x.correct),time:avg(arr)}};const lv=[1,2,3,4,5,6].map(byLevel);const add=qs.filter(x=>x.operation==='addition'),sub=qs.filter(x=>x.operation==='subtraction'),cross=qs.filter(x=>x.crossZero),carry=qs.filter(x=>x.needsCarry),borrow=qs.filter(x=>x.needsBorrow),rapidError=qs.filter(x=>x.behaviorLabel==='rapid_error'),slowCorrect=qs.filter(x=>x.behaviorLabel==='slow_correct');const later=qs.filter(x=>x.mode!==6),firstHalf=later.filter(x=>(Number(x.questionId.split('_')[1])||1)<=5),secondHalf=later.filter(x=>(Number(x.questionId.split('_')[1])||1)>5);const same=a=>a.length?Math.round(a.reduce((s,x)=>s+x.responseTime,0)/a.length):0;
+ const focus=[];if(rapidError.length)focus.push(`近期有 ${rapidError.length} 題出現「快速但錯誤」的作答行為，建議持續觀察是否集中在特定題型。`);if(cross.length&&pct(cross,x=>x.correct)<80)focus.push('跨 0 題的作答時間或錯誤較突出，這類題目涉及較多借位步驟。');if(s7.help>0)focus.push(`近期共記錄 ${s7.help} 次成人協助，可進一步看協助從哪一類題型開始出現。`);if(s7.transfer>0)focus.push(`已有 ${s7.transfer}% 的題目出現先前策略的自行轉移線索。`);if(!focus.length)focus.push('目前資料沒有明顯需要特別標記的答題行為。');const levelNames=['','Level 1｜單純加減','Level 2｜單次進位／借位','Level 3｜多次進位','Level 4｜連續借位','Level 5｜跨 0','Level 6｜情境／混合'];const matrix=a=>`<div class="observe-matrix"><div><div class="strong">快速且正確</div>${pct(a,x=>x.behaviorLabel==='rapid_correct')}%</div><div><div class="strong">快速但錯誤</div>${pct(a,x=>x.behaviorLabel==='rapid_error')}%</div><div><div class="strong">慢但正確</div>${pct(a,x=>x.behaviorLabel==='slow_correct')}%</div><div><div class="strong">慢／遲疑且錯誤</div>${pct(a,x=>x.behaviorLabel==='slow_error'||x.behaviorLabel==='hesitant')}%</div></div>`;const trendRows=[['7天',s7],['30天',s30],['90天',s90]].map(([n,s])=>`<tr><td>${n}</td><td>${s.n}</td><td>${s.correct}%</td><td>${s.time}秒</td><td>${s.rapidError}%</td><td>${s.selfReview}%</td><td>${s.help}</td></tr>`).join('');const levelRows=lv.map((x,i)=>`<tr><td>${levelNames[i+1]}</td><td>${x.n}</td><td>${x.n?x.correct+'%':'—'}</td><td>${x.n?x.time+'秒':'—'}</td></tr>`).join('');
+ const el=document.getElementById('observe-content');if(!el)return;el.innerHTML=`<div class="observe-report-section"><div class="observe-report-title">一、客觀資料｜最近 7 天</div><div class="observe-metric-grid"><div class="observe-metric">題數<br><b>${s7.n}</b></div><div class="observe-metric">正確率<br><b>${s7.correct}%</b></div><div class="observe-metric">平均答題時間<br><b>${s7.time} 秒</b></div><div class="observe-metric">最快／最慢<br><b>${qs.length?Math.min(...qs.map(x=>x.responseTime)):0}／${qs.length?Math.max(...qs.map(x=>x.responseTime)):0} 秒</b></div><div class="observe-metric">重複題目<br><b>${s7.repeat} 次</b></div><div class="observe-metric">成人協助<br><b>${s7.help} 次</b></div></div></div><div class="observe-report-section"><div class="observe-report-title">二、作答速度 × 正確率</div>${matrix(qs)}<p class="observe-neutral">快速但正確不會被標記為衝動；「快速但錯誤」只表示目前答題歷程出現此行為。</p><div>快速錯誤：${s7.rapidError}%｜慢但正確：${pct(qs,x=>x.behaviorLabel==='slow_correct')}%｜過早提交線索：${qs.filter(x=>x.impulsiveBehavior?.includes('premature_answer')).length} 次</div></div><div class="observe-report-section"><div class="observe-report-title">三、題型負荷</div><table class="observe-table"><tr><th>題型</th><th>題數</th><th>正確率</th><th>平均時間</th></tr>${levelRows}</table><div>加法：${pct(add,x=>x.correct)}%｜${same(add)} 秒　減法：${pct(sub,x=>x.correct)}%｜${same(sub)} 秒<br>跨 0：${pct(cross,x=>x.correct)}%｜${same(cross)} 秒<br>進位題：${pct(carry,x=>x.correct)}%｜${same(carry)} 秒　借位題：${pct(borrow,x=>x.correct)}%｜${same(borrow)} 秒</div></div><div class="observe-report-section"><div class="observe-report-title">四、卡住／重新計算</div><div class="observe-metric-grid"><div class="observe-metric">平均停頓<br><b>${qs.length?Math.round(qs.reduce((s,x)=>s+(x.hesitationDurationMs||0),0)/qs.length/1000):0} 秒</b></div><div class="observe-metric">最長停頓<br><b>${qs.length?Math.round(Math.max(...qs.map(x=>x.longestPauseMs||0))/1000):0} 秒</b></div><div class="observe-metric">重新開始<br><b>${qs.reduce((s,x)=>s+(x.restartCount||0),0)} 次</b></div><div class="observe-metric">自行檢查線索<br><b>${s7.selfReview}%</b></div></div></div><div class="observe-report-section"><div class="observe-report-title">五、計算策略與轉移</div><div>${['standard_vertical','decomposition','compensation','mental_math','counting','place_value','repeated_calculation','other'].map(k=>`<span class="observe-tag">${k}：${qs.filter(x=>x.strategy===k).length}</span>`).join('')}</div><p>策略自行轉移：${s7.transfer}%｜提示後轉移：${pct(qs,x=>x.strategyTransfer==='transfer_after_hint')}%</p><p class="observe-neutral">非標準但數學上合理的方法答對時，會記錄為 nonstandard_but_correct，不視為錯誤。</p></div><div class="observe-report-section"><div class="observe-report-title">六、成人協助</div><p>第一次尋求協助的題次：${qs.findIndex(x=>(x.parentHelpCount||0)>0)>=0?qs.findIndex(x=>(x.parentHelpCount||0)>0)+1:'尚無資料'}</p><div>${[...new Set(qs.flatMap(x=>x.parentHelpTypes||[]))].map(x=>`<span class="observe-tag">${x}</span>`).join('')||'尚無資料'}</div></div><div class="observe-report-section"><div class="observe-report-title">七、後段作答變化</div>${firstHalf.length&&secondHalf.length?`前段平均 ${same(firstHalf)} 秒／${pct(firstHalf,x=>x.correct)}% 正確；後段平均 ${same(secondHalf)} 秒／${pct(secondHalf,x=>x.correct)}% 正確。這只描述本次練習前後段差異。`:'目前資料不足以比較前後段。'}</div><div class="observe-report-section"><div class="observe-report-title">八、7／30／90 天趨勢</div><table class="observe-table"><tr><th>期間</th><th>題數</th><th>正確率</th><th>平均秒</th><th>快速錯誤</th><th>自行檢查</th><th>成人協助</th></tr>${trendRows}</table></div><div class="observe-report-section"><div class="observe-report-title">九、目前較值得觀察的地方</div>${focus.map((x,i)=>`<div>${i+1}．${x}</div>`).join('')}<p class="observe-neutral">以上是答題行為描述，不代表 ADHD、數學學習障礙、注意力或工作記憶等臨床診斷。速度慢、重複確認或快速作答都需要結合題型與長期資料解讀。</p></div><div class="observe-report-section"><div class="observe-report-title">十、長期行為指標</div><div>慢但正確：${pct(qs,x=>x.behaviorLabel==='slow_correct')}%｜快速但錯誤：${s7.rapidError}%｜重複題目：${s7.repeat} 次｜成人協助：${s7.help} 次｜衝動型行為線索：${qs.filter(x=>x.impulsiveBehavior?.some(k=>k!=='none')).length} 次｜策略自行轉移：${s7.transfer}%</div></div><div class="observe-report-section"><div class="observe-report-title">十一、口算 vs 紙筆</div><div class="observe-limit">目前版本沒有獨立口算模式，因此不做口算比較；現有資料標記為 paper_app。之後若加入口算模式，可沿用同一套資料欄位比較。</div></div>`;
+}
+function showObservation(){show('observe');renderObservation()}
+
+const pokemonDex=[
+ {id:'pikachu',name:'皮卡丘',dex:25,baseHp:40,levelHp:18,desc:'成長速度快，適合每天短時間練習。'},
+ {id:'lucario',name:'路卡利歐',dex:448,baseHp:55,levelHp:24,desc:'需要較多訓練，升級後成長幅度較大。'},
+ {id:'bulbasaur',name:'妙蛙種子',dex:1,baseHp:45,levelHp:20,desc:'穩定成長，適合累積每天的練習。'},
+ {id:'charmander',name:'小火龍',dex:4,baseHp:42,levelHp:21,desc:'連續答對時，成長得很快。'},
+ {id:'squirtle',name:'傑尼龜',dex:7,baseHp:48,levelHp:19,desc:'需要耐心，適合慢慢累積。'},
+ {id:'eevee',name:'伊布',dex:133,baseHp:44,levelHp:22,desc:'成長路線彈性高，適合長期練習。'}
+];
+let pokemonState={species:'pikachu',level:1,hp:0,totalHp:0};
+let pokemonRoster={};
+function pokemonLoad(){
+ try{
+  const x=JSON.parse(localStorage.getItem('math_pokemon_v1')||'null');
+  if(x&&x.species&&pokemonDex.some(p=>p.id===x.species)){pokemonState={...pokemonState,...x};}
+  const r=JSON.parse(localStorage.getItem('math_pokemon_roster_v1')||'null');
+  if(r&&typeof r==='object')pokemonRoster=r;
+  pokemonDex.forEach(p=>{if(!pokemonRoster[p.id])pokemonRoster[p.id]={level:1,hp:0,totalHp:0};});
+  const current=pokemonRoster[pokemonState.species];
+  if(current){pokemonState={...pokemonState,...current};}
+ }catch(e){}
+}
+function pokemonSave(){
+ try{
+  pokemonRoster[pokemonState.species]={level:pokemonState.level,hp:pokemonState.hp,totalHp:pokemonState.totalHp||0};
+  localStorage.setItem('math_pokemon_v1',JSON.stringify(pokemonState));
+  localStorage.setItem('math_pokemon_roster_v1',JSON.stringify(pokemonRoster));
+ }catch(e){}
+}
+pokemonLoad();
+function pokemonById(id){return pokemonDex.find(p=>p.id===id)||pokemonDex[0];}
+function pokemonMaxHp(){const p=pokemonById(pokemonState.species);return p.baseHp+(pokemonState.level-1)*p.levelHp;}
+function pokemonSprite(p){return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.dex}.png`;}
+function downloadMathLog(){
+ const logs=loadErrorLog();
+ const blob=new Blob([JSON.stringify(logs,null,2)],{type:'application/json;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download=`math-error-log-${new Date().toISOString().slice(0,10)}.json`;a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),500);
+}
+function showPokemon(){show('pokemon-page');renderPokemon();}
+function renderPokemon(){
+ const p=pokemonById(pokemonState.species), max=pokemonMaxHp(), pct=Math.min(100,(pokemonState.hp/max)*100);
+ const card=document.getElementById('pokemon-card');
+ card.innerHTML=`<div class="pokemon-hero"><img src="${pokemonSprite(p)}" alt="${p.name}" onerror="this.style.visibility='hidden'"><div><div class="pokemon-name">${p.name}</div><div class="pokemon-level">Lv.${pokemonState.level}</div><div class="pokemon-hp-label"><span>訓練 HP</span><span>${pokemonState.hp} / ${max}</span></div><div class="pokemon-hp"><i style="width:${pct}%"></i></div><div class="pokemon-next">${pokemonState.hp>=max?'準備升級！':`再累積 ${max-pokemonState.hp} HP 升級`}</div><div class="pokemon-actions"><button class="primary" onclick="selectPokemonPrompt()">更換夥伴</button><button onclick="downloadMathLog()">下載錯題 LOG</button></div></div></div><div style="margin-top:10px;color:#64748b;font-size:.88rem">${p.desc}</div>`;
+ const list=document.getElementById('pokemon-list');
+ list.innerHTML=pokemonDex.map(x=>`<button class="pokemon-choice ${x.id===pokemonState.species?'active':''}" onclick="selectPokemon('${x.id}')"><img src="${pokemonSprite(x)}" alt="${x.name}" onerror="this.style.visibility='hidden'"><strong>${x.name}</strong><small>Lv.${x.id===pokemonState.species?pokemonState.level:(pokemonRoster[x.id]?.level||1)}</small></button>`).join('');
+}
+function selectPokemonPrompt(){document.getElementById('pokemon-list')?.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function selectPokemon(id){
+ if(!pokemonDex.some(p=>p.id===id))return;
+ pokemonSave();
+ const saved=pokemonRoster[id]||{level:1,hp:0,totalHp:0};
+ pokemonState={species:id,level:saved.level,hp:saved.hp,totalHp:saved.totalHp||0};
+ pokemonSave();
+ renderPokemon();
+}
+function awardPokemonGrowth(){
+ if(answerRevealed)return;
+ const p=pokemonById(pokemonState.species), max=pokemonMaxHp();
+ // 每題答對都能成長；答錯後再答對仍可獲得成長，避免孩子害怕犯錯。
+ const gain=currentQPoints>=10?10:8;
+ pokemonState.hp+=gain; pokemonState.totalHp=(pokemonState.totalHp||0)+gain;
+ if(pokemonState.hp>=max){
+   pokemonState.hp-=max; pokemonState.level++; pokemonSave(); showPokemonLevelUp(p);
+ }else pokemonSave();
+}
+function showPokemonLevelUp(p){
+ const el=document.getElementById('pokemon-levelup');if(!el)return;
+ document.getElementById('pokemon-levelup-img').src=pokemonSprite(p);
+ document.getElementById('pokemon-levelup-text').innerText=`${p.name} 成為 Lv.${pokemonState.level}！下一級需要更多訓練 HP。`;
+ el.classList.remove('hidden');
+}
+function closePokemonLevelUp(){document.getElementById('pokemon-levelup')?.classList.add('hidden');}
+
+
+function loadAppRecent(){
+  try{
+    const raw=localStorage.getItem('math_app_recent_v2');
+    const parsed=raw?JSON.parse(raw):[];
+    appRecentUsed=Array.isArray(parsed)?parsed.filter(x=>typeof x==='string').slice(-APP_RECENT_LIMIT):[];
+  }catch(e){appRecentUsed=[];}
+}
+function saveAppRecent(){
+  try{localStorage.setItem('math_app_recent_v2',JSON.stringify(appRecentUsed.slice(-APP_RECENT_LIMIT)));}
+  catch(e){}
+}
+function appSignature(p){return `${p.themeKey}|${p.op}|${p.a}|${p.b}`;}
+function rememberAppProblem(p){
+  const sig=appSignature(p);
+  appSessionUsed.add(sig);
+  appRecentUsed.push(sig);
+  if(appRecentUsed.length>APP_RECENT_LIMIT) appRecentUsed=appRecentUsed.slice(-APP_RECENT_LIMIT);
+  saveAppRecent();
+}
+loadAppRecent();
+
+const appThemes=[
+ {key:'butterfly',title:'🦋 紫斑蝶的季節旅行',fact:'紫斑蝶會在臺灣進行季節性的移動，秋冬可在南臺灣看到牠們的越冬族群，例如高雄茂林。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,8999), b=rand(1000,a-1);return {a,b,op:'-',text:`茂林觀察站今天記錄到 ${a.toLocaleString()} 隻紫斑蝶，其中 ${b.toLocaleString()} 隻已完成觀察。還有多少隻需要繼續觀察？`};}
+   const a=rand(1000,5000), b=rand(1000,10000-a);return {a,b,op:'+',text:`茂林觀察站上午記錄 ${a.toLocaleString()} 隻紫斑蝶，下午又記錄 ${b.toLocaleString()} 隻。今天一共記錄多少隻？`};
+ }},
+ {key:'spoonbill',title:'🐦 黑面琵鷺（冬候鳥）',fact:'黑面琵鷺是冬候鳥，臺南曾文溪口等濕地是重要的度冬地。',make(){
+   if(Math.random()<0.5){const a=rand(2000,7000),b=rand(1000,a-1);return {a,b,op:'-',text:`臺南濕地觀察站記錄到 ${a.toLocaleString()} 隻黑面琵鷺，之後有 ${b.toLocaleString()} 隻飛到另一個觀察區。原觀察區還有多少隻？`};}
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`清晨觀察到 ${a.toLocaleString()} 隻黑面琵鷺，傍晚又記錄 ${b.toLocaleString()} 隻。兩次記錄合計多少隻？`};
+ }},
+ {key:'hawk',title:'🦅 灰面鵟鷹（過境鳥）',fact:'灰面鵟鷹會在遷徙季節經過臺灣，因此可作為「過境鳥」的學習例子。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,8500),b=rand(1000,a-1);return {a,b,op:'-',text:`觀察站上午記錄 ${a.toLocaleString()} 隻灰面鵟鷹，其中 ${b.toLocaleString()} 隻已經飛離觀察區。還剩多少隻？`};}
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`上午觀察到 ${a.toLocaleString()} 隻灰面鵟鷹，下午又觀察到 ${b.toLocaleString()} 隻。共記錄多少隻？`};
+ }},
+ {key:'duck',title:'🦆 小水鴨（冬候鳥）',fact:'小水鴨可在臺灣冬季的河口、濕地等環境觀察到。',make(){
+   const a=rand(2000,8000),b=rand(1000,a-1);return {a,b,op:'-',text:`冬季濕地有 ${a.toLocaleString()} 隻小水鴨，下午有 ${b.toLocaleString()} 隻飛到附近水域。原來的濕地還有多少隻？`};
+ }},
+ {key:'forest',title:'🌲 阿里山森林觀察',fact:'森林生態可以從植物、動物、棲地與季節變化來觀察。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`自然觀察隊記錄了 ${a.toLocaleString()} 棵樹，其中 ${b.toLocaleString()} 棵完成標記。還有多少棵尚未標記？`};}
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`上午調查到 ${a.toLocaleString()} 棵樹，下午又調查到 ${b.toLocaleString()} 棵。今天共調查多少棵？`};
+ }},
+ {key:'river',title:'🌊 臺灣河川觀察',fact:'河川可以從上游、中游、下游以及不同測站來觀察水環境。',make(){
+   const sub=Math.random()<0.5;
+   if(sub){const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`河川觀察站今天收到 ${a.toLocaleString()} 筆水環境資料，其中 ${b.toLocaleString()} 筆已完成整理。還有多少筆？`};}
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`上游測站收到 ${a.toLocaleString()} 筆資料，下游測站收到 ${b.toLocaleString()} 筆。兩站共有多少筆資料？`};
+ }},
+ {key:'weather',title:'🌧️ 臺灣的季節與降雨',fact:'不同地區、不同季節的降雨情況可能不同，可以透過觀測資料來比較。',make(){
+   const a=rand(1000,6000),b=rand(1000,a-1);return {a,b,op:'-',text:`某地一段時間累積降雨資料為 ${a.toLocaleString()} 毫米，後來整理出其中 ${b.toLocaleString()} 毫米屬於另一段期間。剩下多少毫米？`};
+ }},
+ {key:'map',title:'🗺️ 臺灣地理小旅行',fact:'臺灣由許多縣市組成，地圖可以幫助我們理解位置、方向與不同地區。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`旅行地圖任務中，北部觀察點有 ${a.toLocaleString()} 位參加者，中部觀察點有 ${b.toLocaleString()} 位。兩地共有多少位？`};
+ }},
+ {key:'go',title:'⚫ 圍棋比賽',fact:'比賽資料也可以用數學整理，例如報名、出席、分組與完成比賽的人數。',make(){
+   const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`圍棋比賽共有 ${a.toLocaleString()} 人報名，其中 ${b.toLocaleString()} 人因故沒有到場。實際參加比賽有多少人？`};
+ }},
+ {key:'school',title:'🏫 校園人口統計',fact:'統計各年級人數，可以幫助學校了解校園人口的變化。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`學校統計資料中，三、四年級共有 ${a.toLocaleString()} 人，五、六年級共有 ${b.toLocaleString()} 人。四個年級共有多少人？`};
+ }},
+ {key:'dinosaur',title:'🦖 恐龍研究站',fact:'化石可以幫助科學家研究很久以前生活在地球上的生物。',make(){
+   const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`恐龍研究站整理了 ${a.toLocaleString()} 件化石資料，其中 ${b.toLocaleString()} 件已完成分類。還有多少件尚未分類？`};
+ }},
+ {key:'park',title:'🏞️ 國家公園探索隊',fact:'國家公園可以保護自然環境，也能讓人認識不同的地形與生態。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`探索隊上午完成 ${a.toLocaleString()} 筆自然觀察紀錄，下午又完成 ${b.toLocaleString()} 筆。今天共有多少筆紀錄？`};
+ }},
+ {key:'spoonbill_route',title:'🗺️ 黑面琵鷺的冬季旅行',fact:'黑面琵鷺秋冬來臺灣度冬，臺南沿海濕地是重要的棲息地。',make(){
+   const a=rand(2000,6000),b=rand(1000,a-1);return {a,b,op:'-',text:`臺南沿海兩個濕地觀察區共有 ${a.toLocaleString()} 隻黑面琵鷺，其中 ${b.toLocaleString()} 隻飛往另一個濕地。原觀察區還有多少隻？`};
+ }},
+ {key:'season_birds',title:'🍂 候鳥的季節',fact:'不同鳥類的遷徙時間不同，有冬候鳥、夏候鳥與過境鳥等分類。',make(){
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`秋季觀察站記錄到 ${a.toLocaleString()} 隻過境鳥，隔天又記錄到 ${b.toLocaleString()} 隻。兩天共記錄多少隻？`};
+ }},
+ {key:'eagle',title:'🦅 赤腹鷹（過境鳥）',fact:'赤腹鷹會在遷徙途中經過臺灣，是認識過境鳥的例子。',make(){
+   const a=rand(3000,8500),b=rand(1000,a-1);return {a,b,op:'-',text:`觀察站記錄到 ${a.toLocaleString()} 隻赤腹鷹，後來有 ${b.toLocaleString()} 隻飛離山區。觀察站還記錄到多少隻？`};
+ }},
+ {key:'typhoon',title:'🌀 臺灣的天氣觀察',fact:'臺灣常受到季風與颱風等天氣系統影響，可以透過觀測資料了解天氣變化。',make(){
+   const a=rand(2000,7000),b=rand(1000,a-1);return {a,b,op:'-',text:`氣象站整理了一段期間的 ${a.toLocaleString()} 筆觀測資料，其中 ${b.toLocaleString()} 筆已完成分析。還有多少筆資料等待分析？`};
+ }},
+ {key:'wetland',title:'🌿 濕地生態調查',fact:'濕地是許多鳥類、魚類與其他生物的重要棲地。',make(){
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`濕地上午完成 ${a.toLocaleString()} 筆鳥類觀察紀錄，下午又完成 ${b.toLocaleString()} 筆。今天共完成多少筆？`};
+ }},
+ {key:'national_park_route',title:'🥾 國家公園步道',fact:'國家公園有不同長度與難度的步道，可以從地圖認識地形與環境。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`探索隊上午完成 ${a.toLocaleString()} 公尺的路線調查，下午又完成 ${b.toLocaleString()} 公尺。兩次共調查多少公尺？`};
+ }},
+ {key:'taiwan_counties',title:'🗺️ 臺灣縣市探索',fact:'地圖可以幫助我們認識臺灣不同縣市的位置與方向。',make(){
+   const a=rand(1000,5000),b=rand(1000,10000-a);return {a,b,op:'+',text:`校外學習地圖上，北部行程有 ${a.toLocaleString()} 位參加者，中部行程有 ${b.toLocaleString()} 位。兩個行程共有多少位？`};
+ }},
+ {key:'museum',title:'🏛️ 自然科學博物館',fact:'博物館可以透過標本、化石與展覽，幫助我們認識自然與科學。',make(){
+   const a=rand(3000,9000),b=rand(1000,a-1);return {a,b,op:'-',text:`自然科學博物館一天有 ${a.toLocaleString()} 位參觀者，其中 ${b.toLocaleString()} 位已經離館。館內還有多少位參觀者？`};
+ }},
+ {key:'sea_turtle',title:'🐢 海龜保育',fact:'海龜是海洋生態的一部分，海洋保育會關注牠們的棲地與生存環境。',make(){
+   const a=rand(1000,4500),b=rand(1000,10000-a);return {a,b,op:'+',text:`海洋觀察隊上午整理 ${a.toLocaleString()} 筆海龜觀察資料，下午又整理 ${b.toLocaleString()} 筆。今天共整理多少筆？`};
+ }}
+];
+
+
+const praisePerfect=['太棒了！你把四位數直式算得又快又準！','千、百、十、個位都站對位置了，漂亮！','進位與退位都難不倒你！'];
+const praiseGood=['這次有完成挑戰！把錯題再算一次，會更穩。','計算方法已經掌握了，下一輪注意每一個位值。','很不錯！尤其是遇到 0 時，慢一步檢查就能更準。'];
+
+function initMenu(){
+ const basic=[
+  {id:1,n:'四位數加法',c:'add',d:'不進位＋進位'},
+  {id:2,n:'四位數減法',c:'sub',d:'不退位＋退位'}
+ ];
+ const advanced=[
+  {id:3,n:'減法連續退位',c:'borrow',d:'例如 5000－3'},
+  {id:4,n:'加法進位挑戰',c:'carry',d:'至少一次進位'},
+  {id:5,n:'加減混合',c:'mix',d:'自己判斷運算'}
+ ];
+ document.getElementById('menu-list').innerHTML=`
+  <div class="menu-section-title">基本練習</div>
+  <div class="menu-primary-grid">
+   ${basic.map(t=>`<button class="btn-menu primary-mode ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;font-size:.78rem;margin-top:5px">${t.d}</small></button>`).join('')}
+  </div>
+  <div class="menu-section-title">進階練習</div>
+  <div class="menu-advanced-grid">
+   ${advanced.map(t=>`<button class="btn-menu advanced-mode ${t.c}" onclick="start(${t.id})">${t.n}<small style="display:block;margin-top:4px">${t.d}</small></button>`).join('')}
+  </div>
+  <button class="menu-app-card" onclick="start(6)"><strong>🌏 情境應用題</strong><small>讀題 → 排直式 → 算答案</small></button>
+  <button class="menu-pokemon-card" onclick="showPokemon()">📖 我的寶可夢圖鑑<small>數學做題讓夥伴成長</small></button>
+  <button class="btn-menu" style="grid-column:1/-1;background:#475569" onclick="showObservation()">📊 學習觀察<small style="display:block;font-size:.78rem;opacity:.9;margin-top:5px">看最近 7 天自己的練習變化</small></button>
+ `;
+}
+
+function start(type){
+ currentType=type;currentQ=1;totalPoints=0;wrongCount=0;appProblem=null;appChosenOp=null;appOpWrongCount=0;appCalcWrongCount=0;wrongProblems=[];sessionQuestionTotal=10;window.__retryQueue=null;
+ answerRevealed=false; answerViewLogged=false; sessionErrorLogCount=0; sessionAnswerViewCount=0; resetAnswerHelp();
+ if(type===6){
+   appSessionUsed=new Set();
+   show('game');
+   document.getElementById('score').innerText='0';
+   document.getElementById('info-bar')?.classList.remove('app-hidden');
+   document.querySelector('.progress')?.classList.remove('app-hidden');
+   loadProblem();
+   return;
+ }
+ show('game');
+ document.getElementById('score').innerText='0';
+ loadProblem();
+}
+
+function getCurrentQuestionText(){
+  if(currentType===6 && appProblem) return appProblem.text;
+  return `${n1.toLocaleString()} ${op==='+'?'＋':'－'} ${n2.toLocaleString()} = ?`;
+}
+function getChildEquation(){
+  if(currentType===6){
+    const left=appPlaced[0]===null?'＿':appNumberForRow(0).toLocaleString();
+    const right=appPlaced[1]===null?'＿':appNumberForRow(1).toLocaleString();
+    const sign=appChosenOp==='+'?'＋':appChosenOp==='-'?'－':'＋／－';
+    return `${left} ${sign} ${right}`;
+  }
+  return `${n1.toLocaleString()} ${op==='+'?'＋':'－'} ${n2.toLocaleString()}`;
+}
+function getCurrentAnswerValue(){
+  const u=normalizedUserAnswer();
+  return u.value===null?'':u.value;
+}
+function loadErrorLog(){
+  try{const raw=localStorage.getItem('math_error_log_v1');const a=raw?JSON.parse(raw):[];return Array.isArray(a)?a:[];}catch(e){return [];}
+}
+function saveErrorLog(entry){
+  try{
+    const logs=loadErrorLog();
+    logs.push(entry);
+    localStorage.setItem('math_error_log_v1',JSON.stringify(logs.slice(-5000)));
+    sessionErrorLogCount++;
+  }catch(e){}
+}
+function logMathError(kind,detail){
+  saveErrorLog({
+    time:new Date().toISOString(),
+    mode:currentType===6?'情境應用題':({1:'四位數加法',2:'四位數減法',3:'減法連續退位',4:'加法進位挑戰',5:'加減混合'}[currentType]||'練習'),
+    questionNo:currentQ,
+    question:getCurrentQuestionText(),
+    childEquation:getChildEquation(),
+    childAnswer:getCurrentAnswerValue(),
+    childOperation:currentType===6?(appChosenOp||'未選擇'):(op==='+'?'＋':'－'),
+    childPlacement:currentType===6?{first:appPlaced[0]===null?null:(appPlaced[0]===0?appProblem?.a:appProblem?.b),second:appPlaced[1]===null?null:(appPlaced[1]===0?appProblem?.a:appProblem?.b)}:null,
+    correctAnswer:correctVal,
+    correctEquation:`${n1.toLocaleString()} ${op==='+'?'＋':'－'} ${n2.toLocaleString()} = ${correctVal.toLocaleString()}`,
+    kind,
+    detail:detail||''
+  });
+}
+function logAnswerViewed(){
+  if(answerViewLogged)return;
+  answerViewLogged=true;
+  sessionAnswerViewCount++;
+  saveErrorLog({
+    time:new Date().toISOString(),
+    mode:currentType===6?'情境應用題':({1:'四位數加法',2:'四位數減法',3:'減法連續退位',4:'加法進位挑戰',5:'加減混合'}[currentType]||'練習'),
+    questionNo:currentQ,
+    question:getCurrentQuestionText(),
+    childEquation:getChildEquation(),
+    childAnswer:getCurrentAnswerValue(),
+    childOperation:currentType===6?(appChosenOp||'未選擇'):(op==='+'?'＋':'－'),
+    childPlacement:currentType===6?{first:appPlaced[0]===null?null:(appPlaced[0]===0?appProblem?.a:appProblem?.b),second:appPlaced[1]===null?null:(appPlaced[1]===0?appProblem?.a:appProblem?.b)}:null,
+    correctAnswer:correctVal,
+    correctEquation:`${n1.toLocaleString()} ${op==='+'?'＋':'－'} ${n2.toLocaleString()} = ${correctVal.toLocaleString()}`,
+    kind:'看答案',
+    detail:'孩子主動查看答案與解題步驟'
+  });
+}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function digits(n){return String(n).padStart(4,'0').split('').map(Number);}
+
+// ===== 加法判斷 =====
+function hasCarry(a,b){
+ const A=digits(a),B=digits(b);
+ let carry=0;
+ for(let i=3;i>=0;i--){
+  const sum=A[i]+B[i]+carry;
+  if(sum>=10)return true;
+  carry=0;
+ }
+ return false;
+}
+
+// 明確判斷「完全沒有進位」
+function noCarry(a,b){
+ const A=digits(a),B=digits(b);
+ let carry=0;
+ for(let i=3;i>=0;i--){
+  if(A[i]+B[i]+carry>=10)return false;
+  carry=0;
+ }
+ return true;
+}
+
+// ===== 減法判斷 =====
+function hasBorrow(a,b){
+ const A=digits(a),B=digits(b);
+ let borrow=0;
+ for(let i=3;i>=0;i--){
+  const x=A[i]-borrow;
+  if(x<B[i]){
+   borrow=1;
+   return true;
+  }
+  borrow=0;
+ }
+ return false;
+}
+
+function noBorrow(a,b){
+ const A=digits(a),B=digits(b);
+ let borrow=0;
+ for(let i=3;i>=0;i--){
+  if(A[i]-borrow<B[i])return false;
+  borrow=0;
+ }
+ return true;
+}
+
+// ===== 四位數加法 =====
+// mode：mixed / carry / noCarry
+function makeAddition(mode){
+ for(let k=0;k<1000;k++){
+  let a=rand(1000,8999);
+  let b=rand(1000,9999-a);
+  if(b<1000)continue;
+
+  const carry=hasCarry(a,b);
+  if(mode==='carry' && !carry)continue;
+  if(mode==='noCarry' && carry)continue;
+  if(a+b>10000)continue;
+
+  return [a,b,'+'];
+ }
+
+ // 理論上不會走到這裡；保底題也不超過 10000
+ if(mode==='carry')return [6379,3621,'+']; // 10000，必有進位
+ if(mode==='noCarry')return [1234,2345,'+'];
+ return [3210,4567,'+'];
+}
+
+// ===== 四位數減法 =====
+// mode：mixed / borrow / noBorrow / chain
+function makeSubtraction(mode){
+ for(let k=0;k<1000;k++){
+  let a=rand(1000,9999);
+  let b=rand(1,a);
+
+  const borrow=hasBorrow(a,b);
+
+  if(mode==='borrow' && !borrow)continue;
+  if(mode==='noBorrow' && borrow)continue;
+
+  if(mode==='chain'){
+   // 必須真的跨過 0 借位，例如 5000－3、7000－8、4000－25。
+   const crossesZero=(a%1000===0 && b<1000) ||
+                     (Math.floor(a/100)%10===0 && b<100);
+   if(!crossesZero || !borrow)continue;
+  }
+
+  return [a,b,'-'];
+ }
+
+ if(mode==='chain')return [5000,3,'-'];
+ if(mode==='borrow')return [6200,185,'-'];
+ if(mode==='noBorrow')return [8765,1234,'-'];
+ return [7654,3210,'-'];
+}
+
+function reverseSubject(themeKey){
+ const map={
+  butterfly:'紫斑蝶',spoonbill:'黑面琵鷺',hawk:'灰面鵟鷹',duck:'小水鴨',forest:'樹木',river:'水環境資料',weather:'降雨資料',map:'參加者',go:'參賽者',school:'學生',dinosaur:'化石資料',park:'自然觀察紀錄',spoonbill_route:'黑面琵鷺',season_birds:'候鳥',eagle:'赤腹鷹',typhoon:'氣象觀測資料',wetland:'鳥類觀察紀錄',national_park_route:'路線調查',taiwan_counties:'參加者',museum:'參觀者',sea_turtle:'海龜觀察資料'
+ };
+ return map[themeKey]||'資料';
+}
+function makeReverseAppQuestion(p){
+ const subject=reverseSubject(p.themeKey);
+ if(p.op==='+'){
+   const total=p.a+p.b;
+   const templates=[
+    `目前有 ${total.toLocaleString()} 個${subject}，已知原有 ${p.a.toLocaleString()} 個，請問增加多少個？`,
+    `原來有 ${p.a.toLocaleString()} 個${subject}，現在變成 ${total.toLocaleString()} 個，請問增加了多少個？`,
+    `原本記錄 ${p.a.toLocaleString()} 個${subject}，後來增加後共有 ${total.toLocaleString()} 個，請問增加了多少個？`
+   ];
+   return {...p,a:total,b:p.a,op:'-',text:templates[rand(0,templates.length-1)]};
+ }
+ const remain=p.a-p.b;
+ const templates=[
+   `原來有 ${p.a.toLocaleString()} 個${subject}，現在剩下 ${remain.toLocaleString()} 個，請問減少了多少個？`,
+   `原本有 ${p.a.toLocaleString()} 個${subject}，後來變成 ${remain.toLocaleString()} 個，請問少了多少個？`,
+   `一開始記錄 ${p.a.toLocaleString()} 個${subject}，現在只剩 ${remain.toLocaleString()} 個，請問減少了多少個？`
+ ];
+ return {...p,a:p.a,b:remain,op:'-',text:templates[rand(0,templates.length-1)]};
+}
+
+function loadProblem(){
+ let q;
+ appChosenOp=currentType===6?'+':null;
+ appPlaced=[null,null];
+ appTargetRow=null;
+ appSelectedNumber=null;
+ appOpWrongRecorded=false;
+
+ if(currentType===6){
+   // 防重複：同一回合先避開本次作答紀錄，再避開最近使用過的題目。
+   let candidate=null, theme=null;
+   for(let attempt=0;attempt<120;attempt++){
+     theme=appThemes[rand(0,appThemes.length-1)];
+     candidate=theme.make();
+     candidate.themeKey=theme.key;
+     const sig=appSignature(candidate);
+     if(!appSessionUsed.has(sig) && !appRecentUsed.includes(sig)) break;
+   }
+   // 若極端情況下候選題仍重複，至少保證本次作答不重複。
+   if(!candidate || appSessionUsed.has(appSignature(candidate))){
+     for(const t of appThemes){
+       const c=t.make(); c.themeKey=t.key;
+       if(!appSessionUsed.has(appSignature(c))){candidate=c;break;}
+     }
+   }
+   // 約三分之一題目改用「已知原來與現在，反推增加／減少多少」的反向思考。
+   if(Math.random()<0.34){ candidate=makeReverseAppQuestion(candidate); candidate.themeKey=theme.key; }
+   appProblem=candidate;
+   rememberAppProblem(appProblem);
+   n1=appProblem.a;n2=appProblem.b;op=appProblem.op;
+   correctVal=op==='+'?n1+n2:n1-n2;
+   currentQPoints=10;
+   answerRevealed=false; answerViewLogged=false; resetAnswerHelp();
+   resetObservationQuestion();
+   document.getElementById('mode-label').innerText='🌏 情境應用題';
+   renderContext(appProblem);
+   document.getElementById('paper-bridge').innerHTML='';
+   renderAppChoices();
+   document.querySelector('.top-question').classList.add('app-hidden');
+   document.querySelector('.math-card').classList.remove('app-hidden');
+   document.getElementById('arrow-help').style.display='none';
+   renderGrid();
+   updateAppBuilderUI();
+   document.getElementById('q-count').innerText=currentQ;
+   document.getElementById('score').innerText=totalPoints;
+   document.getElementById('bar').style.width=((currentQ-1)/sessionQuestionTotal*100)+'%';
+   document.getElementById('final-ans').value='';
+   document.getElementById('feedback').innerText='';
+   updatePaperBridge();
+   return;
+ }
+
+ document.getElementById('context-card').classList.add('app-hidden');
+ document.getElementById('paper-bridge').innerHTML='<strong>紙上也可以這樣算：</strong>直式位置、計算順序與現在相同。';
+ document.getElementById('info-bar')?.classList.remove('app-hidden');
+ document.querySelector('.progress')?.classList.remove('app-hidden');
+ document.querySelector('.top-question').classList.remove('app-hidden');
+ document.querySelector('.math-card').classList.remove('app-hidden');
+ document.getElementById('arrow-help').style.display='block';
+
+ if(currentType===1){
+  q=Math.random()<0.5?makeAddition('noCarry'):makeAddition('carry');
+ }else if(currentType===2){
+  q=Math.random()<0.5?makeSubtraction('noBorrow'):makeSubtraction('borrow');
+ }else if(currentType===3){
+  q=makeSubtraction('chain');
+ }else if(currentType===4){
+  q=makeAddition('carry');
+ }else{
+  q=Math.random()<0.5
+    ?(Math.random()<0.5?makeAddition('noCarry'):makeAddition('carry'))
+    :(Math.random()<0.5?makeSubtraction('noBorrow'):makeSubtraction('borrow'));
+ }
+
+ [n1,n2,op]=q;
+ correctVal=op==='+'?n1+n2:n1-n2;
+ currentQPoints=10;
+ resetObservationQuestion();
+ answerRevealed=false; answerViewLogged=false; resetAnswerHelp();
+
+ const labels={1:'四位數加法',2:'四位數減法',3:'連續退位',4:'進位挑戰',5:'加減混合'};
+ document.getElementById('mode-label').innerText=labels[currentType];
+ document.querySelector('.top-question').classList.remove('app-hidden');
+ document.querySelector('.math-card').classList.remove('app-hidden');
+ renderGrid();
+ renderTopQuestion();
+ document.getElementById('q-count').innerText=currentQ;
+ document.getElementById('score').innerText=totalPoints;
+ document.getElementById('bar').style.width=((currentQ-1)/sessionQuestionTotal*100)+'%';
+ document.getElementById('final-ans').value='';
+ document.getElementById('feedback').innerText='';
+ renderExplain();
+ updatePaperBridge();
+}
+
+function escapeHTML(str){return String(str).replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
+function interactiveAppText(p){
+ let text=escapeHTML(p.text);
+ const a=escapeHTML(p.a.toLocaleString()), b=escapeHTML(p.b.toLocaleString());
+ const tokenA=`<span class="app-number" draggable="true" data-app-num="0" onclick="appNumberClick(0)" ondragstart="appNumberDragStart(event,0)" ondragend="appNumberDragEnd(event)">${a}</span>`;
+ const tokenB=`<span class="app-number" draggable="true" data-app-num="1" onclick="appNumberClick(1)" ondragstart="appNumberDragStart(event,1)" ondragend="appNumberDragEnd(event)">${b}</span>`;
+ if(a===b) text=text.replace(a,'@@APP_A@@').replace(a,'@@APP_B@@');
+ else text=text.replace(a,'@@APP_A@@').replace(b,'@@APP_B@@');
+ return text.replace('@@APP_A@@',tokenA).replace('@@APP_B@@',tokenB);
+}
+function renderContext(p){
+ document.getElementById('context-card').classList.remove('app-hidden');
+ const theme=appThemes.find(t=>t.key===p.themeKey);
+ document.getElementById('context-title').innerText=theme?theme.title:'🌏 今日世界任務';
+ document.getElementById('context-text').innerHTML=interactiveAppText(p);
+ document.getElementById('context-fact').innerText='自然／社會小知識：'+(theme?theme.fact:'');
+}
+
+function renderAppChoices(){
+ updateAppBuilderUI();
+}
+function appOpClick(){
+ if(currentType!==6 || !appProblem)return;
+ appChosenOp=appChosenOp==='+'?'-':'+';
+ renderGrid();
+ updateAppBuilderUI();
+}
+function appPlacementReady(){return currentType===6 && !!appChosenOp && appPlaced[0]!==null && appPlaced[1]!==null;}
+function appNumberForRow(row){const idx=appPlaced[row];return idx===null||idx===undefined?'':String(idx===0?appProblem.a:appProblem.b);}
+function syncAppProblemFromBuilder(){
+ if(!appPlacementReady())return false;
+ const placedN1=appPlaced[0]===0?appProblem.a:appProblem.b;
+ const placedN2=appPlaced[1]===0?appProblem.a:appProblem.b;
+ // 情境題的正確運算永遠由題意決定，不能被孩子目前點選的＋／－覆寫。
+ if(appChosenOp!==appProblem.op)return false;
+ if(appProblem.op==='-' && placedN1<placedN2)return false;
+ n1=placedN1;
+ n2=placedN2;
+ op=appProblem.op;
+ correctVal=op==='+'?n1+n2:n1-n2;
+ return true;
+}
+function updateAppBuilderUI(){
+ const ready=appPlacementReady();
+ // 情境題的上方橫式必須永遠跟孩子目前排出的直式同步。
+ // 這裡只更新「預覽」，真正送出時仍由 syncAppProblemFromBuilder() 驗證。
+ const tq=document.querySelector('.top-question');
+ if(tq)tq.classList.toggle('app-hidden',!ready);
+ if(ready){
+   const previewN1=appPlaced[0]===0?appProblem.a:appProblem.b;
+   const previewN2=appPlaced[1]===0?appProblem.a:appProblem.b;
+   const q1=document.getElementById('q1');
+   const q2=document.getElementById('q2');
+   if(q1)q1.innerHTML=colorizedNumberHTML(previewN1);
+   if(q2)q2.innerHTML=colorizedNumberHTML(previewN2);
+   const qo=document.getElementById('qo');
+   if(qo)qo.innerText=appChosenOp;
+ }
+ document.querySelectorAll('.app-number').forEach(el=>{
+   const idx=Number(el.dataset.appNum);
+   el.classList.toggle('selected',appSelectedNumber===idx);
+   el.classList.toggle('placed',appPlaced.includes(idx));
+ });
+ const targets=document.querySelectorAll('.app-target');
+ targets.forEach((el,i)=>el.classList.toggle('selected',appTargetRow!==null && Math.floor(i/4)===appTargetRow));
+}
+function placeAppNumber(row,numIndex){
+ // 同一個題目中的每個數字只能放一次；若孩子把已放好的數字移到另一列，就先從原列移除。
+ const otherRow=row===0?1:0;
+ if(appPlaced[otherRow]===numIndex)appPlaced[otherRow]=null;
+ appPlaced[row]=numIndex;
+}
+function appNumberClick(numIndex){
+ if(currentType!==6 || !appProblem)return;
+ if(appTargetRow!==null){
+   placeAppNumber(appTargetRow,numIndex);
+   appTargetRow=null;
+   appSelectedNumber=null;
+   renderGrid();
+   updateAppBuilderUI();
+   return;
+ }
+ appSelectedNumber=numIndex;
+ updateAppBuilderUI();
+}
+function appTargetClick(row){
+ if(currentType!==6 || !appProblem)return;
+ appTargetRow=row;
+ if(appSelectedNumber!==null){
+   placeAppNumber(row,appSelectedNumber);
+   appSelectedNumber=null;
+   appTargetRow=null;
+   renderGrid();
+ }
+ updateAppBuilderUI();
+}
+function appNumberDragStart(e,numIndex){if(currentType!==6)return;appSelectedNumber=numIndex;e.dataTransfer.setData('text/plain',String(numIndex));e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('dragging');}
+function appNumberDragEnd(e){e.currentTarget.classList.remove('dragging');}
+function appTargetDragOver(e){if(currentType===6)e.preventDefault();}
+function appTargetDrop(e,row){if(currentType!==6||!appProblem)return;e.preventDefault();const idx=Number(e.dataTransfer.getData('text/plain'));if(idx===0||idx===1){placeAppNumber(row,idx);appSelectedNumber=null;appTargetRow=null;renderGrid();updateAppBuilderUI();}}
+
+function placeClass(index){
+  // digits() 回傳 [千,百,十,個]，index 0~3。
+  return ['place-qian','place-bai','place-shi','place-ge'][index];
+}
+
+function answerClass(index){
+  // 四位答案 index 0~3 = 千、百、十、個；10000 的 index 0~4 = 萬、千、百、十、個。
+  return correctVal===10000
+    ? ['answer-wan','answer-qian','answer-bai','answer-shi','answer-ge'][index]
+    : ['answer-qian','answer-bai','answer-shi','answer-ge'][index];
+}
+
+function colorizedNumberHTML(value){
+  // 橫式題目固定以四位數字處理，但不顯示前導 0。
+  // 這裡不依賴其他 DOM 狀態，避免題目區因輔助函式異常而整段空白。
+  const raw=String(value);
+  const num=Number.isFinite(Number(value)) ? Math.max(0,Math.trunc(Number(value))) : 0;
+  const text=String(num);
+  const arr=text.padStart(4,'0').slice(-4).split('');
+  const firstNonZero=arr.findIndex(x=>x!=='0');
+  const start=firstNonZero<0 ? 3 : firstNonZero;
+  const classes=['place-qian','place-bai','place-shi','place-ge'];
+  return arr.map((x,i)=>{
+    if(i<start) return '';
+    return `<span class="place-digit ${classes[i]}">${x}</span>`;
+  }).join('');
+}
+
+function renderTopQuestion(){
+  const q1=document.getElementById('q1');
+  const q2=document.getElementById('q2');
+  if(!q1 || !q2) return;
+  q1.innerHTML=colorizedNumberHTML(n1);
+  q2.innerHTML=colorizedNumberHTML(n2);
+  document.getElementById('qo').innerText=op;
+}
+
+function renderGrid(){
+ document.querySelector('.math-card')?.classList.toggle('borrow-layout',op==='-');
+ const A=digits(n1),B=digits(n2);
+ const isFive=correctVal===10000;
+ const placeClasses=['place-qian','place-bai','place-shi','place-ge'];
+ const answerClasses=isFive
+   ? ['answer-wan','answer-qian','answer-bai','answer-shi','answer-ge']
+   : ['answer-qian','answer-bai','answer-shi','answer-ge'];
+
+ /*
+  固定 6 欄：說明／符號 + 萬 + 千 + 百 + 十 + 個
+  四位數一律放在「千、百、十、個」四欄。
+  因此 6379 + 6658 必定是：
+       萬 千 百 十 個
+          6  3  7  9
+          6  6  5  8
+  答案也完全使用同一組欄位。
+ */
+ let html='';
+ html+=`<div></div>
+         <div class="header">萬</div>
+         <div class="header">千</div>
+         <div class="header">百</div>
+         <div class="header">十</div>
+         <div class="header">個</div>`;
+
+ if(currentType===6){
+   const first=appNumberForRow(0), second=appNumberForRow(1);
+   const firstDigits=first?digits(Number(first)):['','','',''];
+   const secondDigits=second?digits(Number(second)):['','','',''];
+   const firstNZ=firstDigits.findIndex(v=>v!==0), secondNZ=secondDigits.findIndex(v=>v!==0);
+   // 應用題固定使用 6 欄：說明欄＋萬＋千＋百＋十＋個。
+   // 每一列明確以 display:contents 展開，避免＋／－按鈕因 auto-placement 跑到標題列。
+   html+=`<div class="app-grid-row" style="display:contents"><div></div><div></div><div><input class="carry-cell" id="c-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="c-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="c-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="c-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div></div>`;
+   html+=`<div class="app-grid-row" style="display:contents"><div></div><div></div>${appChosenOp==='-'?`<div><input class="carry-cell borrow-input-cell" id="d-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="千位退位紀錄" onclick="borrowInputClick(this,0)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="百位退位紀錄" onclick="borrowInputClick(this,1)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="十位退位紀錄" onclick="borrowInputClick(this,2)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="個位退位紀錄" onclick="borrowInputClick(this,3)" oninput="limitMark(this)"></div>`:`<div><input class="carry-cell" id="d-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>`}</div>`;
+   html+=`<div class="app-grid-row" style="display:contents"><div></div><div></div>`;
+   firstDigits.forEach((x,i)=>{const show=first!==''&&i>=firstNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[0]!==null?'filled':''} ${appTargetRow===0?'selected':''}" aria-label="第一列${['千','百','十','個'][i]}位" onclick="appTargetClick(0)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,0)">${show?x:''}</div>`;});
+   html+=`</div>`;
+   html+=`<div class="app-grid-row" style="display:contents"><div class="app-op-wrap"><button class="app-op-button ${appChosenOp==='+'?'app-op-plus':'app-op-minus'}" aria-label="點一下切換加法或減法" onclick="appOpClick()">${appChosenOp==='+'?'＋':'－'}</button><span class="app-op-label">切換加減</span></div><div class="cell"></div>`;
+   secondDigits.forEach((x,i)=>{const show=second!==''&&i>=secondNZ;html+=`<div class="cell place-digit ${placeClasses[i]} app-target ${appPlaced[1]!==null?'filled':''} ${appTargetRow===1?'selected':''}" aria-label="第二列${['千','百','十','個'][i]}位" onclick="appTargetClick(1)" ondragover="appTargetDragOver(event)" ondrop="appTargetDrop(event,1)">${show?x:''}</div>`;});
+   html+=`</div>`;
+   html+=`<div class="app-grid-row" style="display:contents"><div class="line"></div></div>`;
+   html+=`<div class="app-grid-row" style="display:contents"><div></div><div class="cell"></div>`;
+   for(let i=0;i<4;i++)html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+   html+=`</div>`;
+   const appGrid=document.getElementById('grid');
+   appGrid.classList.add('app-builder-grid');
+   appGrid.innerHTML=html;
+   const oldHelp=document.querySelector('.borrow-help');if(oldHelp)oldHelp.remove();
+   return;
+ }
+
+ // 一般加減練習：保留兩列虛線格，與上下兩個運算數同一水平對齊。
+ document.getElementById('grid')?.classList.remove('app-builder-grid');
+ html+=`<div></div><div></div>
+         <div><input class="carry-cell" id="c-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
+         <div><input class="carry-cell" id="c-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
+         <div><input class="carry-cell" id="c-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
+         <div><input class="carry-cell" id="c-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>
+         <div></div><div></div>
+         ${op==='-'?`<div><input class="carry-cell borrow-input-cell" id="d-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="千位退位紀錄" onclick="borrowInputClick(this,0)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="百位退位紀錄" onclick="borrowInputClick(this,1)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="十位退位紀錄" onclick="borrowInputClick(this,2)" oninput="limitMark(this)"></div><div><input class="carry-cell borrow-input-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="個位退位紀錄" onclick="borrowInputClick(this,3)" oninput="limitMark(this)"></div>`:`<div><input class="carry-cell" id="d-0" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-1" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-2" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div><div><input class="carry-cell" id="d-3" type="text" inputmode="numeric" maxlength="2" autocomplete="off" oninput="limitMark(this)"></div>`}`;
+
+ // 第一個數：萬位留白，千～個位放四位數。
+ // 重要：前導 0 不顯示，但「中間的 0」必須保留。
+ // 例如 3 要顯示在個位：   3，而不是 0 0 0 3；
+ // 5000 則必須顯示：5 0 0 0，不能把有意義的 0 隱藏。
+ const visibleAStart=A.findIndex(x=>x!==0);
+ const visibleBStart=B.findIndex(x=>x!==0);
+ const aStart=visibleAStart<0 ? A.length-1 : visibleAStart;
+ const bStart=visibleBStart<0 ? B.length-1 : visibleBStart;
+ html+=`<div></div><div class="cell"></div>`;
+ A.forEach((x,i)=>{
+  const cls=placeClasses[i];
+  const show=i>=aStart;
+  if(op==='-'){
+    html+=`<div class="cell place-digit ${cls} clickable-digit" data-digit-index="${i}" onclick="toggleBorrowMark(this)">${show?x:''}</div>`;
+  }else{
+    html+=`<div class="cell place-digit ${cls}">${show?x:''}</div>`;
+  }
+ });
+
+ // 第二個數：固定對齊千～個位；前導 0 不顯示。
+ html+=`<div class="op-box">${op}</div><div class="cell"></div>`;
+ B.forEach((x,i)=>{
+  const show=i>=bStart;
+  html+=`<div class="cell place-digit ${placeClasses[i]}">${show?x:''}</div>`;
+ });
+
+ html+=`<div class="line"></div>`;
+
+ // 答案：只有剛好 10000 才使用萬位；其他全部四格，與千～個位完全對齊。
+ if(isFive){
+  html+=`<div></div>`;
+  for(let i=0;i<5;i++){
+   html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+  }
+ }else{
+  html+=`<div></div><div class="cell"></div>`;
+  for(let i=0;i<4;i++){
+   html+=`<div><input class="digit-input ${answerClasses[i]}" id="a-${i}" type="text" inputmode="numeric" maxlength="1" oninput="limitOne(this)"></div>`;
+  }
+ }
+
+ document.getElementById('grid').innerHTML=html;
+ const oldHelp=document.querySelector('.borrow-help');
+ if(oldHelp)oldHelp.remove();
+ if(op==='-'){
+   const help=document.createElement('div');
+   help.className='borrow-help';
+   help.innerHTML='<strong>退位操作</strong><br>① 點一下框框，輸入退位數字，例如 <b>10</b><br>② 再點一下，套用你輸入的數字<br>③ 上方數字會出現紅色退位斜線';
+   document.getElementById('grid').parentElement.appendChild(help);
+ }
+}
+
+function renderExplain(){
+ // 保留舊版函式名稱，但不再顯示固定解題提示；讓孩子自己決定如何計算。
+ return;
+}
+
+function toggleBorrowMark(el){
+ el.classList.toggle('marked');
+ const i=Number(el.dataset.digitIndex);
+ const action={digitIndex:i,marked:el.classList.contains('marked'),time:Date.now()-qStartTime};
+ qProcessActionCount++; obsRecordEvent(op==='-'?'borrow_mark':'carry_mark',action);
+ if(op==='-'){qBorrowUsed=true;qBorrowActions.push(action);}else{qCarryUsed=true;qCarryActions.push(action);}
+}
+
+// 減法第二列虛線格：第一次點擊可輸入；第二次點擊才套用孩子輸入的數字，
+// 並在上方原數字加上紅色退位斜線。App 不替孩子自動填入 10。
+function borrowInputClick(el,index){
+ if(op!=='-')return;
+ const now=Date.now();
+ const firstNonZero=String(n1).padStart(4,'0').split('').map(Number).findIndex(x=>x!==0);
+ if(firstNonZero<0 || index<firstNonZero){
+   const msg=document.getElementById('feedback');
+   if(msg){msg.style.color='var(--red)';msg.innerText='這一格是前面的空位，不能從這裡借位。';}
+   return;
+ }
+ // 第一次點擊：只讓孩子輸入，不產生退位。
+ if(el.dataset.clickReady!=='1'){
+   el.dataset.clickReady='1';
+   el.dataset.lastClick=String(now);
+   return;
+ }
+ // 第二次點擊：必須先有孩子輸入的數字。
+ const entered=(el.value||'').trim();
+ if(!entered){
+   const msg=document.getElementById('feedback');
+   if(msg){msg.style.color='var(--red)';msg.innerText='先在框框輸入退位數字，再點一次套用。';}
+   return;
+ }
+ el.classList.toggle('applied');
+ el.dataset.applied=el.classList.contains('applied')?'1':'0';
+ // 只把實際套用的退位操作記到觀察資料，不把加法操作混進 borrowActions。
+ if(typeof qBorrowActions!=='undefined'){
+   const action={index, value:entered, applied:el.classList.contains('applied'), time:Date.now()-qStartTime};
+   qProcessActionCount++; obsRecordEvent('borrow_input',action); qBorrowActions.push(action);
+   qBorrowUsed=true;
+ }
+ // 套用退位後，輸入框內的「10」也要同步出現紅色 /，表示這個退位記號已被使用。
+ const digit=document.querySelector(`.clickable-digit[data-digit-index="${index}"]`);
+ if(digit)digit.classList.toggle('marked',el.classList.contains('applied'));
+ const msg=document.getElementById('feedback');
+ if(msg){
+   msg.style.color='var(--blue)';
+   msg.innerText=el.classList.contains('applied')
+     ? `已套用你輸入的「${entered}」，紅色斜線表示這一位正在退位。`
+     : '已取消這一位的退位記號。';
+ }
+ el.dataset.clickReady='0';
+ el.dataset.lastClick='';
+}
+
+function resetBorrowInputState(){
+ document.querySelectorAll('.borrow-input-cell').forEach(el=>{
+   el.dataset.clickReady='0';
+   el.dataset.applied='0';
+   el.dataset.lastClick='';
+   el.classList.remove('applied');
+ });
+}
+
+function limitOne(el){
+ const before=el.value;el.value=el.value.replace(/[^0-9]/g,'').slice(0,1);const now=Date.now();
+ if(!qInputStarted&&el.value!==''){qInputStarted=true;qFirstInputAt=now;qInitialAnswer=el.value;qLastAnswerValue=el.value;obsRecordEvent('input',{field:el.id,value:el.value});}
+ else if(el.value!==before){qAnswerChangeCount++;qInputStarted=true;obsRecordEvent(el.value?'input':'delete',{field:el.id,value:el.value});}
+ if(el.value&&el.classList.contains('digit-input')){const cells=[...document.querySelectorAll('.digit-input')],i=cells.indexOf(el);if(i>=0&&i<cells.length-1)setTimeout(()=>cells[i+1].focus(),0);}
+}
+function limitMark(el){const before=el.value;el.value=el.value.replace(/[^0-9]/g,'').slice(0,2);if(el.value!==before){qProcessActionCount++;obsRecordEvent(el.value?'process_input':'process_delete',{field:el.id,value:el.value});}}
+
+function getVerticalAnswerValue(){
+ const count=correctVal===10000?5:4;
+ const values=[];
+ for(let i=0;i<count;i++){
+  values.push((document.getElementById(`a-${i}`)?.value||'').trim());
+ }
+ // 允許最前面的 0 不填；但中間不能留空。
+ let firstNonZero=values.findIndex(x=>x!=='' && x!=='0');
+ if(firstNonZero===-1){
+  if(values.every(x=>x==='' || x==='0'))return {valid:false,empty:values.every(x=>x===''),values};
+ }
+ const start=firstNonZero===-1?count-1:firstNonZero;
+ for(let i=start;i<count;i++){
+  if(values[i]==='')return {valid:false,empty:false,values};
+ }
+ const normalized=values.map((x,i)=>i<start?'0':x).join('');
+ return {valid:true,value:parseInt(normalized,10),values,normalized};
+}
+
+function moveAndSubmit(){
+ const result=getVerticalAnswerValue();
+ if(!result.valid){
+  const msg=document.getElementById('feedback');
+  msg.style.color='var(--red)';
+  msg.innerText=result.empty?'先填答案再送出。':'前面的 0 可以不填；中間的位數不能空著。';
+  return;
+ }
+ document.getElementById('final-ans').value=String(result.value);
+ if(!qInputStarted){qInputStarted=true;qFirstInputAt=Date.now();qInitialAnswer=String(result.value);qLastAnswerValue=qInitialAnswer;obsRecordEvent('input',{field:'vertical-answer',value:qInitialAnswer})}
+ check();
+}
+
+const praiseFast=[
+ '答對！！這題被你漂亮拿下！',
+ '太準了！位值全部對齊！',
+ '漂亮！這個答案完全正確！',
+ '哇！算得又準又穩！',
+ '太強了！這題完全難不倒你！',
+ '命中！你的計算超漂亮！',
+ '答對啦！數學腦正在發光！',
+ '這個計算很穩！漂亮！',
+ '正確！每一位都算對了！',
+ '太厲害！又解決一題！',
+ '完美命中！繼續保持！',
+ '漂亮的直式計算！',
+ '你抓到重點了！答對！',
+ '這題算得非常乾淨！',
+ '哇，這一題你處理得很好！',
+ '又一題！正確答案到手！',
+ '太棒了！位值概念很清楚！',
+ '這個答案完全正確，漂亮！',
+ '計算成功！再來一題！',
+ '數學小高手，繼續！'
+];
+
+function randomItem(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+function celebrateCorrect(){
+  const text=document.createElement('div');
+  text.className='celebrate-text';
+  text.textContent=randomItem(praiseFast);
+  document.body.appendChild(text);
+  setTimeout(()=>{text.classList.add('fade');setTimeout(()=>text.remove(),500)},850);
+
+  const pieces=Array.from({length:90},(_,i)=>{
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.left=(Math.random()*100)+'vw';
+    p.style.width=(6+Math.random()*8)+'px';
+    p.style.height=(8+Math.random()*13)+'px';
+    p.style.background=['#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899'][Math.floor(Math.random()*6)];
+    p.style.setProperty('--dx',((Math.random()-.5)*45)+'vw');
+    p.style.setProperty('--rot',(Math.random()*1080-540)+'deg');
+    p.style.animationDuration=(1.8+Math.random()*1.8)+'s';
+    p.style.animationDelay=(Math.random()*.25)+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),4500);
+    return p;
+  });
+}
+
+function recordWrongProblem(){
+ if(currentType!==6 || !appProblem)return;
+ const copy={...appProblem};
+ if(!wrongProblems.some(x=>appSignature(x)===appSignature(copy))) wrongProblems.push(copy);
+}
+
+function currentProblemKey(){
+ return `${n1}|${op}|${n2}|${correctVal}|${currentQ}|${currentType}`;
+}
+
+function resetAnswerHelp(){
+ const correction=document.getElementById('correction-under-problem');
+ if(correction){correction.classList.add('hidden');correction.innerHTML='';}
+ const box=document.getElementById('answer-help');
+ if(box){box.classList.add('hidden');box.innerHTML='';delete box.dataset.problemKey;}
+ const btn=document.getElementById('show-answer-btn');
+ if(btn)btn.innerText='💡 看答案';
+ answerRevealed=false;
+}
+
+function placeName(index,total){
+ if(total===5)return ['萬位','千位','百位','十位','個位'][index];
+ return ['千位','百位','十位','個位'][index];
+}
+
+function normalizedUserAnswer(){
+ const finalRaw=(document.getElementById('final-ans')?.value||'').trim();
+ if(/^\d+$/.test(finalRaw))return {value:parseInt(finalRaw,10),raw:finalRaw};
+ const v=getVerticalAnswerValue();
+ return v.valid?{value:v.value,raw:v.normalized}:{value:null,raw:''};
+}
+
+function getDigitErrorText(userVal){
+ const total=correctVal===10000?5:4;
+ const correctDigits=String(correctVal).padStart(total,'0').split('');
+ const userDigits=String(userVal).padStart(total,'0').split('');
+ for(let i=0;i<total;i++){
+  if(correctDigits[i]!==userDigits[i]){
+   const place=placeName(i,total);
+   return `你在${place}寫成 ${userDigits[i]}，正確是 ${correctDigits[i]}。先只看這一位，再回頭檢查這一位的進位或退位。`;
+  }
+ }
+ return '';
+}
+
+function buildCalculationTeaching(){
+ const A=String(n1).padStart(4,'0').split('').map(Number);
+ const B=String(n2).padStart(4,'0').split('').map(Number);
+ const places=['千位','百位','十位','個位'];
+ const steps=[];
+ if(op==='+'){
+  let carry=0;
+  for(let i=3;i>=0;i--){
+   const sum=A[i]+B[i]+carry;
+   const carryText=carry?`＋${carry}`:'';
+   const out=Math.floor(sum/10);
+   steps.push(`${places[i]}：${A[i]}＋${B[i]}${carryText}＝${sum}，這一位寫 ${sum%10}${out?'，並向左進 1':''}。`);
+   carry=out;
+  }
+  return steps;
+ }
+ // 減法：完全依照實際紙本退位順序計算，讓說明與算式中的每一位一致。
+ const work=A.slice();
+ for(let i=3;i>=0;i--){
+  const current=work[i];
+  const sub=B[i];
+  if(current>=sub){
+   steps.push(`${places[i]}：${current}－${sub}＝${current-sub}。`);
+   continue;
+  }
+
+  // 找左邊最近的非 0 位；中間若有 0，依序變成 9。
+  let j=i-1;
+  while(j>=0 && work[j]===0) j--;
+  if(j<0){
+   steps.push(`${places[i]}：${current} 不夠減 ${sub}，這一位需要退位。`);
+   continue;
+  }
+
+  const sourceOld=work[j];
+  work[j]=sourceOld-1;
+  const through=[];
+  for(let k=j+1;k<i;k++){
+   work[k]=9;
+   through.push(`${places[k]}的 0 變成 9`);
+  }
+  work[i]=current+10;
+
+  let sentence=`${places[i]}：${current} 不夠減 ${sub}，要向左退位 1。`;
+  if(j===i-1){
+   sentence+=`${places[j]}的 ${sourceOld} 變成 ${work[j]}，${places[i]}得到 10，${work[i]}－${sub}＝${work[i]-sub}。`;
+  }else{
+   sentence+=`${places[j]}的 ${sourceOld} 變成 ${work[j]}，`;
+   sentence+=through.join('，') + '，';
+   sentence+=`${places[i]}得到 10，${work[i]}－${sub}＝${work[i]-sub}。`;
+  }
+  steps.push(sentence);
+ }
+ return steps;
+}
+
+function buildAnswerEquationHTML(userVal){
+ const total=correctVal===10000?5:4;
+ const width=5; // 畫面固定保留「萬位」欄，四位數前面只留空白，不補 0。
+ const a=String(n1).padStart(width,' ').split('');
+ const b=String(n2).padStart(width,' ').split('');
+ const correct=String(correctVal).padStart(width,' ').split('');
+ const user=userVal===null?null:String(userVal).padStart(total,'0').padStart(width,' ').split('');
+ const wrong=[];
+ if(user){
+  const correctDigits=String(correctVal).padStart(total,'0').split('');
+  const userDigits=String(userVal).padStart(total,'0').split('');
+  for(let i=0;i<total;i++) if(userDigits[i]!==correctDigits[i]) wrong.push(width-total+i);
+ }
+ const row=(chars,opSymbol='')=>{
+  let h=`<div class="ae-row"><span class="ae-op">${opSymbol}</span>`;
+  chars.forEach((ch,i)=>{
+   h+=`<span class="ae-digit">${ch===' ' ? '&nbsp;' : ch}</span>`;
+  });
+  return h+'</div>';
+ };
+ let html='<div class="answer-equation"><div class="answer-equation-title">正確的直式</div>';
+ html+=row(a,'');
+ html+=row(b,op);
+ html+='<div class="ae-line"></div>';
+ html+=`<div class="ae-row"><span class="ae-op">＝</span>`;
+ correct.forEach((ch,i)=>{
+   const cls=user && wrong.includes(i)?'ae-digit ae-correct':'ae-digit';
+   html+=`<span class="${cls}">${ch===' ' ? '&nbsp;' : ch}</span>`;
+ });
+ html+='</div>';
+ if(user && wrong.length){
+   html+='<div class="ae-note">你這次的答案：<span style="font-family:\"Courier New\",monospace;font-weight:900">';
+   user.forEach((ch,i)=>{
+     html+=`<span class="${wrong.includes(i)?'ae-wrong':''}">${ch===' ' ? '&nbsp;' : ch}</span>`;
+   });
+   html+='</span><br>紅框是你需要重新檢查的位數；綠底是這一位的正確答案。</div>';
+ }
+ html+='</div>';
+ return html;
+}
+function buildBorrowVisualHTML(){
+ if(op!=='-' || n1===null || n2===null) return '';
+ const A=String(n1).padStart(4,'0').split('').map(Number);
+ const B=String(n2).padStart(4,'0').split('').map(Number);
+ const work=A.slice();
+ const events=[];
+ const changed=new Set();
+ const newValue=Array(4).fill(null);
+ const places=['千位','百位','十位','個位'];
+
+ // 與作答區完全相同的退位邏輯：從右往左，找到最近的非 0 位借 1，
+ // 中間經過的 0 變 9，接收位得到 10。這裡只呈現「正確解答」，不替孩子改原題。
+ for(let i=3;i>=0;i--){
+   if(work[i] < B[i]){
+     let j=i-1;
+     while(j>=0 && work[j]===0){
+       changed.add(j);
+       work[j]=9;
+       newValue[j]=9;
+       events.push({source:j,receiver:i,sourceOld:0,sourceNew:9,kind:'through'});
+       j--;
+     }
+     if(j<0) continue;
+     const old=work[j];
+     changed.add(j);
+     work[j]=old-1;
+     newValue[j]=work[j];
+     work[i]+=10;
+     newValue[i]=work[i];
+     changed.add(i);
+     events.push({source:j,receiver:i,sourceOld:old,sourceNew:work[j],kind:'borrow',ten:10});
+   }
+ }
+ if(!events.length) return '';
+
+ const receivers=new Set(events.map(e=>e.receiver));
+ const width=5;
+ let html='<div class="answer-borrow-wrap">';
+ html+='<div class="answer-borrow-caption"></div>';
+ html+='<div class="answer-borrow-grid">';
+
+ // 第一列：與實際作答區第一列虛線格一致，保持空白，不製造額外步驟。
+ html+='<div class="answer-borrow-label"></div>';
+ html+='<div class="answer-borrow-empty"></div>'.repeat(5);
+
+ // 第二列：與孩子操作的 d-0~d-3 完全同邏輯；正確解答在需要退位的位置填 10，
+ // 並在「10」本身畫同方向的紅色 /。
+ html+='<div class="answer-borrow-label">退位</div>';
+ html+='<div class="answer-borrow-empty"></div>';
+ for(let i=0;i<4;i++){
+   const show=receivers.has(i);
+   html+=`<div class="answer-borrow-box ${show?'applied':''}">${show?'10':''}</div>`;
+ }
+
+ // 只保留「變化」結果；不再重複列出一排「原數」。
+ // 下面的彩色直式就是孩子要直接比對、計算的原算式，不另外重寫原數。
+ html+='<div class="answer-borrow-label">變化</div>';
+ html+='<div class="answer-borrow-empty"></div>';
+ for(let i=0;i<4;i++){
+   const nv=newValue[i];
+   html+=`<div class="answer-borrow-new">${nv!==null?nv:''}</div>`;
+ }
+ html+='</div>';
+
+ const notes=[];
+ events.slice().reverse().forEach(e=>{
+   if(e.kind==='through'){
+     notes.push(`${places[e.source]}原本是 0，借位過程中變成 9。`);
+   }else{
+     notes.push(`${places[e.source]}借 1 給${places[e.receiver]}，${places[e.source]}的 ${e.sourceOld} 變成 ${e.sourceNew}，${places[e.receiver]}得到 10。`);
+   }
+ });
+ html+=`<div class="correction-borrow-note">${notes.join('<br>')}</div>`;
+ html+='</div>';
+ return html;
+}
+function buildBorrowComparisonSteps(){
+ const A=String(n1).padStart(4,'0').split('').map(Number);
+ const B=String(n2).padStart(4,'0').split('').map(Number);
+ const work=A.slice();
+ const places=['千位','百位','十位','個位'];
+ const events=[];
+ for(let i=3;i>=0;i--){
+  if(work[i]>=B[i]) continue;
+  let j=i-1;
+  while(j>=0 && work[j]===0) j--;
+  if(j<0) continue;
+  const sourceOld=work[j];
+  work[j]=sourceOld-1;
+  for(let k=j+1;k<i;k++) work[k]=9;
+  work[i]+=10;
+  events.push({source:j,receiver:i,sourceOld,sourceNew:work[j],receiverNew:work[i],through:(i-j>1)});
+ }
+ events.sort((a,b)=>a.source-b.source);
+ return events.map(e=>{
+  if(e.through){
+   const middle=[];
+   for(let k=e.source+1;k<e.receiver;k++) middle.push(`${places[k]}的 0 變成 9`);
+   return `${places[e.source]}借 1 給${places[e.receiver]}，${places[e.source]}的 ${e.sourceOld} 變成 ${e.sourceNew}，${middle.join('，')}，${places[e.receiver]}得到 10。`;
+  }
+  return `${places[e.source]}借 1 給${places[e.receiver]}，${places[e.source]}的 ${e.sourceOld} 變成 ${e.sourceNew}，${places[e.receiver]}得到 10。`;
+ });
+}
+
+function buildCorrectionUnderProblemHTML(userVal){
+ const total=correctVal===10000?5:4;
+ const width=5;
+ const a=String(n1).padStart(width,' ').split('');
+ const b=String(n2).padStart(width,' ').split('');
+ const correct=String(correctVal).padStart(width,' ').split('');
+ const wrong=[];
+ if(userVal!==null){
+  const cd=String(correctVal).padStart(total,'0').split('');
+  const ud=String(userVal).padStart(total,'0').split('');
+  for(let i=0;i<total;i++) if(cd[i]!==ud[i]) wrong.push(width-total+i);
+ }
+ const placeCls=['place-wan','place-qian','place-bai','place-shi','place-ge'];
+ let html='<div class="correction-title">訂正</div>';
+ html+='<div class="correction-grid">';
+ html+='<div></div>';
+ a.forEach((ch,i)=>html+=`<div class="correction-cell ${ch===' '?'':placeCls[i]}">${ch===' '?'&nbsp;':ch}</div>`);
+ html+=`<div class="correction-op">${op}</div>`;
+ b.forEach((ch,i)=>html+=`<div class="correction-cell ${ch===' '?'':placeCls[i]}">${ch===' '?'&nbsp;':ch}</div>`);
+ html+='<div class="correction-line"></div>';
+ html+='<div class="correction-op">＝</div>';
+ correct.forEach((ch,i)=>{
+  const cls=ch===' '?'':(wrong.includes(i)?'correction-digit correction-wrong':'correction-digit correction-ok');
+  html+=`<div class="correction-cell"><span class="${cls}">${ch===' '?'&nbsp;':ch}</span></div>`;
+ });
+ html+='</div>';
+
+ if(op==='-'){
+  const steps=buildBorrowComparisonSteps();
+  if(steps.length){
+   html+='<div class="correction-borrow-text">';
+   steps.forEach(step=>{html+=`<div>${step}</div>`;});
+   html+='</div>';
+  }
+ }
+
+ if(userVal!==null && wrong.length){
+  const cd=String(correctVal).padStart(total,'0').split('');
+  const ud=String(userVal).padStart(total,'0').split('');
+  const details=wrong.map(i=>{
+   const logical=i-(width-total);
+   const place=placeName(logical,total);
+   return `${place}：你寫 ${ud[logical]}，正確是 <span class="right">${cd[logical]}</span>`;
+  }).join('；');
+  html+=`<div class="correction-note"><strong>紅框是你算錯的地方。</strong><br>${details}</div>`;
+ }else if(userVal===correctVal){
+  html+='<div class="correction-note"><span class="right">這次答案正確！</span></div>';
+ }
+ return html;
+}
+
+function showAnswer(){
+ if(currentType===6){
+   if(!appPlacementReady()){
+     const box=document.getElementById('answer-help');
+     if(box){box.innerHTML='<div class="answer-title">💡 先把題目變成直式</div><div>先把題目中的兩個數字放到第一列和第二列。</div>';box.classList.remove('hidden');}
+     return;
+   }
+   // 看答案時一律回到「題意的正確運算」，不能讓孩子誤選的＋／－改掉正解。
+   const correctN1=appProblem.a;
+   const correctN2=appProblem.b;
+   n1=correctN1;
+   n2=correctN2;
+   op=appProblem.op;
+   correctVal=op==='+'?n1+n2:n1-n2;
+   const correction=document.getElementById('correction-under-problem');
+   const topQ=document.querySelector('.top-question');
+   if(topQ)topQ.classList.remove('app-hidden');
+   const q1=document.getElementById('q1');
+   const q2=document.getElementById('q2');
+   const qo=document.getElementById('qo');
+   if(q1)q1.innerHTML=colorizedNumberHTML(n1);
+   if(q2)q2.innerHTML=colorizedNumberHTML(n2);
+   if(qo)qo.innerText=op;
+   if(appChosenOp!==appProblem.op){
+     const box=document.getElementById('answer-help');
+     const correctSign=appProblem.op==='+'?'＋':'－';
+     const reason=appProblem.op==='+'?'題目是在問合起來／總共有多少。':'題目是在問從原來的數量中減少多少。';
+     if(box){box.innerHTML=`<div class="answer-title">💡 這題要用正確的運算</div><div>${reason}所以要用 <strong>${correctSign}</strong>。</div>`;box.classList.remove('hidden');}
+   }
+ }
+ const box=document.getElementById('answer-help');
+ if(!box)return;
+ const key=currentProblemKey();
+ if(box.dataset.problemKey!==key){
+   box.innerHTML='';
+   box.classList.add('hidden');
+ }
+ box.dataset.problemKey=key;
+ answerRevealed=true;
+ const answerBtn=document.getElementById('show-answer-btn');
+ if(answerBtn)answerBtn.innerText='💡 答案已顯示';
+ let html='<div class="answer-title">💡 一起看答案，不要卡住</div>';
+ if(currentType===6 && appProblem){
+   const reason=op==='+'?'兩個數量合在一起，所以用加法。':'原來的數量拿走一部分，所以用減法。';
+   html+=`<div>這題要用 <strong>${op==='+'?'加法（＋）':'減法（－）'}</strong>。${reason}</div>`;
+   if(appChosenOp && appChosenOp!==op){
+     html+=`<div class="answer-error">你剛才選的是 ${appChosenOp==='+'?'加法':'減法'}，第一個錯誤是在「判斷要用哪一種運算」。</div>`;
+   }
+ }
+ const user=normalizedUserAnswer();
+ const correction=document.getElementById('correction-under-problem');
+ if(correction){
+  correction.innerHTML=buildCorrectionUnderProblemHTML(user.value);
+  correction.classList.remove('hidden');
+ }
+ if(user.value!==null && user.value!==correctVal){
+   const err=getDigitErrorText(user.value);
+   html+=`<div class="answer-error">這一題是 <strong>${n1.toLocaleString()} ${op} ${n2.toLocaleString()} = ${correctVal.toLocaleString()}</strong>。你填的是 ${user.value.toLocaleString()}。${err||'答案和這個算式不同，請重新檢查每一位。'}</div>`;
+ }else if(user.value===correctVal){
+   html+='<div>你填的答案已經正確！可以直接送出。</div>';
+ }else{
+   html+='<div>目前還沒有完整答案，所以先看正確直式，再回到原題自己算一次。</div>';
+ }
+ html+=`<div class="answer-teach"><strong>正確答案：</strong> <span class="answer-number">${correctVal.toLocaleString()}</span></div>`;
+ box.innerHTML=html;
+ box.classList.remove('hidden');
+ box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function check(){
+ if(currentType===6){
+   const originalA=appProblem?.a, originalB=appProblem?.b, originalOp=appProblem?.op;
+   const originalCorrect=originalOp==='+'?originalA+originalB:originalA-originalB;
+   if(!appPlacementReady()){
+     logMathError('直式建立錯誤','尚未把題目中的兩個數字放進第一列與第二列');
+     const msg=document.getElementById('feedback');
+     if(msg){msg.style.color='var(--red)';msg.innerText='先把題目中的兩個數字放進直式。';}
+     return;
+   }
+   if(appChosenOp!==originalOp){
+     if(!appOpWrongRecorded){
+       appOpWrongRecorded=true;wrongCount++;appOpWrongCount++;qAttemptCount++;obsRecordEvent('operation_error',{chosen:appChosenOp,correct:originalOp});recordWrongProblem();
+       const savedN1=n1,savedN2=n2,savedOp=op,savedCorrect=correctVal;
+       n1=originalA;n2=originalB;op=originalOp;correctVal=originalCorrect;
+       logMathError('運算判斷錯誤',`孩子選了 ${appChosenOp==='+'?'加法':'減法'}，正確應為 ${originalOp==='+'?'加法':'減法'}`);
+       n1=savedN1;n2=savedN2;op=savedOp;correctVal=savedCorrect;
+     }
+     currentQPoints=Math.max(2,currentQPoints-2);
+     const msg=document.getElementById('feedback');
+     if(msg){msg.style.color='var(--red)';msg.innerText=`這題要用 ${originalOp==='+'?'＋ 加法':'－ 減法'}，點一下「切換加減」再試一次。`;}
+     return;
+   }
+   const placedN1=appPlaced[0]===0?appProblem.a:appProblem.b;
+   const placedN2=appPlaced[1]===0?appProblem.a:appProblem.b;
+   if(originalOp==='-' && placedN1<placedN2){
+     logMathError('直式建立錯誤','減法第一列放了較小的數量');
+     const msg=document.getElementById('feedback');
+     if(msg){msg.style.color='var(--red)';msg.innerText='減法時，第一列要放較大的數量。';}
+     return;
+   }
+   // 到這裡才把孩子排出的直式同步成目前真正要計算的題目。
+   n1=placedN1;n2=placedN2;op=originalOp;correctVal=originalCorrect;
+ }
+ const finalInput=document.getElementById('final-ans');
+ let raw=(finalInput?.value||'').trim();
+ // 上方送出與直式送出共用同一套答案解析：
+ // 若上方答案框沒填，就直接讀取直式答案；前導 0 可省略。
+ if(!/^\d+$/.test(raw)){
+  const vertical=getVerticalAnswerValue();
+  if(vertical.valid){
+   raw=String(vertical.value);
+   if(finalInput)finalInput.value=raw;
+  }else{
+   const msg=document.getElementById('feedback');
+   if(msg){
+    msg.style.color='var(--red)';
+    msg.innerText=vertical.empty?'先填答案再送出。':'前面的 0 可以不填；中間的位數不能空著。';
+   }
+   return;
+  }
+ }
+ const userVal=parseInt(raw,10);
+ qAttemptCount++;qFinalAnswer=raw;if(qInitialAnswer==='')qInitialAnswer=raw;else if(raw!==qInitialAnswer){qAnswerChangeCount++;qChangedAnswer=true;}qReviewBeforeSubmit=(qAnswerChangeCount>0||(qProcessActionCount>0&&qFirstInputAt!==null&&Date.now()-qFirstInputAt>=3000));obsRecordEvent('submit',{answer:raw,attempt:qAttemptCount});
+ const obsCorrect=(userVal===correctVal); recordObservation(obsCorrect);
+ const msg=document.getElementById('feedback');
+
+ if(userVal===correctVal){
+  celebrateCorrect();
+  totalPoints+=currentQPoints;
+  document.getElementById('score').innerText=totalPoints;
+  awardPokemonGrowth();
+  msg.style.color='var(--green)';
+  msg.innerText='答對了！繼續下一題。';
+  setTimeout(()=>{
+   if(window.__retryQueue && Array.isArray(window.__retryQueue)){
+     if(currentQ < window.__retryQueue.length){
+       currentQ++;
+       appProblem={...window.__retryQueue[currentQ-1]};
+       appChosenOp='+'; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false; n1=appProblem.a;n2=appProblem.b;op=appProblem.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+       resetObservationQuestion();
+       answerRevealed=false; resetAnswerHelp();
+       document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
+       renderContext(appProblem); renderAppChoices();
+       document.querySelector('.top-question').classList.add('app-hidden');
+       document.querySelector('.math-card').classList.add('app-hidden');
+       document.getElementById('q-count').innerText=currentQ;
+       document.getElementById('bar').style.width=((currentQ-1)/window.__retryQueue.length*100)+'%';
+     }else{
+       window.__retryQueue=null; showResult();
+     }
+   }else if(currentQ<10){currentQ++;loadProblem();}
+   else showResult();
+  },650);
+ }else{
+  wrongCount++;
+  appCalcWrongCount += currentType===6 ? 1 : 0;
+  logMathError('答案錯誤','孩子送出的答案與正確答案不同');
+  recordWrongProblem();
+  currentQPoints=Math.max(2,currentQPoints-2);
+  msg.style.color='var(--red)';
+  msg.innerText='再試一次，仔細看看你的直式。';
+  qRestartCount++;obsRecordEvent('retry',{attempt:qAttemptCount});document.getElementById('final-ans').value='';
+  setTimeout(()=>msg.innerText='',1300);
+ }
+}
+
+function showResult(){
+ qStartTime=0;
+ show('result');
+ const maxScore=sessionQuestionTotal*10;
+ document.getElementById('result-score').innerText=`總積分：${totalPoints} / ${maxScore}`;
+ document.getElementById('result-title').innerText=totalPoints===sessionQuestionTotal*10?'全部答對！':'挑戰完成！';
+ const arr=totalPoints===maxScore?praisePerfect:praiseGood;
+ document.getElementById('praise').innerText=arr[Math.floor(Math.random()*arr.length)];
+ const stats=document.getElementById('stats');
+ if(currentType===6){
+   stats.innerHTML=`${sessionQuestionTotal} 題完成｜情境判斷錯誤：${appOpWrongCount} 次｜計算錯誤：${appCalcWrongCount} 次｜本次錯誤已記錄：${sessionErrorLogCount} 筆｜看答案：${sessionAnswerViewCount} 次｜需要再練習的題目：${wrongProblems.length} 題`;
+ }else{
+   stats.innerText=`${sessionQuestionTotal} 題完成｜需要重新計算的題目：${wrongCount} 題｜錯誤已記錄：${sessionErrorLogCount} 筆｜看答案：${sessionAnswerViewCount} 次｜每題最多 10 分，重新嘗試會扣 2 分。`;
+ }
+ const pp=pokemonById(pokemonState.species);
+ stats.innerHTML += `<br>🐾 ${pp.name} Lv.${pokemonState.level}｜訓練 HP：${pokemonState.hp}/${pokemonMaxHp()}`;
+ const wrap=document.getElementById('retry-wrong-wrap');
+ if(wrap)wrap.style.display=wrongProblems.length?'block':'none';
+}
+
+function retryWrong(){
+ if(!wrongProblems.length)return;
+ currentQ=1; totalPoints=0; wrongCount=0; appOpWrongCount=0; appCalcWrongCount=0;
+ answerRevealed=false; answerViewLogged=false; sessionErrorLogCount=0; sessionAnswerViewCount=0; resetAnswerHelp();
+ const queue=wrongProblems.map(x=>({...x}));
+ sessionQuestionTotal=queue.length;
+ wrongProblems=[];
+ show('game');
+ document.getElementById('score').innerText='0';
+ document.getElementById('q-count').innerText='1';
+ document.getElementById('mode-label').innerText='🔁 今日錯題再戰';
+ const p=queue[0];
+ appProblem=p; appChosenOp='+'; appPlaced=[null,null]; appTargetRow=null; appSelectedNumber=null; appOpWrongRecorded=false;
+ n1=p.a;n2=p.b;op=p.op;correctVal=op==='+'?n1+n2:n1-n2;currentQPoints=10;
+ resetObservationQuestion();
+ renderContext(p); renderAppChoices();
+ document.getElementById('context-card').classList.remove('app-hidden');
+ document.querySelector('.top-question').classList.add('app-hidden');
+ document.querySelector('.math-card').classList.add('app-hidden');
+ window.__retryQueue=queue;
+ updatePaperBridge();
+}
+
+
+function show(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+}
+function goHome(){qStartTime=0;show('home');initMenu();}
+window.onload=initMenu;
+
+document.addEventListener('focusin',function(e){if(e.target&&e.target.matches('input,button'))obsRecordEvent('focus',{target:e.target.id||e.target.className||e.target.tagName})});
+document.addEventListener('input',function(e){if(!qStartTime||!e.target)return;if(e.target.id==='final-ans'){const v=e.target.value;if(!qInputStarted&&v!==''){qInputStarted=true;qFirstInputAt=Date.now();qInitialAnswer=v;obsRecordEvent('input',{field:'final-ans',value:v})}else {if(v!==qLastAnswerValue){qAnswerChangeCount++;qLastAnswerValue=v}obsRecordEvent(v?'input':'delete',{field:'final-ans',value:v})}}});
+document.addEventListener('visibilitychange',function(){if(document.hidden)obsRecordEvent('pause',{reason:'visibility_hidden'});else obsRecordEvent('resume',{reason:'visibility_visible'})});
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+        const active = document.activeElement;
+        if(active && (
+            active.classList.contains('digit-input') ||
+            active.classList.contains('final-ans') ||
+            active.classList.contains('carry-cell')
+        )){
+            e.preventDefault();
+            const finalInput = document.getElementById('final-ans');
+            if(finalInput && active !== finalInput && typeof moveAndSubmit === 'function'){
+                moveAndSubmit();
+            }else if(typeof check === 'function'){
+                check();
+            }
+        }
+    }
+});
+
+</script>
+<div class="pokemon-levelup hidden" id="pokemon-levelup" aria-live="polite">
+  <div class="pokemon-levelup-box">
+    <img id="pokemon-levelup-img" alt="寶可夢升級" onerror="this.style.visibility='hidden'">
+    <div class="pokemon-levelup-title">✨ 升級成功！✨</div>
+    <div class="pokemon-levelup-sub" id="pokemon-levelup-text"></div>
+    <button class="btn-main" onclick="closePokemonLevelUp()">繼續數學挑戰</button>
+  </div>
+</div>
+</body>
+</html>
