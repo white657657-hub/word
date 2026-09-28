@@ -562,6 +562,7 @@
                 <div id="sentence-inline-result" class="sentence-status" style="display:none;"></div>
             </div>
             <button id="btn-voice" class="game-action-btn" onclick="unlockAndPlayVoice()">🔊 再唸一次</button><span id="voice-status" class="voice-status" aria-live="polite">第一次使用請按 🔊</span>
+            <button id="btn-game-pass" type="button" class="pass-btn-inline" style="display:block; min-width:150px; min-height:48px; margin:10px auto; padding:10px 24px; font-size:1.1rem;" onclick="handlePass()">⏭ PASS｜先跳過</button>
 
 <div id="spelling-feedback" class="spelling-feedback" style="display:none"></div>
             <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
@@ -2546,14 +2547,9 @@ ${detail}
         const skippedWord = state.currentList[state.index];
         recordWordReview(skippedWord, 'pass', state.mode);
 
-        if (state.mode === 'quiz' && !state.tempPractice) {
-            // 魔王挑戰不能用 PASS 把單字永久跳掉；放到隊伍最後，之後仍會考到。
-            const word = state.currentList.splice(state.index, 1)[0];
-            state.currentList.push(word);
-            state.index = 0;
-        } else {
-            state.index++;
-        }
+        // PASS 一律前進，並將單字留在待複習紀錄；不算答對或熟練。
+        // 避免把題目反覆移回目前位置造成孩子卡在同一題。
+        state.index++;
 
         state.tempPractice = false;
         updateHPUI();
