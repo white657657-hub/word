@@ -880,7 +880,11 @@
         const trimmed = name.trim();
         if (!trimmed) return alert('使用者名稱不能空白。');
         if (trimmed === getChildName()) return;
+        // 切換使用者時，先指定載入該使用者的 GitHub TXT 題庫；
+        // 避免沿用上一位使用者的「本機自訂題庫」模式而出現空題庫。
         localStorage.setItem('wordhero_active_user', trimmed);
+        const nextUserKey = normalizeUserKey(trimmed);
+        localStorage.setItem(`wordhero_${nextUserKey}_hero_bank_source_mode`, 'text');
         location.reload();
     }
 
