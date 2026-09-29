@@ -494,7 +494,8 @@
         <div id="more-tools" class="more-tools" style="display:none;">
             <button class="admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
             <button class="admin-btn" onclick="showLearningReport()">📊 家長學習觀察報告</button>
-            <button class="admin-btn" onclick="downloadErrorLog()">📝 完整學習 Log 下載</button>
+            <button class="admin-btn" onclick="downloadErrorLog()">📝 完整學習 Log（TXT 易讀版）</button>
+            <button class="admin-btn" onclick="downloadLearningLogJSON()">🧾 原始 Log（JSON 備份）</button>
             <button class="admin-btn" onclick="clearLearningLogs()">🗑️ 清除所有 Log</button>
             <button class="admin-btn" onclick="downloadChildProgress()">📦 進度下載</button>
             <button class="admin-btn" onclick="switchUser()">👤 切換使用者</button>
@@ -984,6 +985,60 @@
     }
 
     function downloadErrorLog() {
+        const logs = getLearningLog();
+        const errors = getErrorLog();
+        if (!logs.length && !errors.length) return alert('目前還沒有學習 Log。');
+        const labelMap = {
+            at:'時間', type:'紀錄類型', child:'使用者', mode:'模式', unit:'單元',
+            word:'英文單字', meaning:'中文意思', input:'作答內容', result:'結果',
+            responseMs:'作答時間（毫秒）', attempts:'本題提交次數', sentence:'造句內容',
+            issueCount:'檢查問題數', feedback:'檢查回饋', strategy:'系統觀察策略',
+            hintUsed:'是否使用提示', changedAnswer:'是否修改答案'
+        };
+        const printable = value => {
+            if (value === null || value === undefined || value === '') return '（無資料）';
+            if (typeof value === 'object') return JSON.stringify(value, null, 2);
+            if (typeof value === 'boolean') return value ? '是' : '否';
+            return String(value);
+        };
+        const blocks = [
+            'Word Hero｜完整學習紀錄（易讀 TXT）',
+            `使用者：${getChildName()}`,
+            `匯出時間：${new Date().toLocaleString()}`,
+            `學習 Log：${logs.length} 筆；舊版錯題 Log：${errors.length} 筆`,
+            '',
+            '說明：以下保留每筆紀錄的原始欄位；沒有資料的欄位不會自行推測。',
+            ''
+        ];
+        logs.forEach((item, i) => {
+            blocks.push(`━━━━━━━━━━ 學習紀錄 ${i + 1}／${logs.length} ━━━━━━━━━━`);
+            Object.entries(item || {}).forEach(([key, value]) => {
+                const label = labelMap[key] || key;
+                const rendered = printable(value);
+                blocks.push(`${label}：${rendered}`);
+            });
+            blocks.push('');
+        });
+        if (errors.length) {
+            blocks.push('========== 舊版錯題紀錄 ==========');
+            errors.forEach((item, i) => {
+                blocks.push(`【錯題 ${i + 1}／${errors.length}】`);
+                Object.entries(item || {}).forEach(([key, value]) => {
+                    blocks.push(`${labelMap[key] || key}：${printable(value)}`);
+                });
+                blocks.push('');
+            });
+        }
+        const blob = new Blob(['\\uFEFF' + blocks.join('\\r\\n')], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeFileName(getChildName())}_WordHero_完整學習Log.txt`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function downloadLearningLogJSON() {
         const logs = getLearningLog();
         const errors = getErrorLog();
         if (!logs.length && !errors.length) return alert('目前還沒有學習 Log。');
@@ -2427,7 +2482,7 @@
                 return;
             }
             let html = '';
-            if (targetMissing) html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」。`)}</div>`;
+            if (targetMissing) html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」或可辨識的詞形變化。`)}</div>`;
             if (usefulMatches.length) html += '<div style="margin-top:5px;">' + usefulMatches.slice(0,5).map((m,i) => `${i+1}. ${formatLanguageToolMessage(m)}`).join('<div style="margin-top:7px;"></div>') + '</div>';
             if (simpleIssues.length) html += `<div style="margin-top:7px;">${simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>')}</div>`;
             result.className = 'sentence-status warn';
@@ -3207,68 +3262,106 @@
     // 造句目標字判斷：接受合理複數，但避免把所有單字一律加 s 造成誤判。
     // 目前課綱常用字先採明確字典；其他一般可數名詞再使用基本規則。
     function getSentenceTargetVariants(target) {
-        const normalized = normalizeSentenceWord(target).replace(/\s+/g, ' ');
-        if (!normalized) return [];
-
-        const variants = new Set([normalized]);
-        const parts = normalized.split(' ');
+        const raw = String(target || '').trim().toLowerCase();
+        if (!raw) return [];
+        const parts = raw.split(/\s+/);
         const last = parts[parts.length - 1];
+        const variants = new Set([raw]);
+        const addLast = form => {
+            const p = [...parts];
+            p[p.length - 1] = form;
+            variants.add(p.join(' '));
+        };
 
-        // 本題庫／國小常用字的明確複數型。
-        const explicitPlural = {
-            dinosaur:'dinosaurs', million:'millions', street:'streets', dance:'dances',
-            cloud:'clouds', lake:'lakes', valley:'valleys', yesterday:'yesterdays',
-            camp:'camps', map:'maps', star:'stars', hundred:'hundreds', ninety:'nineties',
-            east:'easts', north:'norths', south:'souths', west:'wests', far:'fars',
-            lizard:'lizards', castle:'castles', gold:'golds', american:'americans',
-            australian:'australians', country:'countries', flag:'flags',
-            'picnic table':'picnic tables', 'parking lot':'parking lots',
+        // 名詞複數：保留既有常見不規則變化。
+        const irregularPlural = {
             child:'children', person:'people', man:'men', woman:'women', mouse:'mice',
             goose:'geese', tooth:'teeth', foot:'feet', louse:'lice', ox:'oxen'
         };
+        if (irregularPlural[last]) addLast(irregularPlural[last]);
+        else if (/(?:s|x|z|ch|sh)$/.test(last)) addLast(last + 'es');
+        else if (/[^aeiou]y$/.test(last)) addLast(last.slice(0, -1) + 'ies');
+        else if (/[^aeiou]o$/.test(last)) addLast(last + 'es');
+        else if (/(?:f|fe)$/.test(last)) {
+            addLast(last + 's');
+            addLast(last.replace(/fe$/, 'ves').replace(/f$/, 'ves'));
+        } else if (!/(?:s|ss)$/.test(last)) addLast(last + 's');
 
-        // 這些在彥勛目前題庫中視為專有名詞／不可數或非名詞，不自動產生複數。
-        const noPlural = new Set([
-            'earth','today','near','gold','australia','china','egypt',
-            'eighty','fifty','forty','seventy','sixty','thirty','twenty',
-            'million','hundred','ninety'
-        ]);
-
-        if (explicitPlural[normalized]) {
-            variants.add(explicitPlural[normalized]);
-            return [...variants];
+        // 常見不規則動詞：用字典型態比對，時態正確性另交由文法檢查。
+        const irregularVerbs = {
+            be:['am','is','are','was','were','been','being'],
+            go:['goes','went','gone','going'],
+            do:['does','did','done','doing'],
+            have:['has','had','having'],
+            eat:['eats','ate','eaten','eating'],
+            see:['sees','saw','seen','seeing'],
+            make:['makes','made','making'],
+            take:['takes','took','taken','taking'],
+            come:['comes','came','coming'],
+            run:['runs','ran','run','running'],
+            swim:['swims','swam','swum','swimming'],
+            write:['writes','wrote','written','writing'],
+            read:['reads','read','reading'],
+            speak:['speaks','spoke','spoken','speaking'],
+            sing:['sings','sang','sung','singing'],
+            drink:['drinks','drank','drunk','drinking'],
+            give:['gives','gave','given','giving'],
+            get:['gets','got','gotten','getting'],
+            buy:['buys','bought','buying'],
+            bring:['brings','brought','bringing'],
+            think:['thinks','thought','thinking'],
+            teach:['teaches','taught','teaching'],
+            catch:['catches','caught','catching'],
+            feel:['feels','felt','feeling'],
+            find:['finds','found','finding'],
+            sleep:['sleeps','slept','sleeping'],
+            say:['says','said','saying'],
+            tell:['tells','told','telling'],
+            leave:['leaves','left','leaving'],
+            know:['knows','knew','known','knowing'],
+            draw:['draws','drew','drawn','drawing'],
+            fly:['flies','flew','flown','flying'],
+            ride:['rides','rode','ridden','riding'],
+            break:['breaks','broke','broken','breaking'],
+            play:['plays','played','playing'],
+            study:['studies','studied','studying']
+        };
+        if (irregularVerbs[last]) irregularVerbs[last].forEach(addLast);
+        else {
+            // 規則動詞三單、過去式、現在分詞；對字尾 e、子音+y 與常見 CVC 雙寫做處理。
+            if (/[^aeiou]y$/.test(last)) {
+                addLast(last.slice(0, -1) + 'ies');
+                addLast(last.slice(0, -1) + 'ied');
+                addLast(last.slice(0, -1) + 'ying');
+            } else if (/e$/.test(last) && !/(?:ee|ye|oe)$/.test(last)) {
+                addLast(last + 's');
+                addLast(last + 'd');
+                addLast(last.slice(0, -1) + 'ing');
+            } else {
+                addLast(last + 's');
+                addLast(last + 'ed');
+                addLast(last + 'ing');
+                if (/[^aeiou][aeiou][^aeiouwxy]$/.test(last) && last.length <= 5) {
+                    addLast(last + last.slice(-1) + 'ed');
+                    addLast(last + last.slice(-1) + 'ing');
+                }
+            }
         }
-        if (noPlural.has(normalized)) return [...variants];
-
-        // 多字單字只複數化最後一個字：picnic table → picnic tables。
-        let plural = last;
-        if (/(?:s|x|z|ch|sh)$/.test(last)) {
-            plural = last + 'es';
-        } else if (/[^aeiou]y$/.test(last)) {
-            plural = last.slice(0, -1) + 'ies';
-        } else if (/[^aeiou]o$/.test(last)) {
-            // 國小常見規則中部分字尾 o 加 es；不確定的字則保留單數即可。
-            plural = last + 'es';
-        } else if (/(?:f|fe)$/.test(last)) {
-            // f/fe 有許多例外，因此同時接受規則 +s 與常見 ves 型。
-            const p1 = [...parts]; p1[p1.length - 1] = last + 's'; variants.add(p1.join(' '));
-            plural = last.replace(/fe$/, 'ves').replace(/f$/, 'ves');
-        } else {
-            plural = last + 's';
+        // 若題庫輸入的是常見變化型，也反向接受原形（有限規則，避免聲稱涵蓋所有不規則變化）。
+        if (/ies$/.test(last)) addLast(last.slice(0, -3) + 'y');
+        if (/ied$/.test(last)) addLast(last.slice(0, -3) + 'y');
+        if (/ing$/.test(last)) {
+            const stem = last.slice(0, -3);
+            addLast(stem);
+            if (/(.)\1$/.test(stem)) addLast(stem.slice(0, -1));
+            if (/e$/.test(stem)) addLast(stem + 'e');
         }
-        const pluralParts = [...parts];
-        pluralParts[pluralParts.length - 1] = plural;
-        variants.add(pluralParts.join(' '));
-
-        // 若題庫本身輸入的是複數字，也接受其對應的常見單數型。
-        if (/ies$/.test(last)) {
-            const p = [...parts]; p[p.length - 1] = last.slice(0, -3) + 'y'; variants.add(p.join(' '));
-        } else if (/(?:ches|shes|xes|zes|ses)$/.test(last)) {
-            const p = [...parts]; p[p.length - 1] = last.slice(0, -2); variants.add(p.join(' '));
-        } else if (/s$/.test(last) && !/ss$/.test(last)) {
-            const p = [...parts]; p[p.length - 1] = last.slice(0, -1); variants.add(p.join(' '));
+        if (/ed$/.test(last)) {
+            const stem = last.slice(0, -2);
+            addLast(stem);
+            if (/(.)\1$/.test(stem)) addLast(stem.slice(0, -1));
+            addLast(stem + 'e');
         }
-
         return [...variants];
     }
 
@@ -3296,7 +3389,7 @@
             return issues;
         }
         if (!sentenceContainsTarget(text, target)) {
-            issues.push(`句子裡還沒有使用目標單字「${target}」（也可使用合理的複數型）。`);
+            issues.push(`句子裡還沒有使用目標單字「${target}」或可辨識的合理詞形變化。`);
         }
         if (!/[.!?]$/.test(text)) {
             issues.push('建議在句尾加上句號、問號或驚嘆號。');
@@ -3374,7 +3467,7 @@
 
             let html = '';
             if (targetMissing) {
-                html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」。`)}</div>`;
+                html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」或可辨識的詞形變化。`)}</div>`;
             }
             if (usefulMatches.length) {
                 html += '<div style="margin-top:5px;">' +
