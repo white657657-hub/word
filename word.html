@@ -325,8 +325,9 @@
             border-radius:8px !important;
             background:#475569 !important;
             color:#e2e8f0 !important;
-            font-size:.78rem !important;
-            font-weight:700 !important;
+            font-size:1rem !important;
+            font-weight:800 !important;
+            min-height:44px;
             line-height:1.2;
         }
         .admin-btn:hover { background:#64748b !important; }
@@ -378,7 +379,7 @@
         /* V1456：題庫管理重新設計 */
         .bank-page-head { display:flex; justify-content:space-between; align-items:center; margin:2px 0 10px; }
         .bank-page-title { font-size:1.45rem; font-weight:1000; color:#f8fafc; }
-        .bank-page-subtitle { color:#94a3b8; font-size:.78rem; margin-top:2px; }
+        .bank-page-subtitle { color:#cbd5e1; font-size:1rem; margin-top:4px; }
         .bank-storage-card { background:rgba(124,58,237,.10); border:1px solid rgba(124,58,237,.45); border-radius:12px; padding:9px 10px; margin-bottom:9px; font-size:.8rem; color:#ddd6fe; line-height:1.5; }
         .bank-source-panel-new { padding:10px; margin-bottom:9px; }
         .bank-control-card, .bank-entry-card, .bank-existing-card { background:rgba(15,23,42,.78); border:1px solid #334155; border-radius:14px; padding:11px; margin-bottom:9px; }
@@ -625,10 +626,17 @@
             <div class="bank-tip">只要輸入英文即可。按 Enter 會自動跳到下一格英文；離開欄位時會自動取得中文。</div>
         </div>
 
+        <div class="bank-entry-card" id="paste-bank-card">
+            <div class="bank-entry-head"><div><div class="bank-entry-title">③ 快速貼上／批次檢查</div><div class="bank-entry-subtitle">一行一個英文；也可用「英文[TAB]中文」或「英文,中文」</div></div></div>
+            <textarea id="bank-paste-input" rows="7" spellcheck="false" placeholder="apple\t蘋果\nbook\t書\nbeautiful\t美麗的" style="width:100%;box-sizing:border-box;padding:13px;border-radius:10px;background:#0b1220;color:#fff;border:1px solid #475569;font-size:1.05rem;line-height:1.65;resize:vertical;"></textarea>
+            <div class="bank-entry-actions"><button type="button" class="bank-clear-btn" onclick="document.getElementById('bank-paste-input').value='';document.getElementById('paste-bank-preview').innerHTML='';">清空文字</button><button type="button" class="bank-save-btn" onclick="checkPastedBankWords()">🔎 檢查並配對中文</button></div>
+            <div id="paste-bank-status" class="twenty-bank-status" aria-live="polite"></div><div id="paste-bank-preview"></div>
+        </div>
+
         <div class="bank-entry-card">
             <div class="bank-entry-head">
                 <div>
-                    <div class="bank-entry-title">③ 輸入單字</div>
+                    <div class="bank-entry-title">④ 逐格輸入單字</div>
                     <div class="bank-entry-subtitle">英文在左、中文在右，共 20 格</div>
                 </div>
                 <div class="bank-entry-count" id="bank-entry-count">0 / 20</div>
@@ -648,7 +656,7 @@
         <div class="bank-existing-card">
             <div class="bank-existing-head">
                 <div>
-                    <div class="bank-existing-title">④ 已有題目</div>
+                    <div class="bank-existing-title">⑤ 已有題目</div>
                     <div class="bank-existing-subtitle">可以搜尋、編輯或刪除</div>
                 </div>
                 <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManagerList()">
@@ -1616,6 +1624,56 @@
         refreshUnitSelectors();
         document.getElementById('bank-manage-unit').value = name;
         renderBankManager();
+    }
+
+    let pastedBankRows = [];
+    function parsePastedBankText(raw) {
+        return String(raw||'').split(/\r?\n/).map((line,i)=>{
+            const t=line.trim(); if(!t) return null;
+            let parts=t.includes('\t')?t.split('\t'):t.split(/\s*,\s*/);
+            return {line:i+1,en:String(parts[0]||'').trim(),cn:String(parts.slice(1).join(' ').replace(/^\s+|\s+$/g,'')).trim(),flag:'待檢查'};
+        }).filter(Boolean);
+    }
+    async function checkPastedBankWords() {
+        const unit=document.getElementById('bank-manage-unit')?.value;
+        const status=document.getElementById('paste-bank-status'); const preview=document.getElementById('paste-bank-preview');
+        if(bankSourceMode!=='custom') { alert('請先切換「自行變更題庫」，再新增題目。'); return; }
+        if(!unit || !state.banks[unit]) { alert('請先選擇單元。'); return; }
+        const rows=parsePastedBankText(document.getElementById('bank-paste-input')?.value);
+        if(!rows.length){status.textContent='請先貼上單字。';return;}
+        if(rows.length>150){status.textContent='一次最多檢查 150 行，請分批貼上。';return;}
+        const seen=new Set(); const existing=new Set((state.banks[unit]||[]).map(w=>String(w.en||'').toLowerCase()));
+        for(let i=0;i<rows.length;i++){
+            const r=rows[i], k=r.en.toLowerCase();
+            if(!r.en){r.flag='英文空白';continue;}
+            if(existing.has(k)||seen.has(k)){r.flag='重複單字';} else {seen.add(k);}
+            if(!r.cn){status.textContent=`正在檢查 ${i+1}/${rows.length}：${r.en}`; const info=await fetchWordInfo(r.en); r.cn=info.cn||''; r.audio=info.audio||''; if(!r.cn && r.flag!=='重複單字')r.flag='中文未取得，請人工確認'; else if(r.flag==='待檢查')r.flag='已取得中文，請核對詞義';}
+            else if(r.flag==='待檢查') r.flag='已提供中文，請核對詞義';
+        }
+        pastedBankRows=rows; renderPastedBankPreview();
+        const flagged=rows.filter(r=>r.flag==='重複單字'||r.flag==='中文未取得，請人工確認'||r.flag==='英文空白').length;
+        status.textContent=`檢查完成：${rows.length} 筆；${flagged} 筆需注意。請逐筆核對英文拼字及中文意思，再按「確認並加入題庫」。自動翻譯僅供參考。`;
+    }
+    function renderPastedBankPreview(){
+        const el=document.getElementById('paste-bank-preview'); if(!el)return;
+        if(!pastedBankRows.length){el.innerHTML='';return;}
+        el.innerHTML='<div class="bank-entry-header-row" style="padding:10px 4px 6px 30px"><div>英文（可訂正）</div><div>中文（可訂正）</div></div><div class="twenty-bank-grid">'+pastedBankRows.map((r,i)=>`<div class="twenty-bank-row"><div class="twenty-bank-no">${i+1}</div><input class="twenty-bank-input en" aria-label="第${i+1}筆英文" value="${escapeHtml(r.en)}" oninput="pastedBankRows[${i}].en=this.value"><input class="twenty-bank-input cn" aria-label="第${i+1}筆中文" value="${escapeHtml(r.cn)}" oninput="pastedBankRows[${i}].cn=this.value"></div><div style="margin:-2px 0 5px 30px;color:${r.flag==='重複單字'||r.flag==='中文未取得，請人工確認'||r.flag==='英文空白'?'#fbbf24':'#94a3b8'};font-size:.88rem">第 ${r.line} 行：${escapeHtml(r.flag)}${r.flag==='重複單字'?'（請確認是否要改字或先刪除）':''}</div>`).join('')+'</div><button type="button" class="bank-save-btn" style="width:100%;margin-top:10px" onclick="savePastedBankRows()">💾 確認並加入題庫</button>';
+    }
+    async function savePastedBankRows(){
+        const unit=document.getElementById('bank-manage-unit')?.value;
+        if(bankSourceMode!=='custom'){alert('請先切換自行變更題庫。');return;}
+        const rows=pastedBankRows.map(r=>({en:String(r.en||'').trim(),cn:String(r.cn||'').trim()}));
+        const invalid=rows.filter(r=>!r.en||!r.cn);
+        if(invalid.length){alert('仍有英文或中文空白的項目。請先補齊或刪除該行後再儲存。');return;}
+        const existing=new Set((state.banks[unit]||[]).map(w=>w.en.toLowerCase())); const seen=new Set();
+        const dup=rows.filter(r=>{const k=r.en.toLowerCase();if(existing.has(k)||seen.has(k))return true;seen.add(k);return false;});
+        if(dup.length){alert('發現重複單字：'+dup.map(x=>x.en).join('、')+'。請先訂正或移除重複項目。');return;}
+        const custom=getLocalJSON('hero_custom_questions',[]);
+        rows.forEach(row=>{const ref=`LOCAL_PASTE_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;state.banks[unit].push({...row,ref});custom.push({unit,...row,ref});});
+        setLocalJSON('hero_custom_questions',custom);saveUserQuestionBank();pastedBankRows=[];
+        document.getElementById('bank-paste-input').value='';document.getElementById('paste-bank-preview').innerHTML='';
+        document.getElementById('paste-bank-status').textContent=`已加入 ${rows.length} 個單字。可在下方「已有題目」逐筆編輯。`;
+        refreshUnitSelectors();document.getElementById('bank-manage-unit').value=unit;renderBankManager();
     }
 
     function renderQuestionEntryGrid() {
