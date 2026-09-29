@@ -748,7 +748,9 @@
 
 <script>
     const ANSON_USER = 'anson';
-    const ANSON_TXT_URL = './vocab/Anson.txt';
+    // GitHub Pages 題庫目錄：以目前選取的使用者名稱對應 word/{使用者}.txt。
+    const USER_TXT_DIR = './word/';
+    function getUserTxtUrl() { return `${USER_TXT_DIR}${encodeURIComponent(safeFileName(getChildName()))}.txt`; }
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
     // 寶可夢名稱安全查詢：任何畫面都優先走這裡，避免顯示 No.XX。
     const PK_NAME_ALIASES = {
@@ -1057,7 +1059,7 @@
         }).join('');
         return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero 完整學習 Log</title><style>
         *{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.6 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1000px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0 0 4px}.muted{color:#667085}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.stat{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:12px 16px;min-width:130px}.stat strong{display:block;font-size:24px}input{width:100%;font:inherit;padding:14px;border:2px solid #9aa8bd;border-radius:10px;background:white;margin:8px 0 16px}.log{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #18233a0b}.log header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#667085;font-size:14px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}h2{font-size:20px;margin:8px 0 0;overflow-wrap:anywhere}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.empty{padding:28px;text-align:center;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}}
-        </style><body><main class="wrap"><h1>Word Hero｜完整學習 Log</h1><div class="muted">使用者：${esc(getChildName())}　｜　匯出：${esc(new Date().toLocaleString())}</div><section class="stats"><div class="stat"><strong>${logs.length}</strong>學習紀錄</div><div class="stat"><strong>${errors.length}</strong>舊版錯題紀錄</div><div class="stat"><strong>${all.length}</strong>合計</div></section><label for="q">搜尋單字、句子、結果或欄位內容</label><input id="q" type="search" placeholder="輸入關鍵字即時篩選…"><div id="count" class="muted">顯示 ${all.length} 筆</div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><scr${'ipt'}>const q=document.getElementById('q'),cards=[...document.querySelectorAll('.log')],count=document.getElementById('count');q.addEventListener('input',()=>{let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=c.dataset.search.includes(term);c.hidden=!show;if(show)n++});count.textContent='顯示 '+n+' / '+cards.length+' 筆'});</scr${'ipt'}></body></html>`;
+        </style><body><main class="wrap"><h1>Word Hero｜完整學習 Log</h1><div class="muted">使用者：${esc(getChildName())}　｜　匯出：${esc(new Date().toLocaleString())}</div><section class="stats"><div class="stat"><strong>${logs.length}</strong>學習紀錄</div><div class="stat"><strong>${errors.length}</strong>舊版錯題紀錄</div><div class="stat"><strong>${all.length}</strong>合計</div></section><label for="q">搜尋單字、句子、結果或欄位內容</label><input id="q" type="search" placeholder="輸入關鍵字即時篩選…"><div id="count" class="muted">顯示 ${all.length} 筆</div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const q=document.getElementById('q'),cards=[...document.querySelectorAll('.log')],count=document.getElementById('count');q.addEventListener('input',()=>{let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=c.dataset.search.includes(term);c.hidden=!show;if(show)n++});count.textContent='顯示 '+n+' / '+cards.length+' 筆'});</script></body></html>`;
     }
     function previewLearningLogHTML() {
         const logs = getLearningLog(), errors = getErrorLog();
@@ -1175,53 +1177,23 @@
         if (textBtn) textBtn.classList.toggle('active', bankSourceMode === 'text');
         if (customBtn) customBtn.classList.toggle('active', bankSourceMode === 'custom');
         if (!note) return;
-
         if (bankSourceMode === 'text') {
-            if (isAnsonUser) {
-                note.innerHTML = '目前使用：<b>vocab/Anson.txt</b>。TXT 是唯一題庫來源；切換到此模式會重新讀取最新 TXT。若要自己新增、刪除或修改，請切換到「自行變更題庫」。';
-            } else {
-                const imported = getLocalJSON('hero_text_bank', null);
-                note.innerHTML = imported
-                    ? '目前使用這位使用者上次匯入的 TXT 文字題庫。需要修改內容時，請切換到「自行變更題庫」。'
-                    : '尚未匯入 TXT。按「文字題庫」後可選擇自己的 .txt 單字庫。';
-            }
+            note.innerHTML = `目前使用：<b>${escapeHtml(getUserTxtUrl())}</b>。切換使用者會讀取該使用者同名 TXT；文字題庫模式會重新載入 GitHub 上的檔案。`;
         } else {
-            note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除都只會影響這位使用者。`;
+            note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除只影響這位使用者。`;
         }
     }
 
     async function useTextQuestionBank() {
-        if (isAnsonUser) {
-            bankSourceMode = 'text';
-            setHeroData('hero_bank_source_mode', bankSourceMode);
-            // 切回文字題庫時，強制重新抓取最新 Anson.txt。
-            setLocalJSON('hero_anson_txt_cache', null);
-            const ok = await loadAnsonTxtQuestionBank();
-            refreshUnitSelectors();
-            updateBankSourceUI();
-            renderBankManager();
-            alert(ok
-                ? '📄 已重新載入最新 Anson.txt 文字題庫。\n\nTXT 裡寫什麼，題目就使用什麼。'
-                : '⚠️ Anson.txt 目前無法讀取，已使用程式內建 W1-W4。\n\n請確認 vocab/Anson.txt 路徑與檔案名稱。');
-            return;
-        }
-
-        const savedText = getLocalJSON('hero_text_bank', null);
-        if (savedText && Object.keys(savedText).length) {
-            state.banks = cloneBanks(savedText);
-            bankSourceMode = 'text';
-            setHeroData('hero_bank_source_mode', bankSourceMode);
-            refreshUnitSelectors();
-            updateBankSourceUI();
-            renderBankManager();
-            return;
-        }
-
-        const input = document.getElementById('txt-file-input');
-        if (input) {
-            input.value = '';
-            input.click();
-        }
+        bankSourceMode = 'text';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        const ok = await loadUserTxtQuestionBank();
+        refreshUnitSelectors();
+        updateBankSourceUI();
+        renderBankManager();
+        alert(ok
+            ? `📄 已重新載入 ${getChildName()}.txt。\n\n目前使用該使用者的正式文字題庫。`
+            : `⚠️ 找不到或無法讀取 ${getUserTxtUrl()}。\n\n請確認 GitHub 上有該使用者同名 TXT，且檔案路徑正確。未改用其他使用者的題庫。`);
     }
 
     function handleTxtFile(event) {
@@ -2076,44 +2048,25 @@
         return result;
     }
 
-    async function loadAnsonTxtQuestionBank() {
-        // Anson 的「📄 文字題庫」以 Anson.txt 為唯一來源。
-        // 成功讀取 TXT 後，直接使用 TXT 內容，不再混入舊 localStorage。
+    async function loadUserTxtQuestionBank() {
+        // 每位使用者讀取 word/{使用者名稱}.txt；不可退回 Anson 或共用預設題庫。
         try {
-            const response = await fetch(`${ANSON_TXT_URL}?t=${Date.now()}`, {cache:'no-store'});
+            const response = await fetch(`${getUserTxtUrl()}?t=${Date.now()}`, {cache:'no-store'});
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const text = await response.text();
             const parsed = parseAnsonTxt(text);
             if (!Object.keys(parsed).length || !Object.values(parsed).some(arr => arr.length)) {
-                throw new Error('Anson.txt 沒有讀到任何題目');
+                throw new Error(`${getChildName()}.txt 沒有讀到任何題目`);
             }
-
-            // TXT 讀到什麼就使用什麼；只補 TXT 完全沒有的 W1-W4。
-            state.banks = normalizeLegacyEarthInBanks(mergeFixedBanks(parsed));
-
-            // 更新快取，避免舊版的 eart 殘留。
-            setLocalJSON('hero_anson_txt_cache', state.banks);
+            state.banks = normalizeLegacyEarthInBanks(parsed);
+            setLocalJSON('hero_text_bank', state.banks);
             return true;
         } catch (e) {
-            // 不再優先使用可能含有舊「eart」的快取。
-            // 離線／TXT 無法讀取時，至少使用目前程式內建的正確 W1-W4（Earth）。
-            state.banks = banksFromPairs(getFixedBanks());
-            console.warn('Anson.txt 無法讀取，改用目前內建 W1-W4：', e);
+            console.warn(`${getChildName()}.txt 無法讀取：`, e);
+            const ownCustom = getLocalJSON('hero_question_bank', null);
+            state.banks = ownCustom && Object.keys(ownCustom).length ? cloneBanks(ownCustom) : {};
             return false;
         }
-    }
-
-    function loadLocalQuestionBank() {
-        const saved = getLocalJSON('hero_question_bank', null);
-        if (saved && typeof saved === 'object' && Object.keys(saved).length) {
-            state.banks = normalizeLegacyEarthInBanks(saved);
-            saveUserQuestionBank();
-            return;
-        }
-
-        state.banks = normalizeLegacyEarthInBanks(banksFromPairs(getFixedBanks()));
-        applyLocalQuestionChanges();
-        saveUserQuestionBank();
     }
 
     function removeLegacyEartFromAnsonTextCache() {
@@ -2151,21 +2104,12 @@
     }
 
     async function initQuestionBank() {
-        removeLegacyEartFromAnsonTextCache();
+        
         const savedMode = getHeroData('hero_bank_source_mode');
         if (savedMode === 'text' || savedMode === 'custom') bankSourceMode = savedMode;
 
         if (bankSourceMode === 'text') {
-            if (isAnsonUser) {
-                await loadAnsonTxtQuestionBank();
-            } else {
-                const savedText = getLocalJSON('hero_text_bank', null);
-                if (savedText && Object.keys(savedText).length) state.banks = cloneBanks(savedText);
-                else {
-                    bankSourceMode = 'custom';
-                    loadLocalQuestionBank();
-                }
-            }
+            await loadUserTxtQuestionBank();
         } else {
             loadLocalQuestionBank();
         }
@@ -2223,9 +2167,7 @@
         if (mainName) mainName.textContent = getChildName();
         const storageInfo = document.getElementById('bank-storage-info');
         if (storageInfo) {
-            storageInfo.innerHTML = isAnsonUser
-                ? '👦 Anson：可在「📄 文字題庫」與「✏️ 自行變更題庫」之間切換。文字題庫使用 <b>vocab/Anson.txt</b>；自行變更後只保存在 Anson 本機。'
-                : `👤 ${escapeHtml(getChildName())}：可匯入自己的 TXT 文字題庫，也可以切換成完全由自己管理的本機題庫。`;
+            storageInfo.innerHTML = `👤 ${escapeHtml(getChildName())}：文字題庫讀取 <b>${escapeHtml(getUserTxtUrl())}</b>；自行變更題庫則只保存在這位使用者的瀏覽器。`;
         }
         await initQuestionBank();
         renderBankManager();
