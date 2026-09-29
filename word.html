@@ -494,6 +494,8 @@
         <div id="more-tools" class="more-tools" style="display:none;">
             <button class="admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
             <button class="admin-btn" onclick="showLearningReport()">📊 家長學習觀察報告</button>
+            <button class="admin-btn" onclick="previewLearningLogHTML()">🌐 瀏覽器查看完整 Log（可搜尋）</button>
+            <button class="admin-btn" onclick="downloadLearningLogHTML()">🗂️ 下載 HTML Log 報告</button>
             <button class="admin-btn" onclick="downloadErrorLog()">📝 完整學習 Log（TXT 易讀版）</button>
             <button class="admin-btn" onclick="downloadLearningLogJSON()">🧾 原始 Log（JSON 備份）</button>
             <button class="admin-btn" onclick="clearLearningLogs()">🗑️ 清除所有 Log</button>
@@ -1036,6 +1038,41 @@
         a.download = `${safeFileName(getChildName())}_WordHero_完整學習Log.txt`;
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function buildLearningLogHTML() {
+        const logs = getLearningLog();
+        const errors = getErrorLog();
+        const all = [
+            ...logs.map((item, i) => ({...item, _group:'學習紀錄', _index:i+1})),
+            ...errors.map((item, i) => ({...item, _group:'舊版錯題紀錄', _index:i+1}))
+        ];
+        const esc = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        const labelMap = {at:'時間',type:'紀錄類型',child:'使用者',mode:'模式',unit:'單元',word:'英文單字',meaning:'中文意思',input:'作答內容',result:'結果',responseMs:'作答時間（毫秒）',attempts:'本題提交次數',sentence:'造句內容',issueCount:'檢查問題數',feedback:'檢查回饋',strategy:'系統觀察策略',hintUsed:'是否使用提示',changedAnswer:'是否修改答案'};
+        const cards = all.map((item, i) => {
+            const fields = Object.entries(item).filter(([k])=>!k.startsWith('_')).map(([k,v])=>`<div class="field"><b>${esc(labelMap[k]||k)}</b><div>${esc(typeof v==='object'&&v!==null?JSON.stringify(v,null,2):v===true?'是':v===false?'否':v??'（無資料）')}</div></div>`).join('');
+            const title = item.word || item.sentence || item.type || '紀錄';
+            const date = item.at ? new Date(item.at).toLocaleString() : '時間未記錄';
+            return `<article class="log" data-search="${esc([item._group,title,item.meaning,item.input,item.sentence,item.result,JSON.stringify(item)].join(' ')).toLowerCase()}"><header><span class="tag">${esc(item._group)} #${item._index}</span><time>${esc(date)}</time></header><h2>${esc(title)}</h2><p class="sub">${esc(item.meaning||'')}　｜　結果：${esc(item.result||'未標示')}</p><details><summary>展開全部欄位</summary><div class="fields">${fields}</div></details></article>`;
+        }).join('');
+        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero 完整學習 Log</title><style>
+        *{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.6 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1000px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0 0 4px}.muted{color:#667085}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.stat{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:12px 16px;min-width:130px}.stat strong{display:block;font-size:24px}input{width:100%;font:inherit;padding:14px;border:2px solid #9aa8bd;border-radius:10px;background:white;margin:8px 0 16px}.log{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #18233a0b}.log header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#667085;font-size:14px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}h2{font-size:20px;margin:8px 0 0;overflow-wrap:anywhere}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.empty{padding:28px;text-align:center;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}}
+        </style><body><main class="wrap"><h1>Word Hero｜完整學習 Log</h1><div class="muted">使用者：${esc(getChildName())}　｜　匯出：${esc(new Date().toLocaleString())}</div><section class="stats"><div class="stat"><strong>${logs.length}</strong>學習紀錄</div><div class="stat"><strong>${errors.length}</strong>舊版錯題紀錄</div><div class="stat"><strong>${all.length}</strong>合計</div></section><label for="q">搜尋單字、句子、結果或欄位內容</label><input id="q" type="search" placeholder="輸入關鍵字即時篩選…"><div id="count" class="muted">顯示 ${all.length} 筆</div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><scr${'ipt'}>const q=document.getElementById('q'),cards=[...document.querySelectorAll('.log')],count=document.getElementById('count');q.addEventListener('input',()=>{let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=c.dataset.search.includes(term);c.hidden=!show;if(show)n++});count.textContent='顯示 '+n+' / '+cards.length+' 筆'});</scr${'ipt'}></body></html>`;
+    }
+    function previewLearningLogHTML() {
+        const logs = getLearningLog(), errors = getErrorLog();
+        if (!logs.length && !errors.length) return alert('目前還沒有學習 Log。');
+        const win = window.open('', '_blank');
+        if (!win) return alert('瀏覽器封鎖了新視窗。請允許此頁開啟彈出視窗，或使用「下載 HTML Log 報告」。');
+        win.document.open(); win.document.write(buildLearningLogHTML()); win.document.close();
+    }
+    function downloadLearningLogHTML() {
+        const logs = getLearningLog(), errors = getErrorLog();
+        if (!logs.length && !errors.length) return alert('目前還沒有學習 Log。');
+        const blob = new Blob(['\\uFEFF', buildLearningLogHTML()], {type:'text/html;charset=utf-8'});
+        const url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href=url; a.download=`${safeFileName(getChildName())}_WordHero_完整學習Log.html`;
+        document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
 
     function downloadLearningLogJSON() {
