@@ -492,7 +492,9 @@
         <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">⚙️ 更多功能 <span id="more-arrow">⌄</span></button>
         <div id="more-tools" class="more-tools" style="display:none;">
             <button class="admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
-            <button class="admin-btn" onclick="downloadErrorLog()">📝 錯題 Log</button>
+            <button class="admin-btn" onclick="showLearningReport()">📊 家長學習觀察報告</button>
+            <button class="admin-btn" onclick="downloadErrorLog()">📝 完整學習 Log 下載</button>
+            <button class="admin-btn" onclick="clearLearningLogs()">🗑️ 清除所有 Log</button>
             <button class="admin-btn" onclick="downloadChildProgress()">📦 進度下載</button>
             <button class="admin-btn" onclick="switchUser()">👤 切換使用者</button>
         </div>
@@ -656,8 +658,14 @@
 
         <div class="bank-bottom-actions">
             <button class="mode-btn admin-btn" onclick="openQuestionEditor()">＋單個新增</button>
-            <button class="mode-btn admin-btn" onclick="exportQuestionCSV()">📤 匯出題庫</button>
+            <button class="mode-btn admin-btn" onclick="exportQuestionCSV()">📤 匯出本單元 CSV</button>
         </div>
+        <div class="bank-bottom-actions" style="margin-top:7px;">
+            <button class="mode-btn admin-btn" onclick="exportAllQuestionBanks()">📦 批次匯出全部題庫</button>
+            <button class="mode-btn admin-btn" onclick="document.getElementById('bank-json-import').click()">📥 批次匯入題庫</button>
+        </div>
+        <input id="bank-json-import" type="file" accept=".json,application/json" style="display:none" onchange="importAllQuestionBanks(event)">
+        <div class="bank-tip">批次匯出會保存所有單元及中英文；匯入前會先檢查格式，並在確認後取代目前這位使用者的自訂題庫。建議先匯出備份。</div>
         <button class="mode-btn admin-btn bank-back-btn" onclick="switchView('view-main')">🏠 返回主畫面</button>
     </div>
 
@@ -924,49 +932,60 @@
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
+    function getLearningLog() { return getLocalJSON('hero_learning_log', []); }
+    function addLearningLog(item) {
+        try {
+            const rows = getLearningLog();
+            rows.push({ child: getChildName(), at: new Date().toISOString(), ...item });
+            setLocalJSON('hero_learning_log', rows.slice(-10000));
+        } catch (e) { /* Log 寫入失敗不可阻斷孩子作答 */ }
+    }
+    function showLearningReport() {
+        const rows = getLearningLog();
+        const words = rows.filter(x => x.type === 'word_answer');
+        const sentences = rows.filter(x => x.type === 'sentence');
+        const correct = words.filter(x => x.result === 'correct');
+        const wrong = words.filter(x => x.result === 'incorrect');
+        const passes = rows.filter(x => x.type === 'word_pass');
+        const firstTry = correct.filter(x => Number(x.attempts || 1) === 1).length;
+        const times = correct.map(x => Number(x.responseMs)).filter(x => Number.isFinite(x) && x >= 0 && x < 3600000);
+        const avg = times.length ? Math.round(times.reduce((a,b)=>a+b,0)/times.length/1000) : null;
+        const byWord = {};
+        words.forEach(x => { const k=x.word||'(未標示單字)'; byWord[k] ||= {wrong:0,correct:0,attempts:0}; byWord[k].attempts++; if(x.result==='incorrect')byWord[k].wrong++; if(x.result==='correct')byWord[k].correct++; });
+        const difficult = Object.entries(byWord).filter(([,v])=>v.wrong>0).sort((a,b)=>b[1].wrong-a[1].wrong).slice(0,8);
+        const lines = [
+          `${getChildName()}｜學習觀察報告`,
+          `Log 紀錄：${rows.length} 筆`,
+          `單字提交：${words.length} 次（答對紀錄 ${correct.length}、答錯提交 ${wrong.length}、PASS ${passes.length}）`,
+          `首次答對：${firstTry} 題；平均答對作答時間：${avg===null?'資料不足':avg+' 秒'}`,
+          `造句提交／結果紀錄：${sentences.length} 筆`,
+          '', '【較常出現錯誤的單字】',
+          ...(difficult.length ? difficult.map(([w,v])=>`${w}：錯誤 ${v.wrong} 次／總紀錄 ${v.attempts} 次`) : ['目前沒有足夠錯誤紀錄。']),
+          '', '注意：這是作答紀錄的描述性統計，不等於心理或能力診斷。平均時間只計入有有效時間的答對紀錄。'
+        ];
+        alert(lines.join('\n'));
+    }
+
+    function clearLearningLogs() {
+        const ok = confirm('確定清除這位使用者的所有學習 Log？此操作無法復原。建議先下載備份。');
+        if (!ok) return;
+        setLocalJSON('hero_learning_log', []);
+        setLocalJSON('hero_error_log', []);
+        setHeroData('hero_word_review_queue', '[]');
+        alert('已清除學習 Log、錯題 Log 與待複習紀錄。');
+    }
+
     function downloadErrorLog() {
-        const log = getErrorLog();
-
-        if (!log.length) {
-            return alert('目前還沒有錯題 Log。');
-        }
-
-        const counts = {};
-        log.forEach(item => {
-            const key = item.correct;
-            counts[key] = (counts[key] || 0) + 1;
-        });
-
-        const common = Object.entries(counts)
-            .sort((a, b) => b[1] - a[1])
-            .map(([word, count]) => `${word}：${count} 次`)
-            .join('\n');
-
-        const detail = log.map(item =>
-            `${item.date} ${item.time} | ${item.unit} | 正確：${item.correct} | 輸入：${item.typed}`
-        ).join('\n');
-
-        const childName = getChildName();
-        const content =
-`${childName}｜WORD HERO 錯題 LOG
-====================
-
-【常錯單字統計】
-${common}
-
-【錯題紀錄】
-日期 時間 | 單元 | 正確單字 | 輸入錯誤
-${detail}
-`;
-
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const logs = getLearningLog();
+        const errors = getErrorLog();
+        if (!logs.length && !errors.length) return alert('目前還沒有學習 Log。');
+        const payload = { child: getChildName(), exportedAt: new Date().toISOString(), learningLog: logs, legacyErrorLog: errors };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${safeFileName(childName)}_錯題Log.txt`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        a.download = `${safeFileName(getChildName())}_WordHero_學習Log.json`;
+        document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
@@ -1802,6 +1821,69 @@ ${detail}
         a.href=url; a.download=`${unit.replace(/[\\/:*?"<>|]/g,'_')}_題庫.csv`; a.click(); URL.revokeObjectURL(url);
     }
 
+    function exportAllQuestionBanks() {
+        const payload = {
+            format: 'WordHeroQuestionBanks',
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            banks: cloneBanks(state.banks)
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Word_Hero_全部題庫備份.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1200);
+    }
+
+    async function importAllQuestionBanks(event) {
+        const input = event?.target;
+        const file = input?.files?.[0];
+        if (!file) return;
+        try {
+            const raw = await file.text();
+            const parsed = JSON.parse(raw);
+            const source = parsed?.banks && typeof parsed.banks === 'object' ? parsed.banks : parsed;
+            if (!source || typeof source !== 'object' || Array.isArray(source)) throw new Error('檔案必須是「單元名稱：單字陣列」的 JSON 題庫格式。');
+            const normalized = {};
+            Object.entries(source).forEach(([unitName, entries]) => {
+                const unit = String(unitName || '').trim();
+                if (!unit || !Array.isArray(entries)) throw new Error(`單元「${unitName}」格式不正確。`);
+                const seen = new Set();
+                normalized[unit] = entries.map((item, idx) => {
+                    const en = String(Array.isArray(item) ? item[0] : item?.en ?? '').trim();
+                    const cn = String(Array.isArray(item) ? item[1] : item?.cn ?? '').trim();
+                    if (!en) throw new Error(`單元「${unit}」第 ${idx+1} 題缺少英文。`);
+                    const key = en.toLowerCase();
+                    if (seen.has(key)) throw new Error(`單元「${unit}」有重複英文：${en}`);
+                    seen.add(key);
+                    return {en, cn, ref: `IMPORT_${Date.now()}_${unit.replace(/[^a-z0-9]/gi,'_')}_${idx+1}`};
+                });
+            });
+            const total = Object.values(normalized).reduce((n, arr) => n + arr.length, 0);
+            if (!Object.keys(normalized).length || !total) throw new Error('檔案沒有可匯入的題目。');
+            const summary = Object.entries(normalized).map(([u, arr]) => `${u}：${arr.length} 題`).join('\n');
+            if (!confirm(`即將匯入 ${Object.keys(normalized).length} 個單元、共 ${total} 題：\n\n${summary}\n\n這會取代目前的自訂題庫。建議先匯出備份。確定繼續嗎？`)) return;
+            state.banks = normalized;
+            bankSourceMode = 'custom';
+            setHeroData('hero_bank_source_mode', 'custom');
+            setLocalJSON('hero_question_bank', normalized);
+            setLocalJSON('hero_custom_units', []);
+            setLocalJSON('hero_custom_questions', []);
+            setLocalJSON('hero_question_edits', {});
+            setLocalJSON('hero_deleted_question_refs', []);
+            refreshUnitSelectors();
+            updateBankSourceUI();
+            renderBankManager();
+            alert(`匯入完成！\n${Object.keys(normalized).length} 個單元、${total} 題已保存於目前使用者的本機題庫。`);
+        } catch (err) {
+            alert(`匯入失敗：${err.message || '檔案無法讀取'}\n\n原有題庫未變更。`);
+        } finally {
+            if (input) input.value = '';
+        }
+    }
+
     function parseAnsonTxt(text) {
         const banks = {};
         let currentUnit = '';
@@ -2209,8 +2291,11 @@ ${detail}
 
     function sentenceUnitPass() {
         const passedWord = state.sentenceList && state.sentenceList[state.sentenceIndex];
-        if (passedWord) recordWordReview(passedWord, 'pass_sentence', 'sentence');
         const input = document.getElementById('sentence-unit-input');
+        if (passedWord) {
+            recordWordReview(passedWord, 'pass_sentence', 'sentence');
+            addLearningLog({ type: 'sentence', mode: 'sentence', unit: state.sentenceUnitName || '', word: passedWord.en || '', meaning: passedWord.cn || '', sentence: input ? String(input.value || '').trim() : '', result: 'pass' });
+        }
         if (input) {
             capitalizeSentenceInput(input);
             maybeAutoPunctuateSentence(input);
@@ -2225,6 +2310,9 @@ ${detail}
         if (!input || !result) return;
         capitalizeSentenceInput(input);
         maybeAutoPunctuateSentence(input);
+        const sentenceText = String(input.value || '').trim();
+        const activeWord = state.sentenceList && state.sentenceList[state.sentenceIndex];
+        addLearningLog({ type: 'sentence', mode: 'sentence', unit: state.sentenceUnitName || state.unit || '', word: activeWord && activeWord.en || sentenceTargetWord || '', meaning: activeWord && activeWord.cn || '', sentence: sentenceText, result: sentenceText ? 'submitted_for_check' : 'empty_submission' });
         await runSentenceGrammarCheck(input, result);
     }
 
@@ -2235,6 +2323,7 @@ ${detail}
 
     async function runSentenceGrammarCheck(input, result) {
         const sentence = String(input.value || '').trim();
+        addLearningLog({type:'sentence',mode:'inline_sentence',unit:state.unit||'',word:sentenceTargetWord||'',sentence,result:sentence?'submitted_for_check':'empty_submission'});
         result.style.display = 'block';
         result.className = 'sentence-status sentence-loading';
         result.innerHTML = '⏳ 正在檢查文法與拼字……';
@@ -2304,6 +2393,9 @@ ${detail}
 
     async function loadWord() {
         wrongAttemptsThisQuestion = 0;
+        state.questionStartedAt = Date.now();
+        state.questionAttemptCount = 0;
+        state.previousSubmittedInput = ''; 
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         const word = state.currentList[state.index], display = document.getElementById('display-cn');
         let tip = localDict[word.en.toLowerCase()] || word.cn;
@@ -2406,6 +2498,7 @@ ${detail}
     function checkFinalAnswer() {
         const word = state.currentList[state.index];
         if (!word) return;
+        state.questionAttemptCount = (state.questionAttemptCount || 0) + 1;
 
         const boxes = document.querySelectorAll('.letter-box');
         let ui = "";
@@ -2415,6 +2508,9 @@ ${detail}
         const normalizedAnswer = word.en.replace(/[\s\/-]/g, '').toLowerCase();
 
         if (normalizedInput === normalizedAnswer) {
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: state.questionStartedAt ? Date.now() - state.questionStartedAt : null, attempts: state.questionAttemptCount || 1, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            state.previousSubmittedInput = ui;
+            recordWordReview(word, 'correct', state.mode || 'practice');
             const spellingFeedback = document.getElementById('spelling-feedback');
             if (spellingFeedback) { spellingFeedback.style.display = 'none'; spellingFeedback.innerHTML = ''; }
             boxes.forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
@@ -2500,7 +2596,9 @@ ${detail}
                 setTimeout(loadWord, 600);
             }
         } else {
-            // 錯題仍記錄，但把「錯在哪一個字母」直接標出來。
+            // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: state.questionStartedAt ? Date.now() - state.questionStartedAt : null, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            state.previousSubmittedInput = ui;
             addErrorLog(word, ui || '(空白)');
 
             const answerChars = Array.from(word.en.replace(/[\s\/-]/g, '').toLowerCase());
@@ -2545,6 +2643,7 @@ ${detail}
     function handlePass() {
         if (state.index >= state.currentList.length) return;
         const skippedWord = state.currentList[state.index];
+        addLearningLog({ type:'word_pass', mode:state.mode||'', unit:state.unit||'', word:skippedWord.en||'', meaning:skippedWord.cn||'', attemptCount:state.questionAttemptCount||0, responseMs:state.questionStartedAt?Date.now()-state.questionStartedAt:null });
         recordWordReview(skippedWord, 'pass', state.mode);
 
         // PASS 一律前進，並將單字留在待複習紀錄；不算答對或熟練。
