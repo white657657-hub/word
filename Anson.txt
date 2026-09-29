@@ -1,7 +1,7 @@
 # Word Hero Anson 專屬單字庫
 # 格式：單元標題下一行一個單字，可寫成 English,中文
 
-[W1]
+[W2]
 dinosaur,恐龍
 million,百萬
 street,街道
@@ -13,7 +13,7 @@ near,附近
 valley,山谷
 yesterday,昨天
 
-[W2]
+[W3]
 camp,營地
 map,地圖
 eighty,八十
@@ -25,7 +25,7 @@ sixty,六十
 thirty,三十
 twenty,二十
 
-[W3]
+[W4]
 hundred,一百
 ninety,九十
 east,東方
@@ -37,7 +37,7 @@ picnic table,野餐桌
 parking lot,停車場
 lizard,蜥蜴
 
-[W4]
+[W5]
 castle,城堡
 gold,黃金
 gloden,金色的
@@ -49,6 +49,60 @@ China,中國
 country,國家
 Egypt,埃及
 flag,國旗
+
+[W6]
+"English","中文"
+"Mexico","墨西哥"
+"United States of America","美國"
+"born","出生"
+"Chinese","中國人"
+"continent","大陸"
+"April","四月"
+"August","八月"
+"February","二月"
+"January","一月"
+"July","七月"
+
+[W7]
+"English","中文"
+"June","六月"
+"March","行進"
+"May","可能"
+"December","十二月"
+"November","十一月"
+"October","十月"
+"September","九月"
+"season","季節"
+"spring","春天"
+"summer","夏天"
+
+[W8]
+"English","中文"
+"hurry","匆忙"
+"cheer","歡呼"
+"winter","冬天"
+"measurement","測量"
+"capital city","首都"
+"witch","巫婆"
+"complain","抱怨"
+"except","除了"
+"miss","錯過"
+"tape","膠帶"
+[W9]
+"English","中文"
+"beg","求"
+"promise","承諾"
+"shocked","震驚"
+"gasp","喘氣"
+"scream","尖叫"
+"cubby","小房間"
+"floor","地面"
+"mix up","混合起來"
+"trade","交易"
+"recess","課間休息"
+
+
+
 
 # 可繼續增加：
 # [W5]
