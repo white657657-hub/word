@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1448 - 練習模式：複數判斷／下一題</title>
+    <title>Word Hero V1478 - 造句文法檢查 Worker 版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -141,6 +141,13 @@
         #sentence-unit-input { width:100%; min-height:105px; resize:vertical; padding:11px; border-radius:10px; border:1px solid #475569; background:#020617; color:#fff; font-size:1.05rem; line-height:1.5; font-family:inherit; box-sizing:border-box; }
         #sentence-unit-input:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,.15); outline:none; }
         .sentence-unit-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:8px; }
+        .sentence-example-box[hidden]{display:none!important}
+        .sentence-example-box{margin-top:12px;padding:12px;border:1px solid #334155;border-radius:12px;background:rgba(30,41,59,.75)}
+        .sentence-example-label{font-size:.78rem;color:#fbbf24;font-weight:800;margin-bottom:6px}
+        .sentence-example-text{font-size:1.12rem;line-height:1.55;color:#e0f2fe;font-weight:700;min-height:28px}
+        .sentence-example-actions{display:flex;gap:7px;margin-top:8px}
+        .sentence-example-actions button,.sentence-own-play button{border:1px solid #475569;border-radius:8px;background:#263b59;color:#fff;padding:7px 10px;font-weight:700;cursor:pointer}
+        .sentence-own-play{margin-top:8px;text-align:center}
         .sentence-unit-pass { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
         .sentence-unit-progress { text-align:center; color:#94a3b8; font-size:.78rem; margin-top:8px; }
         /* V1448：文法說明後固定提供下一題 */
@@ -298,6 +305,18 @@
         .home-header { text-align:center; margin:5px 0 10px; }
         .home-title { color:var(--accent); font-size:1.55rem; font-weight:1000; letter-spacing:1px; }
         .home-user { color:#94a3b8; font-size:.78rem; margin-top:2px; }
+        .home-user-control{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:4px}
+        #home-user-select{max-width:118px;min-width:74px;padding:3px 20px 3px 7px;border:1px solid #334155;border-radius:6px;background:#172033;color:#e2e8f0;font-size:.75rem;line-height:1.25;font-weight:700}
+        .home-user-icon{font-size:.75rem;color:#94a3b8}
+        .home-user-add{width:23px;height:23px;padding:0;border:1px solid #475569;border-radius:6px;background:#263b59;color:#fff;font-size:18px;line-height:20px;font-weight:700;cursor:pointer}
+        .home-user-add:active{transform:scale(.96)}
+        .user-add-modal{position:fixed;inset:0;z-index:9999;background:rgba(2,6,23,.72);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+        .user-add-card{width:100%;max-width:320px;margin:auto;background:#1e293b;border:1px solid #475569;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 50px rgba(0,0,0,.4)}
+        .user-add-card label{font-weight:800;color:#e2e8f0}
+        .user-add-card input{width:100%;box-sizing:border-box;padding:12px;border-radius:9px;border:1px solid #64748b;background:#0f172a;color:#fff;font-size:1rem}
+        .user-add-actions{display:flex;gap:8px}
+        .user-add-actions button{flex:1;padding:11px;border:0;border-radius:9px;font-weight:800;color:#fff;background:#0ea5e9}
+        .user-add-actions .secondary{background:#475569}
         .unit-card { background:rgba(30,41,59,.75); border:1px solid #475569; border-radius:14px; padding:9px 10px; margin-bottom:10px; }
         .unit-label { color:#cbd5e1; font-size:.8rem; font-weight:900; margin-bottom:4px; }
         #unit-selector { width:100%; padding:10px 12px; border-radius:10px; background:#0f172a; color:var(--gold); border:1px solid #475569; font-weight:900; font-size:1.05rem; }
@@ -461,7 +480,11 @@
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
             <div class="home-title">WORD HERO</div>
-            <div class="home-user">👤 <span id="main-child-name"></span></div>
+            <div class="home-user-control">
+                <span class="home-user-icon">👤</span>
+                <select id="home-user-select" aria-label="切換使用者" onchange="switchUserTo(this.value)"></select>
+                <button type="button" class="home-user-add" onclick="openUserAddModal()" aria-label="新增使用者" title="新增使用者">+</button>
+            </div>
         </div>
 
         <div class="unit-card">
@@ -504,6 +527,18 @@
         </div>
     </div>
 
+    <div id="user-add-modal" class="user-add-modal" role="dialog" aria-modal="true" aria-labelledby="user-add-title" style="display:none;">
+        <div class="user-add-card">
+            <h2 id="user-add-title" style="margin:0;text-align:center;color:#fbbf24;">新增使用者</h2>
+            <label for="new-user-name">使用者名稱</label>
+            <input id="new-user-name" type="text" maxlength="30" autocomplete="off" placeholder="輸入名稱">
+            <div class="user-add-actions">
+                <button type="button" class="secondary" onclick="closeUserAddModal()">取消</button>
+                <button type="button" onclick="createUserFromPage()">確定</button>
+            </div>
+        </div>
+    </div>
+
     <div id="view-practice-menu" class="view-section">
         <h2 class="practice-unit-title">🛡️ 練習模式</h2>
         <div class="practice-unit-subtitle">請選擇今天要練習的項目。<br>「單字練習」和「單字造句」分開進行。</div>
@@ -528,9 +563,21 @@
                 <span>自動補句點「.」</span>
             </label>
             <textarea id="sentence-unit-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子" oninput="capitalizeSentenceInput(this)" onblur="maybeAutoPunctuateSentence(this)"></textarea>
+            <div id="sentence-example-box" class="sentence-example-box" hidden>
+                <div class="sentence-example-label">🌟 你完成自己的句子了！來看看其他說法</div>
+                <div id="sentence-example-text" class="sentence-example-text"></div>
+                <div class="sentence-example-actions">
+                    <button type="button" onclick="previousSentenceExample()" aria-label="上一個例句">← 上一個</button>
+                    <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
+                    <button type="button" onclick="nextSentenceExample()" aria-label="下一個例句">下一個 →</button>
+                </div>
+            </div>
             <div class="sentence-unit-actions">
                 <button type="button" class="sentence-check-btn" onclick="checkStandaloneSentenceGrammar()">🔎 檢查文法</button>
                 <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
+            </div>
+            <div class="sentence-own-play">
+                <button type="button" onclick="playChildSentence()">🔊 播放我的造句</button>
             </div>
             <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
             <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
@@ -884,17 +931,67 @@
         return name;
     }
 
-    function switchUser() {
-        const name = prompt('請輸入要切換的使用者名稱：', getChildName());
-        if (name === null) return;
-        const trimmed = name.trim();
-        if (!trimmed) return alert('使用者名稱不能空白。');
-        if (trimmed === getChildName()) return;
-        // 切換使用者時，先指定載入該使用者的 GitHub TXT 題庫；
-        // 避免沿用上一位使用者的「本機自訂題庫」模式而出現空題庫。
+    function getRegisteredUsers() {
+        const saved = getLocalJSON('wordhero_registered_users', []);
+        const names = Array.isArray(saved) ? saved.filter(x => typeof x === 'string' && x.trim()) : [];
+        ['Anson', 'Vicky', getChildName()].forEach(name => {
+            if (name && !names.some(x => x.toLowerCase() === name.toLowerCase())) names.push(name);
+        });
+        return [...new Map(names.map(name => [name.toLowerCase(), name])).values()];
+    }
+
+    function renderUserSelector() {
+        const select = document.getElementById('home-user-select');
+        if (!select) return;
+        const active = getChildName();
+        select.innerHTML = getRegisteredUsers().map(name =>
+            `<option value="${escapeHtml(name)}"${name.toLowerCase() === active.toLowerCase() ? ' selected' : ''}>${escapeHtml(name)}</option>`
+        ).join('');
+    }
+
+    function switchUserTo(name) {
+        const trimmed = String(name || '').trim();
+        if (!trimmed || trimmed.toLowerCase() === getChildName().toLowerCase()) return;
         localStorage.setItem('wordhero_active_user', trimmed);
         const nextUserKey = normalizeUserKey(trimmed);
         localStorage.setItem(`wordhero_${nextUserKey}_hero_bank_source_mode`, 'text');
+        location.reload();
+    }
+
+    function switchUser() {
+        const select = document.getElementById('home-user-select');
+        if (select) switchUserTo(select.value);
+    }
+
+    function openUserAddModal() {
+        const modal = document.getElementById('user-add-modal');
+        const input = document.getElementById('new-user-name');
+        if (!modal || !input) return;
+        modal.style.display = 'flex';
+        input.value = '';
+        input.focus();
+    }
+
+    function closeUserAddModal() {
+        const modal = document.getElementById('user-add-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function createUserFromPage() {
+        const input = document.getElementById('new-user-name');
+        const name = String(input && input.value || '').trim();
+        if (!name) return alert('請輸入使用者名稱。');
+        if (/[\\/\\?#%]/.test(name)) return alert('名稱不可包含 / \\ ? # % 等網址特殊字元。');
+        const users = getRegisteredUsers();
+        if (users.some(x => x.toLowerCase() === name.toLowerCase())) {
+            return alert('這個使用者已存在，請從首頁下拉選單切換。');
+        }
+        users.push(name);
+        setLocalJSON('wordhero_registered_users', users);
+        localStorage.setItem('wordhero_active_user', name);
+        const key = normalizeUserKey(name);
+        localStorage.setItem(`wordhero_${key}_hero_bank_source_mode`, 'text');
+        alert(`已新增使用者「${name}」。接下來會讀取 ./${safeFileName(name)}.txt。請確認該 TXT 已放在與 word.html 相同的 /word/ 目錄。`);
         location.reload();
     }
 
@@ -2183,6 +2280,7 @@
         state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
         state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
         state.chosenOppId = parseInt(getHeroData('hero_opponent_id')) || 0;
+        renderUserSelector();
         const mainName = document.getElementById('main-child-name');
         if (mainName) mainName.textContent = getChildName();
         const storageInfo = document.getElementById('bank-storage-info');
@@ -2376,7 +2474,67 @@
         }
     }
 
+    function buildSimpleSentenceExample(word) {
+        const clean = String(word || '').trim().toLowerCase().replace(/[^a-z'-]/g, '');
+        const bankWords = Object.values(state.banks || {}).flat().map(x => String(x.en || '').trim().toLowerCase()).filter(x => /^[a-z]+(?:[ '-][a-z]+)*$/.test(x) && x !== clean);
+        const related = bankWords.find(x => x.length <= 14) || 'my friend';
+        // Diverse beginner-friendly sentence patterns; examples are for reading/listening only.
+        return [
+            `I found a ${clean} today.`,
+            `The ${clean} is near my friend.`,
+            `Can you see the ${clean}?`,
+            `We have a ${clean} at home.`,
+            `My friend and I saw a ${clean}.`,
+            `Where is the ${clean}?`,
+            `I have a ${clean}, and you have a ${related}.`,
+            `Look! The ${clean} is here!`
+        ];
+    }
+
+    function refreshSentenceExample() {
+        const el = document.getElementById('sentence-example-text');
+        const word = state.sentenceList && state.sentenceList[state.sentenceIndex];
+        if (!el || !word) return;
+        const examples = buildSimpleSentenceExample(word.en);
+        state.sentenceExampleList = examples;
+        state.sentenceExampleIndex = Math.min(state.sentenceExampleIndex || 0, examples.length - 1);
+        state.currentSentenceExample = examples[state.sentenceExampleIndex];
+        el.textContent = state.currentSentenceExample;
+    }
+
+    function changeSentenceExample(delta) {
+        const examples = state.sentenceExampleList || [];
+        if (!examples.length) return;
+        state.sentenceExampleIndex = (state.sentenceExampleIndex + delta + examples.length) % examples.length;
+        state.currentSentenceExample = examples[state.sentenceExampleIndex];
+        const el = document.getElementById('sentence-example-text');
+        if (el) el.textContent = state.currentSentenceExample;
+    }
+    function nextSentenceExample() { changeSentenceExample(1); }
+    function previousSentenceExample() { changeSentenceExample(-1); }
+
+    function revealSentenceExamples() {
+        const box = document.getElementById('sentence-example-box');
+        if (box) box.hidden = false;
+        refreshSentenceExample();
+    }
+
+    function playSentenceExample() {
+        if (state.currentSentenceExample) speakEnglish(state.currentSentenceExample, {userGesture:true, rate:0.78});
+    }
+
+    function playChildSentence() {
+        const input = document.getElementById('sentence-unit-input');
+        const text = String(input && input.value || '').trim();
+        if (!text) { alert('請先輸入一句英文，再按播放。'); return; }
+        speakEnglish(text, {userGesture:true, rate:0.78});
+    }
+
     function loadSentenceUnitWord() {
+        const exampleBox = document.getElementById('sentence-example-box');
+        if (exampleBox) exampleBox.hidden = true;
+        state.sentenceExampleIndex = 0;
+
         if (!state.sentenceList || state.sentenceIndex >= state.sentenceList.length) {
             alert('🎉 這組單字的造句練習完成！');
             switchView('view-main');
@@ -2399,6 +2557,8 @@
         const text = `${state.sentenceIndex + 1} / ${state.sentenceList.length}`;
         if (progress) progress.textContent = `第 ${text} 題｜使用單字：${sentenceTargetWord}`;
         if (top) top.textContent = text;
+        state.sentenceExampleIndex = 0;
+        refreshSentenceExample();
     }
 
     function sentenceUnitPass() {
@@ -2414,6 +2574,29 @@
         }
         state.sentenceIndex = (state.sentenceIndex || 0) + 1;
         loadSentenceUnitWord();
+    }
+
+    // V1478：透過自有 Cloudflare Worker 轉送 LanguageTool，避免前端直接依賴公開 API。
+    // 部署 Worker 後，將下方網址改成自己的 https://<worker-name>.<account>.workers.dev/check
+    const WORDHERO_GRAMMAR_PROXY = 'https://YOUR-WORKER.workers.dev/check';
+    async function requestGrammarCheck(sentence, timeoutMs = 9000) {
+        if (!WORDHERO_GRAMMAR_PROXY || WORDHERO_GRAMMAR_PROXY.includes('YOUR-WORKER')) {
+            throw new Error('尚未設定文法檢查服務網址');
+        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+            const response = await fetch(WORDHERO_GRAMMAR_PROXY, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: String(sentence || '').slice(0, 500), language: 'en-US' }),
+                signal: controller.signal
+            });
+            if (!response.ok) throw new Error(`文法服務回應 ${response.status}`);
+            const data = await response.json();
+            if (!Array.isArray(data.matches)) throw new Error('文法服務回傳格式不正確');
+            return data.matches;
+        } finally { clearTimeout(timeoutId); }
     }
 
     async function checkStandaloneSentenceGrammar() {
@@ -2448,27 +2631,8 @@
         }
         let matches = [];
         let apiOK = false;
-        try {
-            const body = new URLSearchParams();
-            body.set('text', sentence);
-            body.set('language', 'en-US');
-            body.set('enabledOnly', 'false');
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 7000);
-            let response;
-            try {
-                response = await fetch('https://api.languagetool.org/v2/check', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: body.toString(), signal: controller.signal
-                });
-            } finally { clearTimeout(timeoutId); }
-            if (response.ok) {
-                const data = await response.json();
-                matches = Array.isArray(data.matches) ? data.matches : [];
-                apiOK = true;
-            }
-        } catch (e) { apiOK = false; }
+        try { matches = await requestGrammarCheck(sentence); apiOK = true; }
+        catch (e) { apiOK = false; }
 
         const targetMissing = localIssues.some(x => x.includes('還沒有使用目標單字'));
         const simpleIssues = localIssues.filter(x => !x.includes('還沒有使用目標單字'));
@@ -2476,7 +2640,8 @@
             const usefulMatches = matches.filter(m => m && m.message && m.rule);
             if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
                 result.className = 'sentence-status good';
-                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">做得好！這是自動檢查建議，仍可請家長一起看看。</div>';
+                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">做得好！自動檢查仍可能有遺漏，請和家長一起確認。</div>';
+                revealSentenceExamples();
                 showSentenceNextButton();
                 return;
             }
@@ -2829,7 +2994,7 @@
     }
 
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSentencePractice(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSentencePractice(); closeUserAddModal(); } });
     /*
      * 英文音節顯示：
      * 1. 先使用常見單字的固定音節，避免一般規則把學習單字切錯。
@@ -3157,45 +3322,39 @@
         }
         const spoken = String(text || '').trim();
         if (!spoken) return false;
-
-        // 自動播放只有在使用者曾經操作過語音後才執行。
         if (!options.userGesture && !voiceUnlocked) return false;
         if (options.userGesture) voiceUnlocked = true;
 
-        const run = () => {
-            try {
-                const synth = window.speechSynthesis;
-                synth.cancel();
-                if (typeof synth.resume === 'function') synth.resume();
+        const synth = window.speechSynthesis;
+        try {
+            // 不在閒置時反覆 cancel；Chrome 桌面版可能因此取消剛送出的語音。
+            if (synth.speaking || synth.pending) synth.cancel();
+            if (typeof synth.resume === 'function') synth.resume();
 
-                const utter = new SpeechSynthesisUtterance(spoken);
-                utter.lang = 'en-US';
-                const voice = chooseEnglishVoice();
-                if (voice) utter.voice = voice;
-                utter.rate = options.rate ?? 0.78;
-                utter.pitch = 1;
-                utter.volume = 1;
-                utter.onstart = () => showVoiceStatus('🔊 正在播放');
-                utter.onend = () => showVoiceStatus('🔊 可以再聽一次');
-                utter.onerror = () => {
-                    showVoiceStatus('⚠️ Chrome 沒有成功播放，請再按一次 🔊');
-                };
-                synth.speak(utter);
-            } catch (e) {
-                showVoiceStatus('⚠️ 語音播放失敗，請再按一次 🔊');
-            }
-        };
-
-        // Chrome 平板有時需要讓 cancel/resume 完成後再 speak。
-        if (options.userGesture) {
-            run();
-            setTimeout(() => {
-                if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) run();
-            }, 120);
-        } else {
-            run();
+            const utter = new SpeechSynthesisUtterance(spoken);
+            utter.lang = 'en-US';
+            const voice = chooseEnglishVoice();
+            if (voice) utter.voice = voice;
+            utter.rate = options.rate ?? 0.78;
+            utter.pitch = 1;
+            utter.volume = 1;
+            utter.onstart = () => showVoiceStatus('🔊 正在播放');
+            utter.onend = () => showVoiceStatus('🔊 播放完成，可以再聽一次');
+            utter.onerror = (event) => {
+                const reason = event && event.error ? String(event.error) : 'unknown';
+                console.warn('Word Hero speechSynthesis error:', reason);
+                showVoiceStatus(reason === 'not-allowed'
+                    ? '⚠️ Chrome 尚未允許播放，請再按一次 🔊'
+                    : '⚠️ 語音播放失敗；請確認電腦音量與 Chrome 輸出裝置。');
+            };
+            // 只送出一次。舊版 120ms 後的第二次 run 可能 cancel 第一段語音。
+            synth.speak(utter);
+            return true;
+        } catch (e) {
+            console.warn('Word Hero speech playback failed:', e);
+            showVoiceStatus('⚠️ 語音播放失敗；請確認 Chrome 與電腦音量設定。');
+            return false;
         }
-        return true;
     }
 
     function showVoiceStatus(message) {
@@ -3432,26 +3591,8 @@
         let matches = [];
         let apiOK = false;
 
-        try {
-            const body = new URLSearchParams();
-            body.set('text', sentence);
-            body.set('language', 'en-US');
-            body.set('enabledOnly', 'false');
-
-            const response = await fetch('https://api.languagetool.org/v2/check', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: body.toString()
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                matches = Array.isArray(data.matches) ? data.matches : [];
-                apiOK = true;
-            }
-        } catch (e) {
-            apiOK = false;
-        }
+        try { matches = await requestGrammarCheck(sentence); apiOK = true; }
+        catch (e) { apiOK = false; }
 
         const targetMissing = localIssues.some(x => x.includes('還沒有使用目標單字'));
         const simpleIssues = localIssues.filter(x => !x.includes('還沒有使用目標單字'));
@@ -3460,7 +3601,8 @@
             const usefulMatches = matches.filter(m => m && m.message && m.rule);
             if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
                 result.className = 'sentence-status good';
-                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">很好，繼續用這個單字造句。</div>';
+                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">很好！自動檢查仍可能有遺漏。</div>';
+                revealSentenceExamples();
                 return;
             }
 
