@@ -608,7 +608,7 @@
             </div>
             <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
             <div id="sentence-example-box" class="sentence-example-box" hidden>
-                <div class="sentence-example-label">🌟 你的句子通過基本檢查了！來看看另一種說法</div>
+                <div class="sentence-example-label">🌟 基本格式檢查通過！確認句意與文法後，再看參考例句</div>
                 <div id="sentence-example-text" class="sentence-example-text"></div>
                 <div id="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
                 <div class="sentence-example-actions">
@@ -2614,19 +2614,12 @@
             return themed[key];
         }
 
+        if (clean === 'valley') return [story('We walked through the green valley.', '我們走過綠意盎然的山谷。', ['valley'])];
         if (clean === 'million') return [story('I have a million dollars.', '我有一百萬元。', ['million'])];
         if (clean === 'dollar' || clean === 'dollars') return [story('I have ten dollars.', '我有十元美金。', ['dollar'])];
-        const q = `“${clean}”`;
-        const scenes = [
-            {en:`A tiny explorer found ${q} on a map to a secret island.`,zh:`一位小小探險家在通往秘密島嶼的地圖上發現了「${clean}」。`},
-            {en:`My dinosaur friend used ${q} to solve a forest mystery.`,zh:`我的恐龍朋友用「${clean}」解開了森林裡的謎題。`},
-            {en:`We added ${q} to our nature-club adventure journal.`,zh:`我們把「${clean}」寫進自然社的探險日誌。`},
-            {en:`A little robot found ${q} while looking for its friend.`,zh:`一個小機器人找朋友時發現了「${clean}」。`},
-            {en:`At the end of the story, ${q} helped everyone get home.`,zh:`故事最後，「${clean}」幫助大家回到家。`}
-        ];
-        let hash = 0;
-        for (const ch of clean) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-        return scenes.map((_, i) => scenes[(i + hash) % scenes.length]);
+        // 未建立語意例句的單字，使用明確的「談論單字」句型；
+        // 不把未知名詞硬塞進 found/use/help 等動詞後，避免產生不自然或文法錯誤的例句。
+        return [story(`I learned the word “${clean}” today.`, `我今天學會了「${clean}」這個單字。`, [clean])];
     }
 
     const storyWordGloss = {
@@ -2724,6 +2717,7 @@
             if (box) box.hidden = false;
         });
         refreshSentenceExample();
+        showSentenceNextButton();
     }
 
     function playSentenceExample() {
@@ -2825,9 +2819,8 @@
         const formatIssues = issues.filter(x => !x.includes('還沒有使用目標單字'));
         if (!targetMissing && formatIssues.length === 0) {
             result.className = 'sentence-status good';
-            result.innerHTML = '✅ <b>本機基本檢查完成！</b><div class="sentence-example">有使用目標單字，句首與標點格式看起來完整。這不是完整文法判定，請和家長一起確認。</div>';
+            result.innerHTML = '✅ <b>基本格式檢查通過！</b><div class="sentence-example">已使用目標單字，句首與標點符合基本規則。這不是完整文法判定；請讀一遍確認句意。</div>';
             revealSentenceExamples();
-            showSentenceNextButton();
             addLearningLog({type:'sentence',mode:'local_check',word:sentenceTargetWord||'',sentence,result:'local_basic_check_pass'});
             return;
         }
