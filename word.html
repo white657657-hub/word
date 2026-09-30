@@ -2932,7 +2932,10 @@ const storyWordGloss = {
         if (sentenceInput) sentenceInput.value = '';
         if (sentenceResult) { sentenceResult.style.display = 'none'; sentenceResult.className = 'sentence-status'; sentenceResult.innerHTML = ''; }
         sentenceTargetWord = String(word.en || '').trim();
-        refreshPracticeContextSentence(sentenceTargetWord);
+        const contextCard = document.getElementById('practice-context-card');
+        const showContextExample = state.mode !== 'quiz';
+        if (contextCard) contextCard.style.display = showContextExample ? '' : 'none';
+        if (showContextExample) refreshPracticeContextSentence(sentenceTargetWord);
 
         const area = document.getElementById('letter-area');
         area.innerHTML = "";
