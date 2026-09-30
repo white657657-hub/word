@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1485 - 故事逐字互動學習版</title>
+    <title>Word Hero V1486 - 造句點字與單字卡UX修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,13 +147,33 @@
         .story-word:hover{background:#334155}
         .word-help-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
         .word-help-overlay.show{display:flex}
-        .word-help-card{width:min(100%,420px);background:#172338;border:1px solid #64748b;border-radius:18px;padding:20px;color:#f8fafc;box-shadow:0 20px 60px #0009}
+        .word-help-card{width:min(100%,460px);max-height:min(86dvh,720px);overflow:auto;background:#0b1730;border:1px solid #334b6b;border-radius:20px;padding:20px;color:#f8fafc;box-shadow:0 20px 60px #0009}
+        .word-help-kicker{font-size:.82rem;font-weight:800;letter-spacing:.04em;color:#94a3b8;text-align:center;margin-bottom:5px}
+        .word-help-word{font-size:clamp(2.25rem,9vw,3.2rem);font-weight:1000;color:#38bdf8;text-align:center;line-height:1.2;overflow-wrap:anywhere}
+        #word-help-phonics{min-height:50px;text-align:center;margin:10px 0 14px}
+        #word-help-phonics .practice-phonics-note{font-size:.78rem}
+        #word-help-phonics .practice-phonics-row{gap:5px}
+        #word-help-phonics .practice-phonics-item{font-size:.82rem}
+        .word-help-meaning{font-size:1.25rem;line-height:1.55;margin:12px 0;text-align:center;font-weight:800}
+        .word-help-note{font-size:.98rem;line-height:1.6;color:#dbeafe;background:#172b49;border:1px solid #2d4565;border-radius:12px;padding:12px}
+        .word-help-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+        .word-help-actions button{min-height:50px;border-radius:12px;font-size:1rem;font-weight:850}
+        .word-help-close{background:transparent;border:1px solid #475569;color:#e2e8f0;border-radius:10px;min-width:42px;min-height:42px;font-size:1.1rem}
         .word-help-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
         .word-help-word{font-size:2rem;font-weight:900;color:#7dd3fc;overflow-wrap:anywhere}
         .word-help-meaning{font-size:1.2rem;line-height:1.6;margin:10px 0}
         .word-help-note{font-size:1rem;line-height:1.6;color:#cbd5e1;background:#25364f;border-radius:10px;padding:10px}
         .word-help-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
         .word-help-actions button{min-height:48px;border-radius:11px;font-size:1rem;font-weight:800}
+
+
+        .practice-context-card{width:min(94%,560px);box-sizing:border-box;margin:12px auto 8px;padding:12px 14px 13px;border:1px solid #355477;border-radius:14px;background:linear-gradient(145deg,rgba(22,42,69,.96),rgba(11,23,48,.98));text-align:center}
+        .practice-context-label{font-size:.88rem;font-weight:800;color:#fbbf24;margin-bottom:8px;letter-spacing:.01em}
+        .practice-context-sentence{font-size:clamp(1.05rem,4.5vw,1.32rem);line-height:1.75;font-weight:750;color:#f8fafc;overflow-wrap:anywhere}
+        .practice-context-sentence .story-word{display:inline;border:0;border-bottom:2px dotted #fbbf24;border-radius:3px;background:transparent;color:inherit;font:inherit;font-weight:inherit;line-height:1.65;padding:0 1px;cursor:pointer;touch-action:manipulation}
+        .practice-context-sentence .story-word:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
+        .practice-context-translation{font-size:.95rem;line-height:1.55;color:#cbd5e1;margin-top:7px}
+        @media(max-width:420px){.practice-context-card{padding:10px 9px}.practice-context-label{font-size:.82rem}.practice-context-translation{font-size:.88rem}}
 
         .sentence-example-box[hidden]{display:none!important}
         .sentence-example-box{margin-top:12px;padding:12px;border:1px solid #334155;border-radius:12px;background:rgba(30,41,59,.75)}
@@ -603,7 +623,9 @@
 
     <div id="word-help-overlay" class="word-help-overlay" onclick="if(event.target===this)closeWordHelp()" role="dialog" aria-modal="true" aria-label="單字解說">
       <div class="word-help-card">
-        <div class="word-help-head"><div id="word-help-word" class="word-help-word"></div><button type="button" onclick="closeWordHelp()" aria-label="關閉">✕</button></div>
+        <div class="word-help-head"><div class="word-help-kicker">單字小教室</div><button class="word-help-close" type="button" onclick="closeWordHelp()" aria-label="關閉單字解說">✕</button></div>
+        <div id="word-help-word" class="word-help-word"></div>
+        <div id="word-help-phonics"></div>
         <div id="word-help-meaning" class="word-help-meaning"></div>
         <div id="word-help-note" class="word-help-note"></div>
         <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再聽一次</button><button id="word-help-star" type="button" onclick="toggleWordHelpStar()">☆ 加入星號</button></div>
@@ -626,6 +648,11 @@
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:25px;"></div>
         <div id="letter-area" class="box-input-container"></div>
+        <section id="practice-context-card" class="practice-context-card" aria-label="單字情境例句">
+            <div class="practice-context-label">📖 讀讀看這句話・點不懂的字</div>
+            <div id="practice-context-sentence" class="practice-context-sentence"></div>
+            <div id="practice-context-translation" class="practice-context-translation"></div>
+        </section>
         
         <div style="display:flex; flex-direction:column; align-items:center;">
             <div id="sentence-inline" class="sentence-inline">
@@ -2621,8 +2648,12 @@
     function openWordHelp(raw){
       activeHelpWord=String(raw||'').toLowerCase(); activeHelpBase=normalizeStoryBase(activeHelpWord);
       const item=findBankWord(activeHelpBase) || findBankWord(activeHelpWord); activeHelpRef=item&&item.ref?item.ref:'';
-      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || (item&&(item.zh||item.meaning)) || '這個字的中文意思請搭配目前單字庫確認。';
+      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || (item&&(item.zh||item.cn||item.meaning)) || '這個字的中文意思請搭配目前單字庫確認。';
       document.getElementById('word-help-word').textContent=raw;
+      const phonics=document.getElementById('word-help-phonics'); phonics.innerHTML='';
+      const parts=fallbackSyllables(activeHelpWord); let si=0;
+      parts.forEach(part=>{ if(/^\s+$/.test(part)){const sep=document.createElement('span');sep.className='practice-syllable-separator';sep.textContent=' ';phonics.appendChild(sep);} else if(/^[\/-]$/.test(part)){const sep=document.createElement('span');sep.className='practice-syllable-separator';sep.textContent=part;phonics.appendChild(sep);} else {const span=document.createElement('span');span.className='practice-syllable color-'+((si++%6)+1);span.textContent=part;phonics.appendChild(span);} });
+      renderPracticePhonics(phonics, activeHelpWord);
       document.getElementById('word-help-meaning').textContent=meaning;
       document.getElementById('word-help-note').textContent=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase ? `字形變化：${activeHelpBase} → ${activeHelpWord}。請留意它在句子中的單複數或動詞形式。` : '點「再聽一次」可以重複聽這個字的發音。');
       const stars=JSON.parse(getHeroData('hero_priority')||'[]');
@@ -2635,6 +2666,21 @@
       if(!activeHelpRef)return; let p=JSON.parse(getHeroData('hero_priority')||'[]');
       p=p.includes(activeHelpRef)?p.filter(x=>x!==activeHelpRef):[...p,activeHelpRef]; setHeroData('hero_priority',JSON.stringify(p));
       document.getElementById('word-help-star').textContent=p.includes(activeHelpRef)?'★ 已加入星號':'☆ 加入星號';
+    }
+
+    function refreshPracticeContextSentence(wordText) {
+        const word = String(wordText || '').trim();
+        const examples = buildSimpleSentenceExample(word);
+        const base = normalizeStoryBase(word.toLowerCase());
+        const chosen = examples.find(item => {
+            const tokens = String(item.en || '').toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g) || [];
+            return tokens.some(token => normalizeStoryBase(token) === base || token === word.toLowerCase());
+        }) || examples[0];
+        const sentence = document.getElementById('practice-context-sentence');
+        const translation = document.getElementById('practice-context-translation');
+        if (!chosen || !sentence) return;
+        sentence.innerHTML = renderStoryTokens(chosen.en);
+        if (translation) translation.textContent = chosen.zh || '';
     }
 
     function refreshSentenceExample() {
@@ -2816,6 +2862,7 @@
         if (sentenceInput) sentenceInput.value = '';
         if (sentenceResult) { sentenceResult.style.display = 'none'; sentenceResult.className = 'sentence-status'; sentenceResult.innerHTML = ''; }
         sentenceTargetWord = String(word.en || '').trim();
+        refreshPracticeContextSentence(sentenceTargetWord);
 
         const area = document.getElementById('letter-area');
         area.innerHTML = "";
@@ -3120,7 +3167,7 @@
     }
 
     function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSentencePractice(); closeUserAddModal(); } });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeWordHelp(); closeSentencePractice(); closeUserAddModal(); } });
     /*
      * 英文音節顯示：
      * 1. 先使用常見單字的固定音節，避免一般規則把學習單字切錯。
