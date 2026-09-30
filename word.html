@@ -167,6 +167,14 @@
         .word-help-actions button{min-height:48px;border-radius:11px;font-size:1rem;font-weight:800}
 
 
+
+        .sentence-unit-context{margin:12px 0 14px;padding:13px 12px;border:1px solid #355477;border-radius:13px;background:#172a46;text-align:center}
+        .sentence-unit-context-label{font-size:.84rem;font-weight:850;color:#fbbf24;margin-bottom:7px}
+        .sentence-unit-context-text{font-size:clamp(1.08rem,4.4vw,1.28rem);font-weight:750;line-height:1.75;color:#f8fafc;overflow-wrap:anywhere}
+        .sentence-unit-context-text .story-word{display:inline;border:0;border-bottom:2px dotted #fbbf24;border-radius:3px;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 1px;line-height:1.6;cursor:pointer;touch-action:manipulation}
+        .sentence-unit-context-text .story-word:focus-visible{outline:2px solid #38bdf8;outline-offset:2px}
+        .sentence-unit-context-translation{font-size:.94rem;color:#cbd5e1;line-height:1.55;margin-top:7px}
+
         .practice-context-card{width:min(94%,560px);box-sizing:border-box;margin:12px auto 8px;padding:12px 14px 13px;border:1px solid #355477;border-radius:14px;background:linear-gradient(145deg,rgba(22,42,69,.96),rgba(11,23,48,.98));text-align:center}
         .practice-context-label{font-size:.88rem;font-weight:800;color:#fbbf24;margin-bottom:8px;letter-spacing:.01em}
         .practice-context-sentence{font-size:clamp(1.05rem,4.5vw,1.32rem);line-height:1.75;font-weight:750;color:#f8fafc;overflow-wrap:anywhere}
@@ -592,6 +600,11 @@
             <div style="text-align:center;color:#fbbf24;font-weight:1000;font-size:1rem;margin-bottom:2px;">✍️ 單字造句</div>
             <div id="sentence-unit-cn" class="sentence-unit-cn"></div>
             <div id="sentence-unit-word" class="sentence-unit-word"></div>
+            <section id="sentence-unit-context" class="sentence-unit-context" aria-label="參考例句">
+                <div class="sentence-unit-context-label">📖 先讀讀看・點單字可看解說</div>
+                <div id="sentence-unit-context-text" class="sentence-unit-context-text"></div>
+                <div id="sentence-unit-context-translation" class="sentence-unit-context-translation"></div>
+            </section>
             <label class="sentence-auto-puncture">
                 <input id="sentence-auto-period" type="checkbox">
                 <span>自動補句點「.」</span>
@@ -2612,6 +2625,8 @@
             return themed[key];
         }
 
+        if (clean === 'million') return [story('I have a million dollars.', '我有一百萬元。', ['million'])];
+        if (clean === 'dollar' || clean === 'dollars') return [story('I have ten dollars.', '我有十元美金。', ['dollar'])];
         const q = `“${clean}”`;
         const scenes = [
             {en:`A tiny explorer found ${q} on a map to a secret island.`,zh:`一位小小探險家在通往秘密島嶼的地圖上發現了「${clean}」。`},
@@ -2760,6 +2775,12 @@
         const top = document.getElementById('sentence-unit-progress-top');
         if (cn) cn.textContent = word.cn || localDict[sentenceTargetWord.toLowerCase()] || '';
         if (en) en.textContent = sentenceTargetWord;
+        const contextExamples = buildSimpleSentenceExample(sentenceTargetWord);
+        const context = contextExamples[0];
+        const contextText = document.getElementById('sentence-unit-context-text');
+        const contextTranslation = document.getElementById('sentence-unit-context-translation');
+        if (contextText && context) contextText.innerHTML = renderStoryTokens(context.en);
+        if (contextTranslation && context) contextTranslation.textContent = context.zh || '';
         if (input) { input.value = ''; input.focus(); }
         if (result) { result.style.display = 'none'; result.className = 'sentence-status'; result.innerHTML = ''; }
         const nextBtn = document.querySelector('.sentence-next-btn');
