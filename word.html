@@ -142,9 +142,9 @@
         #sentence-unit-input:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,.15); outline:none; }
         .sentence-unit-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:8px; }
 
-        .story-word{display:inline-block;border-bottom:2px dotted #fbbf24;color:#e0f2fe;cursor:pointer;padding:1px 2px;margin:0 1px;border-radius:4px;min-height:30px}
-        .story-word:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}
-        .story-word:hover{background:#334155}
+        .story-word{display:inline;border:0!important;border-bottom:1px dotted #fbbf24!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:inherit;font:inherit;font-weight:inherit;line-height:inherit;cursor:pointer;padding:0!important;margin:0 .025em!important;min-height:0!important;min-width:0!important;vertical-align:baseline;appearance:none;-webkit-appearance:none;touch-action:manipulation}
+        .story-word:focus-visible{outline:2px solid #38bdf8;outline-offset:3px;border-radius:2px!important}
+        .story-word:hover{background:rgba(56,189,248,.12)!important}
         .word-help-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
         .word-help-overlay.show{display:flex}
         .word-help-card{width:min(100%,460px);max-height:min(86dvh,720px);overflow:auto;background:#0b1730;border:1px solid #334b6b;border-radius:20px;padding:20px;color:#f8fafc;box-shadow:0 20px 60px #0009}
@@ -178,10 +178,10 @@
         @media(max-width:420px){.practice-context-card{padding:10px 9px}.practice-context-label{font-size:.82rem}.practice-context-translation{font-size:.88rem}}
 
         .sentence-example-box[hidden]{display:none!important}
-        .sentence-example-box{margin-top:12px;padding:12px;border:1px solid #334155;border-radius:12px;background:rgba(30,41,59,.75)}
-        .sentence-example-label{font-size:.78rem;color:#fbbf24;font-weight:800;margin-bottom:6px}
-        .sentence-example-text{font-size:1.12rem;line-height:1.55;color:#e0f2fe;font-weight:700;min-height:28px}
-        .sentence-example-actions{display:flex;gap:7px;margin-top:8px}
+        .sentence-example-box{margin-top:8px;padding:10px 12px;border:1px solid #334155;border-radius:10px;background:rgba(30,41,59,.55)}
+        .sentence-example-label{font-size:.8rem;color:#fbbf24;font-weight:800;margin-bottom:4px}
+        .sentence-example-text{font-size:1.15rem;line-height:1.65;color:#e0f2fe;font-weight:700;min-height:0;overflow-wrap:anywhere}
+        .sentence-example-actions{display:flex;gap:7px;margin-top:6px}
         .sentence-example-actions button,.sentence-own-play button{border:1px solid #475569;border-radius:8px;background:#263b59;color:#fff;padding:7px 10px;font-weight:700;cursor:pointer}
         .sentence-own-play{margin-top:8px;text-align:left}
         .sentence-unit-pass { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
@@ -608,13 +608,11 @@
             </div>
             <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
             <div id="sentence-example-box" class="sentence-example-box" hidden>
-                <div class="sentence-example-label">🌟 基本格式檢查通過！確認句意與文法後，再看參考例句</div>
+                <div class="sentence-example-label">📖 參考例句・點單字看解說</div>
                 <div id="sentence-example-text" class="sentence-example-text"></div>
                 <div id="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
                 <div class="sentence-example-actions">
-                    <button type="button" onclick="previousSentenceExample()" aria-label="上一個例句">← 上一個</button>
                     <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
-                    <button type="button" onclick="nextSentenceExample()" aria-label="下一個例句">下一個 →</button>
                 </div>
             </div>
             <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
@@ -668,13 +666,11 @@
                 </div>
                 <div id="sentence-inline-result" class="sentence-status" style="display:none;"></div>
                 <div id="sentence-inline-example-box" class="sentence-example-box" hidden>
-                    <div class="sentence-example-label">🌟 完成自己的句子後，看看其他說法</div>
+                    <div class="sentence-example-label">📖 參考例句・點單字看解說</div>
                     <div id="sentence-inline-example-text" class="sentence-example-text"></div>
                     <div id="sentence-inline-example-translation" class="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
                     <div class="sentence-example-actions">
-                        <button type="button" onclick="previousSentenceExample()" aria-label="上一個例句">← 上一個</button>
                         <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
-                        <button type="button" onclick="nextSentenceExample()" aria-label="下一個例句">下一個 →</button>
                     </div>
                 </div>
             </div>
