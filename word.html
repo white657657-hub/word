@@ -633,7 +633,6 @@
       <div class="word-help-card">
         <div class="word-help-head"><div class="word-help-kicker">單字小教室</div><button class="word-help-close" type="button" onclick="closeWordHelp()" aria-label="關閉單字解說">✕</button></div>
         <div class="word-help-title-row"><div id="word-help-word" class="word-help-word"></div><button id="word-help-star" class="word-help-star-inline" type="button" onclick="toggleWordHelpStar()" aria-label="加入或移除星號">☆</button></div>
-        <div id="word-help-phonics"></div>
         <div id="word-help-meaning" class="word-help-meaning"></div>
         <div id="word-help-note" class="word-help-note"></div>
         <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再聽一次</button></div>
@@ -2627,12 +2626,12 @@
     }
 
     const storyWordGloss = {
-      learn:'學習；學會', learned:'學了；學會了', learnt:'學了；學會了', street:'街道', streets:'街道（複數）', like:'喜歡', liked:'喜歡了', add:'加；增加', added:'加了；增加了', dance:'跳舞', danced:'跳了舞', thirty:'三十', today:'今天', word:'單字；字', I:'我',
+      i:'我', have:'有；擁有', has:'有；擁有', had:'有；曾經有', a:'一個／一件／一隻（冠詞）', an:'一個／一件（冠詞）', my:'我的', your:'你的；你們的', we:'我們', you:'你；你們', he:'他', she:'她', it:'它；牠', they:'他們；牠們', this:'這個', that:'那個', is:'是；正在（be 動詞）', are:'是；在（be 動詞）', was:'是；曾經是（過去式）', were:'是；曾經是（過去式）', am:'是（be 動詞）', the:'這個／那個（定冠詞）', of:'……的；……之中', to:'到；向；不定詞標記', in:'在……裡', on:'在……上', at:'在（時間／地點）', for:'為了；給', with:'和；使用', from:'從', and:'和；而且', or:'或者', but:'但是', today:'今天', yesterday:'昨天', tomorrow:'明天', word:'單字；字', learned:'學了；學會了', learn:'學習；學會', learnt:'學了；學會了', street:'街道', streets:'街道（複數）', like:'喜歡', liked:'喜歡了', add:'加；增加', added:'加了；增加了', dance:'跳舞', danced:'跳了舞', thirty:'三十', million:'一百萬', dollars:'美元；元（dollar 的複數）', dollar:'美元；元',
       the:'這個／那個（定冠詞）', dinosaur:'恐龍', dinosaurs:'恐龍（複數）', lives:'住、生活（live 的第三人稱單數）', live:'住、生活', in:'在……裡', forest:'森林', one:'一（個）', day:'天；有一天', sees:'看見（see 的第三人稱單數）', see:'看見', a:'一個／一隻（冠詞）', small:'小的', egg:'蛋', near:'靠近；在……旁邊', tree:'樹', baby:'寶寶；幼小的', comes:'來；出現（come 的第三人稱單數）', come:'來', out:'向外；出來', of:'……的；從……之中', two:'兩個／兩隻', walk:'走路', walks:'走路（第三人稱單數）', to:'到；向', lake:'湖', and:'和；而且', fish:'魚', at:'在（某時間／地點）', night:'夜晚', they:'他們／牠們', sleep:'睡覺', sleeps:'睡覺（第三人稱單數）', under:'在……下面', trees:'樹（複數）', is:'是；正在（be 動詞）', hiding:'躲藏（hide 的 -ing 形式）', butterfly:'蝴蝶', flies:'飛（fly 的第三人稱單數；y 改 ies）', fly:'飛', over:'在……上方；越過', flowers:'花（複數）', we:'我們', watch:'看；觀察', little:'小的', ant:'螞蟻', carry:'搬；攜帶', food:'食物', home:'家；回家', follow:'跟著；沿著', path:'小路', find:'找到；發現', bird:'鳥', frog:'青蛙', jumps:'跳（jump 的第三人稱單數）', jump:'跳', water:'水', wind:'風', moves:'移動；吹動（move 的第三人稱單數）', leaves:'葉子（複數；leaf 的 f 變 ves）', leaf:'葉子'
     };
     const storyMorph = {
-      learned:'原形是 learn（學習）。learn → learned：這裡是過去式，表示「學了／學會了」。learned 也可作過去分詞；英式英文也常見 learnt。', learnt:'原形是 learn（學習）。learnt 是 learn 的過去式／過去分詞，表示「學了／學會了」。', liked:'原形：like（喜歡）→ liked。字尾 e 直接加 d，表示過去發生的事。', added:'原形：add（加、增加）→ added。短母音後的單一子音 d 加 ed 時，先重複 d。', danced:'原形：dance（跳舞）→ danced。字尾 e 直接加 d，表示過去發生的事。', streets:'原形：street（街道）→ streets。加 s 表示複數。',
-      lives:'live + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', sees:'see + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', comes:'come + s：主詞是單數的 baby dinosaur，動詞加 s。', sleeps:'sleep + s：主詞是單數時，動詞加 s。', flies:'fly → flies：子音 + y 結尾，第三人稱單數把 y 改成 ies。', dinosaurs:'dinosaur + s：表示不只一隻恐龍。', trees:'tree + s：表示不只一棵樹。', flowers:'flower + s：表示不只一朵花。', leaves:'leaf → leaves：部分 f 結尾名詞變複數時，f 改成 ves。', hiding:'hide + ing：表示正在躲藏；e 通常去掉再加 ing。'
+      learned:'原形是 learn（學習）。learn → learned：這裡是過去式，表示「學了／學會了」。learned 也可作過去分詞；英式英文也常見 learnt。', had:'原形是 have（有）。have → had：過去式，表示「曾經有／有了」。', has:'原形是 have（有）。主詞是 he、she、it 或單數名詞時，現在式用 has。', learnt:'原形是 learn（學習）。learnt 是 learn 的過去式／過去分詞，表示「學了／學會了」。', liked:'原形：like（喜歡）→ liked。字尾 e 直接加 d，表示過去發生的事。', added:'原形：add（加、增加）→ added。短母音後的單一子音 d 加 ed 時，先重複 d。', danced:'原形：dance（跳舞）→ danced。字尾 e 直接加 d，表示過去發生的事。', streets:'原形：street（街道）→ streets。加 s 表示複數。',
+      lived:'原形是 live（居住／生活）。live → lived：規則動詞加 -d，表示過去發生。', likes:'原形是 like（喜歡）。單數主詞現在式加 s。', has:'have → has：第三人稱單數現在式的不規則變化。', lives:'live + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', sees:'see + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', comes:'come + s：主詞是單數的 baby dinosaur，動詞加 s。', sleeps:'sleep + s：主詞是單數時，動詞加 s。', flies:'fly → flies：子音 + y 結尾，第三人稱單數把 y 改成 ies。', dinosaurs:'dinosaur + s：表示不只一隻恐龍。', trees:'tree + s：表示不只一棵樹。', flowers:'flower + s：表示不只一朵花。', leaves:'leaf → leaves：部分 f 結尾名詞變複數時，f 改成 ves。', hiding:'hide + ing：表示正在躲藏；e 通常去掉再加 ing。'
     };
     let activeHelpWord = '', activeHelpBase = '', activeHelpRef = '';
     function normalizeStoryBase(w){const x=w.toLowerCase();const map={learned:'learn',learnt:'learn',liked:'like',added:'add',danced:'dance',lives:'live',sees:'see',comes:'come',sleeps:'sleep',flies:'fly',dinosaurs:'dinosaur',trees:'tree',flowers:'flower',leaves:'leaf',hiding:'hide',jumps:'jump',moves:'move',walks:'walk'};return map[x]||x;}
@@ -2649,18 +2648,26 @@
       return all.find(x=>String(x.en||'').trim().toLowerCase()===base) || null;
     }
     function openWordHelp(raw){
-      activeHelpWord=String(raw||'').toLowerCase(); activeHelpBase=normalizeStoryBase(activeHelpWord);
-      const item=findBankWord(activeHelpBase) || findBankWord(activeHelpWord); activeHelpRef=item&&item.ref?item.ref:'';
-      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || (item&&(item.zh||item.cn||item.meaning)) || '目前單字庫尚未提供中文解釋。';
+      activeHelpWord=String(raw||'').toLowerCase();
+      activeHelpBase=normalizeStoryBase(activeHelpWord);
+      const item=findBankWord(activeHelpBase) || findBankWord(activeHelpWord);
+      activeHelpRef=item&&item.ref?item.ref:'';
+      const itemMeaning=item&&(item.zh||item.cn||item.meaning||item.translation||item.chinese||item.definition);
+      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || itemMeaning || '這個字的中文解釋尚未收錄，請先查看單字庫中的翻譯。';
       document.getElementById('word-help-word').textContent=raw;
-      const phonics=document.getElementById('word-help-phonics'); phonics.innerHTML='';
-      const parts=fallbackSyllables(activeHelpWord); let si=0;
-      parts.forEach(part=>{ if(/^\s+$/.test(part)){const sep=document.createElement('span');sep.className='practice-syllable-separator';sep.textContent=' ';phonics.appendChild(sep);} else if(/^[\/-]$/.test(part)){const sep=document.createElement('span');sep.className='practice-syllable-separator';sep.textContent=part;phonics.appendChild(sep);} else {const span=document.createElement('span');span.className='practice-syllable color-'+((si++%6)+1);span.textContent=part;phonics.appendChild(span);} });
-      renderPracticePhonics(phonics, activeHelpWord);
       document.getElementById('word-help-meaning').textContent=meaning;
-      document.getElementById('word-help-note').textContent=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase ? `原形：${activeHelpBase} → ${activeHelpWord}。這是單字的字形變化；依句子判斷它的時態或單複數。` : `原形：${activeHelpBase}。`);
+      const note=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase
+        ? `原形：${activeHelpBase}。${activeHelpWord} 是它的字形變化；請依照句子理解時態或單複數。`
+        : `原形：${activeHelpBase}。`);
+      document.getElementById('word-help-note').textContent=note;
       const stars=JSON.parse(getHeroData('hero_priority')||'[]');
-      const btn=document.getElementById('word-help-star'); const starred=!!(activeHelpRef&&stars.includes(activeHelpRef)); btn.textContent=starred?'★':'☆'; btn.classList.toggle('active',starred); btn.disabled=!activeHelpRef; btn.title=activeHelpRef?(starred?'移除星號':'加入星號複習'):'這個字不在目前題庫，暫時無法加入星號複習'; btn.setAttribute('aria-label',btn.title);
+      const btn=document.getElementById('word-help-star');
+      const starred=!!(activeHelpRef&&stars.includes(activeHelpRef));
+      btn.textContent=starred?'★':'☆';
+      btn.classList.toggle('active',starred);
+      btn.disabled=!activeHelpRef;
+      btn.title=activeHelpRef?(starred?'移除星號':'加入星號複習'):'這個字不在目前題庫，暫時無法加入星號複習';
+      btn.setAttribute('aria-label',btn.title);
       document.getElementById('word-help-overlay').classList.add('show');
     }
     function closeWordHelp(){document.getElementById('word-help-overlay').classList.remove('show');}
@@ -3505,28 +3512,31 @@
 
         const synth = window.speechSynthesis;
         try {
-            // 不在閒置時反覆 cancel；Chrome 桌面版可能因此取消剛送出的語音。
-            if (synth.speaking || synth.pending) synth.cancel();
-            if (typeof synth.resume === 'function') synth.resume();
-
+            // Chrome 桌面版偶爾在 cancel 後立即 speak 會吞掉短字；清空佇列後稍候再送出。
+            synth.cancel();
             const utter = new SpeechSynthesisUtterance(spoken);
             utter.lang = 'en-US';
-            const voice = chooseEnglishVoice();
-            if (voice) utter.voice = voice;
-            utter.rate = options.rate ?? 0.78;
+            utter.rate = options.rate ?? 0.82;
             utter.pitch = 1;
             utter.volume = 1;
             utter.onstart = () => showVoiceStatus('🔊 正在播放');
-            utter.onend = () => showVoiceStatus('🔊 播放完成，可以再聽一次');
+            utter.onend = () => showVoiceStatus('🔊 播放完成');
             utter.onerror = (event) => {
                 const reason = event && event.error ? String(event.error) : 'unknown';
                 console.warn('Word Hero speechSynthesis error:', reason);
                 showVoiceStatus(reason === 'not-allowed'
-                    ? '⚠️ Chrome 尚未允許播放，請再按一次 🔊'
-                    : '⚠️ 語音播放失敗；請確認電腦音量與 Chrome 輸出裝置。');
+                    ? '⚠️ Chrome 未允許語音播放，請再按一次。'
+                    : '⚠️ 語音播放失敗，請確認 Chrome 與電腦音量／輸出裝置。');
             };
-            // 只送出一次。舊版 120ms 後的第二次 run 可能 cancel 第一段語音。
-            synth.speak(utter);
+            window.setTimeout(() => {
+                try {
+                    if (typeof synth.resume === 'function') synth.resume();
+                    synth.speak(utter);
+                } catch (e) {
+                    console.warn('Word Hero speech enqueue failed:', e);
+                    showVoiceStatus('⚠️ 語音播放失敗，請再按一次。');
+                }
+            }, 80);
             return true;
         } catch (e) {
             console.warn('Word Hero speech playback failed:', e);
