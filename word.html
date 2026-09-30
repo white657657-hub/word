@@ -156,8 +156,9 @@
         #word-help-phonics .practice-phonics-item{font-size:.82rem}
         .word-help-meaning{font-size:1.25rem;line-height:1.55;margin:12px 0;text-align:center;font-weight:800}
         .word-help-note{font-size:.98rem;line-height:1.6;color:#dbeafe;background:#172b49;border:1px solid #2d4565;border-radius:12px;padding:12px}
-        .word-help-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
-        .word-help-actions button{min-height:50px;border-radius:12px;font-size:1rem;font-weight:850}
+        .word-help-note[hidden]{display:none!important}
+        .word-help-actions{display:flex;justify-content:center;align-items:center;margin-top:14px;width:100%}
+        .word-help-actions button{width:min(100%,230px);min-height:50px;border-radius:12px;font-size:1rem;font-weight:850;display:block;margin:0 auto;text-align:center}
         .word-help-close{background:transparent;border:1px solid #475569;color:#e2e8f0;border-radius:10px;min-width:42px;min-height:42px;font-size:1.1rem}
 
         .word-help-title-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px auto 4px}
@@ -635,7 +636,7 @@
         <div class="word-help-title-row"><div id="word-help-word" class="word-help-word"></div><button id="word-help-star" class="word-help-star-inline" type="button" onclick="toggleWordHelpStar()" aria-label="加入或移除星號">☆</button></div>
         <div id="word-help-meaning" class="word-help-meaning"></div>
         <div id="word-help-note" class="word-help-note"></div>
-        <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再聽一次</button></div>
+        <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再唸一次</button></div>
       </div>
     </div>
 
@@ -2656,10 +2657,10 @@
       const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || itemMeaning || '這個字的中文解釋尚未收錄，請先查看單字庫中的翻譯。';
       document.getElementById('word-help-word').textContent=raw;
       document.getElementById('word-help-meaning').textContent=meaning;
-      const note=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase
-        ? `原形：${activeHelpBase}。${activeHelpWord} 是它的字形變化；請依照句子理解時態或單複數。`
-        : `原形：${activeHelpBase}。`);
-      document.getElementById('word-help-note').textContent=note;
+      const note=storyMorph[activeHelpWord] || '';
+      const noteEl=document.getElementById('word-help-note');
+      noteEl.textContent=note;
+      noteEl.hidden=!note;
       const stars=JSON.parse(getHeroData('hero_priority')||'[]');
       const btn=document.getElementById('word-help-star');
       const starred=!!(activeHelpRef&&stars.includes(activeHelpRef));
@@ -3512,10 +3513,13 @@
 
         const synth = window.speechSynthesis;
         try {
-            // Chrome 桌面版偶爾在 cancel 後立即 speak 會吞掉短字；清空佇列後稍候再送出。
-            synth.cancel();
+            // 在使用者點擊事件內同步呼叫 speak，避免 setTimeout 讓 Chrome 丟失使用者操作授權。
+            if (synth.speaking || synth.pending) synth.cancel();
+            if (typeof synth.resume === 'function') synth.resume();
             const utter = new SpeechSynthesisUtterance(spoken);
             utter.lang = 'en-US';
+            const voice = chooseEnglishVoice();
+            if (voice) utter.voice = voice;
             utter.rate = options.rate ?? 0.82;
             utter.pitch = 1;
             utter.volume = 1;
@@ -3528,15 +3532,7 @@
                     ? '⚠️ Chrome 未允許語音播放，請再按一次。'
                     : '⚠️ 語音播放失敗，請確認 Chrome 與電腦音量／輸出裝置。');
             };
-            window.setTimeout(() => {
-                try {
-                    if (typeof synth.resume === 'function') synth.resume();
-                    synth.speak(utter);
-                } catch (e) {
-                    console.warn('Word Hero speech enqueue failed:', e);
-                    showVoiceStatus('⚠️ 語音播放失敗，請再按一次。');
-                }
-            }, 80);
+            synth.speak(utter);
             return true;
         } catch (e) {
             console.warn('Word Hero speech playback failed:', e);
