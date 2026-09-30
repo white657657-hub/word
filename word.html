@@ -159,6 +159,14 @@
         .word-help-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
         .word-help-actions button{min-height:50px;border-radius:12px;font-size:1rem;font-weight:850}
         .word-help-close{background:transparent;border:1px solid #475569;color:#e2e8f0;border-radius:10px;min-width:42px;min-height:42px;font-size:1.1rem}
+
+        .word-help-title-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:2px auto 4px}
+        .word-help-title-row .word-help-word{margin:0;text-align:center}
+        .word-help-star-inline{flex:0 0 auto;border:0;background:transparent;color:#fbbf24;font-size:1.8rem;line-height:1;padding:3px;min-width:38px;min-height:38px;cursor:pointer}
+        .word-help-star-inline.active{color:#facc15;text-shadow:0 0 12px #facc1570}
+        .word-help-star-inline:disabled{opacity:.28;cursor:not-allowed}
+        .word-help-note{margin-top:10px}
+
         .word-help-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
         .word-help-word{font-size:2rem;font-weight:900;color:#7dd3fc;overflow-wrap:anywhere}
         .word-help-meaning{font-size:1.2rem;line-height:1.6;margin:10px 0}
@@ -624,11 +632,11 @@
     <div id="word-help-overlay" class="word-help-overlay" onclick="if(event.target===this)closeWordHelp()" role="dialog" aria-modal="true" aria-label="單字解說">
       <div class="word-help-card">
         <div class="word-help-head"><div class="word-help-kicker">單字小教室</div><button class="word-help-close" type="button" onclick="closeWordHelp()" aria-label="關閉單字解說">✕</button></div>
-        <div id="word-help-word" class="word-help-word"></div>
+        <div class="word-help-title-row"><div id="word-help-word" class="word-help-word"></div><button id="word-help-star" class="word-help-star-inline" type="button" onclick="toggleWordHelpStar()" aria-label="加入或移除星號">☆</button></div>
         <div id="word-help-phonics"></div>
         <div id="word-help-meaning" class="word-help-meaning"></div>
         <div id="word-help-note" class="word-help-note"></div>
-        <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再聽一次</button><button id="word-help-star" type="button" onclick="toggleWordHelpStar()">☆ 加入星號</button></div>
+        <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再聽一次</button></div>
       </div>
     </div>
 
@@ -2619,13 +2627,15 @@
     }
 
     const storyWordGloss = {
+      learn:'學習；學會', learned:'學了；學會了', learnt:'學了；學會了', street:'街道', streets:'街道（複數）', like:'喜歡', liked:'喜歡了', add:'加；增加', added:'加了；增加了', dance:'跳舞', danced:'跳了舞', thirty:'三十', today:'今天', word:'單字；字', I:'我',
       the:'這個／那個（定冠詞）', dinosaur:'恐龍', dinosaurs:'恐龍（複數）', lives:'住、生活（live 的第三人稱單數）', live:'住、生活', in:'在……裡', forest:'森林', one:'一（個）', day:'天；有一天', sees:'看見（see 的第三人稱單數）', see:'看見', a:'一個／一隻（冠詞）', small:'小的', egg:'蛋', near:'靠近；在……旁邊', tree:'樹', baby:'寶寶；幼小的', comes:'來；出現（come 的第三人稱單數）', come:'來', out:'向外；出來', of:'……的；從……之中', two:'兩個／兩隻', walk:'走路', walks:'走路（第三人稱單數）', to:'到；向', lake:'湖', and:'和；而且', fish:'魚', at:'在（某時間／地點）', night:'夜晚', they:'他們／牠們', sleep:'睡覺', sleeps:'睡覺（第三人稱單數）', under:'在……下面', trees:'樹（複數）', is:'是；正在（be 動詞）', hiding:'躲藏（hide 的 -ing 形式）', butterfly:'蝴蝶', flies:'飛（fly 的第三人稱單數；y 改 ies）', fly:'飛', over:'在……上方；越過', flowers:'花（複數）', we:'我們', watch:'看；觀察', little:'小的', ant:'螞蟻', carry:'搬；攜帶', food:'食物', home:'家；回家', follow:'跟著；沿著', path:'小路', find:'找到；發現', bird:'鳥', frog:'青蛙', jumps:'跳（jump 的第三人稱單數）', jump:'跳', water:'水', wind:'風', moves:'移動；吹動（move 的第三人稱單數）', leaves:'葉子（複數；leaf 的 f 變 ves）', leaf:'葉子'
     };
     const storyMorph = {
+      learned:'原形是 learn（學習）。learn → learned：這裡是過去式，表示「學了／學會了」。learned 也可作過去分詞；英式英文也常見 learnt。', learnt:'原形是 learn（學習）。learnt 是 learn 的過去式／過去分詞，表示「學了／學會了」。', liked:'原形：like（喜歡）→ liked。字尾 e 直接加 d，表示過去發生的事。', added:'原形：add（加、增加）→ added。短母音後的單一子音 d 加 ed 時，先重複 d。', danced:'原形：dance（跳舞）→ danced。字尾 e 直接加 d，表示過去發生的事。', streets:'原形：street（街道）→ streets。加 s 表示複數。',
       lives:'live + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', sees:'see + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', comes:'come + s：主詞是單數的 baby dinosaur，動詞加 s。', sleeps:'sleep + s：主詞是單數時，動詞加 s。', flies:'fly → flies：子音 + y 結尾，第三人稱單數把 y 改成 ies。', dinosaurs:'dinosaur + s：表示不只一隻恐龍。', trees:'tree + s：表示不只一棵樹。', flowers:'flower + s：表示不只一朵花。', leaves:'leaf → leaves：部分 f 結尾名詞變複數時，f 改成 ves。', hiding:'hide + ing：表示正在躲藏；e 通常去掉再加 ing。'
     };
     let activeHelpWord = '', activeHelpBase = '', activeHelpRef = '';
-    function normalizeStoryBase(w){const x=w.toLowerCase();const map={lives:'live',sees:'see',comes:'come',sleeps:'sleep',flies:'fly',dinosaurs:'dinosaur',trees:'tree',flowers:'flower',leaves:'leaf',hiding:'hide',jumps:'jump',moves:'move',walks:'walk'};return map[x]||x;}
+    function normalizeStoryBase(w){const x=w.toLowerCase();const map={learned:'learn',learnt:'learn',liked:'like',added:'add',danced:'dance',lives:'live',sees:'see',comes:'come',sleeps:'sleep',flies:'fly',dinosaurs:'dinosaur',trees:'tree',flowers:'flower',leaves:'leaf',hiding:'hide',jumps:'jump',moves:'move',walks:'walk'};return map[x]||x;}
     function renderStoryTokens(text){
       const safe=String(text||'');
       return safe.replace(/[A-Za-z]+(?:'[A-Za-z]+)?|[^A-Za-z]+/g, part => {
@@ -2641,16 +2651,16 @@
     function openWordHelp(raw){
       activeHelpWord=String(raw||'').toLowerCase(); activeHelpBase=normalizeStoryBase(activeHelpWord);
       const item=findBankWord(activeHelpBase) || findBankWord(activeHelpWord); activeHelpRef=item&&item.ref?item.ref:'';
-      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || (item&&(item.zh||item.cn||item.meaning)) || '這個字的中文意思請搭配目前單字庫確認。';
+      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || (item&&(item.zh||item.cn||item.meaning)) || '目前單字庫尚未提供中文解釋。';
       document.getElementById('word-help-word').textContent=raw;
       const phonics=document.getElementById('word-help-phonics'); phonics.innerHTML='';
       const parts=fallbackSyllables(activeHelpWord); let si=0;
       parts.forEach(part=>{ if(/^\s+$/.test(part)){const sep=document.createElement('span');sep.className='practice-syllable-separator';sep.textContent=' ';phonics.appendChild(sep);} else if(/^[\/-]$/.test(part)){const sep=document.createElement('span');sep.className='practice-syllable-separator';sep.textContent=part;phonics.appendChild(sep);} else {const span=document.createElement('span');span.className='practice-syllable color-'+((si++%6)+1);span.textContent=part;phonics.appendChild(span);} });
       renderPracticePhonics(phonics, activeHelpWord);
       document.getElementById('word-help-meaning').textContent=meaning;
-      document.getElementById('word-help-note').textContent=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase ? `字形變化：${activeHelpBase} → ${activeHelpWord}。請留意它在句子中的單複數或動詞形式。` : '點「再聽一次」可以重複聽這個字的發音。');
+      document.getElementById('word-help-note').textContent=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase ? `原形：${activeHelpBase} → ${activeHelpWord}。這是單字的字形變化；依句子判斷它的時態或單複數。` : `原形：${activeHelpBase}。`);
       const stars=JSON.parse(getHeroData('hero_priority')||'[]');
-      const btn=document.getElementById('word-help-star'); btn.textContent=activeHelpRef&&stars.includes(activeHelpRef)?'★ 已加入星號':'☆ 加入星號'; btn.disabled=!activeHelpRef; btn.title=activeHelpRef?'加入或移除星號單字':'這個字不在目前題庫，暫時無法加入星號複習';
+      const btn=document.getElementById('word-help-star'); const starred=!!(activeHelpRef&&stars.includes(activeHelpRef)); btn.textContent=starred?'★':'☆'; btn.classList.toggle('active',starred); btn.disabled=!activeHelpRef; btn.title=activeHelpRef?(starred?'移除星號':'加入星號複習'):'這個字不在目前題庫，暫時無法加入星號複習'; btn.setAttribute('aria-label',btn.title);
       document.getElementById('word-help-overlay').classList.add('show');
     }
     function closeWordHelp(){document.getElementById('word-help-overlay').classList.remove('show');}
@@ -2658,7 +2668,7 @@
     function toggleWordHelpStar(){
       if(!activeHelpRef)return; let p=JSON.parse(getHeroData('hero_priority')||'[]');
       p=p.includes(activeHelpRef)?p.filter(x=>x!==activeHelpRef):[...p,activeHelpRef]; setHeroData('hero_priority',JSON.stringify(p));
-      document.getElementById('word-help-star').textContent=p.includes(activeHelpRef)?'★ 已加入星號':'☆ 加入星號';
+      const starBtn=document.getElementById('word-help-star'); const starred=p.includes(activeHelpRef); starBtn.textContent=starred?'★':'☆'; starBtn.classList.toggle('active',starred); starBtn.title=starred?'移除星號':'加入星號複習'; starBtn.setAttribute('aria-label',starBtn.title);
     }
 
     function refreshPracticeContextSentence(wordText) {
