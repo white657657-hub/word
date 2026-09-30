@@ -566,6 +566,7 @@
             <div id="sentence-example-box" class="sentence-example-box" hidden>
                 <div class="sentence-example-label">🌟 你完成自己的句子了！來看看其他說法</div>
                 <div id="sentence-example-text" class="sentence-example-text"></div>
+                <div id="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
                 <div class="sentence-example-actions">
                     <button type="button" onclick="previousSentenceExample()" aria-label="上一個例句">← 上一個</button>
                     <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
@@ -613,6 +614,16 @@
                     <button type="button" class="pass-btn-inline" onclick="handlePass()">PASS</button>
                 </div>
                 <div id="sentence-inline-result" class="sentence-status" style="display:none;"></div>
+                <div id="sentence-inline-example-box" class="sentence-example-box" hidden>
+                    <div class="sentence-example-label">🌟 完成自己的句子後，看看其他說法</div>
+                    <div id="sentence-inline-example-text" class="sentence-example-text"></div>
+                    <div id="sentence-inline-example-translation" class="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
+                    <div class="sentence-example-actions">
+                        <button type="button" onclick="previousSentenceExample()" aria-label="上一個例句">← 上一個</button>
+                        <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
+                        <button type="button" onclick="nextSentenceExample()" aria-label="下一個例句">下一個 →</button>
+                    </div>
+                </div>
             </div>
             <button id="btn-voice" class="game-action-btn" onclick="unlockAndPlayVoice()">🔊 再唸一次</button><span id="voice-status" class="voice-status" aria-live="polite">第一次使用請按 🔊</span>
             <button id="btn-game-pass" type="button" class="pass-btn-inline" style="display:block; min-width:150px; min-height:48px; margin:10px auto; padding:10px 24px; font-size:1.1rem;" onclick="handlePass()">⏭ PASS｜先跳過</button>
@@ -2476,30 +2487,32 @@
 
     function buildSimpleSentenceExample(word) {
         const clean = String(word || '').trim().toLowerCase().replace(/[^a-z'-]/g, '');
-        const bankWords = Object.values(state.banks || {}).flat().map(x => String(x.en || '').trim().toLowerCase()).filter(x => /^[a-z]+(?:[ '-][a-z]+)*$/.test(x) && x !== clean);
-        const related = bankWords.find(x => x.length <= 14) || 'my friend';
-        // Diverse beginner-friendly sentence patterns; examples are for reading/listening only.
+        const quoted = `“${clean}”`;
+        // 以「談論這個英文單字」的方式造句，避免未知詞性時硬套 a/is/like 造成錯誤。
         return [
-            `I found a ${clean} today.`,
-            `The ${clean} is near my friend.`,
-            `Can you see the ${clean}?`,
-            `We have a ${clean} at home.`,
-            `My friend and I saw a ${clean}.`,
-            `Where is the ${clean}?`,
-            `I have a ${clean}, and you have a ${related}.`,
-            `Look! The ${clean} is here!`
+            {en:`I learned the word ${quoted} today.`, zh:`我今天學到「${clean}」這個單字。`},
+            {en:`Can you use ${quoted} in a sentence?`, zh:`你可以用「${clean}」造一個句子嗎？`},
+            {en:`My teacher wrote ${quoted} on the board.`, zh:`老師把「${clean}」寫在黑板上。`},
+            {en:`I want to remember how to spell ${quoted}.`, zh:`我想記住「${clean}」的拼法。`},
+            {en:`I found ${quoted} in my word list.`, zh:`我在單字表裡找到「${clean}」。`},
+            {en:`Let’s make a new sentence with ${quoted}.`, zh:`我們用「${clean}」來造一個新句子吧。`}
         ];
     }
 
     function refreshSentenceExample() {
-        const el = document.getElementById('sentence-example-text');
         const word = state.sentenceList && state.sentenceList[state.sentenceIndex];
-        if (!el || !word) return;
-        const examples = buildSimpleSentenceExample(word.en);
+        const target = word && word.en ? word.en : sentenceTargetWord;
+        if (!target) return;
+        const examples = buildSimpleSentenceExample(target);
         state.sentenceExampleList = examples;
         state.sentenceExampleIndex = Math.min(state.sentenceExampleIndex || 0, examples.length - 1);
         state.currentSentenceExample = examples[state.sentenceExampleIndex];
-        el.textContent = state.currentSentenceExample;
+        ['sentence-example','sentence-inline-example'].forEach(prefix => {
+            const text = document.getElementById(`${prefix}-text`);
+            const translation = document.getElementById(`${prefix}-translation`);
+            if (text) text.textContent = state.currentSentenceExample.en;
+            if (translation) translation.textContent = state.currentSentenceExample.zh;
+        });
     }
 
     function changeSentenceExample(delta) {
@@ -2507,20 +2520,26 @@
         if (!examples.length) return;
         state.sentenceExampleIndex = (state.sentenceExampleIndex + delta + examples.length) % examples.length;
         state.currentSentenceExample = examples[state.sentenceExampleIndex];
-        const el = document.getElementById('sentence-example-text');
-        if (el) el.textContent = state.currentSentenceExample;
+        ['sentence-example','sentence-inline-example'].forEach(prefix => {
+            const text = document.getElementById(`${prefix}-text`);
+            const translation = document.getElementById(`${prefix}-translation`);
+            if (text) text.textContent = state.currentSentenceExample.en;
+            if (translation) translation.textContent = state.currentSentenceExample.zh;
+        });
     }
     function nextSentenceExample() { changeSentenceExample(1); }
     function previousSentenceExample() { changeSentenceExample(-1); }
 
     function revealSentenceExamples() {
-        const box = document.getElementById('sentence-example-box');
-        if (box) box.hidden = false;
+        ['sentence-example-box','sentence-inline-example-box'].forEach(id => {
+            const box = document.getElementById(id);
+            if (box) box.hidden = false;
+        });
         refreshSentenceExample();
     }
 
     function playSentenceExample() {
-        if (state.currentSentenceExample) speakEnglish(state.currentSentenceExample, {userGesture:true, rate:0.78});
+        if (state.currentSentenceExample) speakEnglish(state.currentSentenceExample.en || state.currentSentenceExample, {userGesture:true, rate:0.78});
     }
 
     function playChildSentence() {
@@ -2576,30 +2595,8 @@
         loadSentenceUnitWord();
     }
 
-    // V1478：透過自有 Cloudflare Worker 轉送 LanguageTool，避免前端直接依賴公開 API。
-    // 部署 Worker 後，將下方網址改成自己的 https://<worker-name>.<account>.workers.dev/check
-    const WORDHERO_GRAMMAR_PROXY = 'https://YOUR-WORKER.workers.dev/check';
-    async function requestGrammarCheck(sentence, timeoutMs = 9000) {
-        if (!WORDHERO_GRAMMAR_PROXY || WORDHERO_GRAMMAR_PROXY.includes('YOUR-WORKER')) {
-            throw new Error('尚未設定文法檢查服務網址');
-        }
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-        try {
-            const response = await fetch(WORDHERO_GRAMMAR_PROXY, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: String(sentence || '').slice(0, 500), language: 'en-US' }),
-                signal: controller.signal
-            });
-            if (!response.ok) throw new Error(`文法服務回應 ${response.status}`);
-            const data = await response.json();
-            if (!Array.isArray(data.matches)) throw new Error('文法服務回傳格式不正確');
-            return data.matches;
-        } finally { clearTimeout(timeoutId); }
-    }
-
-    async function checkStandaloneSentenceGrammar() {
+    // V1480：完全離線的本機造句檢查，不連接任何第三方 API。
+    function checkStandaloneSentenceGrammar() {
         const input = document.getElementById('sentence-unit-input');
         const result = document.getElementById('sentence-unit-result');
         if (!input || !result) return;
@@ -2607,8 +2604,8 @@
         maybeAutoPunctuateSentence(input);
         const sentenceText = String(input.value || '').trim();
         const activeWord = state.sentenceList && state.sentenceList[state.sentenceIndex];
-        addLearningLog({ type: 'sentence', mode: 'sentence', unit: state.sentenceUnitName || state.unit || '', word: activeWord && activeWord.en || sentenceTargetWord || '', meaning: activeWord && activeWord.cn || '', sentence: sentenceText, result: sentenceText ? 'submitted_for_check' : 'empty_submission' });
-        await runSentenceGrammarCheck(input, result);
+        addLearningLog({ type:'sentence', mode:'sentence', unit:state.sentenceUnitName || state.unit || '', word:activeWord && activeWord.en || sentenceTargetWord || '', meaning:activeWord && activeWord.cn || '', sentence:sentenceText, result:sentenceText ? 'submitted_for_local_check' : 'empty_submission' });
+        runSentenceGrammarCheck(input, result);
     }
 
     function showSentenceNextButton() {
@@ -2616,49 +2613,31 @@
         if (btn) btn.style.display = 'block';
     }
 
-    async function runSentenceGrammarCheck(input, result) {
+    function runSentenceGrammarCheck(input, result) {
         const sentence = String(input.value || '').trim();
-        addLearningLog({type:'sentence',mode:'inline_sentence',unit:state.unit||'',word:sentenceTargetWord||'',sentence,result:sentence?'submitted_for_check':'empty_submission'});
         result.style.display = 'block';
         result.className = 'sentence-status sentence-loading';
-        result.innerHTML = '⏳ 正在檢查文法與拼字……';
-
-        const localIssues = localSentenceChecks(sentence, sentenceTargetWord);
+        result.textContent = '正在做本機基本檢查……';
         if (!sentence) {
             result.className = 'sentence-status error';
-            result.innerHTML = '❌ 請先寫一句英文句子。';
+            result.textContent = '請先寫一句英文句子。';
             return;
         }
-        let matches = [];
-        let apiOK = false;
-        try { matches = await requestGrammarCheck(sentence); apiOK = true; }
-        catch (e) { apiOK = false; }
-
-        const targetMissing = localIssues.some(x => x.includes('還沒有使用目標單字'));
-        const simpleIssues = localIssues.filter(x => !x.includes('還沒有使用目標單字'));
-        if (apiOK) {
-            const usefulMatches = matches.filter(m => m && m.message && m.rule);
-            if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
-                result.className = 'sentence-status good';
-                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">做得好！自動檢查仍可能有遺漏，請和家長一起確認。</div>';
-                revealSentenceExamples();
-                showSentenceNextButton();
-                return;
-            }
-            let html = '';
-            if (targetMissing) html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」或可辨識的詞形變化。`)}</div>`;
-            if (usefulMatches.length) html += '<div style="margin-top:5px;">' + usefulMatches.slice(0,5).map((m,i) => `${i+1}. ${formatLanguageToolMessage(m)}`).join('<div style="margin-top:7px;"></div>') + '</div>';
-            if (simpleIssues.length) html += `<div style="margin-top:7px;">${simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>')}</div>`;
-            result.className = 'sentence-status warn';
-            result.innerHTML = html || '⚠️ 有一些地方建議再檢查。';
+        const issues = localSentenceChecks(sentence, sentenceTargetWord);
+        const targetMissing = issues.some(x => x.includes('還沒有使用目標單字'));
+        const formatIssues = issues.filter(x => !x.includes('還沒有使用目標單字'));
+        if (!targetMissing && formatIssues.length === 0) {
+            result.className = 'sentence-status good';
+            result.innerHTML = '✅ <b>本機基本檢查完成！</b><div class="sentence-example">有使用目標單字，句首與標點格式看起來完整。這不是完整文法判定，請和家長一起確認。</div>';
+            revealSentenceExamples();
             showSentenceNextButton();
+            addLearningLog({type:'sentence',mode:'local_check',word:sentenceTargetWord||'',sentence,result:'local_basic_check_pass'});
             return;
         }
         result.className = 'sentence-status warn';
-        result.innerHTML = (!targetMissing && simpleIssues.length === 0)
-            ? '⚠️ 線上文法服務目前無法連線。<br>基本檢查沒有發現明顯問題，但這不代表文法已完整確認。'
-            : (targetMissing ? `⚠️ 句子裡還沒有使用目標單字「${escapeSentenceHtml(sentenceTargetWord)}」。<br>` : '') + (simpleIssues.length ? simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>') : '');
-        showSentenceNextButton();
+        result.innerHTML = issues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>') + '<div style="margin-top:7px;">修改後可以再按一次檢查。這裡不會連線到外部網站。</div>';
+        ['sentence-example-box','sentence-inline-example-box'].forEach(id => { const box = document.getElementById(id); if (box) box.hidden = true; });
+        addLearningLog({type:'sentence',mode:'local_check',word:sentenceTargetWord||'',sentence,result:'local_basic_check_review'});
     }
 
 
@@ -2687,6 +2666,8 @@
         updateSentenceChoiceUI();
         const sentenceInput = document.getElementById('sentence-inline-input');
         const sentenceResult = document.getElementById('sentence-inline-result');
+        const inlineExampleBox = document.getElementById('sentence-inline-example-box');
+        if (inlineExampleBox) inlineExampleBox.hidden = true;
         if (sentenceInput) sentenceInput.value = '';
         if (sentenceResult) { sentenceResult.style.display = 'none'; sentenceResult.className = 'sentence-status'; sentenceResult.innerHTML = ''; }
         sentenceTargetWord = String(word.en || '').trim();
@@ -3564,78 +3545,16 @@
         return issues;
     }
 
-    function formatLanguageToolMessage(match) {
-        const msg = escapeSentenceHtml(match.message || '可能有文法或拼字問題。');
-        const replacements = Array.isArray(match.replacements) ? match.replacements.slice(0, 3).map(x => x.value).filter(Boolean) : [];
-        if (!replacements.length) return msg;
-        return `${msg}<div class="sentence-correction">建議：<b>${replacements.map(escapeSentenceHtml).join('、')}</b></div>`;
-    }
 
-    async function checkSentenceGrammar() {
+    function checkSentenceGrammar() {
         const input = document.getElementById('sentence-inline-input');
         const result = document.getElementById('sentence-inline-result');
         if (!input || !result) return;
-
+        capitalizeSentenceInput(input);
+        maybeAutoPunctuateSentence(input);
         const sentence = String(input.value || '').trim();
-        result.style.display = 'block';
-        result.className = 'sentence-status sentence-loading';
-        result.innerHTML = '⏳ 正在檢查文法與拼字……';
-
-        const localIssues = localSentenceChecks(sentence, sentenceTargetWord);
-        if (!sentence) {
-            result.className = 'sentence-status error';
-            result.innerHTML = '❌ 請先寫一句英文句子。';
-            return;
-        }
-
-        let matches = [];
-        let apiOK = false;
-
-        try { matches = await requestGrammarCheck(sentence); apiOK = true; }
-        catch (e) { apiOK = false; }
-
-        const targetMissing = localIssues.some(x => x.includes('還沒有使用目標單字'));
-        const simpleIssues = localIssues.filter(x => !x.includes('還沒有使用目標單字'));
-
-        if (apiOK) {
-            const usefulMatches = matches.filter(m => m && m.message && m.rule);
-            if (!targetMissing && usefulMatches.length === 0 && simpleIssues.length === 0) {
-                result.className = 'sentence-status good';
-                result.innerHTML = '✅ <b>目前沒有找到明顯的文法或拼字提醒！</b><div class="sentence-example">很好！自動檢查仍可能有遺漏。</div>';
-                revealSentenceExamples();
-                return;
-            }
-
-            let html = '';
-            if (targetMissing) {
-                html += `<div>⚠️ ${escapeSentenceHtml(`句子裡還沒有使用目標單字「${sentenceTargetWord}」或可辨識的詞形變化。`)}</div>`;
-            }
-            if (usefulMatches.length) {
-                html += '<div style="margin-top:5px;">' +
-                    usefulMatches.slice(0, 5).map((m, i) => `${i + 1}. ${formatLanguageToolMessage(m)}`).join('<div style="margin-top:7px;"></div>') +
-                    '</div>';
-            }
-            if (simpleIssues.length) {
-                html += `<div style="margin-top:7px;">${simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>')}</div>`;
-            }
-
-            result.className = 'sentence-status warn';
-            result.innerHTML = html || '⚠️ 有一些地方建議再檢查。';
-            showSentenceNextButton();
-            return;
-        }
-
-        // 網路文法服務無法使用時，仍提供本機基本檢查，不假裝是完整文法判定。
-        if (!targetMissing && simpleIssues.length === 0) {
-            result.className = 'sentence-status warn';
-            result.innerHTML = '⚠️ 線上文法服務目前無法連線。<br>基本檢查沒有發現明顯問題，但這不代表文法已完整確認。';
-        } else {
-            result.className = 'sentence-status warn';
-            result.innerHTML =
-                (targetMissing ? `⚠️ 句子裡還沒有使用目標單字「${escapeSentenceHtml(sentenceTargetWord)}」。<br>` : '') +
-                (simpleIssues.length ? simpleIssues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>') : '') +
-                '<div style="margin-top:7px;">目前無法連線完整文法檢查服務。</div>';
-        }
+        addLearningLog({type:'sentence',mode:'inline_sentence',unit:state.unit||'',word:sentenceTargetWord||'',sentence,result:sentence?'submitted_for_local_check':'empty_submission'});
+        runSentenceGrammarCheck(input, result);
     }
 
     function renderTeam() {
