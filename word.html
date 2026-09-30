@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1482 - 兒童造句人因與字體優化版</title>
+    <title>Word Hero V1485 - 故事逐字互動學習版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -141,6 +141,20 @@
         #sentence-unit-input { width:100%; min-height:105px; resize:vertical; padding:11px; border-radius:10px; border:1px solid #475569; background:#020617; color:#fff; font-size:1.05rem; line-height:1.5; font-family:inherit; box-sizing:border-box; }
         #sentence-unit-input:focus { border-color:#38bdf8; box-shadow:0 0 0 2px rgba(56,189,248,.15); outline:none; }
         .sentence-unit-actions { display:grid; grid-template-columns:1fr 100px; gap:7px; margin-top:8px; }
+
+        .story-word{display:inline-block;border-bottom:2px dotted #fbbf24;color:#e0f2fe;cursor:pointer;padding:1px 2px;margin:0 1px;border-radius:4px;min-height:30px}
+        .story-word:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}
+        .story-word:hover{background:#334155}
+        .word-help-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
+        .word-help-overlay.show{display:flex}
+        .word-help-card{width:min(100%,420px);background:#172338;border:1px solid #64748b;border-radius:18px;padding:20px;color:#f8fafc;box-shadow:0 20px 60px #0009}
+        .word-help-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+        .word-help-word{font-size:2rem;font-weight:900;color:#7dd3fc;overflow-wrap:anywhere}
+        .word-help-meaning{font-size:1.2rem;line-height:1.6;margin:10px 0}
+        .word-help-note{font-size:1rem;line-height:1.6;color:#cbd5e1;background:#25364f;border-radius:10px;padding:10px}
+        .word-help-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+        .word-help-actions button{min-height:48px;border-radius:11px;font-size:1rem;font-weight:800}
+
         .sentence-example-box[hidden]{display:none!important}
         .sentence-example-box{margin-top:12px;padding:12px;border:1px solid #334155;border-radius:12px;background:rgba(30,41,59,.75)}
         .sentence-example-label{font-size:.78rem;color:#fbbf24;font-weight:800;margin-bottom:6px}
@@ -585,6 +599,15 @@
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
         </div>
         <button class="mode-btn sentence-unit-back" onclick="switchView('view-main')">🏠 結束造句練習</button>
+    </div>
+
+    <div id="word-help-overlay" class="word-help-overlay" onclick="if(event.target===this)closeWordHelp()" role="dialog" aria-modal="true" aria-label="單字解說">
+      <div class="word-help-card">
+        <div class="word-help-head"><div id="word-help-word" class="word-help-word"></div><button type="button" onclick="closeWordHelp()" aria-label="關閉">✕</button></div>
+        <div id="word-help-meaning" class="word-help-meaning"></div>
+        <div id="word-help-note" class="word-help-note"></div>
+        <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再聽一次</button><button id="word-help-star" type="button" onclick="toggleWordHelpStar()">☆ 加入星號</button></div>
+      </div>
     </div>
 
     <div id="view-game" class="view-section">
@@ -2519,17 +2542,99 @@
     }
 
     function buildSimpleSentenceExample(word) {
-        const clean = String(word || '').trim().toLowerCase().replace(/[^a-z'-]/g, '');
-        const quoted = `“${clean}”`;
-        // 以「談論這個英文單字」的方式造句，避免未知詞性時硬套 a/is/like 造成錯誤。
-        return [
-            {en:`I learned the word ${quoted} today.`, zh:`我今天學到「${clean}」這個單字。`},
-            {en:`Can you use ${quoted} in a sentence?`, zh:`你可以用「${clean}」造一個句子嗎？`},
-            {en:`My teacher wrote ${quoted} on the board.`, zh:`老師把「${clean}」寫在黑板上。`},
-            {en:`I want to remember how to spell ${quoted}.`, zh:`我想記住「${clean}」的拼法。`},
-            {en:`I found ${quoted} in my word list.`, zh:`我在單字表裡找到「${clean}」。`},
-            {en:`Let’s make a new sentence with ${quoted}.`, zh:`我們用「${clean}」來造一個新句子吧。`}
+        const clean = String(word || '').trim().toLowerCase().replace(/[^a-z' -]/g, '').replace(/\s+/g, ' ');
+        const bankWords = new Set();
+        Object.values(state.banks || {}).flat().forEach(item => {
+            const value = String(item && item.en || '').toLowerCase().trim();
+            if (value) bankWords.add(value);
+        });
+        const has = (...words) => words.every(w => bankWords.has(w));
+        const story = (en, zh, uses = []) => ({en, zh, bankMatched: uses.filter(w => bankWords.has(w))});
+
+        // Anson 喜歡恐龍、昆蟲、自然探索與故事。恐龍例句採「連續小故事」，
+        // 優先使用目前題庫中有的實詞；必要的冠詞、代名詞、介系詞等基礎功能字可補足句子。
+        if (clean === 'dinosaur' || clean === 'dinosaurs') {
+            const singular = clean === 'dinosaur';
+            const lines = [
+                story('The dinosaur lives in the forest.', '這隻恐龍住在森林裡。', ['dinosaur','live','forest']),
+                story('One day, the dinosaur sees a small egg near a tree.', '有一天，恐龍在一棵樹旁看見一顆小蛋。', ['day','see','small','egg','near','tree']),
+                story('A baby dinosaur comes out of the egg.', '一隻小恐龍從蛋裡孵出來。', ['baby','come','egg']),
+                story('The two dinosaurs walk to the lake and see a fish.', '兩隻恐龍走到湖邊，看見一條魚。', ['walk','lake','see','fish']),
+                story('At night, they sleep under the trees.', '到了晚上，牠們在樹下睡覺。', ['night','sleep','tree'])
+            ];
+            // 以孩子的單字庫為依據排序：先顯示能連結較多已學單字的故事句，再保留完整故事脈絡。
+            return lines.map((line, index) => ({...line, _score: line.bankMatched.length, _order:index}))
+                .sort((a,b) => b._score-a._score || a._order-b._order)
+                .map(({_score,_order,...line}) => line);
+        }
+
+        const themed = {
+            insect: [
+                story('A tiny beetle is hiding under a leaf.', '一隻小甲蟲正躲在葉子下面。', ['beetle','leaf']),
+                story('The butterfly flies over the flowers.', '蝴蝶飛過花朵上方。', ['butterfly','fly','flower']),
+                story('We watch the little ant carry food home.', '我們看著小螞蟻把食物搬回家。', ['ant','food','home'])
+            ],
+            nature: [
+                story('We follow a small path and find a bird near the lake.', '我們沿著小路走，在湖邊發現一隻鳥。', ['small','path','find','bird','near','lake']),
+                story('A frog jumps into the water.', '一隻青蛙跳進水裡。', ['frog','jump','water']),
+                story('The wind moves the leaves in the forest.', '風吹動森林裡的葉子。', ['wind','leaf','forest'])
+            ]
+        };
+        if (['butterfly','beetle','ant','frog','bird','forest','lake','tree','flower'].includes(clean)) {
+            const key = ['butterfly','beetle','ant'].includes(clean) ? 'insect' : 'nature';
+            return themed[key];
+        }
+
+        const q = `“${clean}”`;
+        const scenes = [
+            {en:`A tiny explorer found ${q} on a map to a secret island.`,zh:`一位小小探險家在通往秘密島嶼的地圖上發現了「${clean}」。`},
+            {en:`My dinosaur friend used ${q} to solve a forest mystery.`,zh:`我的恐龍朋友用「${clean}」解開了森林裡的謎題。`},
+            {en:`We added ${q} to our nature-club adventure journal.`,zh:`我們把「${clean}」寫進自然社的探險日誌。`},
+            {en:`A little robot found ${q} while looking for its friend.`,zh:`一個小機器人找朋友時發現了「${clean}」。`},
+            {en:`At the end of the story, ${q} helped everyone get home.`,zh:`故事最後，「${clean}」幫助大家回到家。`}
         ];
+        let hash = 0;
+        for (const ch of clean) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+        return scenes.map((_, i) => scenes[(i + hash) % scenes.length]);
+    }
+
+    const storyWordGloss = {
+      the:'這個／那個（定冠詞）', dinosaur:'恐龍', dinosaurs:'恐龍（複數）', lives:'住、生活（live 的第三人稱單數）', live:'住、生活', in:'在……裡', forest:'森林', one:'一（個）', day:'天；有一天', sees:'看見（see 的第三人稱單數）', see:'看見', a:'一個／一隻（冠詞）', small:'小的', egg:'蛋', near:'靠近；在……旁邊', tree:'樹', baby:'寶寶；幼小的', comes:'來；出現（come 的第三人稱單數）', come:'來', out:'向外；出來', of:'……的；從……之中', two:'兩個／兩隻', walk:'走路', walks:'走路（第三人稱單數）', to:'到；向', lake:'湖', and:'和；而且', fish:'魚', at:'在（某時間／地點）', night:'夜晚', they:'他們／牠們', sleep:'睡覺', sleeps:'睡覺（第三人稱單數）', under:'在……下面', trees:'樹（複數）', is:'是；正在（be 動詞）', hiding:'躲藏（hide 的 -ing 形式）', butterfly:'蝴蝶', flies:'飛（fly 的第三人稱單數；y 改 ies）', fly:'飛', over:'在……上方；越過', flowers:'花（複數）', we:'我們', watch:'看；觀察', little:'小的', ant:'螞蟻', carry:'搬；攜帶', food:'食物', home:'家；回家', follow:'跟著；沿著', path:'小路', find:'找到；發現', bird:'鳥', frog:'青蛙', jumps:'跳（jump 的第三人稱單數）', jump:'跳', water:'水', wind:'風', moves:'移動；吹動（move 的第三人稱單數）', leaves:'葉子（複數；leaf 的 f 變 ves）', leaf:'葉子'
+    };
+    const storyMorph = {
+      lives:'live + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', sees:'see + s：主詞是單數的 dinosaur，現在簡單式動詞加 s。', comes:'come + s：主詞是單數的 baby dinosaur，動詞加 s。', sleeps:'sleep + s：主詞是單數時，動詞加 s。', flies:'fly → flies：子音 + y 結尾，第三人稱單數把 y 改成 ies。', dinosaurs:'dinosaur + s：表示不只一隻恐龍。', trees:'tree + s：表示不只一棵樹。', flowers:'flower + s：表示不只一朵花。', leaves:'leaf → leaves：部分 f 結尾名詞變複數時，f 改成 ves。', hiding:'hide + ing：表示正在躲藏；e 通常去掉再加 ing。'
+    };
+    let activeHelpWord = '', activeHelpBase = '', activeHelpRef = '';
+    function normalizeStoryBase(w){const x=w.toLowerCase();const map={lives:'live',sees:'see',comes:'come',sleeps:'sleep',flies:'fly',dinosaurs:'dinosaur',trees:'tree',flowers:'flower',leaves:'leaf',hiding:'hide',jumps:'jump',moves:'move',walks:'walk'};return map[x]||x;}
+    function renderStoryTokens(text){
+      const safe=String(text||'');
+      return safe.replace(/[A-Za-z]+(?:'[A-Za-z]+)?|[^A-Za-z]+/g, part => {
+        if(!/^[A-Za-z]/.test(part)) return part.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const esc=part.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return `<button type="button" class="story-word" data-story-word="${esc}" onclick="openWordHelp(this.dataset.storyWord)" aria-label="查看單字 ${esc}">${esc}</button>`;
+      });
+    }
+    function findBankWord(base){
+      const all=Object.values(state.banks||{}).flat();
+      return all.find(x=>String(x.en||'').trim().toLowerCase()===base) || null;
+    }
+    function openWordHelp(raw){
+      activeHelpWord=String(raw||'').toLowerCase(); activeHelpBase=normalizeStoryBase(activeHelpWord);
+      const item=findBankWord(activeHelpBase) || findBankWord(activeHelpWord); activeHelpRef=item&&item.ref?item.ref:'';
+      const meaning=storyWordGloss[activeHelpWord] || storyWordGloss[activeHelpBase] || (item&&(item.zh||item.meaning)) || '這個字的中文意思請搭配目前單字庫確認。';
+      document.getElementById('word-help-word').textContent=raw;
+      document.getElementById('word-help-meaning').textContent=meaning;
+      document.getElementById('word-help-note').textContent=storyMorph[activeHelpWord] || (activeHelpWord!==activeHelpBase ? `字形變化：${activeHelpBase} → ${activeHelpWord}。請留意它在句子中的單複數或動詞形式。` : '點「再聽一次」可以重複聽這個字的發音。');
+      const stars=JSON.parse(getHeroData('hero_priority')||'[]');
+      const btn=document.getElementById('word-help-star'); btn.textContent=activeHelpRef&&stars.includes(activeHelpRef)?'★ 已加入星號':'☆ 加入星號'; btn.disabled=!activeHelpRef; btn.title=activeHelpRef?'加入或移除星號單字':'這個字不在目前題庫，暫時無法加入星號複習';
+      document.getElementById('word-help-overlay').classList.add('show');
+    }
+    function closeWordHelp(){document.getElementById('word-help-overlay').classList.remove('show');}
+    function playWordHelp(){if(activeHelpWord)speakEnglish(activeHelpWord,{userGesture:true,rate:0.72});}
+    function toggleWordHelpStar(){
+      if(!activeHelpRef)return; let p=JSON.parse(getHeroData('hero_priority')||'[]');
+      p=p.includes(activeHelpRef)?p.filter(x=>x!==activeHelpRef):[...p,activeHelpRef]; setHeroData('hero_priority',JSON.stringify(p));
+      document.getElementById('word-help-star').textContent=p.includes(activeHelpRef)?'★ 已加入星號':'☆ 加入星號';
     }
 
     function refreshSentenceExample() {
@@ -2543,7 +2648,7 @@
         ['sentence-example','sentence-inline-example'].forEach(prefix => {
             const text = document.getElementById(`${prefix}-text`);
             const translation = document.getElementById(`${prefix}-translation`);
-            if (text) text.textContent = state.currentSentenceExample.en;
+            if (text) text.innerHTML = renderStoryTokens(state.currentSentenceExample.en);
             if (translation) translation.textContent = state.currentSentenceExample.zh;
         });
     }
@@ -2556,7 +2661,7 @@
         ['sentence-example','sentence-inline-example'].forEach(prefix => {
             const text = document.getElementById(`${prefix}-text`);
             const translation = document.getElementById(`${prefix}-translation`);
-            if (text) text.textContent = state.currentSentenceExample.en;
+            if (text) text.innerHTML = renderStoryTokens(state.currentSentenceExample.en);
             if (translation) translation.textContent = state.currentSentenceExample.zh;
         });
     }
