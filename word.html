@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1478 - 造句文法檢查 Worker 版</title>
+    <title>Word Hero V1482 - 兒童造句人因與字體優化版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -147,7 +147,7 @@
         .sentence-example-text{font-size:1.12rem;line-height:1.55;color:#e0f2fe;font-weight:700;min-height:28px}
         .sentence-example-actions{display:flex;gap:7px;margin-top:8px}
         .sentence-example-actions button,.sentence-own-play button{border:1px solid #475569;border-radius:8px;background:#263b59;color:#fff;padding:7px 10px;font-weight:700;cursor:pointer}
-        .sentence-own-play{margin-top:8px;text-align:center}
+        .sentence-own-play{margin-top:8px;text-align:left}
         .sentence-unit-pass { background:#475569; color:#fff; border:0; border-radius:10px; font-weight:1000; font-size:1rem; cursor:pointer; }
         .sentence-unit-progress { text-align:center; color:#94a3b8; font-size:.78rem; margin-top:8px; }
         /* V1448：文法說明後固定提供下一題 */
@@ -562,9 +562,17 @@
                 <input id="sentence-auto-period" type="checkbox">
                 <span>自動補句點「.」</span>
             </label>
-            <textarea id="sentence-unit-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子" oninput="capitalizeSentenceInput(this)" onblur="maybeAutoPunctuateSentence(this)"></textarea>
+            <textarea id="sentence-unit-input" spellcheck="true" autocapitalize="sentences" placeholder="用這個單字，寫一句自己的英文句子…" oninput="capitalizeSentenceInput(this)" onblur="maybeAutoPunctuateSentence(this)"></textarea>
+            <div class="sentence-own-play" style="text-align:left;margin:8px 0 12px;">
+                <button type="button" onclick="playChildSentence()">🔊 聽聽我的句子</button>
+            </div>
+            <div class="sentence-unit-actions">
+                <button type="button" class="sentence-check-btn" onclick="checkStandaloneSentenceGrammar()">🔎 檢查文法</button>
+                <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
+            </div>
+            <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
             <div id="sentence-example-box" class="sentence-example-box" hidden>
-                <div class="sentence-example-label">🌟 你完成自己的句子了！來看看其他說法</div>
+                <div class="sentence-example-label">🌟 完成自己的句子！來聽聽其他說法</div>
                 <div id="sentence-example-text" class="sentence-example-text"></div>
                 <div id="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
                 <div class="sentence-example-actions">
@@ -573,14 +581,6 @@
                     <button type="button" onclick="nextSentenceExample()" aria-label="下一個例句">下一個 →</button>
                 </div>
             </div>
-            <div class="sentence-unit-actions">
-                <button type="button" class="sentence-check-btn" onclick="checkStandaloneSentenceGrammar()">🔎 檢查文法</button>
-                <button type="button" class="sentence-unit-pass" onclick="sentenceUnitPass()">PASS</button>
-            </div>
-            <div class="sentence-own-play">
-                <button type="button" onclick="playChildSentence()">🔊 播放我的造句</button>
-            </div>
-            <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
             <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
         </div>
@@ -608,7 +608,8 @@
             <div id="sentence-inline" class="sentence-inline">
                 <div class="sentence-inline-title">✍️ 用這個單字造句</div>
                 <div id="sentence-inline-word" class="sentence-inline-word"></div>
-                <textarea id="sentence-inline-input" spellcheck="true" autocapitalize="sentences" placeholder="請用上面的單字寫一句英文句子"></textarea>
+                <textarea id="sentence-inline-input" spellcheck="true" autocapitalize="sentences" placeholder="用這個單字，寫一句自己的英文句子…"></textarea>
+                <div class="sentence-own-play sentence-inline-play"><button type="button" onclick="playInlineChildSentence()">🔊 聽聽我的句子</button></div>
                 <div class="sentence-inline-actions">
                     <button type="button" class="sentence-check-btn" onclick="checkSentenceGrammar()">🔎 檢查文法</button>
                     <button type="button" class="pass-btn-inline" onclick="handlePass()">PASS</button>
@@ -1181,7 +1182,39 @@
         }).join('');
         return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero 完整學習 Log</title><style>
         *{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.6 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1000px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0 0 4px}.muted{color:#667085}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.stat{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:12px 16px;min-width:130px}.stat strong{display:block;font-size:24px}input{width:100%;font:inherit;padding:14px;border:2px solid #9aa8bd;border-radius:10px;background:white;margin:8px 0 16px}.log{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #18233a0b}.log header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#667085;font-size:14px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}h2{font-size:20px;margin:8px 0 0;overflow-wrap:anywhere}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.empty{padding:28px;text-align:center;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}}
-        </style><body><main class="wrap"><h1>Word Hero｜完整學習 Log</h1><div class="muted">使用者：${esc(getChildName())}　｜　匯出：${esc(new Date().toLocaleString())}</div><section class="stats"><div class="stat"><strong>${logs.length}</strong>學習紀錄</div><div class="stat"><strong>${errors.length}</strong>舊版錯題紀錄</div><div class="stat"><strong>${all.length}</strong>合計</div></section><label for="q">搜尋單字、句子、結果或欄位內容</label><input id="q" type="search" placeholder="輸入關鍵字即時篩選…"><div id="count" class="muted">顯示 ${all.length} 筆</div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const q=document.getElementById('q'),cards=[...document.querySelectorAll('.log')],count=document.getElementById('count');q.addEventListener('input',()=>{let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=c.dataset.search.includes(term);c.hidden=!show;if(show)n++});count.textContent='顯示 '+n+' / '+cards.length+' 筆'});<\\/script></body></html>`;
+        
+        /* V1482：兒童人因優化—閱讀字級、觸控尺寸、層級與窄螢幕重排 */
+        .sentence-unit-card { width:min(100%,600px); padding:clamp(14px,3.5vw,20px); gap:12px; }
+        .sentence-unit-cn, .sentence-inline-title { font-size:1.125rem; line-height:1.45; }
+        .sentence-unit-word { font-size:clamp(2rem,7vw,2.5rem); line-height:1.2; margin:6px 0 14px; letter-spacing:.01em; overflow-wrap:anywhere; }
+        #sentence-unit-input, #sentence-inline-input { min-height:124px; padding:14px; font-size:1.2rem; line-height:1.65; letter-spacing:.01em; border:2px solid #64748b; border-radius:12px; }
+        #sentence-unit-input::placeholder, #sentence-inline-input::placeholder { color:#94a3b8; opacity:1; font-size:1rem; }
+        .sentence-auto-puncture { display:flex; align-items:center; gap:10px; min-height:44px; font-size:1rem; }
+        .sentence-auto-puncture input { width:22px; height:22px; accent-color:#38bdf8; }
+        .sentence-own-play { margin:8px 0 12px !important; }
+        .sentence-own-play button, .sentence-example-actions button { min-height:48px; padding:10px 14px; font-size:1rem; border-radius:11px; }
+        .sentence-inline-play { display:flex; justify-content:flex-start; }
+        .sentence-inline-play button { width:100%; }
+        .sentence-unit-actions, .sentence-inline-actions { grid-template-columns:minmax(0,1fr) minmax(88px,112px); gap:10px; margin-top:10px; }
+        .sentence-check-btn, .sentence-unit-pass, .pass-btn-inline { min-height:52px; font-size:1.1rem; border-radius:12px; }
+        .sentence-example-box { margin-top:14px; padding:16px; border-radius:14px; }
+        .sentence-example-label { font-size:1rem; line-height:1.5; }
+        .sentence-example-text { font-size:1.25rem; line-height:1.6; min-height:0; overflow-wrap:anywhere; }
+        .sentence-example-translation, #sentence-example-translation, #sentence-inline-example-translation { font-size:1.05rem !important; line-height:1.6; }
+        .sentence-example-actions { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:8px; }
+        .sentence-example-actions button { min-width:0; white-space:normal; }
+        .sentence-unit-progress { font-size:.95rem; line-height:1.5; }
+        .sentence-unit-back { min-height:48px; font-size:1rem; }
+        button:focus-visible, textarea:focus-visible, input:focus-visible { outline:3px solid #fbbf24 !important; outline-offset:3px; }
+        @media (max-width:380px) {
+          .sentence-unit-card { padding:12px; }
+          .sentence-unit-actions, .sentence-inline-actions { grid-template-columns:minmax(0,1fr) 82px; gap:7px; }
+          .sentence-example-actions { grid-template-columns:1fr 1fr; }
+          .sentence-example-actions button:nth-child(2) { grid-column:1 / -1; grid-row:1; }
+          .sentence-example-text { font-size:1.12rem; }
+        }
+        @media (prefers-reduced-motion: reduce) { .sentence-unit-card *, .sentence-inline * { animation:none !important; transition:none !important; } }
+</style><body><main class="wrap"><h1>Word Hero｜完整學習 Log</h1><div class="muted">使用者：${esc(getChildName())}　｜　匯出：${esc(new Date().toLocaleString())}</div><section class="stats"><div class="stat"><strong>${logs.length}</strong>學習紀錄</div><div class="stat"><strong>${errors.length}</strong>舊版錯題紀錄</div><div class="stat"><strong>${all.length}</strong>合計</div></section><label for="q">搜尋單字、句子、結果或欄位內容</label><input id="q" type="search" placeholder="輸入關鍵字即時篩選…"><div id="count" class="muted">顯示 ${all.length} 筆</div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const q=document.getElementById('q'),cards=[...document.querySelectorAll('.log')],count=document.getElementById('count');q.addEventListener('input',()=>{let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=c.dataset.search.includes(term);c.hidden=!show;if(show)n++});count.textContent='顯示 '+n+' / '+cards.length+' 筆'});<\\/script></body></html>`;
     }
     function previewLearningLogHTML() {
         const logs = getLearningLog(), errors = getErrorLog();
@@ -2546,6 +2579,13 @@
         const input = document.getElementById('sentence-unit-input');
         const text = String(input && input.value || '').trim();
         if (!text) { alert('請先輸入一句英文，再按播放。'); return; }
+        speakEnglish(text, {userGesture:true, rate:0.78});
+    }
+
+    function playInlineChildSentence() {
+        const input = document.getElementById('sentence-inline-input');
+        const text = String(input && input.value || '').trim();
+        if (!text) { alert('先寫一句英文，再來聽聽看喔！'); return; }
         speakEnglish(text, {userGesture:true, rate:0.78});
     }
 
