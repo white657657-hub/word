@@ -510,8 +510,10 @@
     
 
         /* V1509：將發音控制放在對應文字旁，使用圖示按鈕節省畫面 */
-        .word-help-title-row{gap:8px}
-        .word-help-speak-inline,.sentence-speak-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:42px;min-height:42px;padding:4px;border:1px solid #45617f;border-radius:12px;background:#1b2d49;color:#f8fafc;font-size:1.25rem;cursor:pointer;touch-action:manipulation}
+        /* V1511：單字與喇叭固定同列，避免喇叭掉到單字下方 */
+        .word-help-title-row{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;width:max-content;max-width:100%;margin:2px auto 4px}
+        .word-help-title-row .word-help-word{display:block;flex:0 1 auto;width:auto;min-width:0;margin:0;text-align:center;white-space:nowrap}
+        .word-help-speak-inline,.sentence-speak-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:36px;min-height:36px;width:36px;height:36px;padding:2px;border:0;border-radius:8px;background:transparent;color:#f8fafc;font-size:1.2rem;cursor:pointer;touch-action:manipulation}
         .word-help-speak-inline:active,.sentence-speak-icon:active{transform:scale(.95)}
         .practice-context-line,.sentence-example-line{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
         .practice-context-line .practice-context-sentence,.sentence-example-line .sentence-example-text{flex:1;min-width:0}
