@@ -172,8 +172,8 @@
         .word-help-word{font-size:2rem;font-weight:900;color:#7dd3fc;overflow-wrap:anywhere}
         .word-help-meaning{font-size:1.2rem;line-height:1.6;margin:10px 0}
         .word-help-note{font-size:1rem;line-height:1.6;color:#cbd5e1;background:#25364f;border-radius:10px;padding:10px}
-        .word-help-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
-        .word-help-actions button{min-height:48px;border-radius:11px;font-size:1rem;font-weight:800}
+        .word-help-actions{display:flex;justify-content:center;align-items:center;gap:0;margin:14px auto 0;width:100%}
+        .word-help-actions button{width:min(100%,230px);min-height:50px;border-radius:12px;font-size:1rem;font-weight:850;display:block;margin:0 auto;text-align:center}
 
 
 
@@ -2982,6 +2982,18 @@ const storyWordGloss = {
             inp.onkeydown = (e) => {
                 const idx = parseInt(e.target.dataset.idx, 10);
 
+                // 允許孩子用鍵盤左右方向鍵在字母格間移動，方便回頭修改錯字。
+                if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+                    e.preventDefault();
+                    const step = e.key === "ArrowLeft" ? -1 : 1;
+                    const target = document.querySelector(`.letter-box[data-idx="${idx + step}"]`);
+                    if (target) {
+                        target.focus();
+                        target.select();
+                    }
+                    return;
+                }
+
                 if (e.key === "Backspace") {
                     // 目前這格有字：先清掉目前這格，再停留。
                     if (e.target.value !== "") {
@@ -3008,20 +3020,35 @@ const storyWordGloss = {
                 const chars = Array.from(String(e.target.value || ""));
                 e.target.value = chars.length ? chars[chars.length - 1] : "";
 
+                const boxes = [...document.querySelectorAll('.letter-box')];
+                const complete = boxes.length > 0 && boxes.every(b => b.value.length === 1);
+                const typed = boxes.map(b => b.value).join('').replace(/[\s\/-]/g, '').toLowerCase();
+                const expected = String(state.currentList[state.index]?.en || '').replace(/[\s\/-]/g, '').toLowerCase();
+
+                // 自動跳格；但不要求孩子移到最後一格才能重新判定。
                 if (e.target.value.length === 1) {
                     const next = document.querySelector(
                         `.letter-box[data-idx="${parseInt(e.target.dataset.idx, 10) + 1}"]`
                     );
-
                     if (next) {
                         next.focus();
                         next.select();
-                    } else {
-                        // 最後一格輸入完成後自動送出答案
-                        const boxes = [...document.querySelectorAll('.letter-box')];
-                        if (boxes.length && boxes.every(b => b.value.length === 1)) {
-                            setTimeout(checkFinalAnswer, 150);
-                        }
+                    }
+                }
+
+                // 所有格子已填滿時，每次修改都重新比對；修正紅框後正確即自動送出。
+                if (complete && typed === expected) {
+                    if (!area.dataset.answerCheckPending) {
+                        area.dataset.answerCheckPending = '1';
+                        setTimeout(() => {
+                            delete area.dataset.answerCheckPending;
+                            const latestBoxes = [...document.querySelectorAll('.letter-box')];
+                            const latestTyped = latestBoxes.map(b => b.value).join('').replace(/[\s\/-]/g, '').toLowerCase();
+                            const latestExpected = String(state.currentList[state.index]?.en || '').replace(/[\s\/-]/g, '').toLowerCase();
+                            if (latestBoxes.length && latestBoxes.every(b => b.value.length === 1) && latestTyped === latestExpected) {
+                                checkFinalAnswer();
+                            }
+                        }, 90);
                     }
                 }
             };
@@ -3467,10 +3494,6 @@ const storyWordGloss = {
         const key = String(text || '').toLowerCase();
         const data = PHONICS_HINTS[key];
         if (!data) return;
-        const label = document.createElement('div');
-        label.className = 'practice-phonics-note';
-        label.textContent = '字母／字母群提示（點「🔊 聽整個單字」聽完整發音）';
-        el.appendChild(label);
         const row = document.createElement('div');
         row.className = 'practice-phonics-row';
         data.parts.forEach(item => {
@@ -3503,11 +3526,6 @@ const storyWordGloss = {
         if (!el) return;
         el.innerHTML = '';
         if (!text) return;
-
-        const note = document.createElement('div');
-        note.className = 'practice-phonics-note';
-        note.textContent = '先看音節與字母群提示；🔊 聽完整單字。音節分色是輔助，不等於每段都能獨立拼讀。';
-        el.appendChild(note);
 
         const parts = fallbackSyllables(text);
         let syllableIndex = 0;
