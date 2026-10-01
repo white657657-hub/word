@@ -898,19 +898,14 @@
 
 <script>
     const ANSON_USER = 'anson';
-    // 個人 TXT 與本 HTML 放在同一個 /word/ 目錄。
-    // 例如 /word/word.html + /word/Vicky.txt -> ./Vicky.txt
-    const USER_TXT_FILE_NAMES = { anson: 'Anson', vicky: 'Vicky' };
+    // GitHub Pages 題庫依目前使用者讀取：Vicky.txt 或 Anson.txt，與 HTML 放在同一目錄。
     function getUserTxtFileStem() {
-        const raw = String(getChildName() || '').trim();
-        const key = raw.toLowerCase();
-        if (USER_TXT_FILE_NAMES[key]) return USER_TXT_FILE_NAMES[key];
-        const safe = safeFileName(raw);
-        return safe.charAt(0).toUpperCase() + safe.slice(1);
+        const name = String((typeof getChildName === 'function' ? getChildName() : '') || localStorage.getItem('wordhero_active_user') || 'Anson').trim();
+        if (/^vicky$/i.test(name)) return 'Vicky';
+        if (/^anson$/i.test(name)) return 'Anson';
+        return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Anson';
     }
-    function getUserTxtUrl() {
-        return `./${encodeURIComponent(getUserTxtFileStem())}.txt`;
-    }
+    function getUserTxtUrl() { return `./${encodeURIComponent(getUserTxtFileStem())}.txt`; }
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
     // 寶可夢名稱安全查詢：任何畫面都優先走這裡，避免顯示 No.XX。
     const PK_NAME_ALIASES = {
@@ -970,7 +965,7 @@
     let currentUserName = '';
     let currentUserKey = '';
     let isAnsonUser = false;
-    let bankSourceMode = 'custom'; // text = 文字題庫；custom = 自行變更題庫
+    let bankSourceMode = 'text'; // 預設依目前使用者讀取 GitHub Pages 同目錄的 Vicky.txt／Anson.txt
 
     function normalizeUserKey(name) {
         return encodeURIComponent(String(name || '').trim().toLowerCase());
@@ -1129,7 +1124,7 @@
         localStorage.setItem('wordhero_active_user', name);
         const key = normalizeUserKey(name);
         localStorage.setItem(`wordhero_${key}_hero_bank_source_mode`, 'text');
-        alert(`已新增使用者「${name}」。接下來會讀取 ./${safeFileName(name)}.txt。請確認該 TXT 已放在與 word.html 相同的 /word/ 目錄。`);
+        alert(`已新增使用者「${name}」。文字題庫依使用者讀取同目錄的 ${getUserTxtFileStem()}.txt；個人學習進度仍分開保存。`);
         location.reload();
     }
 
@@ -1435,7 +1430,7 @@
 
     async function loadUserTxtQuestionBank() {
         const fileName = `${getUserTxtFileStem()}.txt`;
-        const url = new URL(`./${encodeURIComponent(fileName)}`, document.baseURI).href;
+        const url = new URL(getUserTxtUrl(), document.baseURI).href;
         window.__wordHeroTxtLoadInfo = { ok: false, url, status: null, count: 0 };
         try {
             const response = await fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`, { cache: 'no-store' });
@@ -1494,15 +1489,875 @@
         if (bankSourceMode === 'custom') saveUserQuestionBank();
     }
 
+    function loadLocalQuestionBank() {
+        const saved = getLocalJSON('hero_question_bank', {});
+        state.banks = saved && typeof saved === 'object' && !Array.isArray(saved) ? cloneBanks(saved) : {};
+    }
+
+    async function useTextQuestionBank() {
+        bankSourceMode = 'text';
+        setHeroData('hero_bank_source_mode', 'text');
+        const loaded = await loadUserTxtQuestionBank();
+        normalizeCurrentBank();
+        refreshUnitSelectors();
+        if (typeof updateBankSourceUI === 'function') updateBankSourceUI();
+        renderBankManager();
+        if (!loaded) alert(`無法載入目前使用者的題庫：${getUserTxtUrl()}\n請確認 GitHub Pages 的 /word/ 目錄中有 ${getUserTxtFileStem()}.txt，且檔案格式包含 [W1] 單元標題及英文、中文資料。`);
+    }
+
+
+
+    // V1518：依使用者名稱讀取各自 GitHub TXT 題庫；保留題庫管理及編輯函式（避免上一版缺少宣告造成按鈕失效）。
+    function escapeHtml(v) {
+        return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+
+    function cloneBanks(banks) {
+        return JSON.parse(JSON.stringify(banks || {}));
+    }
+
+    function getFixedBanks() {
+        return {
+            'W1': [
+                ['dinosaur','恐龍'],
+                ['million','百萬'],
+                ['street','街道'],
+                ['Earth','地球'],
+                ['dance','跳舞'],
+                ['cloud','雲'],
+                ['lake','湖'],
+                ['near','附近'],
+                ['valley','山谷'],
+                ['yesterday','昨天']
+            ],
+            'W2': [
+                ['camp','營地'],
+                ['map','地圖'],
+                ['eighty','八十'],
+                ['fifty','五十'],
+                ['forty','四十'],
+                ['star','星星'],
+                ['seventy','七十'],
+                ['sixty','六十'],
+                ['thirty','三十'],
+                ['twenty','二十']
+            ],
+            'W3': [
+                ['hundred','一百'],
+                ['ninety','九十'],
+                ['east','東方'],
+                ['north','北方'],
+                ['south','南方'],
+                ['west','西方'],
+                ['far','遠的'],
+                ['picnic table','野餐桌'],
+                ['parking lot','停車場'],
+                ['lizard','蜥蜴']
+            ],
+            'W4': [
+                ['castle','城堡'],
+                ['gold','黃金'],
+                ['golden','金色的'],
+                ['today','今天'],
+                ['American','美國的'],
+                ['Australia','澳洲'],
+                ['Australian','澳洲的'],
+                ['China','中國'],
+                ['country','國家'],
+                ['Egypt','埃及'],
+                ['flag','國旗']
+            ]
+        };
+    }
+
+    function banksFromPairs(pairs) {
+        const banks = {};
+        Object.keys(pairs).forEach(unit => {
+            banks[unit] = pairs[unit].map((item, idx) => ({
+                en: item[0],
+                cn: item[1],
+                ref: `FIXED_${unit}_${idx + 1}`
+            }));
+        });
+        return banks;
+    }
+
+    function setBankSourceMode(mode) {
+        bankSourceMode = mode === 'text' ? 'text' : 'custom';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        updateBankSourceUI();
+    }
+
+    function updateBankSourceUI() {
+        const textBtn = document.getElementById('bank-source-text');
+        const customBtn = document.getElementById('bank-source-custom');
+        const note = document.getElementById('bank-source-note');
+        if (textBtn) textBtn.classList.toggle('active', bankSourceMode === 'text');
+        if (customBtn) customBtn.classList.toggle('active', bankSourceMode === 'custom');
+        if (!note) return;
+        if (bankSourceMode === 'text') {
+            note.innerHTML = `目前使用：<b>${escapeHtml(getUserTxtUrl())}</b>。題庫依使用者分開讀取；學習進度與自訂修改也依使用者分開保存。`;
+        } else {
+            note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除只影響這位使用者。`;
+        }
+    }
+
+    function handleTxtFile(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const parsed = parseAnsonTxt(String(reader.result || ''));
+                if (!Object.keys(parsed).length || !Object.values(parsed).some(arr => arr.length)) {
+                    alert('TXT 裡沒有讀到單字。\n\n格式請使用：\n[W1]\ndinosaur,恐龍\nmillion,百萬');
+                    return;
+                }
+                setLocalJSON('hero_text_bank', parsed);
+                state.banks = cloneBanks(parsed);
+                bankSourceMode = 'text';
+                setHeroData('hero_bank_source_mode', bankSourceMode);
+                refreshUnitSelectors();
+                updateBankSourceUI();
+                renderBankManager();
+                alert(`📄 已載入「${file.name}」文字題庫。\n\n這個 TXT 會保存在「${getChildName()}」的本機資料，不會影響其他使用者。`);
+            } catch (e) {
+                alert('TXT 讀取失敗，請確認檔案格式。');
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    function applyLocalQuestionChanges() {
+        const units = getLocalJSON('hero_custom_units', []);
+        const custom = getLocalJSON('hero_custom_questions', []);
+        const edits = getLocalJSON('hero_question_edits', {});
+        const deleted = new Set(getLocalJSON('hero_deleted_question_refs', []));
+        const nextBanks = {};
+
+        units.forEach(u => { nextBanks[u] = nextBanks[u] || []; });
+
+        Object.keys(state.banks).forEach(sourceUnit => {
+            (state.banks[sourceUnit] || []).forEach(w => {
+                if (deleted.has(w.ref)) return;
+                const merged = edits[w.ref] ? {...w, ...edits[w.ref]} : {...w};
+                const targetUnit = String(merged.unit || sourceUnit).trim() || sourceUnit;
+                delete merged.unit;
+                if (!nextBanks[targetUnit]) nextBanks[targetUnit] = [];
+                if (!nextBanks[targetUnit].some(x => x.ref === merged.ref)) nextBanks[targetUnit].push(merged);
+            });
+        });
+
+        custom.forEach(w => {
+            if (deleted.has(w.ref)) return;
+            const targetUnit = String(w.unit || 'W1').trim();
+            if (!nextBanks[targetUnit]) nextBanks[targetUnit] = [];
+            if (!nextBanks[targetUnit].some(x => x.ref === w.ref)) {
+                nextBanks[targetUnit].push({en:w.en, cn:w.cn || '', ref:w.ref});
+            }
+        });
+
+        state.banks = nextBanks;
+    }
+
+    function refreshUnitSelectors() {
+        const units = Object.keys(state.banks).sort();
+        ['unit-selector','bank-manage-unit','question-unit'].forEach(id => {
+            const el = document.getElementById(id); if (!el) return;
+            const old = el.value;
+            el.innerHTML = units.map(u => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+            if (units.includes(old)) el.value = old;
+        });
+    }
+
+    function renderTwentyBankInputs() {
+        const grid = document.getElementById('twenty-bank-grid');
+        if (!grid) return;
+        const unit = document.getElementById('bank-manage-unit')?.value || '';
+        const existing = unit && state.banks[unit] ? state.banks[unit] : [];
+        grid.innerHTML = Array.from({length:20}, (_, i) => {
+            return `<div class="twenty-bank-row">
+                <div class="twenty-bank-no">${i+1}</div>
+                <div style="display:flex;gap:5px;min-width:0;align-items:center;">
+                    <input id="tw-en-${i}" class="twenty-bank-input en" autocomplete="off" autocapitalize="none" spellcheck="false" value="" placeholder="英文單字" oninput="handleTwentyEnglishInput(${i})" onkeydown="handleTwentyEnglishKeydown(event,${i})" onblur="autoFillTwentyRow(${i})">
+                    <button type="button" class="twenty-bank-speak" title="播放發音" onclick="playBankWord(document.getElementById('tw-en-${i}')?.value || '')">🔊</button>
+                </div>
+                <input id="tw-cn-${i}" class="twenty-bank-input cn" autocomplete="off" value="" placeholder="自動取得中文（可修改）">
+            </div>`;
+        }).join('');
+        updateTwentyBankCount();
+    }
+
+    function updateTwentyBankCount() {
+        const count = [...document.querySelectorAll('#twenty-bank-grid .twenty-bank-input.en')].filter(el => el.value.trim()).length;
+        const el = document.getElementById('bank-entry-count');
+        if (el) el.textContent = `${count} / 20`;
+    }
+
+    function handleTwentyEnglishInput(index) {
+        updateTwentyBankCount();
+        const input = document.getElementById(`tw-en-${index}`);
+        const cn = document.getElementById(`tw-cn-${index}`);
+        if (input && !input.value.trim() && cn) cn.value = '';
+        // 使用者開始改字時，清除舊中文，避免顯示上一個單字的翻譯。
+        if (input && input.dataset.lastValue && input.value.trim().toLowerCase() !== input.dataset.lastValue.toLowerCase() && cn) cn.value = '';
+    }
+
+    function handleTwentyEnglishKeydown(event, index) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            autoFillTwentyRow(index, true);
+        }
+    }
+
+    async function autoFillTwentyRow(index, moveNext = false) {
+        const enEl = document.getElementById(`tw-en-${index}`);
+        const cnEl = document.getElementById(`tw-cn-${index}`);
+        if (!enEl || !cnEl) return;
+        const word = String(enEl.value || '').trim();
+        if (!word) {
+            cnEl.value = '';
+            if (moveNext) {
+                const next = document.getElementById(`tw-en-${index + 1}`);
+                if (next) { next.focus(); next.select(); }
+            }
+            return;
+        }
+        enEl.dataset.lastValue = word;
+        // 按 Enter 時先立刻跳到下一個英文格，不讓孩子等網路翻譯。
+        if (moveNext) {
+            const next = document.getElementById(`tw-en-${index + 1}`);
+            if (next) { next.focus(); next.select(); }
+        }
+        cnEl.value = '取得中…';
+        const info = await fetchWordInfo(word);
+        // 使用者在等待期間若改了英文，不要把舊結果寫回來。
+        if (String(enEl.value || '').trim() !== word) return;
+        cnEl.value = info.cn || '';
+        const status = document.getElementById('twenty-bank-status');
+        if (status) status.textContent = info.cn ? `✅ 第 ${index+1} 格：已取得「${info.cn}」` : `ℹ️ 第 ${index+1} 格：沒有取得中文，可以先留白，儲存後再編輯。`;
+    }
+
+    async function saveTwentyBankWords() {
+        if (bankSourceMode !== 'custom') {
+            alert('目前是「文字題庫」模式。請先切換到「✏️ 自行變更題庫」。');
+            return;
+        }
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        if (!unit || !state.banks[unit]) { alert('請先選擇要加入的單元。'); return; }
+        const rows = Array.from({length:20}, (_, i) => {
+            const en = document.getElementById(`tw-en-${i}`)?.value.trim() || '';
+            const cn = document.getElementById(`tw-cn-${i}`)?.value.trim() || '';
+            return {en, cn, i};
+        }).filter(x => x.en);
+        if (!rows.length) { alert('請至少輸入 1 個英文單字。'); return; }
+
+        const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
+        const seen = new Set();
+        const toAdd = [];
+        const skipped = [];
+        rows.forEach(row => {
+            const key = row.en.toLowerCase();
+            if (existing.has(key) || seen.has(key)) skipped.push(row.en);
+            else { seen.add(key); toAdd.push(row); }
+        });
+        if (!toAdd.length) { alert('這 20 格裡的單字都已經在題庫中，沒有新增。'); return; }
+
+        // 儲存前補一次中文，讓只輸入英文也能正常建立題目。
+        const status = document.getElementById('twenty-bank-status');
+        if (status) status.textContent = `⏳ 正在補齊 ${toAdd.length} 個單字的中文……`;
+        for (const row of toAdd) {
+            if (!row.cn) {
+                const info = await fetchWordInfo(row.en);
+                row.cn = info.cn || '';
+            }
+        }
+
+        const custom = getLocalJSON('hero_custom_questions', []);
+        toAdd.forEach(row => {
+            const ref = `LOCAL_20_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+            state.banks[unit].push({en:row.en, cn:row.cn, ref});
+            custom.push({unit, en:row.en, cn:row.cn, ref});
+        });
+        setLocalJSON('hero_custom_questions', custom);
+        saveUserQuestionBank();
+
+        const skippedText = skipped.length ? `
+已跳過重複：${skipped.join('、')}` : '';
+        alert(`✅ 已加入 ${unit} 題庫 ${toAdd.length} 個單字。${skippedText}`);
+        renderTwentyBankInputs();
+        renderBankManagerList();
+        const status2 = document.getElementById('twenty-bank-status');
+        if (status2) status2.textContent = `已儲存 ${toAdd.length} 個單字。可以繼續輸入下一批。`;
+    }
+
+    function clearTwentyBankInputs() {
+        for (let i=0;i<20;i++) {
+            const en=document.getElementById(`tw-en-${i}`);
+            const cn=document.getElementById(`tw-cn-${i}`);
+            if(en) { en.value=''; en.dataset.lastValue=''; }
+            if(cn) cn.value='';
+        }
+        updateTwentyBankCount();
+        const status=document.getElementById('twenty-bank-status');
+        if(status) status.textContent='已清除這 20 格。';
+        const first=document.getElementById('tw-en-0');
+        if(first) first.focus();
+    }
+
+    function renderBankManagerList() {
+        const unit = document.getElementById('bank-manage-unit')?.value;
+        const list = document.getElementById('bank-list'); if (!list) return;
+        const key = (document.getElementById('bank-search')?.value || '').trim().toLowerCase();
+        const words = (state.banks[unit] || []).filter(w => !key || w.en.toLowerCase().includes(key) || (w.cn||'').toLowerCase().includes(key));
+        if (!words.length) {
+            list.innerHTML = '<div style="text-align:center;color:#64748b;padding:30px 10px;">目前沒有符合條件的題目。</div>';
+            return;
+        }
+        list.innerHTML = words.map(w => `<div class="bank-row"><div class="bank-row-main"><div style="min-width:0;"><div class="bank-word">${escapeHtml(w.en)}</div><div class="bank-cn">${escapeHtml(w.cn||'')}</div><div class="bank-ref">${escapeHtml(w.ref)}</div></div><div class="bank-action"><button class="bank-edit" onclick="openQuestionEditor('${encodeURIComponent(w.ref)}')">編輯</button><button class="bank-delete" onclick="deleteQuestion('${encodeURIComponent(w.ref)}')">刪除</button></div></div></div>`).join('');
+    }
+
+    let bulkValidatedWords = [];
+    let bulkValidatedDetails = [];
+    let bulkValidationPassed = false;
+
+    function updateBulkSubmitState() {
+        const btn = document.getElementById('bulk-submit');
+        const cb = document.getElementById('bulk-confirm');
+        const ok = bulkValidationPassed && cb && cb.checked && bulkValidatedWords.length > 0;
+        if (!btn) return;
+        btn.disabled = !ok;
+        btn.style.opacity = ok ? '1' : '.55';
+        btn.style.background = ok ? '#16a34a' : '#334155';
+    }
+
+    async function fetchWordInfo(word) {
+        const clean = String(word || '').trim();
+        if (!clean) return { en: '', cn: '', audio: '' };
+        let cn = localDict[clean.toLowerCase()] || '';
+        if (!cn) cn = await fetchTranslation(clean);
+        let audio = '';
+        // 優先取得字典提供的真人／標準英文發音音檔；失敗時由瀏覽器 TTS 播放。
+        try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 3500);
+            const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(clean)}`, {
+                cache: 'no-store', signal: controller.signal
+            });
+            clearTimeout(timer);
+            if (r.ok) {
+                const data = await r.json();
+                const phonetics = Array.isArray(data) ? data.flatMap(x => Array.isArray(x.phonetics) ? x.phonetics : []) : [];
+                const hit = phonetics.find(x => x && x.audio) || phonetics.find(x => x && x.text);
+                if (hit && hit.audio) audio = hit.audio;
+            }
+        } catch (e) {}
+        return { en: clean, cn: cn || '', audio };
+    }
+
+    function playBankWord(word, audioUrl='') {
+        const text = String(word || '').trim();
+        if (!text) return;
+        if (audioUrl) {
+            try {
+                const audio = new Audio(audioUrl);
+                audio.play().catch(() => speakEnglish(text, {userGesture:true, rate:0.72}));
+                return;
+            } catch (e) {}
+        }
+        speakEnglish(text, {userGesture:true, rate:0.72});
+    }
+
+    function renderBulkWordInfo(details, notFound=[], unavailable=[]) {
+        const result = document.getElementById('bulk-check-result');
+        if (!result) return;
+        let html = '<div style="color:#4ade80;font-weight:900;font-size:1rem;margin-bottom:6px;">✅ 單字已檢查，並自動取得中文與發音</div>';
+        if (details.length) {
+            html += '<div style="display:flex;flex-direction:column;gap:6px;margin-top:7px;">';
+            details.forEach((d, i) => {
+                html += `<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:7px 8px;background:#111827;border:1px solid #334155;border-radius:9px;">` +
+                    `<span style="font-weight:900;color:#f8fafc;min-width:120px;">${escapeHtml(d.en)}</span>` +
+                    `<span style="color:#fbbf24;">${escapeHtml(d.cn || '尚未取得中文')}</span>` +
+                    `<button type="button" class="bank-edit" onclick="playBankWord(${JSON.stringify(d.en)}, ${JSON.stringify(d.audio || '')})">🔊 發音</button>` +
+                    `</div>`;
+            });
+            html += '</div>';
+        }
+        if (notFound.length) html += '<div style="margin-top:7px;color:#fbbf24;">⚠️ 線上字典沒有找到：' + notFound.map(escapeHtml).join('、') + '</div>';
+        if (unavailable.length) html += '<div style="margin-top:5px;color:#94a3b8;">ℹ️ 部分線上服務無法連線；中文可稍後再補，發音仍可用瀏覽器播放。</div>';
+        html += '<div style="margin-top:7px;color:#94a3b8;">中文與發音是自動輔助資料；儲存後仍可在「編輯」中修改中文。</div>';
+        result.innerHTML = html;
+        result.style.display = 'block';
+    }
+
+    async function autoFillQuestionTranslation() {
+        const enEl = document.getElementById('question-en');
+        const cnEl = document.getElementById('question-cn');
+        const hint = document.getElementById('question-auto-info');
+        const word = String(enEl?.value || '').trim();
+        if (!word || !cnEl) return;
+        if (hint) hint.textContent = '⏳ 正在取得中文……';
+        const info = await fetchWordInfo(word);
+        if (!cnEl.value.trim() && info.cn) cnEl.value = info.cn;
+        if (hint) hint.textContent = info.cn ? '✅ 已自動填入中文；按「🔊 發音」可聽單字。' : 'ℹ️ 暫時沒有取得中文，可手動輸入。';
+        return info;
+    }
+
+    async function validateBulkWords() {
+        if (bankSourceMode !== 'custom') {
+            alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+            return;
+        }
+
+        const box = document.getElementById('bulk-words');
+        const result = document.getElementById('bulk-check-result');
+        const wrap = document.getElementById('bulk-confirm-wrap');
+        const cb = document.getElementById('bulk-confirm');
+
+        bulkValidatedWords = [];
+        bulkValidatedDetails = [];
+        bulkValidationPassed = false;
+        if (cb) cb.checked = false;
+        if (wrap) wrap.style.display = 'none';
+        updateBulkSubmitState();
+
+        // 一行一個單字；保留 apostrophe、空白與連字號，支援 don't / picnic table / well-known。
+        const words = (box?.value || '')
+            .split(/\r?\n/)
+            .map(w => w.trim())
+            .filter(Boolean);
+
+        if (!words.length) {
+            if (result) {
+                result.style.display = 'block';
+                result.innerHTML = '<span style="color:#f87171;">請先貼上單字，一行一個。</span>';
+            }
+            return;
+        }
+
+        // 第一層：本機格式檢查。這是唯一會「阻止儲存」的拼字前置檢查。
+        // 不再把線上字典 API 當成絕對真相，避免 swim、專有名詞、複數、變化形或網路異常被誤判。
+        const invalidFormat = words.filter(w => !/^[A-Za-z][A-Za-z' -]*$/.test(w));
+        const normalized = words.map(w => w.toLowerCase());
+        const duplicates = normalized.filter((w, i) => normalized.indexOf(w) !== i);
+
+        if (invalidFormat.length) {
+            result.style.display = 'block';
+            result.innerHTML =
+                '<span style="color:#f87171;font-weight:800;">❌ 有些內容不是英文單字格式：</span><br>' +
+                invalidFormat.map(escapeHtml).join('<br>') +
+                '<br><span style="color:#94a3b8;">請只輸入英文字母；可使用 apostrophe、空格或連字號。</span>';
+            return;
+        }
+
+        const unique = [...new Map(words.map(w => [w.toLowerCase(), w])).values()];
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        const existing = new Set((state.banks[unit] || []).map(w => w.en.trim().toLowerCase()));
+        const newWords = unique.filter(w => !existing.has(w.toLowerCase()));
+        const repeated = unique.filter(w => existing.has(w.toLowerCase()));
+
+        // 第二層：線上字典僅作「參考提醒」，不再直接判定錯字。
+        // 這樣即使 Chrome 平板無法連線 dictionaryapi.dev，正常單字仍然可以加入題庫。
+        if (result) {
+            result.style.display = 'block';
+            result.innerHTML = '<span style="color:#fbbf24;">🔎 正在做輔助拼字檢查……</span>';
+        }
+
+        const dictionaryResults = await Promise.all(unique.map(async word => {
+            // 已經存在於題庫中的字，視為已確認過，不必再次依賴外部服務。
+            if (existing.has(word.toLowerCase())) return { word, status: 'known' };
+
+            const parts = word.split(/[\s-]+/).filter(Boolean);
+            const partResults = [];
+            for (const part of parts) {
+                try {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 3500);
+                    const r = await fetch(
+                        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(part)}`,
+                        { cache: 'no-store', signal: controller.signal }
+                    );
+                    clearTimeout(timer);
+                    partResults.push(r.ok ? 'found' : 'not-found');
+                } catch (e) {
+                    partResults.push('unavailable');
+                }
+            }
+
+            if (partResults.every(x => x === 'found')) return { word, status: 'found' };
+            if (partResults.some(x => x === 'unavailable')) return { word, status: 'unavailable' };
+            return { word, status: 'not-found' };
+        }));
+
+        const notFound = dictionaryResults.filter(x => x.status === 'not-found').map(x => x.word);
+        const unavailable = dictionaryResults.filter(x => x.status === 'unavailable').map(x => x.word);
+
+        // 新單字自動取得中文；發音優先抓音檔，沒有音檔時仍可用瀏覽器 TTS。
+        const details = [];
+        for (const word of newWords) {
+            details.push(await fetchWordInfo(word));
+        }
+        bulkValidatedDetails = details;
+        bulkValidatedWords = details.map(x => x.en);
+        // 通過本機格式檢查即可進入確認流程；外部服務只是輔助。
+        bulkValidationPassed = true;
+
+        renderBulkWordInfo(details, notFound, unavailable);
+        if (repeated.length) {
+            const resultEl = document.getElementById('bulk-check-result');
+            if (resultEl) resultEl.innerHTML += `<div style="margin-top:6px;color:#94a3b8;">已存在 ${repeated.length} 個，送出時會跳過。</div>`;
+        }
+        if (duplicates.length) {
+            const resultEl = document.getElementById('bulk-check-result');
+            if (resultEl) resultEl.innerHTML += `<div style="margin-top:4px;color:#94a3b8;">重複輸入 ${duplicates.length} 個，已自動合併。</div>`;
+        }
+
+        if (wrap) wrap.style.display = 'flex';
+        updateBulkSubmitState();
+    }
+
+    function clearBulkInput() {
+        const box = document.getElementById('bulk-words');
+        const cb = document.getElementById('bulk-confirm');
+        const wrap = document.getElementById('bulk-confirm-wrap');
+        const result = document.getElementById('bulk-check-result');
+        if (box) box.value = '';
+        if (cb) cb.checked = false;
+        if (wrap) wrap.style.display = 'none';
+        if (result) result.style.display = 'none';
+        bulkValidatedWords = [];
+        bulkValidatedDetails = [];
+        bulkValidationPassed = false;
+        updateBulkSubmitState();
+    }
+
+    function addBulkWords() {
+        const unit = document.getElementById('bank-manage-unit')?.value?.trim();
+        if (!unit || !state.banks[unit]) return alert('請先選擇要加入的單元。');
+        if (!bulkValidationPassed || !bulkValidatedWords.length) return alert('請先按「檢查單字」，確認拼字正確後才能送出。');
+
+        const details = [...bulkValidatedDetails];
+        const words = details.map(x => x.en);
+        details.forEach(d => {
+            state.banks[unit].push({
+                en: d.en,
+                cn: d.cn || '',
+                ref: `LOCAL_BULK_${Date.now()}_${Math.random().toString(36).slice(2,8)}`
+            });
+        });
+
+        const custom = getLocalJSON('hero_custom_questions', []);
+        details.forEach((d, i) => {
+            const ref = state.banks[unit][state.banks[unit].length - details.length + i].ref;
+            custom.push({unit, en:d.en, cn:d.cn || '', ref});
+        });
+        setLocalJSON('hero_custom_questions', custom);
+        saveUserQuestionBank();
+        clearBulkInput();
+        renderBankManager();
+        alert(`✅ 已加入 ${unit} 本機題庫 ${words.length} 個單字。\n\n這些單字只會存在「${getChildName()}」的題庫。`);
+    }
+
+    function addBankUnit() {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+        const input = prompt('請輸入新單元名稱，例如 Unit 10：'); if (!input) return;
+        const name = input.trim(); if (!name) return;
+        if (state.banks[name]) return alert('這個單元已經存在。');
+        state.banks[name] = [];
+        const units = getLocalJSON('hero_custom_units', []);
+        if (!units.includes(name)) { units.push(name); setLocalJSON('hero_custom_units', units); }
+        saveUserQuestionBank();
+        refreshUnitSelectors();
+        document.getElementById('bank-manage-unit').value = name;
+        renderBankManager();
+    }
+
+    let pastedBankRows = [];
+
+    function parsePastedBankText(raw) {
+        return String(raw||'').split(/\r?\n/).map((line,i)=>{
+            const t=line.trim(); if(!t) return null;
+            let parts=t.includes('\t')?t.split('\t'):t.split(/\s*,\s*/);
+            return {line:i+1,en:String(parts[0]||'').trim(),cn:String(parts.slice(1).join(' ').replace(/^\s+|\s+$/g,'')).trim(),flag:'待檢查'};
+        }).filter(Boolean);
+    }
+
+    async function checkPastedBankWords() {
+        const unit=document.getElementById('bank-manage-unit')?.value;
+        const status=document.getElementById('paste-bank-status'); const preview=document.getElementById('paste-bank-preview');
+        if(bankSourceMode!=='custom') { alert('請先切換「自行變更題庫」，再新增題目。'); return; }
+        if(!unit || !state.banks[unit]) { alert('請先選擇單元。'); return; }
+        const rows=parsePastedBankText(document.getElementById('bank-paste-input')?.value);
+        if(!rows.length){status.textContent='請先貼上單字。';return;}
+        if(rows.length>150){status.textContent='一次最多檢查 150 行，請分批貼上。';return;}
+        const seen=new Set(); const existing=new Set((state.banks[unit]||[]).map(w=>String(w.en||'').toLowerCase()));
+        for(let i=0;i<rows.length;i++){
+            const r=rows[i], k=r.en.toLowerCase();
+            if(!r.en){r.flag='英文空白';continue;}
+            if(existing.has(k)||seen.has(k)){r.flag='重複單字';} else {seen.add(k);}
+            if(!r.cn){status.textContent=`正在檢查 ${i+1}/${rows.length}：${r.en}`; const info=await fetchWordInfo(r.en); r.cn=info.cn||''; r.audio=info.audio||''; if(!r.cn && r.flag!=='重複單字')r.flag='中文未取得，請人工確認'; else if(r.flag==='待檢查')r.flag='已取得中文，請核對詞義';}
+            else if(r.flag==='待檢查') r.flag='已提供中文，請核對詞義';
+        }
+        pastedBankRows=rows; renderPastedBankPreview();
+        const flagged=rows.filter(r=>r.flag==='重複單字'||r.flag==='中文未取得，請人工確認'||r.flag==='英文空白').length;
+        status.textContent=`檢查完成：${rows.length} 筆；${flagged} 筆需注意。請逐筆核對英文拼字及中文意思，再按「確認並加入題庫」。自動翻譯僅供參考。`;
+    }
+
+    function renderPastedBankPreview(){
+        const el=document.getElementById('paste-bank-preview'); if(!el)return;
+        if(!pastedBankRows.length){el.innerHTML='';return;}
+        el.innerHTML='<div class="bank-entry-header-row" style="padding:10px 4px 6px 30px"><div>英文（可訂正）</div><div>中文（可訂正）</div></div><div class="twenty-bank-grid">'+pastedBankRows.map((r,i)=>`<div class="twenty-bank-row"><div class="twenty-bank-no">${i+1}</div><input class="twenty-bank-input en" aria-label="第${i+1}筆英文" value="${escapeHtml(r.en)}" oninput="pastedBankRows[${i}].en=this.value"><input class="twenty-bank-input cn" aria-label="第${i+1}筆中文" value="${escapeHtml(r.cn)}" oninput="pastedBankRows[${i}].cn=this.value"></div><div style="margin:-2px 0 5px 30px;color:${r.flag==='重複單字'||r.flag==='中文未取得，請人工確認'||r.flag==='英文空白'?'#fbbf24':'#94a3b8'};font-size:.88rem">第 ${r.line} 行：${escapeHtml(r.flag)}${r.flag==='重複單字'?'（請確認是否要改字或先刪除）':''}</div>`).join('')+'</div><button type="button" class="bank-save-btn" style="width:100%;margin-top:10px" onclick="savePastedBankRows()">💾 確認並加入題庫</button>';
+    }
+
+    async function savePastedBankRows(){
+        const unit=document.getElementById('bank-manage-unit')?.value;
+        if(bankSourceMode!=='custom'){alert('請先切換自行變更題庫。');return;}
+        const rows=pastedBankRows.map(r=>({en:String(r.en||'').trim(),cn:String(r.cn||'').trim()}));
+        const invalid=rows.filter(r=>!r.en||!r.cn);
+        if(invalid.length){alert('仍有英文或中文空白的項目。請先補齊或刪除該行後再儲存。');return;}
+        const existing=new Set((state.banks[unit]||[]).map(w=>w.en.toLowerCase())); const seen=new Set();
+        const dup=rows.filter(r=>{const k=r.en.toLowerCase();if(existing.has(k)||seen.has(k))return true;seen.add(k);return false;});
+        if(dup.length){alert('發現重複單字：'+dup.map(x=>x.en).join('、')+'。請先訂正或移除重複項目。');return;}
+        const custom=getLocalJSON('hero_custom_questions',[]);
+        rows.forEach(row=>{const ref=`LOCAL_PASTE_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;state.banks[unit].push({...row,ref});custom.push({unit,...row,ref});});
+        setLocalJSON('hero_custom_questions',custom);saveUserQuestionBank();pastedBankRows=[];
+        document.getElementById('bank-paste-input').value='';document.getElementById('paste-bank-preview').innerHTML='';
+        document.getElementById('paste-bank-status').textContent=`已加入 ${rows.length} 個單字。可在下方「已有題目」逐筆編輯。`;
+        refreshUnitSelectors();document.getElementById('bank-manage-unit').value=unit;renderBankManager();
+    }
+
+    function renderQuestionEntryGrid() {
+        const grid = document.getElementById('question-entry-grid');
+        const unit = document.getElementById('question-unit-bulk')?.value || '';
+        if (!grid) return;
+        grid.innerHTML = Array.from({length:20}, (_, i) => `<div class="twenty-bank-row">
+            <div class="twenty-bank-no">${i+1}</div>
+            <div style="display:flex;gap:5px;min-width:0;align-items:center;">
+                <input id="qe-en-${i}" class="twenty-bank-input en" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="英文單字" oninput="updateQuestionEntryCount()" onkeydown="handleQuestionEntryKeydown(event,${i})" onblur="autoFillQuestionEntry(${i})">
+                <button type="button" class="twenty-bank-speak" title="播放發音" onclick="playBankWord(document.getElementById('qe-en-${i}')?.value || '')">🔊</button>
+            </div>
+            <input id="qe-cn-${i}" class="twenty-bank-input cn" autocomplete="off" placeholder="自動取得中文（可修改）">
+        </div>`).join('');
+        updateQuestionEntryCount();
+        const first=document.getElementById('qe-en-0');
+        if(first) setTimeout(()=>first.focus(),80);
+    }
+
+    function updateQuestionEntryCount() {
+        const count=[...document.querySelectorAll('#question-entry-grid .twenty-bank-input.en')].filter(el=>el.value.trim()).length;
+        const el=document.getElementById('question-entry-status');
+        if(el && !el.textContent.startsWith('⏳') && !el.textContent.startsWith('✅')) el.textContent=`目前已輸入 ${count} / 20 格`;
+    }
+
+    function handleQuestionEntryKeydown(event,index) {
+        if(event.key==='Enter') {
+            event.preventDefault();
+            autoFillQuestionEntry(index,true);
+        }
+    }
+
+    async function autoFillQuestionEntry(index,moveNext=false) {
+        const en=document.getElementById(`qe-en-${index}`);
+        const cn=document.getElementById(`qe-cn-${index}`);
+        if(!en||!cn) return;
+        const word=String(en.value||'').trim();
+        if(!word) {
+            cn.value='';
+            if(moveNext) { const next=document.getElementById(`qe-en-${index+1}`); if(next){next.focus();next.select();} }
+            return;
+        }
+        en.dataset.lastValue=word;
+        if(moveNext) { const next=document.getElementById(`qe-en-${index+1}`); if(next){next.focus();next.select();} }
+        cn.value='取得中…';
+        const info=await fetchWordInfo(word);
+        if(String(en.value||'').trim()!==word) return;
+        cn.value=info.cn||'';
+        const status=document.getElementById('question-entry-status');
+        if(status) status.textContent=info.cn ? `✅ 第 ${index+1} 格：已取得「${info.cn}」` : `ℹ️ 第 ${index+1} 格：沒有取得中文，可儲存後再編輯。`;
+    }
+
+    function clearQuestionEntryInputs() {
+        for(let i=0;i<20;i++){
+            const en=document.getElementById(`qe-en-${i}`), cn=document.getElementById(`qe-cn-${i}`);
+            if(en){en.value='';en.dataset.lastValue='';}
+            if(cn) cn.value='';
+        }
+        const status=document.getElementById('question-entry-status');
+        if(status) status.textContent='已清除 20 格。';
+        const first=document.getElementById('qe-en-0'); if(first) first.focus();
+    }
+
+    async function saveQuestionEntries() {
+        if(bankSourceMode!=='custom') {
+            const copied=cloneBanks(state.banks);
+            state.banks=normalizeLegacyEarthInBanks(copied);
+            setLocalJSON('hero_question_bank',state.banks);
+            bankSourceMode='custom';
+            setHeroData('hero_bank_source_mode',bankSourceMode);
+        }
+        const unit=document.getElementById('question-unit-bulk')?.value?.trim();
+        if(!unit || !state.banks[unit]) { alert('請先選擇單元。'); return; }
+        const rows=Array.from({length:20},(_,i)=>({
+            en:(document.getElementById(`qe-en-${i}`)?.value||'').trim(),
+            cn:(document.getElementById(`qe-cn-${i}`)?.value||'').trim()
+        })).filter(x=>x.en);
+        if(!rows.length){ alert('請至少輸入 1 個英文單字。'); return; }
+        const existing=new Set((state.banks[unit]||[]).map(w=>w.en.toLowerCase()));
+        const seen=new Set(), toAdd=[], skipped=[];
+        rows.forEach(row=>{const k=row.en.toLowerCase(); if(existing.has(k)||seen.has(k)) skipped.push(row.en); else {seen.add(k);toAdd.push(row);}});
+        if(!toAdd.length){ alert('這 20 格裡的單字都已經在題庫中，沒有新增。'); return; }
+        const status=document.getElementById('question-entry-status');
+        if(status) status.textContent=`⏳ 正在補齊 ${toAdd.length} 個單字的中文……`;
+        for(const row of toAdd){ if(!row.cn){const info=await fetchWordInfo(row.en);row.cn=info.cn||'';} }
+        const custom=getLocalJSON('hero_custom_questions',[]);
+        toAdd.forEach(row=>{const ref=`LOCAL_20E_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;state.banks[unit].push({en:row.en,cn:row.cn,ref});custom.push({unit,en:row.en,cn:row.cn,ref});});
+        setLocalJSON('hero_custom_questions',custom);
+        saveUserQuestionBank();
+        const skippedText=skipped.length?`\n已跳過重複：${skipped.join('、')}`:'';
+        alert(`✅ 已加入 ${unit} 題庫 ${toAdd.length} 個單字。${skippedText}`);
+        clearQuestionEntryInputs();
+        refreshUnitSelectors();
+        document.getElementById('bank-manage-unit').value=unit;
+        renderBankManager();
+    }
+
+    function openQuestionEditor(encodedRef='') {
+        editingQuestionRef = encodedRef ? decodeURIComponent(encodedRef) : null;
+        refreshUnitSelectors();
+        const bulk=document.getElementById('question-editor-bulk');
+        const single=document.getElementById('question-editor-single');
+        const title=document.getElementById('question-editor-title');
+        const units=Object.keys(state.banks).sort();
+        if(!units.length) return alert('請先建立單元。');
+
+        if(editingQuestionRef) {
+            const unitEl=document.getElementById('question-unit');
+            const enEl=document.getElementById('question-en');
+            const cnEl=document.getElementById('question-cn');
+            let found=null,foundUnit=null;
+            Object.keys(state.banks).some(u=>{const w=state.banks[u].find(x=>x.ref===editingQuestionRef);if(w){found=w;foundUnit=u;return true;}return false;});
+            if(!found) return alert('找不到這筆題目。');
+            title.innerText='✏️ 編輯題目';
+            bulk.style.display='none';
+            single.style.display='block';
+            unitEl.innerHTML=units.map(u=>`<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+            unitEl.value=foundUnit;
+            enEl.value=found.en;
+            cnEl.value=found.cn||'';
+            setTimeout(()=>enEl.focus(),100);
+        } else {
+            title.innerText='＋新增 20 個題目';
+            single.style.display='none';
+            bulk.style.display='block';
+            const unitEl=document.getElementById('question-unit-bulk');
+            unitEl.innerHTML=units.map(u=>`<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+            const current=document.getElementById('bank-manage-unit')?.value;
+            if(current && state.banks[current]) unitEl.value=current;
+            renderQuestionEntryGrid();
+        }
+        switchView('view-question-editor');
+    }
+
+    function saveQuestion() {
+        // 文字題庫來自 TXT，網頁無法直接回寫 GitHub 上的 TXT。
+        // 使用者若在文字題庫模式按下儲存，先複製成自己的本機自訂題庫，再完成修改。
+        if (bankSourceMode !== 'custom') {
+            const copied = cloneBanks(state.banks);
+            state.banks = normalizeLegacyEarthInBanks(copied);
+            setLocalJSON('hero_question_bank', state.banks);
+            bankSourceMode = 'custom';
+            setHeroData('hero_bank_source_mode', bankSourceMode);
+        }
+        const unit=document.getElementById('question-unit').value.trim(), en=document.getElementById('question-en').value.trim(), cn=document.getElementById('question-cn').value.trim();
+        if(!unit || !en) return alert('「單元」與「English」不能空白。');
+        if(!state.banks[unit]) state.banks[unit]=[];
+        if(editingQuestionRef) {
+            let oldUnit = null;
+            Object.keys(state.banks).forEach(u=>{
+                if(state.banks[u].some(w=>w.ref===editingQuestionRef)) oldUnit=u;
+                state.banks[u]=state.banks[u].filter(w=>w.ref!==editingQuestionRef);
+            });
+            state.banks[unit].push({en,cn,ref:editingQuestionRef});
+            const edits=getLocalJSON('hero_question_edits',{});
+            edits[editingQuestionRef]={en,cn,unit};
+            setLocalJSON('hero_question_edits',edits);
+            if (oldUnit && oldUnit !== unit) {
+                const custom=getLocalJSON('hero_custom_questions',[]);
+                setLocalJSON('hero_custom_questions',custom.map(w=>w.ref===editingQuestionRef?{...w,unit,en,cn}:w));
+            }
+        } else {
+            if(state.banks[unit].some(w=>w.en.toLowerCase()===en.toLowerCase())) return alert('這個單元已經有相同的英文單字。');
+            const ref=`LOCAL_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+            state.banks[unit].push({en,cn,ref});
+            const custom=getLocalJSON('hero_custom_questions',[]);
+            custom.push({unit,en,cn,ref});
+            setLocalJSON('hero_custom_questions',custom);
+        }
+        saveUserQuestionBank();
+        editingQuestionRef=null;
+        refreshUnitSelectors();
+        document.getElementById('bank-manage-unit').value=unit;
+        switchView('view-bank');
+        renderBankManager();
+    }
+
+    function deleteQuestion(encodedRef) {
+        if (bankSourceMode !== 'custom') return alert('目前是文字題庫模式。請先切換「自行變更題庫」，才能修改題庫。');
+        const ref=decodeURIComponent(encodedRef); let target=null, unit=null;
+        Object.keys(state.banks).some(u=>{const w=state.banks[u].find(x=>x.ref===ref);if(w){target=w;unit=u;return true;}return false;});
+        if(!target) return;
+        if(!confirm(`確定刪除「${target.en}」？`)) return;
+        state.banks[unit]=state.banks[unit].filter(w=>w.ref!==ref);
+        const deleted=getLocalJSON('hero_deleted_question_refs',[]);
+        if(!deleted.includes(ref)) deleted.push(ref);
+        setLocalJSON('hero_deleted_question_refs',deleted);
+        const custom=getLocalJSON('hero_custom_questions',[]);
+        setLocalJSON('hero_custom_questions',custom.filter(w=>w.ref!==ref));
+        const edits=getLocalJSON('hero_question_edits',{});
+        delete edits[ref];
+        setLocalJSON('hero_question_edits',edits);
+        saveUserQuestionBank();
+        renderBankManager();
+    }
+
+    function saveUserQuestionBank() {
+        if (!currentUserKey || bankSourceMode !== 'custom') return;
+        setLocalJSON('hero_question_bank', state.banks);
+    }
+
+    function useCustomQuestionBank() {
+        if (bankSourceMode === 'custom') {
+            updateBankSourceUI();
+            renderBankManager();
+            return;
+        }
+
+        // 以目前文字題庫複製一份，作為可自由修改的本機題庫。
+        const copied = cloneBanks(state.banks);
+        state.banks = copied;
+        setLocalJSON('hero_question_bank', copied);
+        bankSourceMode = 'custom';
+        setHeroData('hero_bank_source_mode', bankSourceMode);
+        refreshUnitSelectors();
+        updateBankSourceUI();
+        renderBankManager();
+        alert('✏️ 已切換到「自行變更題庫」。\n\n現在新增、編輯、刪除單字，都只會修改這位使用者的本機題庫。');
+    }
+
     async function initQuestionBank() {
-        
         const savedMode = getHeroData('hero_bank_source_mode');
         if (savedMode === 'text' || savedMode === 'custom') bankSourceMode = savedMode;
-
-        if (bankSourceMode === 'text') {
-            await loadUserTxtQuestionBank();
-        } else {
+        if (bankSourceMode === 'custom') {
             loadLocalQuestionBank();
+            applyLocalQuestionChanges();
+            const hasCustomWords = Object.values(state.banks).some(arr => Array.isArray(arr) && arr.length);
+            if (!hasCustomWords) {
+                bankSourceMode = 'text';
+                setHeroData('hero_bank_source_mode', 'text');
+                await loadUserTxtQuestionBank();
+            }
+        } else {
+            await loadUserTxtQuestionBank();
         }
         normalizeCurrentBank();
         refreshUnitSelectors();
@@ -1585,7 +2440,7 @@
         state.unit = document.getElementById('unit-selector').value;
 
         if (!state.unit || !state.banks[state.unit] || state.banks[state.unit].length === 0) {
-            return alert("目前沒有可用的單字資料。");
+            return alert(`目前沒有可用的單字資料。\n題庫來源：${bankSourceMode === 'text' ? getUserTxtUrl() : '目前使用者的本機自訂題庫'}\n請確認題庫已載入，並選擇有單字的單元。`);
         }
 
         state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
@@ -1730,7 +2585,7 @@
     function startSentenceSession() {
         const unit = document.getElementById('unit-selector').value;
         if (!unit || !state.banks[unit] || state.banks[unit].length === 0) {
-            return alert('目前沒有可用的單字資料。');
+            return alert(`目前沒有可用的單字資料。\n題庫來源：${bankSourceMode === 'text' ? getUserTxtUrl() : '目前使用者的本機自訂題庫'}\n請確認題庫已載入，並選擇有單字的單元。`);
         }
         state.sentenceList = [...state.banks[unit]].sort(() => Math.random() - 0.5);
         state.sentenceIndex = 0;
