@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1486 - 造句點字與單字卡UX修正版</title>
+    <title>Word Hero V1504 - 兒童友善與圖鑑收服修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -507,7 +507,19 @@
         .voice-status { display:inline-flex; align-items:center; margin-left:8px; color:#94a3b8; font-size:.78rem; min-height:28px; }
         .game-action-btn:active { transform:scale(.97); }
         @media screen and (max-width:600px){ .voice-status{display:block;margin:4px 0 0;text-align:center;font-size:.75rem;} }
-    </style>
+    
+        /* V1504：國小中年級友善字級、觸控與視覺層次 */
+        body { font-size:18px; line-height:1.55; }
+        button, input, select, textarea { font:inherit; }
+        button { min-height:46px; touch-action:manipulation; }
+        .view-section { gap:12px; }
+        .home-action, .practice-unit-btn, .mode-btn { border-radius:18px; }
+        .home-action span, .practice-unit-btn { font-size:1.08rem; }
+        .sentence-example, .sentence-inline-example { font-size:1.12rem; line-height:1.7; }
+        .sentence-translation { font-size:1rem; line-height:1.6; }
+        .grid-item .name-zh { font-size:.95rem; }
+        @media (max-width:600px) { body {font-size:17px;} button {min-height:48px;} }
+</style>
 </head>
 <body onload="initSystem()">
 
@@ -566,7 +578,7 @@
             <button class="admin-btn" onclick="downloadLearningLogHTML()">🗂️ 下載 HTML Log 報告</button>
             <button class="admin-btn" onclick="downloadErrorLog()">📝 完整學習 Log（TXT 易讀版）</button>
             <button class="admin-btn" onclick="downloadLearningLogJSON()">🧾 原始 Log（JSON 備份）</button>
-            <button class="admin-btn" onclick="clearLearningLogs()">🗑️ 清除所有 Log</button>
+            <div class="admin-btn" style="display:block;line-height:1.7;cursor:default"><b>📦 學習資料容量管理</b><div id="log-storage-status" style="font-size:13px;color:#64748b">正在計算目前使用量…</div><button class="admin-btn" onclick="refreshLogStorageStatus()">重新計算容量</button><button class="admin-btn" onclick="clearOldLearningLogs()">清除 90 天以前的學習紀錄</button><button class="admin-btn" onclick="clearLearningLogs()">🗑️ 清除所有學習 Log</button><small style="display:block;color:#64748b">只清除學習／錯題紀錄與待複習清單；不刪除題庫、單字星號或寶可夢進度。建議先下載備份。</small></div>
             <button class="admin-btn" onclick="downloadChildProgress()">📦 進度下載</button>
             <button class="admin-btn" onclick="switchUser()">👤 切換使用者</button>
         </div>
@@ -1158,13 +1170,30 @@
         alert(lines.join('\n'));
     }
 
+    function refreshLogStorageStatus() {
+        const keys = ['hero_learning_log','hero_error_log','hero_word_review_queue'];
+        let bytes = 0; const counts = {};
+        keys.forEach(k => { const raw = getHeroData(k) || ''; bytes += new Blob([raw]).size; try { const v=JSON.parse(raw||'[]'); counts[k]=Array.isArray(v)?v.length:0; } catch(e){counts[k]=0;} });
+        const el=document.getElementById('log-storage-status');
+        if(el) el.textContent=`目前這位使用者的學習資料約 ${(bytes/1024).toFixed(1)} KB；學習紀錄 ${counts.hero_learning_log} 筆、舊版錯題 ${counts.hero_error_log} 筆、待複習 ${counts.hero_word_review_queue} 筆。容量為估算值。`;
+    }
+    function clearOldLearningLogs() {
+        const days=90, cutoff=Date.now()-days*86400000;
+        const logs=getLearningLog(), errors=getErrorLog();
+        const keep=x=>{const t=x&&x.at?new Date(x.at).getTime():NaN; return !Number.isFinite(t)||t>=cutoff;};
+        const nextLogs=logs.filter(keep), nextErrors=errors.filter(keep);
+        const removed=(logs.length-nextLogs.length)+(errors.length-nextErrors.length);
+        if(!removed) return alert('沒有可清除的 90 天以前紀錄。');
+        if(!confirm(`將清除 ${removed} 筆 90 天以前的學習／錯題紀錄，保留較新的紀錄。建議先下載備份。確定繼續？`)) return;
+        setLocalJSON('hero_learning_log',nextLogs); setLocalJSON('hero_error_log',nextErrors);
+        refreshLogStorageStatus(); alert(`已清除 ${removed} 筆舊紀錄。`);
+    }
     function clearLearningLogs() {
-        const ok = confirm('確定清除這位使用者的所有學習 Log？此操作無法復原。建議先下載備份。');
+        const ok = confirm('確定清除這位使用者的所有學習 Log、錯題 Log 與待複習清單？此操作無法復原。題庫、星號及寶可夢進度會保留。建議先下載備份。');
         if (!ok) return;
-        setLocalJSON('hero_learning_log', []);
-        setLocalJSON('hero_error_log', []);
+        setLocalJSON('hero_learning_log', []); setLocalJSON('hero_error_log', []);
         setHeroData('hero_word_review_queue', '[]');
-        alert('已清除學習 Log、錯題 Log 與待複習紀錄。');
+        refreshLogStorageStatus(); alert('已清除學習 Log、錯題 Log 與待複習紀錄；其他學習資料已保留。');
     }
 
     function downloadErrorLog() {
@@ -1222,55 +1251,13 @@
     }
 
     function buildLearningLogHTML() {
-        const logs = getLearningLog();
-        const errors = getErrorLog();
-        const all = [
-            ...logs.map((item, i) => ({...item, _group:'學習紀錄', _index:i+1})),
-            ...errors.map((item, i) => ({...item, _group:'舊版錯題紀錄', _index:i+1}))
-        ];
+        const logs = getLearningLog(); const errors = getErrorLog();
+        const all = [...logs.map((x,i)=>({...x,_group:'學習紀錄',_index:i+1})), ...errors.map((x,i)=>({...x,_group:'舊版錯題紀錄',_index:i+1}))];
         const esc = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-        const labelMap = {at:'時間',type:'紀錄類型',child:'使用者',mode:'模式',unit:'單元',word:'英文單字',meaning:'中文意思',input:'作答內容',result:'結果',responseMs:'作答時間（毫秒）',attempts:'本題提交次數',sentence:'造句內容',issueCount:'檢查問題數',feedback:'檢查回饋',strategy:'系統觀察策略',hintUsed:'是否使用提示',changedAnswer:'是否修改答案'};
-        const cards = all.map((item, i) => {
-            const fields = Object.entries(item).filter(([k])=>!k.startsWith('_')).map(([k,v])=>`<div class="field"><b>${esc(labelMap[k]||k)}</b><div>${esc(typeof v==='object'&&v!==null?JSON.stringify(v,null,2):v===true?'是':v===false?'否':v??'（無資料）')}</div></div>`).join('');
-            const title = item.word || item.sentence || item.type || '紀錄';
-            const date = item.at ? new Date(item.at).toLocaleString() : '時間未記錄';
-            return `<article class="log" data-search="${esc([item._group,title,item.meaning,item.input,item.sentence,item.result,JSON.stringify(item)].join(' ')).toLowerCase()}"><header><span class="tag">${esc(item._group)} #${item._index}</span><time>${esc(date)}</time></header><h2>${esc(title)}</h2><p class="sub">${esc(item.meaning||'')}　｜　結果：${esc(item.result||'未標示')}</p><details><summary>展開全部欄位</summary><div class="fields">${fields}</div></details></article>`;
-        }).join('');
-        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero 完整學習 Log</title><style>
-        *{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.6 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1000px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0 0 4px}.muted{color:#667085}.stats{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}.stat{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:12px 16px;min-width:130px}.stat strong{display:block;font-size:24px}input{width:100%;font:inherit;padding:14px;border:2px solid #9aa8bd;border-radius:10px;background:white;margin:8px 0 16px}.log{background:#fff;border:1px solid #dce2ee;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #18233a0b}.log header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#667085;font-size:14px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}h2{font-size:20px;margin:8px 0 0;overflow-wrap:anywhere}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.empty{padding:28px;text-align:center;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}}
-        
-        /* V1482：兒童人因優化—閱讀字級、觸控尺寸、層級與窄螢幕重排 */
-        .sentence-unit-card { width:min(100%,600px); padding:clamp(14px,3.5vw,20px); gap:12px; }
-        .sentence-unit-cn, .sentence-inline-title { font-size:1.125rem; line-height:1.45; }
-        .sentence-unit-word { font-size:clamp(2rem,7vw,2.5rem); line-height:1.2; margin:6px 0 14px; letter-spacing:.01em; overflow-wrap:anywhere; }
-        #sentence-unit-input, #sentence-inline-input { min-height:124px; padding:14px; font-size:1.2rem; line-height:1.65; letter-spacing:.01em; border:2px solid #64748b; border-radius:12px; }
-        #sentence-unit-input::placeholder, #sentence-inline-input::placeholder { color:#94a3b8; opacity:1; font-size:1rem; }
-        .sentence-auto-puncture { display:flex; align-items:center; gap:10px; min-height:44px; font-size:1rem; }
-        .sentence-auto-puncture input { width:22px; height:22px; accent-color:#38bdf8; }
-        .sentence-own-play { margin:8px 0 12px !important; }
-        .sentence-own-play button, .sentence-example-actions button { min-height:48px; padding:10px 14px; font-size:1rem; border-radius:11px; }
-        .sentence-inline-play { display:flex; justify-content:flex-start; }
-        .sentence-inline-play button { width:100%; }
-        .sentence-unit-actions, .sentence-inline-actions { grid-template-columns:minmax(0,1fr) minmax(88px,112px); gap:10px; margin-top:10px; }
-        .sentence-check-btn, .sentence-unit-pass, .pass-btn-inline { min-height:52px; font-size:1.1rem; border-radius:12px; }
-        .sentence-example-box { margin-top:14px; padding:16px; border-radius:14px; }
-        .sentence-example-label { font-size:1rem; line-height:1.5; }
-        .sentence-example-text { font-size:1.25rem; line-height:1.6; min-height:0; overflow-wrap:anywhere; }
-        .sentence-example-translation, #sentence-example-translation, #sentence-inline-example-translation { font-size:1.05rem !important; line-height:1.6; }
-        .sentence-example-actions { display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:8px; }
-        .sentence-example-actions button { min-width:0; white-space:normal; }
-        .sentence-unit-progress { font-size:.95rem; line-height:1.5; }
-        .sentence-unit-back { min-height:48px; font-size:1rem; }
-        button:focus-visible, textarea:focus-visible, input:focus-visible { outline:3px solid #fbbf24 !important; outline-offset:3px; }
-        @media (max-width:380px) {
-          .sentence-unit-card { padding:12px; }
-          .sentence-unit-actions, .sentence-inline-actions { grid-template-columns:minmax(0,1fr) 82px; gap:7px; }
-          .sentence-example-actions { grid-template-columns:1fr 1fr; }
-          .sentence-example-actions button:nth-child(2) { grid-column:1 / -1; grid-row:1; }
-          .sentence-example-text { font-size:1.12rem; }
-        }
-        @media (prefers-reduced-motion: reduce) { .sentence-unit-card *, .sentence-inline * { animation:none !important; transition:none !important; } }
-</style><body><main class="wrap"><h1>Word Hero｜完整學習 Log</h1><div class="muted">使用者：${esc(getChildName())}　｜　匯出：${esc(new Date().toLocaleString())}</div><section class="stats"><div class="stat"><strong>${logs.length}</strong>學習紀錄</div><div class="stat"><strong>${errors.length}</strong>舊版錯題紀錄</div><div class="stat"><strong>${all.length}</strong>合計</div></section><label for="q">搜尋單字、句子、結果或欄位內容</label><input id="q" type="search" placeholder="輸入關鍵字即時篩選…"><div id="count" class="muted">顯示 ${all.length} 筆</div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const q=document.getElementById('q'),cards=[...document.querySelectorAll('.log')],count=document.getElementById('count');q.addEventListener('input',()=>{let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=c.dataset.search.includes(term);c.hidden=!show;if(show)n++});count.textContent='顯示 '+n+' / '+cards.length+' 筆'});<\\/script></body></html>`;
+        const labelMap={at:'時間',type:'紀錄類型',child:'使用者',mode:'練習模式',unit:'單元',word:'英文單字',meaning:'中文意思',input:'孩子輸入',result:'結果',responseMs:'作答時間（毫秒）',attempts:'本題提交次數',sentence:'造句內容',issueCount:'檢查問題數',feedback:'系統回饋',strategy:'觀察到的作答策略',hintUsed:'是否使用提示',changedAnswer:'是否修改答案',attemptIndex:'第幾次提交',previousInput:'前一次輸入',correct:'正確答案',typed:'孩子輸入'};
+        const cards=all.map(item=>{const title=item.word||item.sentence||item.type||'紀錄';const date=item.at?new Date(item.at).toLocaleString():'時間未記錄';const day=item.at?(()=>{const d=new Date(item.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})():(item.date||'');const fields=Object.entries(item).filter(([k])=>!k.startsWith('_')).map(([k,v])=>`<div class="field"><b>${esc(labelMap[k]||k)}</b><div>${esc(typeof v==='object'&&v!==null?JSON.stringify(v,null,2):v===true?'是':v===false?'否':v??'（無資料）')}</div></div>`).join('');return `<article class="log" data-day="${esc(day)}" data-search="${esc([item._group,title,item.meaning,item.input,item.sentence,item.result,JSON.stringify(item)].join(' ').toLowerCase())}"><header><span class="tag">${esc(item._group)}</span><time>${esc(date)}</time></header><h2>${esc(title)}</h2><p class="sub">${esc(item.meaning||'')}　｜　${esc(item.result||'未標示')}　｜　${esc(item.mode||'')}</p><details><summary>查看家長觀察細節</summary><div class="fields">${fields}</div></details></article>`}).join('');
+        const payload=JSON.stringify(all).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title><style>*{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0}h2{font-size:19px;margin:8px 0}h3{font-size:17px;margin:0 0 8px}.muted{color:#667085}.panel,.stat,.log{background:white;border:1px solid #dce2ee;border-radius:14px;padding:16px;margin:12px 0}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:16px 0}.stat strong{display:block;font-size:25px}.filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filters label{display:grid;gap:4px;font-weight:600}.filters input{font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:white}.filters button{padding:10px 14px;border:0;border-radius:8px;background:#244f91;color:white;font:inherit;cursor:pointer}.chart{width:100%;height:230px;display:block}.barrow{display:grid;grid-template-columns:minmax(90px,1fr) 3fr 42px;gap:8px;align-items:center;margin:8px 0}.track{height:12px;background:#e9edf5;border-radius:20px;overflow:hidden}.fill{height:100%;background:#6389c6;border-radius:20px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}.log header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#667085;font-size:14px}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.note{background:#fff8e7;border-left:4px solid #e2b24e;padding:12px;border-radius:8px}.empty{padding:18px;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}.barrow{grid-template-columns:85px 1fr 30px}}</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">孩子：${esc(getChildName())}　｜　報告產生：${esc(new Date().toLocaleString())}</div><section class="panel"><h3>日期篩選</h3><div class="filters"><label>開始日期<input type="date" id="from"></label><label>結束日期<input type="date" id="to"></label><button id="reset">顯示全部日期</button></div><p class="muted">選擇日期後，摘要、圖表、錯誤統計及下方紀錄會同步更新。</p></section><section class="stats"><div class="stat"><strong id="total">0</strong>作答／學習紀錄</div><div class="stat"><strong id="rate">—</strong>單字答對率</div><div class="stat"><strong id="first">0</strong>首次答對題次</div><div class="stat"><strong id="passes">0</strong>PASS 次數</div><div class="stat"><strong id="mins">—</strong>平均答對時間</div></section><section class="panel"><h3>每日學習與答題表現</h3><svg id="chart" class="chart" viewBox="0 0 900 230" role="img" aria-label="每日答題數與答對率圖表"></svg><div class="muted">柱狀高度代表每日單字作答數；折線代表當日答對率。資料不足的日期不計算答對率。</div></section><section class="panel"><h3>最常答錯的單字</h3><div id="words"></div></section><section class="panel"><h3>常見文法／造句問題</h3><div id="grammar"></div><p class="note">解讀提醒：只統計程式實際記錄的錯誤標籤或回饋文字；若造句檢查沒有提供具體文法分類，會標示「目前資料不足」，不會把一般答錯自行推論成文法能力問題。</p></section><h2>逐筆學習紀錄</h2><label for="q">搜尋單字、句子、結果或回饋</label><input id="q" type="search" placeholder="輸入關鍵字…" style="width:100%;font:inherit;padding:12px;border:1px solid #9aa8bd;border-radius:9px"> <div id="count" class="muted"></div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const DATA=${payload};const cards=[...document.querySelectorAll('.log')],q=document.getElementById('q'),from=document.getElementById('from'),to=document.getElementById('to');const day=x=>{if(x.at){const d=new Date(x.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return x.date||''};function filtered(){return DATA.filter(x=>(!from.value||day(x)>=from.value)&&(!to.value||day(x)<=to.value))}function bars(el,entries){if(!entries.length){el.innerHTML='<div class="empty">目前沒有足夠資料。</div>';return}const max=Math.max(1,...entries.map(x=>x[1]));el.innerHTML=entries.map(([k,v])=>'<div class="barrow"><span>'+k.replace(/[&<>]/g,'')+'</span><div class="track"><div class="fill" style="width:'+v/max*100+'%"></div></div><b>'+v+'</b></div>').join('')}function render(){const rows=filtered(),w=rows.filter(x=>x.type==='word_answer'),ok=w.filter(x=>x.result==='correct'),bad=w.filter(x=>x.result==='incorrect'),pass=rows.filter(x=>x.type==='word_pass');document.getElementById('total').textContent=rows.length;document.getElementById('rate').textContent=w.length?Math.round(ok.length/w.length*100)+'%':'—';document.getElementById('first').textContent=ok.filter(x=>Number(x.attempts||x.attemptIndex||1)===1).length;document.getElementById('passes').textContent=pass.length;const t=ok.map(x=>Number(x.responseMs)).filter(x=>Number.isFinite(x)&&x>=0&&x<3600000);document.getElementById('mins').textContent=t.length?(t.reduce((a,b)=>a+b,0)/t.length/1000).toFixed(1)+' 秒':'—';const freq={};bad.forEach(x=>{const k=x.word||'未標示';freq[k]=(freq[k]||0)+1});bars(document.getElementById('words'),Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8));const gf={};rows.filter(x=>x.type==='sentence').forEach(x=>{const s=JSON.stringify([x.errorType,x.issueType,x.feedback,x.issues||x.errors||'']).toLowerCase();const rules=[['語序／句子結構',/語序|句構|word order|sentence structure/],['主詞與動詞一致',/主詞|動詞一致|主謂|subject.?verb|agreement/],['時態',/時態|tense/],['單複數',/單複數|複數|plural/],['冠詞 a／an／the',/冠詞|article/],['拼字',/拼字|拼寫|spelling/],['標點／大小寫',/標點|大小寫|punctuation|capitalization/]];let matched=false;rules.forEach(([name,re])=>{if(re.test(s)){gf[name]=(gf[name]||0)+1;matched=true}});if(!matched&&x.result&&/review|incorrect|fail/i.test(x.result))gf['未分類造句待檢視']=(gf['未分類造句待檢視']||0)+1});bars(document.getElementById('grammar'),Object.entries(gf).sort((a,b)=>b[1]-a[1]).slice(0,8));const daily={};w.forEach(x=>{const d=day(x);if(!d)return;(daily[d]||= {n:0,ok:0}).n++;if(x.result==='correct')daily[d].ok++});const ds=Object.entries(daily).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14),svg=document.getElementById('chart');if(!ds.length){svg.innerHTML='<text x="450" y="115" text-anchor="middle" fill="#667085">尚無可繪製的單字作答資料</text>'}else{const max=Math.max(1,...ds.map(x=>x[1].n)),step=840/ds.length;let s='';ds.forEach(([d,v],i)=>{const x=45+i*step+step*.25,h=145*v.n/max,y=180-h,rate=v.ok/v.n; s+='<rect x="'+x+'" y="'+y+'" width="'+step*.5+'" height="'+h+'" rx="4" fill="#8aa6d4"/><circle cx="'+(x+step*.25)+'" cy="'+(170-rate*125)+'" r="4" fill="#d17b39"/><text x="'+(x+step*.25)+'" y="202" font-size="11" text-anchor="middle" fill="#667085">'+d.slice(5)+'</text>'});svg.innerHTML='<line x1="35" y1="180" x2="885" y2="180" stroke="#9aa8bd"/>'+s+'<text x="42" y="18" fill="#5478ad" font-size="12">作答數（柱）</text><circle cx="165" cy="14" r="4" fill="#d17b39"/><text x="176" y="18" fill="#a45c27" font-size="12">答對率（點）</text>'}let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=(!from.value||c.dataset.day>=from.value)&&(!to.value||c.dataset.day<=to.value)&&c.dataset.search.includes(term);c.hidden=!show;if(show)n++});document.getElementById('count').textContent='目前顯示 '+n+' / '+cards.length+' 筆';}from.addEventListener('change',render);to.addEventListener('change',render);q.addEventListener('input',render);document.getElementById('reset').addEventListener('click',()=>{from.value='';to.value='';q.value='';render()});render();<\/script></body></html>`;
     }
     function previewLearningLogHTML() {
         const logs = getLearningLog(), errors = getErrorLog();
@@ -2375,9 +2362,25 @@
         renderBankManagerList();
     }
 
+    function normalizePokedexBits(value) {
+        const raw = String(value || '');
+        return Array.from({length:151}, (_,i)=>raw[i]==='1'?'1':'0').join('');
+    }
+    function markPokemonCaught(id) {
+        const n = Number(id);
+        if (!Number.isInteger(n) || n < 1 || n > 151) return false;
+        state.pokedex = normalizePokedexBits(state.pokedex);
+        const bits = state.pokedex.split('');
+        bits[n-1] = '1';
+        state.pokedex = bits.join('');
+        setHeroData('hero_pokedex_bits', state.pokedex);
+        return true;
+    }
+
     async function initSystem() {
         ensureChildName();
-        state.pokedex = getHeroData('hero_pokedex_bits') || "0".repeat(151);
+        state.pokedex = normalizePokedexBits(getHeroData('hero_pokedex_bits'));
+        setHeroData('hero_pokedex_bits', state.pokedex);
         state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
         state.chosenOppId = parseInt(getHeroData('hero_opponent_id')) || 0;
         renderUserSelector();
@@ -2522,6 +2525,7 @@
     }
 
     function toggleMoreTools() {
+        refreshLogStorageStatus();
         const panel = document.getElementById('more-tools');
         const btn = document.querySelector('.more-toggle');
         const arrow = document.getElementById('more-arrow');
@@ -2590,7 +2594,21 @@
               'picnic table':[['We eat at the picnic table.','我們在野餐桌旁吃東西。']], 'parking lot':[['The car is in the parking lot.','車子在停車場裡。']], 'capital city':[['Taipei is a capital city.','台北是一座首都城市。']], 'mix up':[['Do not mix up the words.','不要把單字搞混。']], 'united states of america':[['The United States of America is a country.','美利堅合眾國是一個國家。']],
               english:[['I learn English.','我學英文。'],['English is fun.','英文很有趣。']], mexico:[['Mexico is a country.','墨西哥是一個國家。']], american:[['He is American.','他是美國人。']], australian:[['She is Australian.','她是澳洲人。']], china:[['China is a country.','中國是一個國家。']], egypt:[['Egypt is a country.','埃及是一個國家。']], measurement:[['This is a measurement.','這是一個測量結果。']]
             };
-            const pool = [pair, ...(easyPools[clean] || [])].map(([en,zh])=>({en,zh,bankMatched:[clean]}));
+            const simple = easyPools[clean] || [];
+            // 其他單字使用短句型變化；只用目標字與基礎功能字，避免長句洩漏造句答案。
+            const fallbackVariants = {
+              'eighty':[['I see eighty stars.','我看到八十顆星星。'],['Eighty is a number.','八十是一個數字。']],
+              'fifty':[['I have fifty cards.','我有五十張卡片。']], 'forty':[['Forty is more than thirty.','四十比三十大。']],
+              'seventy':[['I can count to seventy.','我可以數到七十。']], 'sixty':[['Sixty is a big number.','六十是一個大數字。']],
+              'thirty':[['I can count to thirty.','我可以數到三十。']], 'twenty':[['I have twenty cards.','我有二十張卡片。']],
+              'ninety':[['Ninety is a number.','九十是一個數字。']], 'american':[['My friend is American.','我的朋友是美國人。']],
+              'australian':[['He is Australian.','他是澳洲人。']], 'gloden':[['The word is spelled golden.','這個字的正確拼法是 golden。']],
+              'mexico':[['I can find Mexico on a map.','我可以在地圖上找到墨西哥。']],
+              'united states of america':[['The United States of America is big.','美利堅合眾國很大。']],
+              'measurement':[['We need a measurement.','我們需要測量。']]
+            };
+            const variants = fallbackVariants[clean] || [];
+            const pool = (simple.length ? simple : (variants.length ? variants : [pair])).map(([en,zh])=>({en,zh,bankMatched:[clean]}));
             return pool;
         }
         const bankWords = new Set();
@@ -3068,10 +3086,7 @@ const storyWordGloss = {
 
                 // 擊敗一隻寶可夢後，繼續考剩下的單字，而不是直接結束整個 W。
                 if (state.oppHP <= 0) {
-                    let p = state.pokedex.split('');
-                    p[state.currentOppId - 1] = "1";
-                    state.pokedex = p.join('');
-                    setHeroData('hero_pokedex_bits', state.pokedex);
+                    markPokemonCaught(state.currentOppId);
                     confetti({ particleCount: 100, spread: 80 });
 
                     if (state.currentList.length === 0) {
@@ -3872,6 +3887,7 @@ const storyWordGloss = {
     function toggleOpponentPickMode() { state.opponentPickMode = !state.opponentPickMode; const b=document.getElementById('dex-opponent-toggle'); const n=document.getElementById('dex-mode-note'); if(b) b.textContent=state.opponentPickMode?'✓ 對手選擇模式（再按一次取消）':'⚔️ 選擇對戰對手'; if(n) n.textContent=state.opponentPickMode?'點選圖鑑中的寶可夢，設定為下一場魔王挑戰的對手。':'點擊已收服寶可夢可設為自己的夥伴；按上方按鈕可改選對手。'; }
 
     function renderDex() {
+        state.pokedex = normalizePokedexBits(getHeroData('hero_pokedex_bits') || state.pokedex);
         const nameEl = document.getElementById('dex-child-name');
         if (nameEl) nameEl.textContent = getChildName();
         const grid=document.getElementById('dex-grid'); grid.innerHTML='';
