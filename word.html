@@ -508,6 +508,18 @@
         .game-action-btn:active { transform:scale(.97); }
         @media screen and (max-width:600px){ .voice-status{display:block;margin:4px 0 0;text-align:center;font-size:.75rem;} }
     
+
+        /* V1509：將發音控制放在對應文字旁，使用圖示按鈕節省畫面 */
+        .word-help-title-row{gap:8px}
+        .word-help-speak-inline,.sentence-speak-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:42px;min-height:42px;padding:4px;border:1px solid #45617f;border-radius:12px;background:#1b2d49;color:#f8fafc;font-size:1.25rem;cursor:pointer;touch-action:manipulation}
+        .word-help-speak-inline:active,.sentence-speak-icon:active{transform:scale(.95)}
+        .practice-context-line,.sentence-example-line{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+        .practice-context-line .practice-context-sentence,.sentence-example-line .sentence-example-text{flex:1;min-width:0}
+        .sentence-example-line{align-items:flex-start}
+        .sentence-example-line .sentence-speak-icon{margin-top:1px}
+        .game-word-speak{width:48px;min-width:48px;min-height:48px;padding:0;font-size:1.35rem}
+        .voice-status{display:none!important}
+
         /* V1504：國小中年級友善字級、觸控與視覺層次 */
         body { font-size:18px; line-height:1.55; }
         button, input, select, textarea { font:inherit; }
@@ -630,11 +642,8 @@
             <div id="sentence-unit-result" class="sentence-status" style="display:none;"></div>
             <div id="sentence-example-box" class="sentence-example-box" hidden>
                 <div class="sentence-example-label">📖 參考例句・點單字看解說</div>
-                <div id="sentence-example-text" class="sentence-example-text"></div>
+                <div class="sentence-example-line"><div id="sentence-example-text" class="sentence-example-text"></div><button type="button" class="sentence-speak-icon" onclick="playSentenceExample()" aria-label="播放例句" title="播放例句">🔊</button></div>
                 <div id="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
-                <div class="sentence-example-actions">
-                    <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
-                </div>
             </div>
             <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
@@ -645,10 +654,9 @@
     <div id="word-help-overlay" class="word-help-overlay" onclick="if(event.target===this)closeWordHelp()" role="dialog" aria-modal="true" aria-label="單字解說">
       <div class="word-help-card">
         <div class="word-help-head"><div class="word-help-kicker">單字小教室</div><button class="word-help-close" type="button" onclick="closeWordHelp()" aria-label="關閉單字解說">✕</button></div>
-        <div class="word-help-title-row"><div id="word-help-word" class="word-help-word"></div><button id="word-help-star" class="word-help-star-inline" type="button" onclick="toggleWordHelpStar()" aria-label="加入或移除星號">☆</button></div>
+        <div class="word-help-title-row"><div id="word-help-word" class="word-help-word"></div><button type="button" class="word-help-speak-inline" onclick="playWordHelp()" aria-label="播放單字發音" title="播放單字發音">🔊</button><button id="word-help-star" class="word-help-star-inline" type="button" onclick="toggleWordHelpStar()" aria-label="加入或移除星號">☆</button></div>
         <div id="word-help-meaning" class="word-help-meaning"></div>
         <div id="word-help-note" class="word-help-note"></div>
-        <div class="word-help-actions"><button type="button" onclick="playWordHelp()">🔊 再唸一次</button></div>
       </div>
     </div>
 
@@ -670,7 +678,7 @@
         <div id="letter-area" class="box-input-container"></div>
         <section id="practice-context-card" class="practice-context-card" aria-label="單字情境例句">
             <div class="practice-context-label">📖 讀讀看這句話・點不懂的字</div>
-            <div id="practice-context-sentence" class="practice-context-sentence"></div>
+            <div class="practice-context-line"><div id="practice-context-sentence" class="practice-context-sentence"></div><button type="button" class="sentence-speak-icon" onclick="playPracticeContextSentence()" aria-label="播放例句" title="播放例句">🔊</button></div>
             <div id="practice-context-translation" class="practice-context-translation"></div>
         </section>
         
@@ -687,14 +695,11 @@
                 <div id="sentence-inline-result" class="sentence-status" style="display:none;"></div>
                 <div id="sentence-inline-example-box" class="sentence-example-box" hidden>
                     <div class="sentence-example-label">📖 參考例句・點單字看解說</div>
-                    <div id="sentence-inline-example-text" class="sentence-example-text"></div>
+                    <div class="sentence-example-line"><div id="sentence-inline-example-text" class="sentence-example-text"></div><button type="button" class="sentence-speak-icon" onclick="playSentenceExample()" aria-label="播放例句" title="播放例句">🔊</button></div>
                     <div id="sentence-inline-example-translation" class="sentence-example-translation" style="margin-top:5px;color:#cbd5e1;font-size:.9rem;"></div>
-                    <div class="sentence-example-actions">
-                        <button type="button" onclick="playSentenceExample()" aria-label="播放例句">🔊 聽例句</button>
-                    </div>
                 </div>
             </div>
-            <button id="btn-voice" class="game-action-btn" onclick="unlockAndPlayVoice()">🔊 再唸一次</button><span id="voice-status" class="voice-status" aria-live="polite">第一次使用請按 🔊</span>
+            <button id="btn-voice" class="game-action-btn game-word-speak" onclick="unlockAndPlayVoice()" aria-label="播放單字發音" title="播放單字發音">🔊</button>
             <button id="btn-game-pass" type="button" class="pass-btn-inline" style="display:block; min-width:150px; min-height:48px; margin:10px auto; padding:10px 24px; font-size:1.1rem;" onclick="handlePass()">⏭ PASS｜先跳過</button>
 
 <div id="spelling-feedback" class="spelling-feedback" style="display:none"></div>
@@ -2813,6 +2818,12 @@ const storyWordGloss = {
         if (state.currentSentenceExample) speakEnglish(state.currentSentenceExample.en || state.currentSentenceExample, {userGesture:true, rate:0.78});
     }
 
+    function playPracticeContextSentence() {
+        const el = document.getElementById('practice-context-sentence');
+        const text = String(el && el.textContent || '').trim();
+        if (text) speakEnglish(text, {userGesture:true, rate:0.78});
+    }
+
     function playChildSentence() {
         const input = document.getElementById('sentence-unit-input');
         const text = String(input && input.value || '').trim();
@@ -3036,8 +3047,29 @@ const storyWordGloss = {
                     }
                 }
 
-                // 所有格子已填滿時，每次修改都重新比對；修正紅框後正確即自動送出。
+                // 所有格子填滿後即時標示正確／錯誤位置；錯字修正後不必再按送出。
+                if (complete) {
+                    const answerChars = Array.from(expected);
+                    let wrongCount = 0;
+                    boxes.forEach((box, i) => {
+                        const isMatch = (box.value || '').toLowerCase() === (answerChars[i] || '');
+                        box.classList.remove('wrong', 'mismatch', 'correct-place');
+                        box.classList.add(isMatch ? 'correct-place' : 'mismatch');
+                        if (!isMatch) wrongCount++;
+                    });
+                    const spellingFeedback = document.getElementById('spelling-feedback');
+                    if (spellingFeedback && typed !== expected) {
+                        spellingFeedback.style.display = 'block';
+                        spellingFeedback.innerHTML = `💡 有 <b>${wrongCount}</b> 個字母需要再看看！紅色框就是需要修正的位置。`;
+                    }
+                } else {
+                    boxes.forEach(box => box.classList.remove('wrong', 'mismatch', 'correct-place'));
+                }
+
+                // 修正紅框後正確即自動送出。
                 if (complete && typed === expected) {
+                    const spellingFeedback = document.getElementById('spelling-feedback');
+                    if (spellingFeedback) { spellingFeedback.style.display = 'none'; spellingFeedback.innerHTML = ''; }
                     if (!area.dataset.answerCheckPending) {
                         area.dataset.answerCheckPending = '1';
                         setTimeout(() => {
@@ -3513,12 +3545,6 @@ const storyWordGloss = {
             row.appendChild(box);
         });
         el.appendChild(row);
-        if (data.rule) {
-            const rule = document.createElement('div');
-            rule.className = 'practice-rule';
-            rule.textContent = data.rule;
-            el.appendChild(rule);
-        }
     }
 
     function renderPracticeGuide(text) {
@@ -3560,7 +3586,7 @@ const storyWordGloss = {
      * Chrome 對 SpeechSynthesis 的語音清單與「使用者手勢」較敏感。
      * 因此：
      * 1. 先預熱 getVoices()。
-     * 2. 第一次由孩子點「🔊 再唸一次」時，視為使用者手勢，正式解鎖語音。
+     * 2. 第一次由孩子點「🔊」發音圖示時，視為使用者手勢，正式解鎖語音。
      * 3. 自動播放若尚未解鎖，不強制播放，避免 Chrome 靜默封鎖。
      * 4. voiceschanged 後重新取得語音。
      * 5. speak 前先 cancel + resume，降低平板 Chrome 卡住不出聲的情況。
@@ -3616,28 +3642,19 @@ const storyWordGloss = {
             utter.rate = options.rate ?? 0.82;
             utter.pitch = 1;
             utter.volume = 1;
-            utter.onstart = () => showVoiceStatus('🔊 正在播放');
-            utter.onend = () => showVoiceStatus('🔊 播放完成');
             utter.onerror = (event) => {
                 const reason = event && event.error ? String(event.error) : 'unknown';
                 console.warn('Word Hero speechSynthesis error:', reason);
-                showVoiceStatus(reason === 'not-allowed'
-                    ? '⚠️ Chrome 未允許語音播放，請再按一次。'
-                    : '⚠️ 語音播放失敗，請確認 Chrome 與電腦音量／輸出裝置。');
             };
             synth.speak(utter);
             return true;
         } catch (e) {
             console.warn('Word Hero speech playback failed:', e);
-            showVoiceStatus('⚠️ 語音播放失敗；請確認 Chrome 與電腦音量設定。');
             return false;
         }
     }
 
-    function showVoiceStatus(message) {
-        const el = document.getElementById('voice-status');
-        if (el) el.textContent = message || '';
-    }
+    function showVoiceStatus(message) { /* V1509：狀態不佔用孩子的畫面 */ }
 
     function unlockAndPlayVoice() {
         const word = state.currentList[state.index];
