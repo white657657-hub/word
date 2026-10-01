@@ -347,11 +347,20 @@
 
         /* 後台管理 UI：低干擾、灰色、小尺寸 */
         /* V1451：8歲兒童首頁 UI/UX */
-        .home-header { text-align:center; margin:5px 0 10px; }
+        .home-header { position:relative; z-index:30; overflow:visible; text-align:center; margin:5px 0 10px; }
         .home-title { color:var(--accent); font-size:1.55rem; font-weight:1000; letter-spacing:1px; }
         .home-user { color:#94a3b8; font-size:.78rem; margin-top:2px; }
-        .home-user-control{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:4px}
-        #home-user-select{max-width:118px;min-width:74px;padding:3px 20px 3px 7px;border:1px solid #334155;border-radius:6px;background:#172033;color:#e2e8f0;font-size:.75rem;line-height:1.25;font-weight:700}
+        .home-user-control{position:relative;z-index:100;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;overflow:visible}
+        .home-user-picker{position:relative;display:inline-flex;align-items:center}
+        #home-user-trigger{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;min-width:116px;min-height:42px;padding:8px 11px;border:1px solid #64748b;border-radius:10px;background:#172033;color:#f8fafc;font-size:16px;line-height:1.2;font-weight:800;cursor:pointer;touch-action:manipulation}
+        #home-user-trigger:focus-visible,.home-user-option:focus-visible{outline:3px solid #38bdf8;outline-offset:2px}
+        .home-user-chevron{font-size:13px;color:#cbd5e1;transition:transform .15s ease}
+        #home-user-trigger[aria-expanded="true"] .home-user-chevron{transform:rotate(180deg)}
+        #home-user-menu{position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);z-index:10000;display:none;min-width:160px;max-width:min(240px,calc(100vw - 28px));padding:6px;background:#172033;border:1px solid #64748b;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.45);}
+        #home-user-menu.is-open{display:block}
+        .home-user-option{display:flex;align-items:center;gap:9px;width:100%;min-height:46px;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:#f8fafc;text-align:left;font-size:16px;font-weight:700;cursor:pointer;touch-action:manipulation}
+        .home-user-option:active,.home-user-option[aria-current="true"]{background:#28415f}
+        .home-user-option-check{width:18px;flex:0 0 18px;color:#7dd3fc;text-align:center}
         .home-user-icon{font-size:.75rem;color:#94a3b8}
         .home-user-add{width:23px;height:23px;padding:0;border:1px solid #475569;border-radius:6px;background:#263b59;color:#fff;font-size:18px;line-height:20px;font-weight:700;cursor:pointer}
         .home-user-add:active{transform:scale(.96)}
@@ -557,8 +566,13 @@
         <div class="home-header">
             <div class="home-title">WORD HERO</div>
             <div class="home-user-control">
-                <span class="home-user-icon">👤</span>
-                <select id="home-user-select" aria-label="切換使用者" onchange="switchUserTo(this.value)"></select>
+                <span class="home-user-icon" aria-hidden="true">👤</span>
+                <div class="home-user-picker">
+                    <button type="button" id="home-user-trigger" aria-label="切換使用者" aria-haspopup="listbox" aria-expanded="false" onclick="toggleUserMenu()">
+                        <span id="home-user-current">載入使用者…</span><span class="home-user-chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div id="home-user-menu" role="listbox" aria-label="選擇使用者"></div>
+                </div>
                 <button type="button" class="home-user-add" onclick="openUserAddModal()" aria-label="新增使用者" title="新增使用者">+</button>
             </div>
         </div>
@@ -1030,13 +1044,48 @@
     }
 
     function renderUserSelector() {
-        const select = document.getElementById('home-user-select');
-        if (!select) return;
+        const trigger = document.getElementById('home-user-trigger');
+        const currentLabel = document.getElementById('home-user-current');
+        const menu = document.getElementById('home-user-menu');
+        if (!trigger || !currentLabel || !menu) return;
         const active = getChildName();
-        select.innerHTML = getRegisteredUsers().map(name =>
-            `<option value="${escapeHtml(name)}"${name.toLowerCase() === active.toLowerCase() ? ' selected' : ''}>${escapeHtml(name)}</option>`
-        ).join('');
+        const users = getRegisteredUsers();
+        const selected = users.find(name => name.toLowerCase() === active.toLowerCase()) || users[0] || 'Anson';
+        currentLabel.textContent = selected;
+        menu.replaceChildren();
+        users.forEach(name => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'home-user-option';
+            option.setAttribute('role', 'option');
+            option.setAttribute('aria-current', String(name.toLowerCase() === selected.toLowerCase()));
+            const check = document.createElement('span');
+            check.className = 'home-user-option-check';
+            check.textContent = name.toLowerCase() === selected.toLowerCase() ? '✓' : '';
+            const label = document.createElement('span');
+            label.textContent = name;
+            option.append(check, label);
+            option.addEventListener('click', () => switchUserTo(name));
+            menu.appendChild(option);
+        });
     }
+
+    function toggleUserMenu(forceOpen) {
+        const trigger = document.getElementById('home-user-trigger');
+        const menu = document.getElementById('home-user-menu');
+        if (!trigger || !menu) return;
+        const open = typeof forceOpen === 'boolean' ? forceOpen : !menu.classList.contains('is-open');
+        menu.classList.toggle('is-open', open);
+        trigger.setAttribute('aria-expanded', String(open));
+    }
+
+    document.addEventListener('click', event => {
+        const picker = document.querySelector('.home-user-picker');
+        if (picker && !picker.contains(event.target)) toggleUserMenu(false);
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') toggleUserMenu(false);
+    });
 
     function switchUserTo(name) {
         const trimmed = String(name || '').trim();
@@ -1048,8 +1097,8 @@
     }
 
     function switchUser() {
-        const select = document.getElementById('home-user-select');
-        if (select) switchUserTo(select.value);
+        const current = document.getElementById('home-user-current');
+        if (current) switchUserTo(current.textContent);
     }
 
     function openUserAddModal() {
