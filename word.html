@@ -653,12 +653,12 @@
         }
 
 \n
-        .learning-report-overlay{position:fixed;inset:0;z-index:10000;background:rgba(2,6,23,.78);display:flex;align-items:stretch;justify-content:center;padding:clamp(0px,2vw,20px);}
-        .learning-report-shell{display:flex;flex-direction:column;width:min(1240px,100%);height:100%;min-height:0;background:#f3f5fa;border:1px solid #52647e;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.4);}
+        .learning-report-overlay{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483000;background:rgba(2,6,23,.82);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;overflow:hidden;}
+        .learning-report-shell{display:flex;flex-direction:column;width:min(1240px,100%);height:min(900px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);min-width:0;min-height:0;background:#f3f5fa;border:1px solid #52647e;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.4);}
         .learning-report-toolbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#0d1930;color:#f8fafc;font-size:15px;}
         .learning-report-toolbar button{min-height:42px;padding:8px 16px;border:1px solid #64748b;border-radius:10px;background:#1e293b;color:#fff;font:inherit;cursor:pointer;}
-        #learning-report-frame{display:block;flex:1 1 auto;width:100%;height:100%;min-height:0;border:0;background:#f3f5fa;}
-        @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
+        #learning-report-frame{display:block;flex:1 1 auto;width:100%;height:100%;min-width:0;min-height:0;border:0;background:#f3f5fa;}
+        @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
 
 </style>
 </head>
@@ -1454,6 +1454,8 @@
         const overlay = document.getElementById('learning-report-overlay');
         const frame = document.getElementById('learning-report-frame');
         if (!overlay || !frame) return alert('報告介面尚未載入，請重新整理頁面後再試。');
+        // 將報告層移到 body 直屬，避免被主畫面的 transform/overflow 容器裁切。
+        if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
         frame.srcdoc = buildLearningLogHTML();
         overlay.style.display = 'flex';
         document.body.style.overflow = 'hidden';
