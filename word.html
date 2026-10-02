@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1539｜喇叭圖示與家長報告入口修正版</title>
+    <title>Word Hero V1540｜喇叭圖示與家長報告入口修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -663,7 +663,7 @@
         @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
 
 
-        /* V1539：發音圖示與單字分離，避免小螢幕重疊 */
+        /* V1540：發音圖示與單字分離，避免小螢幕重疊 */
         #practice-guide .practice-guide-wordline{
             display:flex!important; flex-flow:row nowrap!important; align-items:center!important;
             justify-content:center!important; gap:12px!important; width:100%; max-width:100%;
@@ -692,7 +692,7 @@
         }
 
 
-        /* V1539：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
+        /* V1540：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             appearance:none!important; -webkit-appearance:none!important;
             display:inline-flex!important; align-items:center!important; justify-content:center!important;
@@ -708,7 +708,7 @@
         #practice-guide .practice-guide-wordline > .word-audio-icon::after{content:none!important;display:none!important}
 
 
-        /* V1539：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
+        /* V1540：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             all:unset!important;
             box-sizing:border-box!important;
@@ -749,7 +749,7 @@
         }
 
 
-        /* V1539：單字列僅用非 button 元素承載一個喇叭，避開全站按鈕樣式 */
+        /* V1540：單字列僅用非 button 元素承載一個喇叭，避開全站按鈕樣式 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             all:unset!important; box-sizing:border-box!important;
             display:inline-flex!important; align-items:center!important; justify-content:center!important;
@@ -3469,7 +3469,7 @@ const storyWordGloss = {
 
         // 顯示目前題目的實際字母數，避免字框數與答案不一致。
         area.dataset.answerLength = String(inputIdx);
-        renderPracticeGuide((state.mode === 'practice' || state.tempPractice) ? word.en : "");
+        renderPracticeGuide((state.mode === 'practice' || state.mode === 'quiz' || state.tempPractice) ? word.en : "");
         setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
 
