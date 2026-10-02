@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1526 - 自動錯題庫與版號更新</title>
+    <title>Word Hero V1527 - TXT題庫與簡化發音版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,7 +90,7 @@
             letter-spacing:.02em;
             text-shadow:2px 2px 5px rgba(0,0,0,.75);
         }
-        .practice-syllable { display:inline-block; font-weight:1000; }
+        .practice-guide-whole-word{display:inline-block;font-weight:900;letter-spacing:.02em;}\n        .practice-syllable { display:inline-block; font-weight:1000; }
         .practice-syllable.color-1 { color:#38bdf8; }
         .practice-syllable.color-2 { color:#fbbf24; }
         .practice-syllable.color-3 { color:#4ade80; }
@@ -98,16 +98,16 @@
         .practice-syllable.color-5 { color:#a78bfa; }
         .practice-syllable.color-6 { color:#fb923c; }
         .practice-syllable-separator { color:#94a3b8; font-weight:800; margin:0 .08em; }
-        .practice-phonics-note { display:block; width:100%; text-align:center; color:#cbd5e1; font-size:.78rem; font-weight:800; margin:3px 0 2px; }
-        .practice-phonics-row { display:flex; width:100%; justify-content:center; align-items:center; flex-wrap:wrap; gap:5px; margin-top:2px; }
-        .practice-phonics-item { display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:8px; background:rgba(15,23,42,.78); border:1px solid #475569; font-size:.78rem; font-weight:900; color:#f8fafc; cursor:pointer; user-select:none; transition:transform .08s, background .12s, border-color .12s; }
-        .practice-phonics-item:hover { background:rgba(56,189,248,.14); border-color:#38bdf8; }
-        .practice-phonics-item:active { transform:scale(.96); }
-        .practice-phonics-item.is-playing { border-color:#fbbf24; background:rgba(251,191,36,.12); }
-        .practice-phonics-speaker { color:#38bdf8; font-size:.72rem; margin-left:1px; }
-        .practice-phonics-letter { color:#94a3b8; }
-        .practice-phonics-arrow { color:#64748b; }
-        .practice-phonics-sound { color:#f8fafc; }
+
+
+
+
+
+
+
+
+
+
         .practice-silent { color:#f87171; text-decoration:line-through; }
         .practice-rule { width:100%; text-align:center; color:#fbbf24; font-size:.7rem; font-weight:800; margin-top:2px; }
         .practice-syllable { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
@@ -150,10 +150,10 @@
         .word-help-card{width:min(100%,460px);max-height:min(86dvh,720px);overflow:auto;background:#0b1730;border:1px solid #334b6b;border-radius:20px;padding:20px;color:#f8fafc;box-shadow:0 20px 60px #0009}
         .word-help-kicker{font-size:.82rem;font-weight:800;letter-spacing:.04em;color:#94a3b8;text-align:center;margin-bottom:5px}
         .word-help-word{font-size:clamp(2.25rem,9vw,3.2rem);font-weight:1000;color:#38bdf8;text-align:center;line-height:1.2;overflow-wrap:anywhere}
-        #word-help-phonics{min-height:50px;text-align:center;margin:10px 0 14px}
-        #word-help-phonics .practice-phonics-note{font-size:.78rem}
-        #word-help-phonics .practice-phonics-row{gap:5px}
-        #word-help-phonics .practice-phonics-item{font-size:.82rem}
+
+
+
+
         .word-help-meaning{font-size:1.25rem;line-height:1.55;margin:12px 0;text-align:center;font-weight:800}
         .word-help-note{font-size:.98rem;line-height:1.6;color:#dbeafe;background:#172b49;border:1px solid #2d4565;border-radius:12px;padding:12px}
         .word-help-note[hidden]{display:none!important}
@@ -633,17 +633,7 @@
             line-height:1.2;
             width:100%;
         }
-        .practice-phonics-row {
-            position:relative;
-            display:flex;
-            flex:0 0 auto;
-            width:100%;
-            min-height:0;
-            height:auto;
-            margin:6px 0 0;
-            clear:both;
-            z-index:1;
-        }
+
         #letter-area {
             position:relative;
             flex:0 0 auto;
@@ -661,11 +651,7 @@
             row-gap:4px;
             overflow-wrap:anywhere;
         }
-        .practice-phonics-row {
-            flex-wrap:wrap;
-            max-width:100%;
-            box-sizing:border-box;
-        }
+
 \n
         .learning-report-overlay{position:fixed;inset:0;z-index:10000;background:rgba(2,6,23,.78);display:flex;align-items:stretch;justify-content:center;padding:clamp(0px,2vw,20px);}
         .learning-report-shell{display:flex;flex-direction:column;width:min(1240px,100%);height:100%;min-height:0;background:#f3f5fa;border:1px solid #52647e;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.4);}
@@ -1034,14 +1020,14 @@
 
 <script>
     const ANSON_USER = 'anson';
-    // GitHub Pages 題庫依目前使用者讀取：Vicky.html 或 Anson.html，與主程式放在同一目錄。
+    // GitHub Pages 題庫依目前使用者讀取：Vicky.txt 或 Anson.txt，與主程式放在同一目錄。
     function getUserBankFileStem() {
         const name = String((typeof getChildName === 'function' ? getChildName() : '') || localStorage.getItem('wordhero_active_user') || 'Anson').trim();
         if (/^vicky$/i.test(name)) return 'Vicky';
         if (/^anson$/i.test(name)) return 'Anson';
         return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Anson';
     }
-    function getUserBankUrl() { return `./${encodeURIComponent(getUserBankFileStem())}.html`; }
+    function getUserBankUrl() { return `./${encodeURIComponent(getUserBankFileStem())}.txt`; }
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
     // 寶可夢名稱安全查詢：任何畫面都優先走這裡，避免顯示 No.XX。
     const PK_NAME_ALIASES = {
@@ -1101,7 +1087,7 @@
     let currentUserName = '';
     let currentUserKey = '';
     let isAnsonUser = false;
-    let bankSourceMode = 'text'; // 預設依目前使用者讀取 GitHub Pages 同目錄的 Vicky.html／Anson.html
+    let bankSourceMode = 'text'; // 預設依目前使用者讀取 GitHub Pages 同目錄的 Vicky.txt／Anson.txt
 
     function normalizeUserKey(name) {
         return encodeURIComponent(String(name || '').trim().toLowerCase());
@@ -1259,7 +1245,7 @@
         localStorage.setItem('wordhero_active_user', name);
         const key = normalizeUserKey(name);
         localStorage.setItem(`wordhero_${key}_hero_bank_source_mode`, 'text');
-        alert(`已新增使用者「${name}」。HTML 題庫依使用者讀取同目錄的 ${getUserBankFileStem()}.html；個人學習進度仍分開保存。`);
+        alert(`已新增使用者「${name}」。請在 GitHub Pages 同目錄新增 ${getUserBankFileStem()}.txt（[W1] 後接英文,中文）；個人學習進度仍分開保存。`);
         location.reload();
     }
 
@@ -1587,7 +1573,7 @@
 
     function extractBankTextFromHtml(rawHtml) {
         const raw = String(rawHtml || '');
-        // 支援 .html 以 <pre> 保留原始 [W1]／英文,中文格式，也支援表格式題庫。
+        // 支援 TXT 原始 [W1]／英文,中文格式；保留舊版 HTML 題庫相容讀取。
         if (typeof DOMParser === 'undefined' || !/<(?:html|body|table|pre|div|p|section|article|ul|ol)\b/i.test(raw)) return raw;
         const doc = new DOMParser().parseFromString(raw, 'text/html');
         doc.querySelectorAll('script,style,noscript,template').forEach(node => node.remove());
@@ -1610,7 +1596,7 @@
     }
 
     async function loadUserTxtQuestionBank() {
-        const fileName = `${getUserBankFileStem()}.html`;
+        const fileName = `${getUserBankFileStem()}.txt`;
         const url = new URL(getUserBankUrl(), document.baseURI).href;
         window.__wordHeroBankLoadInfo = { ok: false, url, status: null, count: 0 };
         try {
@@ -1622,7 +1608,7 @@
             const parsed = parseAnsonTxt(sourceText);
             const count = Object.values(parsed).reduce((n, arr) => n + arr.length, 0);
             if (!Object.keys(parsed).length || count === 0) {
-                throw new Error('HTML 題庫已取得，但沒有解析出單字；請確認檔案內含 [W1] 單元標題及英文、中文資料，建議使用 <pre> 或兩欄表格。');
+                throw new Error('TXT 題庫已取得，但沒有解析出單字；請確認檔案包含 [W1] 單元標題及英文,中文資料。');
             }
             state.banks = normalizeLegacyEarthInBanks(parsed);
             setLocalJSON('hero_text_bank', state.banks);
@@ -1693,7 +1679,7 @@
         refreshUnitSelectors();
         if (typeof updateBankSourceUI === 'function') updateBankSourceUI();
         renderBankManager();
-        if (!loaded) alert(`無法載入目前使用者的題庫：${getUserBankUrl()}\n請確認 GitHub Pages 的 /word/ 目錄中有 ${getUserBankFileStem()}.html，且檔案格式包含 [W1] 單元標題及英文、中文資料。`);
+        if (!loaded) alert(`無法載入目前使用者的題庫：${getUserBankUrl()}\n請確認 GitHub Pages 同目錄有 ${getUserBankFileStem()}.txt，格式為 [W1] 後接英文,中文。`);
     }
 
 
@@ -2632,7 +2618,7 @@
         state.unit = document.getElementById('unit-selector').value;
 
         if (!state.unit || !state.banks[state.unit] || state.banks[state.unit].length === 0) {
-            return alert(`目前沒有可用的單字資料。\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認題庫已載入，並選擇有單字的單元。`);
+            return alert(`目前沒有可用的單字資料。\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認同目錄有 ${getUserBankFileStem()}.txt，格式為 [W1] 後接英文,中文。`);
         }
 
         state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
@@ -3565,283 +3551,32 @@ const storyWordGloss = {
 
     function switchView(id) { if(id==='view-main')syncErrorBankCount(); document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeWordHelp(); closeSentencePractice(); closeUserAddModal(); } });
-    /*
-     * 英文音節顯示：
-     * 1. 先使用常見單字的固定音節，避免一般規則把學習單字切錯。
-     * 2. 其他單字使用英文母音核心的保守切法。
-     * 3. 不改變原單字，只控制「練習提示」的視覺呈現。
-     */
-    /*
-     * 自然發音法導向的音節分色：
-     * - 以「可讀、可拼讀」的音節／字母群為單位，而不是任意每幾個字母切一次。
-     * - W1-W4 目前使用的單字採明確規則，避免自動演算法切錯。
-     * - 這裡只改「視覺分組」，不修改孩子真正要拼寫的答案。
-     */
-    const COMMON_SYLLABLES = {
-        dinosaur:['di','no','saur'],
-        million:['mil','lion'],
-        street:['street'],
-        earth:['earth'],
-        dance:['dance'],
-        cloud:['cloud'],
-        lake:['lake'],
-        near:['near'],
-        valley:['val','ley'],
-        yesterday:['yes','ter','day'],
-
-        camp:['camp'],
-        map:['map'],
-        eighty:['eigh','ty'],
-        fifty:['fif','ty'],
-        forty:['for','ty'],
-        star:['star'],
-        seventy:['sev','en','ty'],
-        sixty:['six','ty'],
-        thirty:['thir','ty'],
-        twenty:['twen','ty'],
-
-        hundred:['hun','dred'],
-        ninety:['nine','ty'],
-        east:['east'],
-        north:['north'],
-        south:['south'],
-        west:['west'],
-        far:['far'],
-        'picnic table':['pic','nic','table'],
-        'parking lot':['park','ing','lot'],
-        lizard:['liz','ard'],
-
-        castle:['cas','tle'],
-        gold:['gold'],
-        golden:['gold','en'],
-        today:['to','day'],
-        american:['a','mer','i','can'],
-        australia:['aus','tra','li','a'],
-        australian:['aus','tra','li','an'],
-        china:['chi','na'],
-        country:['coun','try'],
-        egypt:['e','gypt'],
-        flag:['flag']
-    };
-
-    function fallbackSyllables(raw) {
-        const text = String(raw || '');
-        const words = text.split(/(\s+|[\/-])/);
-        const out = [];
-        words.forEach(part => {
-            if (!part) return;
-            if (/^\s+$/.test(part) || /^[\/-]$/.test(part)) { out.push(part); return; }
-            const w = part.toLowerCase();
-            if (COMMON_SYLLABLES[w]) { out.push(...COMMON_SYLLABLES[w]); return; }
-            if (!/[a-z]/i.test(part)) { out.push(part); return; }
-            const chars = Array.from(part);
-            const vowels = /[aeiouy]/i;
-            const chunks = []; let start = 0; let i = 0;
-            while (i < chars.length) {
-                if (vowels.test(chars[i])) {
-                    let nucleusEnd = i + 1;
-                    while (nucleusEnd < chars.length && vowels.test(chars[nucleusEnd])) nucleusEnd++;
-                    let end = nucleusEnd;
-                    if (end < chars.length) {
-                        let j = end;
-                        while (j < chars.length && !vowels.test(chars[j])) j++;
-                        const consonants = j - end;
-                        if (j < chars.length && consonants > 1) end = end + consonants - 1;
-                        else end = j;
-                    }
-                    chunks.push(chars.slice(start, end).join(''));
-                    start = end; i = end;
-                } else i++;
-            }
-            if (start < chars.length) {
-                if (chunks.length) chunks[chunks.length-1] += chars.slice(start).join('');
-                else chunks.push(part);
-            }
-            out.push(...(chunks.length ? chunks : [part]));
-        });
-        return out;
-    }
-
-    /*
-     * 自然發音提示：不是把單字硬翻成中文諧音，而是把「字母／字母群」
-     * 與孩子可以模仿的音值並排顯示。W1-W4 使用明確設定，其餘單字維持原本音節分色。
-     */
-    const PHONICS_HINTS = {
-        dinosaur: { parts:[['di','/ˈdaɪ/'],['no','/nə/'],['saur','/sɔːr/']], rule:'美式發音重音在第一音節；分色是音節提示，不代表每段都能獨立拼讀。' },
-        million: { parts:[['mil','/ˈmɪl/'],['lion','/jən/']], rule:'注意第一音節重音；lion 這組字母在此不等於一般的 l-i-o-n 逐字母發音。' },
-        street: { parts:[['str','/str/'],['ee','/iː/'],['t','/t/']], rule:'str 是子音連綴，ee 常表示長 e 音；此處只顯示提示，不播放假造的單獨音素。' },
-        earth: { parts:[['ear','/ɝː/'],['th','/θ/']], rule:'美式英語提示；th 在 earth 結尾發清音 /θ/。' },
-        dance: { parts:[['d','/d/'],['an','/æ/'],['ce','/s/']] },
-        cloud: { parts:[['cl','/kl/'],['ou','/aʊ/'],['d','/d/']] },
-        lake: { parts:[['l','/l/'],['a_e','/eɪ/'],['k','/k/'],['e','不發音',true]], rule:'a_e：magic e 讓 a 發長音，最後 e 不發音' },
-        near: { parts:[['n','/n/'],['ear','/ɪr/']], rule:'美式英語中 near 的母音與 r 連在一起；英美口音會有差異。' },
-        valley: { parts:[['val','/ˈvæl/'],['ley','/i/']], rule:'重音在第一音節；ey 在這個字尾常發長 e 音。' },
-        yesterday: { parts:[['yes','/jes/'],['ter','/tər/'],['day','/deɪ/']] },
-        camp: { parts:[['c','/k/'],['a','/æ/'],['mp','/mp/']] },
-        map: { parts:[['m','/m/'],['a','/æ/'],['p','/p/']] },
-        eighty: { parts:[['eigh','/eɪ/'],['ty','/ti/']] },
-        fifty: { parts:[['fif','/fɪf/'],['ty','/ti/']] },
-        forty: { parts:[['for','/fɔːr/'],['ty','/ti/']] },
-        star: { parts:[['st','/st/'],['ar','/ɑːr/']] },
-        seventy: { parts:[['sev','/sev/'],['en','/ən/'],['ty','/ti/']] },
-        sixty: { parts:[['six','/sɪks/'],['ty','/ti/']] },
-        thirty: { parts:[['th','/θ/'],['ir','/ɜːr/'],['ty','/ti/']] },
-        twenty: { parts:[['twen','/twen/'],['ty','/ti/']] },
-        hundred: { parts:[['hun','/hʌn/'],['dred','/drəd/']] },
-        ninety: { parts:[['nine','/naɪn/'],['ty','/ti/']] },
-        east: { parts:[['ea','/iː/'],['st','/st/']] },
-        north: { parts:[['nor','/nɔːr/'],['th','/θ/']] },
-        south: { parts:[['sou','/saʊ/'],['th','/θ/']] },
-        west: { parts:[['w','/w/'],['e','/e/'],['st','/st/']] },
-        far: { parts:[['f','/f/'],['ar','/ɑːr/']] },
-        'picnic table': { parts:[['pic','/pɪk/'],['nic','/nɪk/'],['ta','/teɪ/'],['ble','/bəl/']] },
-        'parking lot': { parts:[['park','/pɑːrk/'],['ing','/ɪŋ/'],['lot','/lɑːt/']] },
-        lizard: { parts:[['liz','/lɪz/'],['ard','/ərd/']] },
-        castle: { parts:[['cas','/kæs/'],['t','不發音',true],['le','/əl/']], rule:'castle：t 不發音' },
-        gold: { parts:[['g','/g/'],['o','/oʊ/'],['ld','/ld/']] },
-        golden: { parts:[['gold','/goʊld/'],['en','/ən/']] },
-        today: { parts:[['to','/tə/'],['day','/ˈdeɪ/']], rule:'美式常見讀音重音在第二音節。' },
-        american: { parts:[['a','/ə/'],['mer','/ˈmɛr/'],['i','/ɪ/'],['can','/kən/']], rule:'美式常見讀音重音在第二音節。' },
-        australia: { parts:[['Aus','/ɔː/'],['tra','/ˈstreɪ/'],['li','/li/'],['a','/ə/']], rule:'美式常見讀音約四音節，重音在第二音節；這是發音提示，不是固定自然發音規則。' },
-        australian: { parts:[['Aus','/ɔː/'],['tra','/ˈstreɪ/'],['li','/li/'],['an','/ən/']], rule:'重音在第二音節；字母分組只作記憶提示。' },
-        china: { parts:[['Chi','/tʃaɪ/'],['na','/nə/']] },
-        country: { parts:[['coun','/kʌn/'],['try','/tri/']] },
-        egypt: { parts:[['E','/ˈiː/'],['gypt','/dʒɪpt/']], rule:'專有地名，重音在第一音節；建議以完整單字發音為準。' },
-        flag: { parts:[['fl','/fl/'],['a','/æ/'],['g','/g/']] }
-    };
-
-    // 音節／自然發音的播放：不要把 IPA 字串直接交給瀏覽器 TTS。
-    // 瀏覽器 TTS 看到 /str/、/iː/ 這類符號時，可能把它當成文字或字母名稱念出來，會造成「看起來正確、實際聲音錯誤」。
-    // 因此每個可播放項目改用「可朗讀的英文示範詞／音節」；IPA 只負責畫面提示。
-    const PHONICS_AUDIO_TEXT = {
-        // W1
-        'di:/daɪ/':'die', 'no:/nə/':'nuh', 'saur:/sɔːr/':'sore',
-        'mil:/mɪl/':'mill', 'lion:/jən/':'yun',
-        'str:/str/':'street', 'ee:/iː/':'see', 't:/t/':'top',
-        'ear:/ɜːr/':'bird', 'th:/θ/':'think',
-        'd:/d/':'dog', 'a:/æ/':'cat', 'n:/n/':'no', 'ce:/s/':'see',
-        'cl:/kl/':'clap', 'ou:/aʊ/':'out', 'd:/d/':'dog',
-        'l:/l/':'leg', 'a_e:/eɪ/':'cake', 'k:/k/':'cat',
-        'e:/不發音':'', 'near:/ɪər/':'ear',
-        'val:/væl/':'val', 'ley:/i/':'happy',
-        'yes:/jes/':'yes', 'ter:/tər/':'term', 'day:/deɪ/':'day',
-        // W2
-        'c:/k/':'cat', 'mp:/mp/':'camp', 'p:/p/':'pen',
-        'eigh:/eɪ/':'eight', 'ty:/ti/':'tea', 'fif:/fɪf/':'fif',
-        'for:/fɔːr/':'four', 'st:/st/':'stop', 'sev:/sev/':'seven',
-        'en:/ən/':'open', 'six:/sɪks/':'six', 'thir:/θɜːr/':'third',
-        'twen:/twen/':'twenty',
-        // W3
-        'hun:/hʌn/':'hundred', 'dred:/drəd/':'hundred', 'nine:/naɪn/':'nine',
-        'ea:/iː/':'eat', 'nor:/nɔːr/':'north', 'sou:/saʊ/':'south',
-        'f:/f/':'fish', 'ar:/ɑːr/':'car',
-        'pic:/pɪk/':'pick', 'nic:/nɪk/':'nick', 'ta:/teɪ/':'table',
-        'ble:/bəl/':'table', 'park:/pɑːrk/':'park', 'ing:/ɪŋ/':'sing',
-        'lot:/lɑːt/':'lot', 'liz:/lɪz/':'liz', 'ard:/ərd/':'bird',
-        // W4
-        'cas:/kæs/':'castle', 'le:/əl/':'little',
-        'g:/g/':'go', 'o:/oʊ/':'go', 'ld:/ld/':'old',
-        'glo:/gloʊ/':'glow', 'den:/dən/':'den', 'gold:/goʊld/':'gold',
-        'en:/ən/':'open', 'to:/tə/':'today', 'mer:/mɛr/':'Mary',
-        'i:/ɪ/':'it', 'can:/kən/':'can', 'Aus:/ɔː/':'Australia',
-        'tra:/streɪ/':'Australia', 'li:/li/':'lee', 'an:/ən/':'open',
-        'Chi:/tʃaɪ/':'China', 'na:/nə/':'nuh', 'coun:/kʌn/':'country',
-        'try:/tri/':'tree', 'E:/iː/':'Egypt', 'gypt:/dʒɪpt/':'Egypt',
-        'fl:/fl/':'flag'
-    };
-
-    function playPhonicsPart(button, item) {
-        if (!item || item[2]) return;
-        if (!('speechSynthesis' in window)) return;
-
-        const key = `${item[0]}:${item[1]}`;
-        const spoken = PHONICS_AUDIO_TEXT[key];
-        if (!spoken) return;
-
-        window.speechSynthesis.cancel();
-        document.querySelectorAll('.practice-phonics-item.is-playing').forEach(x => x.classList.remove('is-playing'));
-        button.classList.add('is-playing');
-
-        const utter = new SpeechSynthesisUtterance(spoken);
-        utter.lang = 'en-US';
-        utter.rate = 0.62;
-        utter.pitch = 1;
-        utter.volume = 1;
-        utter.onend = () => button.classList.remove('is-playing');
-        utter.onerror = () => button.classList.remove('is-playing');
-        window.speechSynthesis.speak(utter);
-    }
-
-    function renderPracticePhonics(el, text) {
-        const key = String(text || '').toLowerCase();
-        const data = PHONICS_HINTS[key];
-        if (!data) return;
-        const row = document.createElement('div');
-        row.className = 'practice-phonics-row';
-        data.parts.forEach(item => {
-            const box = document.createElement('span');
-            box.className = 'practice-phonics-item';
-            box.setAttribute('aria-label', `${item[0]}：發音提示 ${item[1]}`);
-            const letters = document.createElement('span');
-            letters.className = 'practice-phonics-letter' + (item[2] ? ' practice-silent' : '');
-            letters.textContent = item[0];
-            const arrow = document.createElement('span');
-            arrow.className = 'practice-phonics-arrow';
-            arrow.textContent = '→';
-            const sound = document.createElement('span');
-            sound.className = 'practice-phonics-sound';
-            sound.textContent = item[1];
-            box.append(letters, arrow, sound);
-            row.appendChild(box);
-        });
-        el.appendChild(row);
-    }
-
+    // 兒童版只保留完整單字及完整單字播放；不顯示未經校對的自然發音切分或音標。
     function renderPracticeGuide(text) {
         const el = document.getElementById('practice-guide');
         if (!el) return;
-        let voiceButton = document.getElementById('btn-voice');
-        if (!voiceButton) {
-            voiceButton = document.createElement('button');
-            voiceButton.id = 'btn-voice';
-            voiceButton.type = 'button';
-            voiceButton.className = 'game-action-btn game-word-speak';
-            voiceButton.textContent = '🔊';
-            voiceButton.setAttribute('aria-label', '播放單字發音');
-            voiceButton.title = '播放單字發音';
-            voiceButton.addEventListener('click', unlockAndPlayVoice);
-        }
         el.innerHTML = '';
         if (!text) return;
 
         const wordLine = document.createElement('div');
         wordLine.className = 'practice-guide-wordline';
-        const parts = fallbackSyllables(text);
-        let syllableIndex = 0;
-        parts.forEach(part => {
-            if (/^\s+$/.test(part)) {
-                const s = document.createElement('span');
-                s.className = 'practice-syllable-separator';
-                s.textContent = ' ';
-                wordLine.appendChild(s);
-            } else if (/^[\/-]$/.test(part)) {
-                const s = document.createElement('span');
-                s.className = 'practice-syllable-separator';
-                s.textContent = part;
-                wordLine.appendChild(s);
-            } else {
-                const s = document.createElement('span');
-                s.className = 'practice-syllable';
-                const colorNo = (syllableIndex % 6) + 1;
-                s.classList.add(`color-${colorNo}`);
-                s.dataset.syllable = String(syllableIndex++);
-                s.textContent = part;
-                wordLine.appendChild(s);
-            }
-        });
-        if (voiceButton) wordLine.appendChild(voiceButton);
+
+        const word = document.createElement('span');
+        word.className = 'practice-guide-whole-word';
+        word.textContent = text;
+        wordLine.appendChild(word);
+
+        const voiceButton = document.createElement('button');
+        voiceButton.id = 'btn-voice';
+        voiceButton.type = 'button';
+        voiceButton.className = 'game-action-btn game-word-speak';
+        voiceButton.textContent = '🔊';
+        voiceButton.setAttribute('aria-label', '播放完整單字發音');
+        voiceButton.title = '播放完整單字發音';
+        voiceButton.addEventListener('click', unlockAndPlayVoice);
+        wordLine.appendChild(voiceButton);
+
         el.appendChild(wordLine);
-        renderPracticePhonics(el, text);
     }
 
     /*
