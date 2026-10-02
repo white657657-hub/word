@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1534｜喇叭圖示與家長報告入口修正版</title>
+    <title>Word Hero V1538｜喇叭圖示與家長報告入口修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -531,12 +531,12 @@
         .practice-context-line .practice-context-sentence,.sentence-example-line .sentence-example-text{flex:1;min-width:0}
         .sentence-example-line{align-items:flex-start}
         .sentence-example-line .sentence-speak-icon{margin-top:1px}
-        .game-word-speak{width:48px;min-width:48px;min-height:48px;padding:0;font-size:1.35rem}
+        
         #practice-guide{display:block!important;width:100%;min-height:0!important;height:auto!important;text-align:center;margin:4px 0 8px}
         .practice-guide-wordline{display:flex;align-items:center;justify-content:center;gap:5px;min-height:52px;width:100%}
         .practice-guide-wordline #btn-voice{width:38px;min-width:38px;height:38px;min-height:38px;padding:0;margin:0;border:0;border-radius:8px;background:transparent;color:#f8fafc;font-size:1.2rem;box-shadow:none;flex:0 0 auto}
         .practice-guide-wordline #btn-voice:active{transform:scale(.94)}
-        .voice-status{display:none!important}
+        .voice-status{display:none;}
 
         /* V1504：國小中年級友善字級、觸控與視覺層次 */
         body { font-size:18px; line-height:1.55; }
@@ -653,9 +653,7 @@
         }
 
 \n
-        .game-replay-wrap{display:flex;justify-content:center;margin-top:8px;}
-        .game-replay-icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:44px;min-width:48px;padding:0;border:1px solid #38bdf8;border-radius:12px;background:#1e40af;color:#fff;font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation;}
-        .game-replay-icon:focus-visible,.parent-report-entry:focus-visible{outline:3px solid #facc15;outline-offset:3px;}
+.parent-report-entry:focus-visible{outline:3px solid #facc15;outline-offset:3px;}
         .parent-report-entry{display:block;width:100%;min-height:48px;margin-top:10px;padding:10px 14px;border:1px solid #38bdf8;border-radius:12px;background:#164e63;color:#fff;font:inherit;font-weight:800;text-align:center;cursor:pointer;touch-action:manipulation;}
         .learning-report-overlay{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483000;background:rgba(2,6,23,.82);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;overflow:hidden;}
         .learning-report-shell{display:flex;flex-direction:column;width:min(1240px,100%);height:min(900px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);min-width:0;min-height:0;background:#f3f5fa;border:1px solid #52647e;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.4);}
@@ -665,7 +663,7 @@
         @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
 
 
-        /* V1534：發音圖示與單字分離，避免小螢幕重疊 */
+        /* V1538：發音圖示與單字分離，避免小螢幕重疊 */
         #practice-guide .practice-guide-wordline{
             display:flex!important; flex-flow:row nowrap!important; align-items:center!important;
             justify-content:center!important; gap:12px!important; width:100%; max-width:100%;
@@ -691,6 +689,63 @@
             #practice-guide{font-size:clamp(1.65rem,8vw,2.05rem)!important}
             #practice-guide .practice-guide-wordline{gap:8px!important}
             #practice-guide .practice-guide-whole-word{max-width:calc(100% - 52px)}
+        }
+
+
+        /* V1538：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
+        #practice-guide .practice-guide-wordline > .word-audio-icon{
+            appearance:none!important; -webkit-appearance:none!important;
+            display:inline-flex!important; align-items:center!important; justify-content:center!important;
+            flex:0 0 44px!important; width:44px!important; min-width:44px!important;
+            height:44px!important; min-height:44px!important; max-width:44px!important;
+            margin:0!important; padding:0!important; border:0!important; border-radius:0!important;
+            background:transparent!important; background-image:none!important;
+            box-shadow:none!important; color:#f8fafc!important;
+            font-family:inherit!important; font-size:24px!important; font-weight:400!important;
+            line-height:1!important; text-indent:0!important; transform:none;
+        }
+        #practice-guide .practice-guide-wordline > .word-audio-icon::before,
+        #practice-guide .practice-guide-wordline > .word-audio-icon::after{content:none!important;display:none!important}
+
+
+        /* V1538：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
+        #practice-guide .practice-guide-wordline > .word-audio-icon{
+            all:unset!important;
+            box-sizing:border-box!important;
+            display:inline-flex!important;
+            align-items:center!important;
+            justify-content:center!important;
+            flex:0 0 44px!important;
+            width:44px!important;
+            min-width:44px!important;
+            max-width:44px!important;
+            height:44px!important;
+            min-height:44px!important;
+            margin:0!important;
+            padding:0!important;
+            color:#f8fafc!important;
+            font-family:inherit!important;
+            font-size:24px!important;
+            line-height:1!important;
+            cursor:pointer!important;
+            touch-action:manipulation!important;
+        }
+        #practice-guide .practice-guide-wordline > .word-audio-icon::before,
+        #practice-guide .practice-guide-wordline > .word-audio-icon::after{
+            content:none!important;
+            display:none!important;
+        }
+        #practice-guide .practice-guide-wordline > .voice-status{
+            display:none;
+            flex:0 0 100%;
+            width:100%;
+            margin:2px 0 0;
+            text-align:center;
+            font-size:.78rem;
+            color:#fbbf24;
+        }
+        #practice-guide .practice-guide-wordline > .voice-status[style*="display: block"]{
+            display:block!important;
         }
 
 </style>
@@ -845,7 +900,7 @@
         <div style="text-align:center; min-height:65px;">
             <span id="display-cn">...</span>
             <span id="star-icon" style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px; vertical-align:middle;" onclick="toggleStar()">☆</span>
-            <div class="game-replay-wrap"><button id="game-replay-word" type="button" class="game-replay-icon" onclick="replayCurrentWord()" aria-label="重聽目前單字" title="重聽目前單字">🔊</button></div>
+            
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:auto;"></div>
         <div id="letter-area" class="box-input-container"></div>
@@ -3637,7 +3692,9 @@ const storyWordGloss = {
     function renderPracticeGuide(text) {
         const el = document.getElementById('practice-guide');
         if (!el) return;
-        el.innerHTML = '';
+
+        // 每次換題先清空容器，避免舊版控制項殘留。
+        el.replaceChildren();
         if (!text) return;
 
         const wordLine = document.createElement('div');
@@ -3648,15 +3705,22 @@ const storyWordGloss = {
         word.textContent = text;
         wordLine.appendChild(word);
 
+        // 魔王挑戰單字區唯一的發音按鈕。
         const voiceButton = document.createElement('button');
-        voiceButton.id = 'btn-voice';
         voiceButton.type = 'button';
-        voiceButton.className = 'game-action-btn game-word-speak';
+        voiceButton.className = 'word-audio-icon';
+        voiceButton.dataset.whAudio = 'primary';
         voiceButton.textContent = '🔊';
         voiceButton.setAttribute('aria-label', '播放完整單字發音');
         voiceButton.title = '播放完整單字發音';
         voiceButton.addEventListener('click', unlockAndPlayVoice);
         wordLine.appendChild(voiceButton);
+
+        const voiceStatus = document.createElement('span');
+        voiceStatus.className = 'voice-status';
+        voiceStatus.setAttribute('aria-live', 'polite');
+        voiceStatus.setAttribute('role', 'status');
+        wordLine.appendChild(voiceStatus);
 
         el.appendChild(wordLine);
     }
@@ -3726,7 +3790,9 @@ const storyWordGloss = {
             utter.onerror = (event) => {
                 const reason = event && event.error ? String(event.error) : 'unknown';
                 console.warn('Word Hero speechSynthesis error:', reason);
+                showVoiceStatus('語音暫時無法播放，請再點一次 🔊。');
             };
+            utter.onstart = () => showVoiceStatus('');
             synth.speak(utter);
             return true;
         } catch (e) {
@@ -3735,7 +3801,26 @@ const storyWordGloss = {
         }
     }
 
-    function showVoiceStatus(message) { /* V1509：狀態不佔用孩子的畫面 */ }
+    function showVoiceStatus(message) {
+        const host = document.querySelector('#practice-guide .practice-guide-wordline');
+        if (!host) return;
+        let status = host.querySelector('.voice-status');
+        if (!status) {
+            status = document.createElement('span');
+            status.className = 'voice-status';
+            status.setAttribute('aria-live', 'polite');
+            status.setAttribute('role', 'status');
+            host.appendChild(status);
+        }
+        status.textContent = String(message || '');
+        status.style.display = message ? 'block' : 'none';
+        status.style.flexBasis = '100%';
+        status.style.width = '100%';
+        status.style.margin = '2px 0 0';
+        status.style.textAlign = 'center';
+        status.style.fontSize = '.78rem';
+        status.style.color = '#fbbf24';
+    }
 
     function unlockAndPlayVoice() {
         const word = state.currentList[state.index];
