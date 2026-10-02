@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1527 - TXT題庫與簡化發音版</title>
+    <title>Word Hero V1532｜喇叭圖示與家長報告入口修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -653,6 +653,10 @@
         }
 
 \n
+        .game-replay-wrap{display:flex;justify-content:center;margin-top:8px;}
+        .game-replay-icon{display:inline-flex;align-items:center;justify-content:center;width:48px;height:44px;min-width:48px;padding:0;border:1px solid #38bdf8;border-radius:12px;background:#1e40af;color:#fff;font-size:24px;line-height:1;cursor:pointer;touch-action:manipulation;}
+        .game-replay-icon:focus-visible,.parent-report-entry:focus-visible{outline:3px solid #facc15;outline-offset:3px;}
+        .parent-report-entry{display:block;width:100%;min-height:48px;margin-top:10px;padding:10px 14px;border:1px solid #38bdf8;border-radius:12px;background:#164e63;color:#fff;font:inherit;font-weight:800;text-align:center;cursor:pointer;touch-action:manipulation;}
         .learning-report-overlay{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:2147483000;background:rgba(2,6,23,.82);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;overflow:hidden;}
         .learning-report-shell{display:flex;flex-direction:column;width:min(1240px,100%);height:min(900px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);min-width:0;min-height:0;background:#f3f5fa;border:1px solid #52647e;border-radius:16px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.4);}
         .learning-report-toolbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#0d1930;color:#f8fafc;font-size:15px;}
@@ -718,6 +722,7 @@
             <button onclick="switchView('view-team')">🐲<span>我的夥伴</span></button>
             <button onclick="switchView('view-pokedex')">📸<span>寶可夢圖鑑</span></button>
         </div>
+        <button type="button" class="parent-report-entry" onclick="openLearningReportInApp()">📊 家長學習報告</button>
 
         <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">⚙️ 更多功能 <span id="more-arrow">⌄</span></button>
         <div id="more-tools" class="more-tools" style="display:none;">
@@ -812,7 +817,7 @@
         <div style="text-align:center; min-height:65px;">
             <span id="display-cn">...</span>
             <span id="star-icon" style="font-size:2.5rem; cursor:pointer; color:#475569; margin-left:12px; vertical-align:middle;" onclick="toggleStar()">☆</span>
-            
+            <div class="game-replay-wrap"><button id="game-replay-word" type="button" class="game-replay-icon" onclick="replayCurrentWord()" aria-label="重聽目前單字" title="重聽目前單字">🔊</button></div>
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:auto;"></div>
         <div id="letter-area" class="box-input-container"></div>
@@ -1054,6 +1059,24 @@
         return SPECIAL_BST[id] || POKE_BST[id - 1] || 350;
     }
 
+    function getPokemonEvolutionStage(id) {
+        if (id === 10079 || id === 10044) return 3;
+        for (const chain of CHAINS) {
+            const pos = chain.indexOf(id);
+            if (pos >= 0) return pos + 1;
+        }
+        return 1;
+    }
+    function getRandomOpponentForm(baseId) {
+        const chain = CHAINS.find(c => c[0] === baseId);
+        if (!chain || chain.length < 2) return baseId;
+        // 每次遇到可進化系列時獨立抽樣；進化型態不是固定沿用上一次。
+        const roll = Math.random();
+        if (chain.length >= 3 && roll < 0.18) return chain[2];
+        if (roll < 0.48) return chain[1];
+        return baseId;
+    }
+
     function getPokemonBattlePower(id) {
         const bst = getPokemonBST(id);
         if (bst >= 700) return 5;
@@ -1068,8 +1091,9 @@
         // 戰力 1~5 → 基礎 HP 6~12。
         const baseHP = [6,7,8,10,12][getPokemonBattlePower(id)-1];
         const info = getEvoInfo(id);
-        // 每升一級增加耐久；LV3 再額外 +2。
-        const evolutionBonus = upgraded ? Math.max(0, info.lv - 1) * 2 : 0;
+        // 進化型態本身提高 HP；自有夥伴另採已累積等級，避免型態與 HP 不一致。
+        const stage = Math.max(getPokemonEvolutionStage(id), upgraded ? info.lv : 1);
+        const evolutionBonus = Math.max(0, stage - 1) * 3;
         return baseHP + evolutionBonus;
     }
 
@@ -1462,9 +1486,15 @@
         if (!overlay || !frame) return alert('報告介面尚未載入，請重新整理頁面後再試。');
         // 將報告層移到 body 直屬，避免被主畫面的 transform/overflow 容器裁切。
         if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
-        frame.srcdoc = buildLearningLogHTML();
         overlay.style.display = 'flex';
+        overlay.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        try {
+            frame.srcdoc = buildLearningLogHTML();
+        } catch (err) {
+            console.error('家長報告產生失敗：', err);
+            frame.srcdoc = '<!doctype html><meta charset="utf-8"><main style="font:16px sans-serif;padding:24px;color:#172033"><h2>報告暫時無法產生</h2><p>請關閉後重新開啟；原始學習紀錄未被刪除。</p></main>';
+        }
         const closeOnEscape = event => {
             if (event.key === 'Escape' && overlay.style.display !== 'none') {
                 closeLearningReportInApp();
@@ -2643,7 +2673,13 @@
         switchView('view-game');
         initArena();
     }
-    function initArena() { let un = []; for(let i=0; i<151; i++) if(state.pokedex[i] === "0") un.push(i+1); state.currentOppId = state.chosenOppId || (un.length > 0 ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1); resetBattleHP(); updateHPUI(); loadWord(); }
+    function initArena() {
+        const un = [];
+        for (let i=0; i<151; i++) if (state.pokedex[i] === '0') un.push(i+1);
+        const base = state.chosenOppId || (un.length ? un[Math.floor(Math.random()*un.length)] : Math.floor(Math.random()*151)+1);
+        state.currentOppId = getRandomOpponentForm(base);
+        resetBattleHP(); updateHPUI(); loadWord();
+    }
 
     function getPokeImageCandidates(id) {
         const base = (id === 10079) ? 384 : (id === 10044 ? 150 : id);
@@ -3683,7 +3719,14 @@ const storyWordGloss = {
     function playVoice() {
         const word = state.currentList[state.index];
         if (!word || !word.en) return;
-        speakEnglish(word.en, {userGesture:false, rate:0.78});
+        speakEnglish(word.en, {userGesture:true, rate:0.78});
+    }
+    // 孩子可依需要重聽，不限一次；由明確點擊觸發瀏覽器語音播放。
+    function replayCurrentWord() {
+        const word = state.currentList[state.index];
+        if (!word || !word.en) { showVoiceStatus('目前沒有可播放的單字。'); return; }
+        const ok = speakEnglish(word.en, {userGesture:true, rate:0.78});
+        if (!ok) showVoiceStatus('目前無法播放語音，請確認瀏覽器語音功能。');
     }
 
     warmUpSpeech();
@@ -3943,18 +3986,30 @@ const storyWordGloss = {
         if (nameEl) nameEl.textContent = getChildName();
         const grid=document.getElementById('dex-grid'); grid.innerHTML='';
         let caught=0;
-        for(let i=1;i<=151;i++){
-            const captured=state.pokedex[i-1]==='1'; if(captured) caught++;
+        const entries=[];
+        for(let i=1;i<=151;i++) entries.push({id:i,base:i,stage:1});
+        // 將有進化鏈的進化型態列為額外圖鑑卡；顯示是否已由孩子解鎖。
+        CHAINS.forEach(chain=>chain.slice(1).forEach((id,idx)=>entries.push({id,base:chain[0],stage:idx+2})));
+        entries.forEach(({id,base,stage})=>{
+            const familyCaught=state.pokedex[base-1]==='1';
+            const evo=getEvoInfo(base);
+            const captured=familyCaught && evo.lv>=stage;
+            if(id===base && familyCaught) caught++;
             const it=document.createElement('div');
             it.className=`grid-item ${captured?'collected':'locked'}`;
-            it.innerHTML=`<img src="${getPokeImageUrl(i,true)}"><div class="name-zh">${getPokemonName(i)}</div>${captured?'<div class="caught-badge">已捕捉・可加入夥伴</div>':'<div style="color:#64748b;font-size:.7rem;">未捕捉</div>'}`;
-            const img=it.querySelector('img');
-            setPokeImageFallback(img,i);
-            it.style.cursor='pointer';
-            it.onclick=()=>{ if(state.opponentPickMode){ state.chosenOppId=i; setHeroData('hero_opponent_id',i); state.opponentPickMode=false; const b=document.getElementById('dex-opponent-toggle'); if(b)b.textContent='⚔️ 選擇對戰對手'; alert(`已選擇 ${getPokemonName(i)} 作為下一場對手。回首頁開始魔王挑戰即可。`); renderDex(); return; } if(!captured){ alert('這隻尚未收服，先在魔王挑戰中擊敗牠，才能設為自己的夥伴。'); return; } state.activePokeId=i; setHeroData('hero_myPoke',i); switchView('view-team'); };
+            const label=stage>1?`進化型態・${captured?'已解鎖':'尚未解鎖'}`:(familyCaught?'已捕捉・可加入夥伴':'未捕捉');
+            it.innerHTML=`<img src="${getPokeImageUrl(id,true)}"><div class="name-zh">${getPokemonName(id)}</div><div style="color:#64748b;font-size:.7rem;">${label}</div>`;
+            const img=it.querySelector('img'); setPokeImageFallback(img,id); it.style.cursor='pointer';
+            it.onclick=()=>{
+                if(state.opponentPickMode){ state.chosenOppId=base; setHeroData('hero_opponent_id',base); state.opponentPickMode=false; const b=document.getElementById('dex-opponent-toggle'); if(b)b.textContent='⚔️ 選擇對戰對手'; alert(`已選擇 ${getPokemonName(base)} 系列作為下一場對手；實際型態每次隨機。`); renderDex(); return; }
+                if(!familyCaught){ alert('這個系列尚未收服，先在魔王挑戰中擊敗牠。'); return; }
+                if(stage>evo.lv){ alert('這個進化型態尚未解鎖，繼續累積冒險經驗即可。'); return; }
+                state.activePokeId=base; setHeroData('hero_myPoke',base); switchView('view-team');
+            };
             grid.appendChild(it);
-        }
-        document.getElementById('dex-count').innerText=`已捕捉 ${caught} / 151｜目前指定對手：${state.chosenOppId ? getPokemonName(state.chosenOppId) : '隨機'}｜已收服者可設為夥伴；對手選擇模式可指定已收服寶可夢`;
+        });
+        const extra=entries.length-151;
+        document.getElementById('dex-count').innerText=`已捕捉 ${caught} / 151｜另有 ${extra} 張進化型態卡｜目前指定對手：${state.chosenOppId ? getPokemonName(state.chosenOppId) : '隨機'}｜未收服對手每次可能以不同進化型態出現，進化型 HP 較高。`;
     }
 </script>
 </body>
