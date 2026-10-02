@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1538｜喇叭圖示與家長報告入口修正版</title>
+    <title>Word Hero V1539｜喇叭圖示與家長報告入口修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -663,7 +663,7 @@
         @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
 
 
-        /* V1538：發音圖示與單字分離，避免小螢幕重疊 */
+        /* V1539：發音圖示與單字分離，避免小螢幕重疊 */
         #practice-guide .practice-guide-wordline{
             display:flex!important; flex-flow:row nowrap!important; align-items:center!important;
             justify-content:center!important; gap:12px!important; width:100%; max-width:100%;
@@ -692,7 +692,7 @@
         }
 
 
-        /* V1538：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
+        /* V1539：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             appearance:none!important; -webkit-appearance:none!important;
             display:inline-flex!important; align-items:center!important; justify-content:center!important;
@@ -708,7 +708,7 @@
         #practice-guide .practice-guide-wordline > .word-audio-icon::after{content:none!important;display:none!important}
 
 
-        /* V1538：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
+        /* V1539：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             all:unset!important;
             box-sizing:border-box!important;
@@ -747,6 +747,24 @@
         #practice-guide .practice-guide-wordline > .voice-status[style*="display: block"]{
             display:block!important;
         }
+
+
+        /* V1539：單字列僅用非 button 元素承載一個喇叭，避開全站按鈕樣式 */
+        #practice-guide .practice-guide-wordline > .word-audio-icon{
+            all:unset!important; box-sizing:border-box!important;
+            display:inline-flex!important; align-items:center!important; justify-content:center!important;
+            flex:0 0 44px!important; width:44px!important; min-width:44px!important;
+            max-width:44px!important; height:44px!important; min-height:44px!important;
+            margin:0!important; padding:0!important; border:0!important; border-radius:0!important;
+            background:transparent!important; box-shadow:none!important; color:#f8fafc!important;
+            font-family:inherit!important; font-size:24px!important; font-weight:400!important;
+            line-height:1!important; cursor:pointer!important; user-select:none;
+        }
+        #practice-guide .practice-guide-wordline > .word-audio-icon::before,
+        #practice-guide .practice-guide-wordline > .word-audio-icon::after{content:none!important;display:none!important}
+        #practice-guide .practice-guide-wordline > .word-audio-icon:focus-visible{outline:2px solid #facc15!important;outline-offset:2px}
+        #practice-guide .practice-guide-wordline > .voice-status{display:none;flex:0 0 100%;width:100%;margin:2px 0 0;text-align:center;font-size:.78rem;color:#fbbf24}
+        #practice-guide .practice-guide-wordline > .voice-status[style*="display: block"]{display:block!important}
 
 </style>
 </head>
@@ -3693,7 +3711,7 @@ const storyWordGloss = {
         const el = document.getElementById('practice-guide');
         if (!el) return;
 
-        // 每次換題先清空容器，避免舊版控制項殘留。
+        // 完全重建單字列，避免舊版按鈕或事件殘留。
         el.replaceChildren();
         if (!text) return;
 
@@ -3705,16 +3723,23 @@ const storyWordGloss = {
         word.textContent = text;
         wordLine.appendChild(word);
 
-        // 魔王挑戰單字區唯一的發音按鈕。
-        const voiceButton = document.createElement('button');
-        voiceButton.type = 'button';
-        voiceButton.className = 'word-audio-icon';
-        voiceButton.dataset.whAudio = 'primary';
-        voiceButton.textContent = '🔊';
-        voiceButton.setAttribute('aria-label', '播放完整單字發音');
-        voiceButton.title = '播放完整單字發音';
-        voiceButton.addEventListener('click', unlockAndPlayVoice);
-        wordLine.appendChild(voiceButton);
+        // 使用 span 而非 button，避開全站 button 的藍色背景／尺寸樣式。
+        const speaker = document.createElement('span');
+        speaker.className = 'word-audio-icon';
+        speaker.dataset.whAudio = 'primary';
+        speaker.textContent = '🔊';
+        speaker.setAttribute('role', 'button');
+        speaker.setAttribute('tabindex', '0');
+        speaker.setAttribute('aria-label', '播放完整單字發音');
+        speaker.title = '播放完整單字發音';
+        speaker.addEventListener('click', unlockAndPlayVoice);
+        speaker.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                unlockAndPlayVoice();
+            }
+        });
+        wordLine.appendChild(speaker);
 
         const voiceStatus = document.createElement('span');
         voiceStatus.className = 'voice-status';
