@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1532｜喇叭圖示與家長報告入口修正版</title>
+    <title>Word Hero V1534｜喇叭圖示與家長報告入口修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -664,6 +664,35 @@
         #learning-report-frame{display:block;flex:1 1 auto;width:100%;height:100%;min-width:0;min-height:0;border:0;background:#f3f5fa;}
         @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
 
+
+        /* V1534：發音圖示與單字分離，避免小螢幕重疊 */
+        #practice-guide .practice-guide-wordline{
+            display:flex!important; flex-flow:row nowrap!important; align-items:center!important;
+            justify-content:center!important; gap:12px!important; width:100%; max-width:100%;
+            min-height:58px; overflow:visible; box-sizing:border-box;
+        }
+        #practice-guide .practice-guide-whole-word{
+            display:block!important; flex:0 1 auto!important; min-width:0; max-width:calc(100% - 60px);
+            overflow-wrap:anywhere; word-break:normal; line-height:1.2; text-align:center;
+        }
+        #practice-guide .practice-guide-wordline #btn-voice{
+            position:relative!important; z-index:2; display:inline-flex!important;
+            flex:0 0 44px!important; width:44px!important; min-width:44px!important;
+            height:44px!important; min-height:44px!important; margin:0!important; padding:0!important;
+            border:0!important; border-radius:8px!important; background:transparent!important;
+            color:#f8fafc!important; box-shadow:none!important; font-size:24px!important;
+            line-height:1!important; align-items:center!important; justify-content:center!important;
+            cursor:pointer; touch-action:manipulation;
+        }
+        #practice-guide .practice-guide-wordline #btn-voice:focus-visible{
+            outline:2px solid #facc15; outline-offset:2px;
+        }
+        @media(max-width:420px){
+            #practice-guide{font-size:clamp(1.65rem,8vw,2.05rem)!important}
+            #practice-guide .practice-guide-wordline{gap:8px!important}
+            #practice-guide .practice-guide-whole-word{max-width:calc(100% - 52px)}
+        }
+
 </style>
 </head>
 <body onload="initSystem()">
@@ -722,8 +751,7 @@
             <button onclick="switchView('view-team')">🐲<span>我的夥伴</span></button>
             <button onclick="switchView('view-pokedex')">📸<span>寶可夢圖鑑</span></button>
         </div>
-        <button type="button" class="parent-report-entry" onclick="openLearningReportInApp()">📊 家長學習報告</button>
-
+        
         <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">⚙️ 更多功能 <span id="more-arrow">⌄</span></button>
         <div id="more-tools" class="more-tools" style="display:none;">
             <button class="admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
