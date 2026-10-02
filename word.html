@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1540｜喇叭圖示與家長報告入口修正版</title>
+    <title>Word Hero V1541｜喇叭圖示與家長報告入口修正版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -663,7 +663,7 @@
         @media(max-width:600px){.learning-report-overlay{padding:0}.learning-report-shell{width:100%;height:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0}.learning-report-toolbar{padding:8px 12px}.learning-report-toolbar button{min-height:44px}}
 
 
-        /* V1540：發音圖示與單字分離，避免小螢幕重疊 */
+        /* V1541：發音圖示與單字分離，避免小螢幕重疊 */
         #practice-guide .practice-guide-wordline{
             display:flex!important; flex-flow:row nowrap!important; align-items:center!important;
             justify-content:center!important; gap:12px!important; width:100%; max-width:100%;
@@ -692,7 +692,7 @@
         }
 
 
-        /* V1540：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
+        /* V1541：魔王挑戰只保留一個純圖示喇叭，禁止繼承遊戲主按鈕外觀 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             appearance:none!important; -webkit-appearance:none!important;
             display:inline-flex!important; align-items:center!important; justify-content:center!important;
@@ -708,7 +708,7 @@
         #practice-guide .practice-guide-wordline > .word-audio-icon::after{content:none!important;display:none!important}
 
 
-        /* V1540：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
+        /* V1541：魔王挑戰單字區只允許一顆純圖示發音按鈕 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             all:unset!important;
             box-sizing:border-box!important;
@@ -749,7 +749,7 @@
         }
 
 
-        /* V1540：單字列僅用非 button 元素承載一個喇叭，避開全站按鈕樣式 */
+        /* V1541：單字列僅用非 button 元素承載一個喇叭，避開全站按鈕樣式 */
         #practice-guide .practice-guide-wordline > .word-audio-icon{
             all:unset!important; box-sizing:border-box!important;
             display:inline-flex!important; align-items:center!important; justify-content:center!important;
@@ -3469,7 +3469,7 @@ const storyWordGloss = {
 
         // 顯示目前題目的實際字母數，避免字框數與答案不一致。
         area.dataset.answerLength = String(inputIdx);
-        renderPracticeGuide((state.mode === 'practice' || state.mode === 'quiz' || state.tempPractice) ? word.en : "");
+        renderPracticeGuide((state.mode === 'practice' || state.mode === 'quiz' || state.tempPractice) ? word.en : "", { showText: state.mode !== 'quiz' });
         setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
 
@@ -3707,7 +3707,7 @@ const storyWordGloss = {
     function switchView(id) { if(id==='view-main')syncErrorBankCount(); document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); document.getElementById(id).style.display = 'flex'; if(id === 'view-team') renderTeam(); if(id === 'view-pokedex') renderDex(); if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); } }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeWordHelp(); closeSentencePractice(); closeUserAddModal(); } });
     // 兒童版只保留完整單字及完整單字播放；不顯示未經校對的自然發音切分或音標。
-    function renderPracticeGuide(text) {
+    function renderPracticeGuide(text, options = {}) {
         const el = document.getElementById('practice-guide');
         if (!el) return;
 
@@ -3718,10 +3718,12 @@ const storyWordGloss = {
         const wordLine = document.createElement('div');
         wordLine.className = 'practice-guide-wordline';
 
-        const word = document.createElement('span');
-        word.className = 'practice-guide-whole-word';
-        word.textContent = text;
-        wordLine.appendChild(word);
+        if (options.showText !== false) {
+            const word = document.createElement('span');
+            word.className = 'practice-guide-whole-word';
+            word.textContent = text;
+            wordLine.appendChild(word);
+        }
 
         // 使用 span 而非 button，避開全站 button 的藍色背景／尺寸樣式。
         const speaker = document.createElement('span');
