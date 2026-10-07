@@ -230,7 +230,7 @@ main{margin-top:18px}
     <div class="hero-poke"><img id="heroPoke" alt="Pikachu"></div>
   </div>
 
-  <div class="section-title"><h2>今日任務</h2><span class="muted" id="dailyText">0 / 10</span></div>
+  <div class="section-title"><h2>今日任務</h2><span class="muted" id="dailyText">今日學習：0 題</span></div>
   <div class="card">
     <div style="display:flex;align-items:center;gap:12px">
       <span style="font-size:28px">📋</span>
@@ -287,7 +287,7 @@ main{margin-top:18px}
   <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
   <div class="stats" id="stats"></div>
   <div class="section-title"><h2>最近紀錄</h2><span class="muted">TEST 不會進入學習統計</span></div>
-  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
+  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
 </section>
 
 <section id="settings" class="screen">
@@ -344,102 +344,149 @@ const STAGES = [
 ];
 
 const QUESTION_BANK = {
- ruleS:[
-  {verb:"play",answer:"S",poke:25,rule:"S"},
-  {verb:"jump",answer:"S",poke:4,rule:"S"},
-  {verb:"listen",answer:"S",poke:7,rule:"S"},
-  {verb:"read",answer:"S",poke:1,rule:"S"}
- ],
- ruleCH:[
-  {verb:"teach",answer:"ES",poke:4,rule:"CH"},
-  {verb:"watch",answer:"ES",poke:7,rule:"CH"},
-  {verb:"teach",answer:"ES",poke:54,rule:"CH"},
-  {verb:"watch",answer:"ES",poke:39,rule:"CH"}
- ],
- ruleSH:[
-  {verb:"wash",answer:"ES",poke:39,rule:"SH"},
-  {verb:"wash",answer:"ES",poke:52,rule:"SH"},
-  {verb:"push",answer:"ES",poke:10,rule:"SH"},
-  {verb:"finish",answer:"ES",poke:16,rule:"SH"}
- ],
- ruleSS:[
-  {verb:"miss",answer:"ES",poke:52,rule:"SS"},
-  {verb:"kiss",answer:"ES",poke:39,rule:"SS"},
-  {verb:"pass",answer:"ES",poke:10,rule:"SS"},
-  {verb:"dress",answer:"ES",poke:16,rule:"SS"}
- ],
- ruleX:[
-  {verb:"fix",answer:"ES",poke:10,rule:"X"},
-  {verb:"mix",answer:"ES",poke:16,rule:"X"},
-  {verb:"box",answer:"ES",poke:54,rule:"X"},
-  {verb:"tax",answer:"ES",poke:39,rule:"X"}
- ],
- ruleO:[
-  {verb:"go",answer:"ES",poke:16,rule:"O"},
-  {verb:"do",answer:"ES",poke:54,rule:"O"},
-  {verb:"echo",answer:"ES",poke:39,rule:"O"},
-  {verb:"echo",answer:"ES",poke:10,rule:"O"}
- ],
- ruleES:[
-  {verb:"teach",answer:"ES",poke:4,rule:"CH"}, {verb:"watch",answer:"ES",poke:7,rule:"CH"},
-  {verb:"wash",answer:"ES",poke:39,rule:"SH"}, {verb:"miss",answer:"ES",poke:52,rule:"SS"},
-  {verb:"fix",answer:"ES",poke:10,rule:"X"}, {verb:"go",answer:"ES",poke:16,rule:"O"}
- ],
- ruleIES:[
-  {verb:"try",answer:"IES",poke:25,rule:"consonant+y"},
-  {verb:"study",answer:"IES",poke:1,rule:"consonant+y"},
-  {verb:"cry",answer:"IES",poke:7,rule:"consonant+y"}
- ],
- mixed:[
-  {verb:"play",answer:"S",poke:25,rule:"vowel+y"},
-  {verb:"teach",answer:"ES",poke:4,rule:"CH"},
-  {verb:"try",answer:"IES",poke:7,rule:"consonant+y"},
-  {verb:"watch",answer:"ES",poke:1,rule:"CH"},
-  {verb:"go",answer:"ES",poke:54,rule:"O"},
-  {verb:"jump",answer:"S",poke:39,rule:"S"}
- ],
- sentenceSubject:[
-  {sentence:"He _____ soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
-  {sentence:"She _____ statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
-  {sentence:"They _____ soccer after school.",choices:["plays","play","playes","plaies"],answer:"play",verb:"play",rule:"plural"},
-  {sentence:"The boys and girls _____ the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"}
- ],
- sentenceFill:[
-  {sentence:"He _____ to play the piano.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"},
-  {sentence:"The music teacher _____ the students.",choices:["teach","teachs","teaches","teachies"],answer:"teaches",verb:"teach",rule:"CH"},
-  {sentence:"Emily _____ her drums.",choices:["fix","fixs","fixes","fixies"],answer:"fixes",verb:"fix",rule:"X"},
-  {sentence:"One girl _____ the beat.",choices:["miss","misses","missies","misss"],answer:"misses",verb:"miss",rule:"SS"},
-  {sentence:"David _____ the piano.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"S"},
-  {sentence:"The children _____ the music.",choices:["enjoy","enjoys","enjoies","enjoyes"],answer:"enjoy",verb:"enjoy",rule:"plural"},
-  {sentence:"Joe _____ to play the violin.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"}
- ],
- ing:[
-  {sentence:"I am _____ on a chair.",choices:["sit","sitting","siting","sitted"],answer:"sitting",verb:"sit",rule:"CVC"},
-  {sentence:"The children are _____ in the garden.",choices:["hop","hopping","hoping","hopped"],answer:"hopping",verb:"hop",rule:"CVC"},
-  {sentence:"The boys are _____ in the hallway.",choices:["drink","drinking","drinkking","drinken"],answer:"drinking",verb:"drink",rule:"+ing"},
-  {sentence:"We are _____ the crayons away.",choices:["put","putting","puting","putted"],answer:"putting",verb:"put",rule:"CVC"},
-  {sentence:"My father and I are _____.",choices:["shop","shopping","shoping","shopped"],answer:"shopping",verb:"shop",rule:"CVC"},
-  {sentence:"Pat is _____ the game.",choices:["win","winning","wining","winned"],answer:"winning",verb:"win",rule:"CVC"},
-  {sentence:"Girls are _____ loudly.",choices:["eat","eating","eatting","eated"],answer:"eating",verb:"eat",rule:"+ing"},
-  {sentence:"Too many children are _____.",choices:["chat","chatting","chating","chatted"],answer:"chatting",verb:"chat",rule:"CVC"},
-  {sentence:"The teacher is _____ the books.",choices:["get","getting","geting","getted"],answer:"getting",verb:"get",rule:"CVC"},
-  {sentence:"My sister is _____ the windows.",choices:["shut","shutting","shuting","shutted"],answer:"shutting",verb:"shut",rule:"CVC"},
-  {sentence:"Students are _____ on the tables.",choices:["jump","jumping","jumpping","jumped"],answer:"jumping",verb:"jump",rule:"+ing"},
-  {sentence:"My friend is _____ the game.",choices:["stop","stopping","stoping","stopped"],answer:"stopping",verb:"stop",rule:"CVC"}
- ],
- error:[
-  {sentence:"The boys and girls leaves the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"},
-  {sentence:"He play soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
-  {sentence:"She make statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
-  {sentence:"They watches TV after school.",choices:["watches","watch","watchs","watchies"],answer:"watch",verb:"watch",rule:"plural"}
- ]
+  // Rule Hunt banks: each skill has a healthy pool so an 8-question mission does not immediately repeat.
+  // `poke` is only the visual skin; the answer is determined by `rule`.
+  ruleS:[
+    {id:"s01",verb:"play",answer:"S",poke:25,rule:"S"},{id:"s02",verb:"jump",answer:"S",poke:4,rule:"S"},
+    {id:"s03",verb:"listen",answer:"S",poke:7,rule:"S"},{id:"s04",verb:"read",answer:"S",poke:1,rule:"S"},
+    {id:"s05",verb:"work",answer:"S",poke:133,rule:"S"},{id:"s06",verb:"clean",answer:"S",poke:54,rule:"S"},
+    {id:"s07",verb:"help",answer:"S",poke:39,rule:"S"},{id:"s08",verb:"open",answer:"S",poke:52,rule:"S"},
+    {id:"s09",verb:"need",answer:"S",poke:10,rule:"S"},{id:"s10",verb:"cook",answer:"S",poke:16,rule:"S"},
+    {id:"s11",verb:"draw",answer:"S",poke:27,rule:"S"},{id:"s12",verb:"sing",answer:"S",poke:35,rule:"S"}
+  ],
+  ruleCH:[
+    {id:"ch01",verb:"teach",answer:"ES",poke:4,rule:"CH"},{id:"ch02",verb:"watch",answer:"ES",poke:7,rule:"CH"},
+    {id:"ch03",verb:"reach",answer:"ES",poke:54,rule:"CH"},{id:"ch04",verb:"touch",answer:"ES",poke:39,rule:"CH"},
+    {id:"ch05",verb:"catch",answer:"ES",poke:52,rule:"CH"},{id:"ch06",verb:"match",answer:"ES",poke:10,rule:"CH"},
+    {id:"ch07",verb:"switch",answer:"ES",poke:16,rule:"CH"},{id:"ch08",verb:"fetch",answer:"ES",poke:27,rule:"CH"},
+    {id:"ch09",verb:"search",answer:"ES",poke:35,rule:"CH"},{id:"ch10",verb:"march",answer:"ES",poke:25,rule:"CH"},
+    {id:"ch11",verb:"scratch",answer:"ES",poke:1,rule:"CH"},{id:"ch12",verb:"stretch",answer:"ES",poke:133,rule:"CH"}
+  ],
+  ruleSH:[
+    {id:"sh01",verb:"wash",answer:"ES",poke:39,rule:"SH"},{id:"sh02",verb:"push",answer:"ES",poke:10,rule:"SH"},
+    {id:"sh03",verb:"finish",answer:"ES",poke:16,rule:"SH"},{id:"sh04",verb:"brush",answer:"ES",poke:52,rule:"SH"},
+    {id:"sh05",verb:"rush",answer:"ES",poke:54,rule:"SH"},{id:"sh06",verb:"wish",answer:"ES",poke:7,rule:"SH"},
+    {id:"sh07",verb:"flash",answer:"ES",poke:25,rule:"SH"},{id:"sh08",verb:"crash",answer:"ES",poke:4,rule:"SH"},
+    {id:"sh09",verb:"polish",answer:"ES",poke:35,rule:"SH"},{id:"sh10",verb:"splash",answer:"ES",poke:27,rule:"SH"},
+    {id:"sh11",verb:"punish",answer:"ES",poke:1,rule:"SH"},{id:"sh12",verb:"publish",answer:"ES",poke:133,rule:"SH"}
+  ],
+  ruleSS:[
+    {id:"ss01",verb:"miss",answer:"ES",poke:52,rule:"SS"},{id:"ss02",verb:"kiss",answer:"ES",poke:39,rule:"SS"},
+    {id:"ss03",verb:"pass",answer:"ES",poke:10,rule:"SS"},{id:"ss04",verb:"dress",answer:"ES",poke:16,rule:"SS"},
+    {id:"ss05",verb:"guess",answer:"ES",poke:54,rule:"SS"},{id:"ss06",verb:"cross",answer:"ES",poke:7,rule:"SS"},
+    {id:"ss07",verb:"press",answer:"ES",poke:25,rule:"SS"},{id:"ss08",verb:"bless",answer:"ES",poke:4,rule:"SS"},
+    {id:"ss09",verb:"discuss",answer:"ES",poke:1,rule:"SS"},{id:"ss10",verb:"express",answer:"ES",poke:133,rule:"SS"},
+    {id:"ss11",verb:"address",answer:"ES",poke:35,rule:"SS"},{id:"ss12",verb:"impress",answer:"ES",poke:27,rule:"SS"}
+  ],
+  ruleX:[
+    {id:"x01",verb:"fix",answer:"ES",poke:10,rule:"X"},{id:"x02",verb:"mix",answer:"ES",poke:16,rule:"X"},
+    {id:"x03",verb:"box",answer:"ES",poke:54,rule:"X"},{id:"x04",verb:"tax",answer:"ES",poke:39,rule:"X"},
+    {id:"x05",verb:"relax",answer:"ES",poke:25,rule:"X"},{id:"x06",verb:"fax",answer:"ES",poke:7,rule:"X"},
+    {id:"x07",verb:"wax",answer:"ES",poke:52,rule:"X"},{id:"x08",verb:"index",answer:"ES",poke:4,rule:"X"},
+    {id:"x09",verb:"flex",answer:"ES",poke:35,rule:"X"},{id:"x10",verb:"vex",answer:"ES",poke:27,rule:"X"},
+    {id:"x11",verb:"prefix",answer:"ES",poke:1,rule:"X"},{id:"x12",verb:"suffix",answer:"ES",poke:133,rule:"X"}
+  ],
+  ruleO:[
+    {id:"o01",verb:"go",answer:"ES",poke:16,rule:"O"},{id:"o02",verb:"do",answer:"ES",poke:54,rule:"O"},
+    {id:"o03",verb:"echo",answer:"ES",poke:39,rule:"O"},{id:"o04",verb:"veto",answer:"ES",poke:52,rule:"O"},
+    {id:"o05",verb:"embargo",answer:"ES",poke:25,rule:"O"},{id:"o06",verb:"zero",answer:"ES",poke:7,rule:"O"},
+    {id:"o07",verb:"solo",answer:"ES",poke:10,rule:"O"},{id:"o08",verb:"lasso",answer:"ES",poke:4,rule:"O"},
+    {id:"o09",verb:"torpedo",answer:"ES",poke:1,rule:"O"},{id:"o10",verb:"video",answer:"ES",poke:133,rule:"O"},
+    {id:"o11",verb:"redo",answer:"ES",poke:35,rule:"O"},{id:"o12",verb:"undo",answer:"ES",poke:27,rule:"O"}
+  ],
+  ruleIES:[
+    {id:"y01",verb:"try",answer:"IES",poke:25,rule:"consonant+y"},{id:"y02",verb:"study",answer:"IES",poke:1,rule:"consonant+y"},
+    {id:"y03",verb:"cry",answer:"IES",poke:7,rule:"consonant+y"},{id:"y04",verb:"carry",answer:"IES",poke:4,rule:"consonant+y"},
+    {id:"y05",verb:"worry",answer:"IES",poke:54,rule:"consonant+y"},{id:"y06",verb:"hurry",answer:"IES",poke:39,rule:"consonant+y"},
+    {id:"y07",verb:"copy",answer:"IES",poke:52,rule:"consonant+y"},{id:"y08",verb:"fly",answer:"IES",poke:10,rule:"consonant+y"},
+    {id:"y09",verb:"reply",answer:"IES",poke:16,rule:"consonant+y"},{id:"y10",verb:"dry",answer:"IES",poke:27,rule:"consonant+y"},
+    {id:"y11",verb:"marry",answer:"IES",poke:35,rule:"consonant+y"},{id:"y12",verb:"tidy",answer:"IES",poke:133,rule:"consonant+y"}
+  ],
+  mixed:[],
+  sentenceSubject:[
+    {id:"sub01",sentence:"He _____ soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
+    {id:"sub02",sentence:"She _____ statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
+    {id:"sub03",sentence:"They _____ soccer after school.",choices:["plays","play","playes","plaies"],answer:"play",verb:"play",rule:"plural"},
+    {id:"sub04",sentence:"The boys and girls _____ the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"},
+    {id:"sub05",sentence:"Tom _____ his homework every day.",choices:["do","does","dos","doies"],answer:"does",verb:"do",rule:"subject"},
+    {id:"sub06",sentence:"We _____ English at school.",choices:["learn","learns","learnes","learies"],answer:"learn",verb:"learn",rule:"plural"},
+    {id:"sub07",sentence:"My sister _____ the piano.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
+    {id:"sub08",sentence:"The dogs _____ in the yard.",choices:["runs","run","runes","runns"],answer:"run",verb:"run",rule:"plural"},
+    {id:"sub09",sentence:"Dad _____ dinner at six.",choices:["cook","cooks","cookes","cokks"],answer:"cooks",verb:"cook",rule:"subject"},
+    {id:"sub10",sentence:"They _____ books in class.",choices:["reads","read","reades","red"],answer:"read",verb:"read",rule:"plural"},
+    {id:"sub11",sentence:"Amy _____ to school every day.",choices:["walk","walks","walkes","walkies"],answer:"walks",verb:"walk",rule:"subject"},
+    {id:"sub12",sentence:"The children _____ games together.",choices:["enjoys","enjoy","enjoies","enjoyes"],answer:"enjoy",verb:"enjoy",rule:"plural"}
+  ],
+  sentenceFill:[
+    {id:"fill01",sentence:"He _____ to play the piano.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"},
+    {id:"fill02",sentence:"The music teacher _____ the students.",choices:["teach","teachs","teaches","teachies"],answer:"teaches",verb:"teach",rule:"CH"},
+    {id:"fill03",sentence:"Emily _____ her drums.",choices:["fix","fixs","fixes","fixies"],answer:"fixes",verb:"fix",rule:"X"},
+    {id:"fill04",sentence:"One girl _____ the beat.",choices:["miss","misses","missies","misss"],answer:"misses",verb:"miss",rule:"SS"},
+    {id:"fill05",sentence:"David _____ the piano.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"S"},
+    {id:"fill06",sentence:"The children _____ the music.",choices:["enjoy","enjoys","enjoies","enjoyes"],answer:"enjoy",verb:"enjoy",rule:"plural"},
+    {id:"fill07",sentence:"Joe _____ to play the violin.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"},
+    {id:"fill08",sentence:"She _____ the dishes.",choices:["wash","washs","washes","washies"],answer:"washes",verb:"wash",rule:"SH"},
+    {id:"fill09",sentence:"Leo _____ to school.",choices:["go","gos","goes","goies"],answer:"goes",verb:"go",rule:"O"},
+    {id:"fill10",sentence:"Max _____ a box.",choices:["mix","mixs","mixes","mixies"],answer:"mixes",verb:"mix",rule:"X"},
+    {id:"fill11",sentence:"Lily _____ her name.",choices:["copy","copys","copies","copyes"],answer:"copies",verb:"copy",rule:"consonant+y"},
+    {id:"fill12",sentence:"The teacher _____ the answer.",choices:["check","checks","checkes","checkies"],answer:"checks",verb:"check",rule:"CH"}
+  ],
+  ing:[
+    {id:"ing01",sentence:"I am _____ on a chair.",choices:["sit","sitting","siting","sitted"],answer:"sitting",verb:"sit",rule:"CVC"},
+    {id:"ing02",sentence:"The children are _____ in the garden.",choices:["hop","hopping","hoping","hopped"],answer:"hopping",verb:"hop",rule:"CVC"},
+    {id:"ing03",sentence:"The boys are _____ in the hallway.",choices:["drink","drinking","drinkking","drinken"],answer:"drinking",verb:"drink",rule:"+ing"},
+    {id:"ing04",sentence:"We are _____ the crayons away.",choices:["put","putting","puting","putted"],answer:"putting",verb:"put",rule:"CVC"},
+    {id:"ing05",sentence:"My father and I are _____.",choices:["shop","shopping","shoping","shopped"],answer:"shopping",verb:"shop",rule:"CVC"},
+    {id:"ing06",sentence:"Pat is _____ the game.",choices:["win","winning","wining","winned"],answer:"winning",verb:"win",rule:"CVC"},
+    {id:"ing07",sentence:"Girls are _____ loudly.",choices:["eat","eating","eatting","eated"],answer:"eating",verb:"eat",rule:"+ing"},
+    {id:"ing08",sentence:"Too many children are _____.",choices:["chat","chatting","chating","chatted"],answer:"chatting",verb:"chat",rule:"CVC"},
+    {id:"ing09",sentence:"The teacher is _____ the books.",choices:["get","getting","geting","getted"],answer:"getting",verb:"get",rule:"CVC"},
+    {id:"ing10",sentence:"My sister is _____ the windows.",choices:["shut","shutting","shuting","shutted"],answer:"shutting",verb:"shut",rule:"CVC"},
+    {id:"ing11",sentence:"Students are _____ on the tables.",choices:["jump","jumping","jumpping","jumped"],answer:"jumping",verb:"jump",rule:"+ing"},
+    {id:"ing12",sentence:"My friend is _____ the game.",choices:["stop","stopping","stoping","stopped"],answer:"stopping",verb:"stop",rule:"CVC"},
+    {id:"ing13",sentence:"Anna is _____ a picture.",choices:["draw","drawing","drawring","drawed"],answer:"drawing",verb:"draw",rule:"+ing"},
+    {id:"ing14",sentence:"The baby is _____ now.",choices:["sleep","sleeping","sleping","sleeped"],answer:"sleeping",verb:"sleep",rule:"+ing"},
+    {id:"ing15",sentence:"We are _____ for the bus.",choices:["wait","waiting","waitting","waited"],answer:"waiting",verb:"wait",rule:"+ing"},
+    {id:"ing16",sentence:"He is _____ a letter.",choices:["write","writing","writting","writed"],answer:"writing",verb:"write",rule:"drop-e"}
+  ],
+  error:[
+    {id:"err01",sentence:"The boys and girls leaves the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"},
+    {id:"err02",sentence:"He play soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
+    {id:"err03",sentence:"She make statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
+    {id:"err04",sentence:"They watches TV after school.",choices:["watches","watch","watchs","watchies"],answer:"watch",verb:"watch",rule:"plural"},
+    {id:"err05",sentence:"My sister try to help.",choices:["try","trys","tries","tryes"],answer:"tries",verb:"try",rule:"subject"},
+    {id:"err06",sentence:"The teacher fix the box.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"subject"},
+    {id:"err07",sentence:"Tom go to school by bus.",choices:["go","goes","gos","goies"],answer:"goes",verb:"go",rule:"subject"},
+    {id:"err08",sentence:"The girls wash the cups.",choices:["wash","washes","washs","washies"],answer:"wash",verb:"wash",rule:"plural"}
+  ]
 };
+
+// Build the mixed bank from the real rule banks instead of maintaining a second, stale list.
+QUESTION_BANK.mixed=[
+  ...QUESTION_BANK.ruleS.slice(0,6),
+  ...QUESTION_BANK.ruleCH.slice(0,4),
+  ...QUESTION_BANK.ruleSH.slice(0,4),
+  ...QUESTION_BANK.ruleSS.slice(0,4),
+  ...QUESTION_BANK.ruleX.slice(0,4),
+  ...QUESTION_BANK.ruleO.slice(0,4),
+  ...QUESTION_BANK.ruleIES.slice(0,6)
+].map(q=>({...q,id:`mix-${q.id}`}));
+
+// Legacy alias retained for old saved data/code paths.
+QUESTION_BANK.ruleES=[
+  ...QUESTION_BANK.ruleCH.slice(0,2),
+  ...QUESTION_BANK.ruleSH.slice(0,2),
+  ...QUESTION_BANK.ruleSS.slice(0,2),
+  ...QUESTION_BANK.ruleX.slice(0,2),
+  ...QUESTION_BANK.ruleO.slice(0,2)
+];
+
 
 const HINTS = {
  S:[
-  ["Look at the subject.","Who is doing the action?"],
-  ["Look at the subject again.","He, she, or it needs S."],
-  ["He / She / It → S","Add S to the verb."]
+  ["Look at the verb.","Which ending does this verb need?"],
+  ["Most verbs use S.","Check that the verb does not end in CH, SH, SS, X, or O."],
+  ["S → S","Add S: play → plays"]
  ],
  CH:[
   ["Look at the end of the word.","Check the last two letters."],
@@ -531,7 +578,8 @@ function loadState(){
       m.needsReview=!!m.needsReview;
     });
     Object.values(s.collection||{}).forEach(v=>{if(v && v.evolutionProgress==null) v.evolutionProgress=0});
-    ["s","ch","sh","ss","x","o","y"].forEach(id=>{if(!s.unlocked.includes(id)) s.unlocked.push(id);});
+    if(!Array.isArray(s.unlocked)) s.unlocked=["s","ch","sh","y"];
+    // Do not silently unlock future stages during migration. Existing progress is preserved.
     return s;
   }catch(e){return defaultState()}
 }
@@ -574,7 +622,7 @@ function updateHeader(){
   document.getElementById("xpText").textContent=`${state.xp} / ${need} EXP`;
   document.getElementById("xpFill").style.width=Math.min(100,state.xp/need*100)+"%";
   document.getElementById("dailyText").textContent=`今日學習：${state.daily.count} 題`;
-  document.getElementById("dailyFill").style.width=Math.min(100,state.daily.count/10*100)+"%";
+  document.getElementById("dailyFill").style.width="0%";
 }
 function saveSettings(){
   state.settings.autoSpeak=document.getElementById("autoSpeak").checked;
@@ -594,12 +642,27 @@ function renderMap(){
     const mastery=stageMastery(s);
     const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
     const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning.mastery[masterySkill(q)]?.needsReview));
-    return `<div class="card stage ${locked?"locked":""}" ${locked?"":"onclick=\"startStage('${s.id}')\""}>
+    return `<div class="card stage ${locked?"locked":""}" ${locked?"":"data-stage=\"${s.id}\" role=\"button\" tabindex=\"0\" aria-label=\"進入 ${escapeHtml(s.title)}\""}>
       <span class="num">STAGE ${i+1}</span><span class="badge">${locked?"🔒":status}</span>
-      <h3>${s.title}</h3><p>${s.desc}</p>
+      <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
       <div class="small-note" style="margin-top:12px">${locked?"尚未解鎖":review?"🔁 建議複習": "▶ 點擊進入"}</div>
     </div>`
   }).join("");
+
+  // Use event delegation instead of inline onclick so stage cards remain reliably clickable
+  // after every re-render. Keyboard Enter/Space is supported as well.
+  el.onclick=(event)=>{
+    const card=event.target.closest('.stage[data-stage]');
+    if(!card || !el.contains(card)) return;
+    startStage(card.dataset.stage);
+  };
+  el.onkeydown=(event)=>{
+    if(event.key!=="Enter" && event.key!==" ") return;
+    const card=event.target.closest('.stage[data-stage]');
+    if(!card || !el.contains(card)) return;
+    event.preventDefault();
+    startStage(card.dataset.stage);
+  };
   const candidates=STAGES.filter(s=>state.unlocked.includes(s.id));
   const reviewStage=candidates.find(s=>stageMastery(s)>=70 && stageMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning.mastery[masterySkill(q)]?.needsReview)));
   const weak=candidates.find(s=>stageMastery(s)<85);
@@ -625,13 +688,17 @@ function stageQuestions(stageId,count=8){
 function mixedTestQuestions(count=10){
   const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id));
   let pool=[];
-  unlocked.forEach(s=>s.types.forEach(t=>pool=pool.concat(QUESTION_BANK[t]||[])));
-  const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}`),q])).values()];
-  return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>({
-    ...q,
-    type:q.type || (q.poke ? "rule" : (q.error ? "error" : (q.rule==="CVC"||q.rule==="+ing" ? "ing" : "sentence")))
+  unlocked.forEach(s=>s.types.forEach(t=>{
+    (QUESTION_BANK[t]||[]).forEach(q=>pool.push({...q,_sourceType:t}));
   }));
+  const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}|${q._sourceType}`),q])).values()];
+  return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
+    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
+    const { _sourceType, ...clean }=q;
+    return {...clean,type};
+  });
 }
+
 function startStage(stageId,test=false){
   resetDaily();
   const stage=STAGES.find(x=>x.id===stageId);
@@ -669,6 +736,36 @@ function startTest(){
   showScreen("learn");
   renderQuestion();
 }
+
+function validateQuestionBank(){
+  const ruleTypes=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"];
+  const problems=[];
+  const validEnd={
+    S:q=>q.answer==="S" && !/(ch|sh|ss|x|o)$/i.test(q.verb),
+    CH:q=>q.answer==="ES" && /ch$/i.test(q.verb),
+    SH:q=>q.answer==="ES" && /sh$/i.test(q.verb),
+    SS:q=>q.answer==="ES" && /ss$/i.test(q.verb),
+    X:q=>q.answer==="ES" && /x$/i.test(q.verb),
+    O:q=>q.answer==="ES" && /o$/i.test(q.verb),
+    "consonant+y":q=>q.answer==="IES" && /[^aeiou]y$/i.test(q.verb)
+  };
+  ruleTypes.forEach(type=>{
+    const seen=new Set();
+    (QUESTION_BANK[type]||[]).forEach(q=>{
+      if(seen.has(q.id)) problems.push(`${type}: duplicate id ${q.id}`);
+      seen.add(q.id);
+      if(validEnd[q.rule] && !validEnd[q.rule](q)) problems.push(`${type}: invalid rule ${q.verb}`);
+      if(!POKEMON[q.poke]) problems.push(`${type}: missing pokemon ${q.poke}`);
+    });
+  });
+  // Every Rule Hunt page must have enough unique visual options to show 1 correct + 3 distractors.
+  const all=[...ruleTypes.flatMap(t=>QUESTION_BANK[t]||[])];
+  const uniquePokes=new Set(all.map(q=>q.poke));
+  if(uniquePokes.size<4) problems.push("Rule Hunt needs at least 4 distinct Pokémon.");
+  if(problems.length) console.warn("Question bank validation:",problems);
+  return problems.length===0;
+}
+validateQuestionBank();
 
 function renderQuestion(){
   answerLocked=false;hintLevel=0;
@@ -718,18 +815,35 @@ function questionType(q){
   return "sentence";
 }
 function makeRuleOptions(answer){
-  const stage=STAGES.find(s=>s.id===currentSession.stageId);
-  const isolatedTypes=stage && stage.types && stage.types.length===1 && ["ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleS","ruleIES"].includes(stage.types[0]);
-  const scoped=isolatedTypes ? (QUESTION_BANK[stage.types[0]]||[]) : [...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO,...QUESTION_BANK.ruleIES];
-  const all=[...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO,...QUESTION_BANK.ruleIES];
+  // Rule Hunt must have exactly ONE correct option. Never place another
+  // option with the same answer ending on the same page.
+  const all=[
+    ...QUESTION_BANK.ruleS,
+    ...QUESTION_BANK.ruleCH,
+    ...QUESTION_BANK.ruleSH,
+    ...QUESTION_BANK.ruleSS,
+    ...QUESTION_BANK.ruleX,
+    ...QUESTION_BANK.ruleO,
+    ...QUESTION_BANK.ruleIES
+  ];
   const correct=currentQuestion;
-  const same=shuffle(scoped.filter(x=>x.answer===answer && x.verb!==correct.verb));
-  const sameRule=shuffle(scoped.filter(x=>x.rule===correct.rule && x.verb!==correct.verb));
-  const distractors=shuffle(all.filter(x=>x.answer!==answer));
-  const pool=[correct,...same.slice(0,2),...sameRule.slice(0,2),...distractors];
-  const seen=new Set();
-  return shuffle(pool.filter(x=>{const k=`${x.verb}|${x.answer}|${x.rule}`;if(seen.has(k))return false;seen.add(k);return true})).slice(0,4);
+  const usedPokes=new Set([Number(correct.poke)]);
+  const usedWords=new Set([correct.verb]);
+  const candidates=shuffle(all.filter(x=>x.answer!==answer && x.verb!==correct.verb));
+  const distractors=[];
+  for(const item of candidates){
+    const poke=Number(item.poke);
+    if(usedPokes.has(poke) || usedWords.has(item.verb)) continue;
+    usedPokes.add(poke);
+    usedWords.add(item.verb);
+    distractors.push(item);
+    if(distractors.length===3) break;
+  }
+  // The app currently has 12 Pokémon, so this should always produce 3 distinct distractors.
+  // If a future data change makes the pool too small, fail safely instead of showing a malformed question.
+  return distractors.length===3 ? shuffle([correct,...distractors]) : [correct,...distractors];
 }
+
 function showHint(){
   if(answerLocked)return;
   hintLevel=Math.min(3,hintLevel+1);
@@ -737,8 +851,9 @@ function showHint(){
     currentQuestion.rule==="consonant+y"?"IES":
     currentQuestion.rule==="CVC"?"CVC":
     currentQuestion.rule==="subject"||currentQuestion.rule==="plural"?"subject":
-    currentQuestion.rule==="S"?"S":"+ing";
-  const h=HINTS[rule]?.[hintLevel-1]||HINTS.subject[hintLevel-1];
+    currentQuestion.rule==="S"||currentQuestion.rule==="vowel+y"?"S":"+ing";
+  const hintSet=HINTS[rule] || HINTS.subject;
+  const h=hintSet[Math.min(hintLevel,3)-1] || ["Look at the word.","Find the clue."];
   let visual="";
   if(hintLevel>=2 && currentQuestion.verb){
     if(["CH","SH","SS","X","O"].includes(rule)){
@@ -830,6 +945,11 @@ function handleAnswer(correct,answer,extra){
     type,
     question:type==="rule"?`Which one is an ${currentQuestion.answer} Pokémon?`:currentQuestion.sentence,
     answer,
+    selectedAnswer:type==="rule"?(extra?.selectedVerb||answer):answer,
+    correctAnswer:type==="rule"?currentQuestion.verb:currentQuestion.answer,
+    selectedPokemon:type==="rule"?(extra?.poke||null):null,
+    questionId:currentQuestion.id||`${currentSession.stageId}-${currentSession.index}`,
+    attemptNumber:qd.answers.length,
     correct,
     hintLevel:currentSession.test?0:hintLevel,
     exp,
@@ -901,28 +1021,38 @@ function stageMastery(stage){
 
 function renderFeedback(correct,answer,errorType,exp){
   const f=document.getElementById("feedback");
+  if(!f)return;
   if(correct){
     f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
-      <div class="sub">${currentSession.test?"測試紀錄，不計入學習統計":`+${exp} EXP`}</div>
-      <div class="actions"><button class="btn primary" onclick="nextQuestion()">下一題</button></div>`;
+      <div class="sub">${currentSession.test?"測試紀錄，不計入學習統計":`+${exp} EXP`}</div>`;
     speak("Correct!");
     if(state.settings.celebrate==="full" && Math.random()<.35) tinyConfetti();
+    // Correct answers advance automatically. No Next button and no Hint button.
+    setTimeout(()=>{
+      if(!currentSession)return;
+      nextQuestion();
+    },700);
   }else{
+    // Wrong answers keep the SAME question. Only the existing Hint button remains available.
     f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
-      <div class="sub">Try again or use a hint.</div>
-      <div class="actions">
-        <button class="btn primary" onclick="retryQuestion()">再試一次</button>
-        <button class="btn gold" onclick="unlockRetryHint()">💡 Hint</button>
-      </div>`;
+      <div class="sub">Try again.</div>`;
     speak("Not quite. Try again.");
+    setTimeout(()=>{
+      if(!currentSession)return;
+      retryQuestion(false);
+    },700);
   }
 }
+
 function unlockRetryHint(){
-  answerLocked=false;hintLevel=Math.max(0,hintLevel);showHint();
+  answerLocked=false;
+  showHint();
   const f=document.getElementById("feedback"); if(f)f.innerHTML="";
 }
-function retryQuestion(){
-  answerLocked=false;hintLevel=0;renderQuestion();
+function retryQuestion(keepHint=false){
+  answerLocked=false;
+  if(!keepHint) hintLevel=0;
+  renderQuestion();
 }
 function nextQuestion(){
   currentSession.index++;
@@ -1136,7 +1266,8 @@ function setActivePokemon(id){
   state.activePokemon=Number(id);saveState();updateHeroPokemon();renderMyPokemon();
 }
 function updateHeroPokemon(){
-  const id=state.activePokemon||25;
+  const id=POKEMON[state.activePokemon]?Number(state.activePokemon):25;
+  if(state.activePokemon!==id){state.activePokemon=id;saveState();}
   const img=document.getElementById("heroPoke");
   if(img)img.src=POKEMON[id].img;
 }
@@ -1165,10 +1296,10 @@ function renderLogs(){
   all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
   const rows=[];
   Object.keys(groups).forEach(date=>{
-    rows.push(`<tr class="date-row"><td colspan="6"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
-    groups[date].forEach(l=>rows.push(`<tr><td>${fmtTime(l.ts)}</td><td class="${l.mode==="TEST"?"testtag":""}">${l.mode==="TEST"?"TEST":"學習"}</td><td>${escapeHtml(l.question)}</td><td class="${l.correct?"ok":"bad"}">${l.correct?"✓":"✗"}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`));
+    rows.push(`<tr class="date-row"><td colspan="8"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
+    groups[date].forEach(l=>rows.push(`<tr><td>${fmtTime(l.ts)}</td><td class="${l.mode==="TEST"?"testtag":""}">${l.mode==="TEST"?"TEST":"學習"}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${l.correct?"ok":"bad"}">${l.correct?"✓":"✗"}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`));
   });
-  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="6" class="muted">目前還沒有紀錄。</td></tr>`;
+  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="8" class="muted">目前還沒有紀錄。</td></tr>`;
 }
 function clearLogs(){
   const choice=prompt("輸入 1 清除學習紀錄；輸入 2 清除 TEST 紀錄；輸入 3 全部清除。Mastery、EXP、關卡進度與寶可夢不會被清除。","1");
