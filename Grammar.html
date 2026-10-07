@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anson 英文文法冒險 V2.2</title>
+<style>
+:root{
+  --bg:#081018;
+  --panel:#101a24;
+  --panel2:#14212d;
+  --panel3:#182936;
+  --text:#f1f5f9;
+  --muted:#aab7c4;
+  --blue:#76aee8;
+  --blue2:#4f8fd2;
+  --green:#7fc79a;
+  --yellow:#e6c66f;
+  --red:#df777d;
+  --purple:#9b91d8;
+  --border:rgba(255,255,255,.10);
+  --shadow:0 10px 28px rgba(0,0,0,.24);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(91,140,184,.10), transparent 30%),
+    radial-gradient(circle at 85% 15%, rgba(111,92,155,.08), transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif;
+  min-height:100vh;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.app{max-width:1180px;margin:auto;padding:18px}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:12px 16px;background:rgba(16,26,36,.94);
+  border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);
+  position:sticky;top:10px;z-index:20;backdrop-filter:blur(12px)
+}
+.profile{display:flex;align-items:center;gap:12px}
+.avatar{
+  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  background:#172536;border:1px solid rgba(255,255,255,.12);font-size:25px
+}
+.profile b{font-size:18px}.profile small{color:var(--muted)}
+.xpwrap{width:180px}.xpbar{height:8px;background:#253542;border-radius:99px;overflow:hidden;margin-top:6px}
+.xpfill{height:100%;width:0;background:linear-gradient(90deg,#6faecf,#8ccf9c);transition:.4s}
+.top-actions{display:flex;gap:8px}
+.iconbtn,.btn{
+  border:1px solid var(--border);background:#172533;color:var(--text);
+  border-radius:12px;padding:10px 14px;font-weight:700
+}
+.iconbtn:hover,.btn:hover{filter:brightness(1.08)}
+.btn.primary{background:#27547c;border-color:#3d79ae}
+.btn.gold{background:#6b5a2d;border-color:#a48a42}
+.btn.green{background:#27553f;border-color:#3d8060}
+.btn.red{background:#5b3035;border-color:#8e4c54}
+.btn.small{padding:7px 10px;font-size:13px}
+main{margin-top:18px}
+.screen{display:none}.screen.active{display:block}
+.hero{
+  min-height:310px;border:1px solid var(--border);border-radius:24px;
+  background:linear-gradient(145deg,#0d1822,#121f2b);
+  padding:28px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;
+  box-shadow:var(--shadow);overflow:hidden;position:relative
+}
+.hero:after{
+  content:"";position:absolute;right:-100px;top:-100px;width:360px;height:360px;
+  background:radial-gradient(circle,rgba(112,155,190,.12),transparent 68%);
+  pointer-events:none
+}
+.hero h1{font-size:42px;margin:20px 0 8px;letter-spacing:-1px}
+.hero p{color:var(--muted);font-size:16px;max-width:620px;line-height:1.7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.hero-poke{display:grid;place-items:center;position:relative}
+.hero-poke img{width:220px;height:220px;image-rendering:auto;filter:drop-shadow(0 18px 18px rgba(0,0,0,.35))}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 2px 12px}
+.section-title h2{margin:0;font-size:21px}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{
+  background:linear-gradient(145deg,#111e29,#152530);border:1px solid var(--border);
+  border-radius:18px;padding:16px;box-shadow:var(--shadow)
+}
+.menu-card{min-height:120px;display:flex;flex-direction:column;justify-content:space-between}
+.menu-card .emoji{font-size:28px}.menu-card h3{margin:8px 0 2px}.menu-card p{margin:0;color:var(--muted);font-size:13px}
+.learning-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px
+}
+.progress{height:8px;background:#24313c;border-radius:99px;overflow:hidden;flex:1;max-width:420px}
+.progress > div{height:100%;background:#d1b85e;transition:.3s}
+.question-card{
+  max-width:880px;margin:0 auto;background:#101b25;border:1px solid var(--border);
+  border-radius:22px;padding:24px;box-shadow:var(--shadow)
+}
+.question{
+  text-align:center;font-size:30px;font-weight:800;line-height:1.4;margin:8px 0 22px
+}
+.red{color:#e67b7f}
+.speaker{
+  display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;
+  background:#244d73;border:1px solid #386f9f;color:#fff;border:0;margin-right:8px;
+  vertical-align:middle
+}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.option{
+  background:#152431;border:1px solid rgba(255,255,255,.10);border-radius:18px;
+  min-height:150px;color:var(--text);padding:14px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;transition:.15s
+}
+.option:hover{transform:translateY(-2px);border-color:#5686ae}
+.option img{width:88px;height:88px}.word{font-size:22px;font-weight:800}
+.word-speaker{font-size:16px;color:#8eb9dd}
+.option.correct{border-color:#65a87f;background:#193326}
+.option.wrong{border-color:#a65a62;background:#321f23}
+.option.disabled{pointer-events:none;opacity:.72}
+.hintbox{
+  margin-top:16px;border:1px solid rgba(230,198,111,.22);background:#191c20;
+  border-radius:16px;padding:16px
+}
+.hint-head{display:flex;justify-content:space-between;align-items:center}
+.hint-title{color:#e5c86f;font-weight:800}.hint-en{font-size:17px;line-height:1.5;margin:10px 0}
+.hint-cn{color:var(--muted);font-size:13px}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+.feedback{text-align:center;margin-top:16px;min-height:80px}
+.feedback .big{font-size:24px;font-weight:900}.feedback .sub{color:var(--muted);margin-top:4px}
+.sentence{
+  text-align:center;font-size:29px;font-weight:800;line-height:1.5;
+  padding:20px 12px
+}
+.baseverb{text-align:center;color:var(--muted);font-size:15px;margin-top:-8px}
+.choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.choice{
+  padding:18px 10px;border-radius:15px;border:1px solid var(--border);
+  background:#172532;color:var(--text);font-size:20px;font-weight:800
+}
+.choice:hover{border-color:#6599c0}
+.choice.correct{background:#193a2b;border-color:#69ad86}
+.choice.wrong{background:#3a2227;border-color:#a85b64}
+.rule-chip{
+  display:inline-block;padding:4px 9px;border-radius:999px;background:#1c3040;color:#9ec4e4;
+  font-size:12px;margin-bottom:8px
+}
+.backrow{margin-bottom:12px}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stage{
+  min-height:145px;position:relative;overflow:hidden;cursor:pointer
+}
+.stage.locked{opacity:.48;cursor:not-allowed}
+.stage .num{font-size:12px;color:#8ea2b2}
+.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.badge{position:absolute;right:12px;top:12px;font-size:12px;color:#c8d4dd}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat b{display:block;font-size:25px;margin-top:5px}.stat span{color:var(--muted);font-size:13px}
+.poke-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.poke{
+  background:#111d27;border:1px solid var(--border);border-radius:16px;padding:10px;text-align:center
+}
+.poke img{width:90px;height:90px}.poke .name{font-weight:800}.poke .no{color:#7f93a3;font-size:11px}.poke .lv{color:#bfcbd5;font-size:12px;margin-top:3px}
+.poke .tag{display:inline-block;margin-top:6px;font-size:11px;padding:3px 7px;border-radius:999px;background:#233a4b;color:#a9cbe5}
+.poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
+.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}.testtag{color:#e2c46e}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.toggle{accent-color:#79aeda}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.74);display:grid;place-items:center;z-index:50;padding:20px
+}
+.modal-box{max-width:720px;width:100%;background:#111d27;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
+.reward-poke img{width:180px;height:180px}.reward-title{font-size:36px;font-weight:950;color:#f0d273}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confetti i{position:absolute;width:8px;height:16px;top:-30px;animation:fall 1.9s linear forwards}
+@keyframes fall{to{transform:translate3d(var(--x),110vh,0) rotate(760deg);opacity:.95}}
+.fireworks{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fireworks span{position:absolute;width:8px;height:8px;border-radius:50%;background:#e8cb72;animation:burst 1.2s ease-out forwards}
+@keyframes burst{0%{transform:scale(.1);opacity:1}100%{transform:scale(16);opacity:0}}
+.small-note{font-size:12px;color:#8ea1af;line-height:1.6}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}.hero-poke{display:none}
+  .grid,.map{grid-template-columns:repeat(2,1fr)}
+  .poke-grid{grid-template-columns:repeat(3,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:620px){
+  .app{padding:10px}.topbar{position:static}.xpwrap{width:120px}
+  .hero h1{font-size:31px}.question{font-size:24px}.sentence{font-size:23px}
+  .options,.choice-row{grid-template-columns:repeat(2,1fr)}
+  .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="profile">
+    <div class="avatar">🧒</div>
+    <div>
+      <b>Anson</b><br><small id="levelText">Lv. 1</small>
+    </div>
+    <div class="xpwrap">
+      <small id="xpText">0 / 100 EXP</small>
+      <div class="xpbar"><div class="xpfill" id="xpFill"></div></div>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button class="iconbtn" onclick="showScreen('settings')">⚙️</button>
+  </div>
+</header>
+
+<main>
+<section id="home" class="screen active">
+  <div class="hero">
+    <div>
+      <div class="muted">English Grammar Adventure</div>
+      <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
+      <p>English questions. Audio support. Short missions. Pokémon rewards.</p>
+      <div class="hero-actions">
+        <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
+        <button class="btn" onclick="showScreen('myPokemon')">⭐ 我的寶可夢</button>
+        <button class="btn" onclick="showScreen('pokedex')">📖 寶可夢圖鑑</button>
+        <button class="btn" onclick="showScreen('logs')">📊 學習紀錄</button>
+        <button class="btn gold" onclick="startTest()">🧪 測試</button>
+      </div>
+    </div>
+    <div class="hero-poke"><img id="heroPoke" alt="Pikachu"></div>
+  </div>
+
+  <div class="section-title"><h2>今日任務</h2><span class="muted" id="dailyText">0 / 10</span></div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:28px">📋</span>
+      <div style="flex:1"><b>完成一個小任務即可結束今天的學習</b><br><span class="muted">建議 10–15 分鐘，不需要一直玩。</span></div>
+      <div class="progress"><div id="dailyFill" style="width:0"></div></div>
+    </div>
+  </div>
+
+  <div class="section-title"><h2>快速入口</h2></div>
+  <div class="grid">
+    <div class="card menu-card" onclick="showScreen('map')"><div class="emoji">🗺️</div><div><h3>關卡地圖</h3><p>主線闖關＋自由回訪</p></div></div>
+    <div class="card menu-card" onclick="showScreen('myPokemon')"><div class="emoji">💙</div><div><h3>我的寶可夢</h3><p>夥伴、等級、EXP</p></div></div>
+    <div class="card menu-card" onclick="showScreen('pokedex')"><div class="emoji">📚</div><div><h3>寶可夢圖鑑</h3><p>收集進度</p></div></div>
+    <div class="card menu-card" onclick="showScreen('logs')"><div class="emoji">📈</div><div><h3>學習紀錄</h3><p>每次練習與提示分析</p></div></div>
+  </div>
+</section>
+
+<section id="map" class="screen">
+  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
+  <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">可以自由回到已解鎖的關卡</span></div>
+  <div class="map" id="stageMap"></div>
+  <div class="section-title"><h2>⭐ 今日推薦</h2></div>
+  <div class="card" id="recommendation"></div>
+</section>
+
+<section id="learn" class="screen">
+  <div class="learning-header">
+    <button class="btn small" onclick="endSession()">← 離開</button>
+    <div style="flex:1;display:flex;justify-content:center;gap:10px;align-items:center">
+      <b id="stageTitle">ES 森林</b>
+      <span class="muted" id="questionCounter">1 / 10</span>
+    </div>
+    <div class="progress"><div id="stageProgress" style="width:0"></div></div>
+  </div>
+  <div class="question-card" id="questionCard"></div>
+</section>
+
+<section id="myPokemon" class="screen">
+  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
+  <div class="section-title"><h2>⭐ 我的寶可夢</h2><span class="muted" id="collectionCount"></span></div>
+  <div class="card" id="myPokemonSummary"></div>
+  <div class="poke-grid" id="myPokemonGrid" style="margin-top:12px"></div>
+</section>
+
+<section id="pokedex" class="screen">
+  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
+  <div class="section-title"><h2>📖 寶可夢圖鑑</h2><span class="muted" id="dexCount"></span></div>
+  <div class="card small-note">圖片與英文名稱由同一份 Pokémon master data 綁定；圖片載入失敗時仍保留正確名稱。</div>
+  <div class="poke-grid" id="pokedexGrid" style="margin-top:12px"></div>
+</section>
+
+<section id="logs" class="screen">
+  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
+  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
+  <div class="stats" id="stats"></div>
+  <div class="section-title"><h2>最近紀錄</h2><span class="muted">TEST 不會進入學習統計</span></div>
+  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
+</section>
+
+<section id="settings" class="screen">
+  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
+  <div class="section-title"><h2>⚙️ 設定</h2></div>
+  <div class="settings">
+    <div class="card">
+      <div class="setting-row"><span>🔊 題目自動播放</span><input class="toggle" id="autoSpeak" type="checkbox" checked onchange="saveSettings()"></div>
+      <div class="setting-row"><span>🎉 慶祝動畫</span><select id="celebrate" onchange="saveSettings()" style="background:#172532;color:#fff;border:1px solid var(--border);padding:7px;border-radius:8px"><option value="full">完整</option><option value="simple">簡單</option><option value="off">關閉</option></select></div>
+      <div class="setting-row"><span>🧪 測試模式</span><span class="muted">不納入學習統計／EXP／Mastery</span></div>
+    </div>
+    <div class="card">
+      <h3>學習原則</h3>
+      <p class="small-note">每天完成一個短任務即可。可以自由回訪喜歡的關卡；重玩時遊戲獎勵會遞減，但真正進步仍會被記錄與鼓勵。</p>
+      <p class="small-note">不設連續登入獎勵、不設等待恢復、不設付費抽卡。</p>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modal-box" id="modalBox"></div></div>
+<div id="confetti" class="confetti"></div>
+
+<script>
+const POKEMON = {
+  25:{name:"Pikachu", no:"025", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"},
+  4:{name:"Charmander", no:"004", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"},
+  7:{name:"Squirtle", no:"007", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"},
+  1:{name:"Bulbasaur", no:"001", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"},
+  133:{name:"Eevee", no:"133", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"},
+  54:{name:"Psyduck", no:"054", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png"},
+  39:{name:"Jigglypuff", no:"039", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"},
+  52:{name:"Meowth", no:"052", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/52.png"},
+  10:{name:"Caterpie", no:"010", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10.png"},
+  16:{name:"Pidgey", no:"016", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/16.png"},
+  27:{name:"Sandshrew", no:"027", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/27.png"},
+  35:{name:"Clefairy", no:"035", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png"}
+};
+
+const STAGES = [
+ {id:"s",title:"S 草原",rule:"S",desc:"Most verbs → S",types:["ruleS"],unlock:0},
+ {id:"ch",title:"CH 小徑",rule:"ES",desc:"CH → ES",types:["ruleCH"],unlock:0},
+ {id:"sh",title:"SH 山谷",rule:"ES",desc:"SH → ES",types:["ruleSH"],unlock:0},
+ {id:"ss",title:"SS 湖畔",rule:"ES",desc:"SS → ES",types:["ruleSS"],unlock:0},
+ {id:"x",title:"X 峽谷",rule:"ES",desc:"X → ES",types:["ruleX"],unlock:0},
+ {id:"o",title:"O 洞窟",rule:"ES",desc:"O → ES",types:["ruleO"],unlock:0},
+ {id:"y",title:"Y 森林",rule:"IES",desc:"Consonant + Y → IES",types:["ruleIES"],unlock:0},
+ {id:"mixed",title:"S / ES / IES 混合區",rule:"Mixed",desc:"Choose the correct ending",types:["mixed"],unlock:1},
+ {id:"subject",title:"主詞峽谷",rule:"Subject",desc:"Subject → correct verb",types:["sentenceSubject"],unlock:1},
+ {id:"sentence",title:"句子森林",rule:"Sentence",desc:"Sentence fill-in",types:["sentenceFill"],unlock:2},
+ {id:"ing",title:"-ing 山谷",rule:"-ing",desc:"Present continuous + CVC",types:["ing"],unlock:3},
+ {id:"error",title:"錯誤偵探村",rule:"Error Detective",desc:"Find the correct sentence",types:["error"],unlock:4}
+];
+
+const QUESTION_BANK = {
+ ruleS:[
+  {verb:"play",answer:"S",poke:25,rule:"S"},
+  {verb:"jump",answer:"S",poke:4,rule:"S"},
+  {verb:"listen",answer:"S",poke:7,rule:"S"},
+  {verb:"read",answer:"S",poke:1,rule:"S"}
+ ],
+ ruleCH:[
+  {verb:"teach",answer:"ES",poke:4,rule:"CH"},
+  {verb:"watch",answer:"ES",poke:7,rule:"CH"},
+  {verb:"teach",answer:"ES",poke:54,rule:"CH"},
+  {verb:"watch",answer:"ES",poke:39,rule:"CH"}
+ ],
+ ruleSH:[
+  {verb:"wash",answer:"ES",poke:39,rule:"SH"},
+  {verb:"wash",answer:"ES",poke:52,rule:"SH"},
+  {verb:"push",answer:"ES",poke:10,rule:"SH"},
+  {verb:"finish",answer:"ES",poke:16,rule:"SH"}
+ ],
+ ruleSS:[
+  {verb:"miss",answer:"ES",poke:52,rule:"SS"},
+  {verb:"kiss",answer:"ES",poke:39,rule:"SS"},
+  {verb:"pass",answer:"ES",poke:10,rule:"SS"},
+  {verb:"dress",answer:"ES",poke:16,rule:"SS"}
+ ],
+ ruleX:[
+  {verb:"fix",answer:"ES",poke:10,rule:"X"},
+  {verb:"mix",answer:"ES",poke:16,rule:"X"},
+  {verb:"box",answer:"ES",poke:54,rule:"X"},
+  {verb:"tax",answer:"ES",poke:39,rule:"X"}
+ ],
+ ruleO:[
+  {verb:"go",answer:"ES",poke:16,rule:"O"},
+  {verb:"do",answer:"ES",poke:54,rule:"O"},
+  {verb:"echo",answer:"ES",poke:39,rule:"O"},
+  {verb:"echo",answer:"ES",poke:10,rule:"O"}
+ ],
+ ruleES:[
+  {verb:"teach",answer:"ES",poke:4,rule:"CH"}, {verb:"watch",answer:"ES",poke:7,rule:"CH"},
+  {verb:"wash",answer:"ES",poke:39,rule:"SH"}, {verb:"miss",answer:"ES",poke:52,rule:"SS"},
+  {verb:"fix",answer:"ES",poke:10,rule:"X"}, {verb:"go",answer:"ES",poke:16,rule:"O"}
+ ],
+ ruleIES:[
+  {verb:"try",answer:"IES",poke:25,rule:"consonant+y"},
+  {verb:"study",answer:"IES",poke:1,rule:"consonant+y"},
+  {verb:"cry",answer:"IES",poke:7,rule:"consonant+y"}
+ ],
+ mixed:[
+  {verb:"play",answer:"S",poke:25,rule:"vowel+y"},
+  {verb:"teach",answer:"ES",poke:4,rule:"CH"},
+  {verb:"try",answer:"IES",poke:7,rule:"consonant+y"},
+  {verb:"watch",answer:"ES",poke:1,rule:"CH"},
+  {verb:"go",answer:"ES",poke:54,rule:"O"},
+  {verb:"jump",answer:"S",poke:39,rule:"S"}
+ ],
+ sentenceSubject:[
+  {sentence:"He _____ soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
+  {sentence:"She _____ statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
+  {sentence:"They _____ soccer after school.",choices:["plays","play","playes","plaies"],answer:"play",verb:"play",rule:"plural"},
+  {sentence:"The boys and girls _____ the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"}
+ ],
+ sentenceFill:[
+  {sentence:"He _____ to play the piano.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"},
+  {sentence:"The music teacher _____ the students.",choices:["teach","teachs","teaches","teachies"],answer:"teaches",verb:"teach",rule:"CH"},
+  {sentence:"Emily _____ her drums.",choices:["fix","fixs","fixes","fixies"],answer:"fixes",verb:"fix",rule:"X"},
+  {sentence:"One girl _____ the beat.",choices:["miss","misses","missies","misss"],answer:"misses",verb:"miss",rule:"SS"},
+  {sentence:"David _____ the piano.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"S"},
+  {sentence:"The children _____ the music.",choices:["enjoy","enjoys","enjoies","enjoyes"],answer:"enjoy",verb:"enjoy",rule:"plural"},
+  {sentence:"Joe _____ to play the violin.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"}
+ ],
+ ing:[
+  {sentence:"I am _____ on a chair.",choices:["sit","sitting","siting","sitted"],answer:"sitting",verb:"sit",rule:"CVC"},
+  {sentence:"The children are _____ in the garden.",choices:["hop","hopping","hoping","hopped"],answer:"hopping",verb:"hop",rule:"CVC"},
+  {sentence:"The boys are _____ in the hallway.",choices:["drink","drinking","drinkking","drinken"],answer:"drinking",verb:"drink",rule:"+ing"},
+  {sentence:"We are _____ the crayons away.",choices:["put","putting","puting","putted"],answer:"putting",verb:"put",rule:"CVC"},
+  {sentence:"My father and I are _____.",choices:["shop","shopping","shoping","shopped"],answer:"shopping",verb:"shop",rule:"CVC"},
+  {sentence:"Pat is _____ the game.",choices:["win","winning","wining","winned"],answer:"winning",verb:"win",rule:"CVC"},
+  {sentence:"Girls are _____ loudly.",choices:["eat","eating","eatting","eated"],answer:"eating",verb:"eat",rule:"+ing"},
+  {sentence:"Too many children are _____.",choices:["chat","chatting","chating","chatted"],answer:"chatting",verb:"chat",rule:"CVC"},
+  {sentence:"The teacher is _____ the books.",choices:["get","getting","geting","getted"],answer:"getting",verb:"get",rule:"CVC"},
+  {sentence:"My sister is _____ the windows.",choices:["shut","shutting","shuting","shutted"],answer:"shutting",verb:"shut",rule:"CVC"},
+  {sentence:"Students are _____ on the tables.",choices:["jump","jumping","jumpping","jumped"],answer:"jumping",verb:"jump",rule:"+ing"},
+  {sentence:"My friend is _____ the game.",choices:["stop","stopping","stoping","stopped"],answer:"stopping",verb:"stop",rule:"CVC"}
+ ],
+ error:[
+  {sentence:"The boys and girls leaves the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"},
+  {sentence:"He play soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
+  {sentence:"She make statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
+  {sentence:"They watches TV after school.",choices:["watches","watch","watchs","watchies"],answer:"watch",verb:"watch",rule:"plural"}
+ ]
+};
+
+const HINTS = {
+ S:[
+  ["Look at the subject.","Who is doing the action?"],
+  ["Look at the subject again.","He, she, or it needs S."],
+  ["He / She / It → S","Add S to the verb."]
+ ],
+ CH:[
+  ["Look at the end of the word.","Check the last two letters."],
+  ["The word ends in CH.","CH is the clue."],
+  ["CH → ES","Add ES: teach → teaches"]
+ ],
+ SH:[
+  ["Look at the end of the word.","Check the last two letters."],
+  ["The word ends in SH.","SH is the clue."],
+  ["SH → ES","Add ES: wash → washes"]
+ ],
+ SS:[
+  ["Look at the end of the word.","Check the last two letters."],
+  ["The word ends in SS.","SS is the clue."],
+  ["SS → ES","Add ES: miss → misses"]
+ ],
+ X:[
+  ["Look at the last letter.","Check the end of the word."],
+  ["The word ends in X.","X is the clue."],
+  ["X → ES","Add ES: fix → fixes"]
+ ],
+ O:[
+  ["Look at the last letter.","Check the end of the word."],
+  ["The word ends in O.","O is the clue."],
+  ["O → ES","Add ES: go → goes"]
+ ],
+ IES:[
+  ["Look at the letter before Y.","Check the letter right before Y."],
+  ["Is it a consonant or a vowel?","A, E, I, O, U are vowels."],
+  ["Consonant + Y → IES","Change Y to IES."]
+ ],
+ subject:[
+  ["Find the subject.","Who is doing the action?"],
+  ["Singular or plural?","He / she / it is singular. They / boys / girls are plural."],
+  ["He / She / It → S / ES / IES","Plural subjects use the base verb."]
+ ],
+ CVC:[
+  ["Look at the last three letters.","Check the consonant-vowel-consonant pattern."],
+  ["Is the verb CVC?","sit, hop, win, stop are examples."],
+  ["CVC → double the last consonant + ing","sit → sitting"]
+ ],
+ "+ing":[
+  ["Look at the verb.","Most verbs simply add -ing."],
+  ["Do not double every verb.","drink → drinking; jump → jumping."],
+  ["verb + ing","Add -ing."]
+ ]
+};
+
+const STORAGE_KEY = "ansonGrammarAdventureV2";
+const SCHEMA_VERSION = 3;
+const state = loadState();
+let currentSession = null;
+let currentQuestion = null;
+let hintLevel = 0;
+let answerLocked = false;
+
+function defaultState(){
+  return {
+    level:1,xp:0,
+    settings:{autoSpeak:true,celebrate:"full"},
+    unlocked:["s","ch","sh","y"],
+    stageStats:{},
+    logs:[],
+    collection:{25:{level:1,xp:0,evolutionProgress:0},4:{level:1,xp:0,evolutionProgress:0},7:{level:1,xp:0,evolutionProgress:0}},
+    daily:{date:today(),count:0},
+    reward:{upgradeUsed:false,effortUsed:false},
+    activePokemon:25,
+    learning:{mastery:{},learningTime:{date:today(),activeMs:0,restRequired:false}},
+    testLogs:[],
+    schemaVersion:SCHEMA_VERSION
+  };
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY) || localStorage.getItem("ansonGrammarV1");
+    const s=raw?JSON.parse(raw):null;
+    if(!s || !s.level) return defaultState();
+    // Migrate V1 data without destroying learning progress.
+    if(!s.learning) s.learning={mastery:{},learningTime:{date:today(),activeMs:0,restRequired:false}};
+    if(!s.testLogs) s.testLogs=[];
+    if(!s.learning.learningTime) s.learning.learningTime={date:today(),activeMs:0,restRequired:false};
+    if(!s.logs) s.logs=[];
+    if(!s.learning.mastery) s.learning.mastery={};
+    Object.values(s.learning.mastery).forEach(m=>{
+      m.attempts=m.attempts||0; m.correct=m.correct||0;
+      m.independentCorrect=m.independentCorrect||0; m.hintCorrect=m.hintCorrect||0;
+      m.corrections=m.corrections||0; m.mastery=m.mastery||0;
+      m.lastPracticed=m.lastPracticed||0; m.lastError=m.lastError||0;
+      m.needsReview=!!m.needsReview;
+    });
+    Object.values(s.collection||{}).forEach(v=>{if(v && v.evolutionProgress==null) v.evolutionProgress=0});
+    ["s","ch","sh","ss","x","o","y"].forEach(id=>{if(!s.unlocked.includes(id)) s.unlocked.push(id);});
+    return s;
+  }catch(e){return defaultState()}
+}
+function saveState(){state.schemaVersion=SCHEMA_VERSION;localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function today(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function resetDaily(){
+  const d=today();
+  if(state.daily.date!==d){
+    state.daily={date:d,count:0};
+    state.reward={upgradeUsed:false,effortUsed:false};
+  }
+  if(!state.learning) state.learning={mastery:{},learningTime:{date:d,activeMs:0,restRequired:false}};
+  if(!state.learning.learningTime || state.learning.learningTime.date!==d){
+    state.learning.learningTime={date:d,activeMs:0,restRequired:false};
+  }
+  saveState();
+}
+function fmtTime(ts){return new Date(ts).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function showScreen(id){
+  resetDaily();
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if(id==="map")renderMap();
+  if(id==="myPokemon")renderMyPokemon();
+  if(id==="pokedex")renderDex();
+  if(id==="logs")renderLogs();
+  if(id==="settings")renderSettings();
+  updateHeader();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function updateHeader(){
+  const need=100 + (state.level-1)*50;
+  document.getElementById("levelText").textContent=`Lv. ${state.level}`;
+  document.getElementById("xpText").textContent=`${state.xp} / ${need} EXP`;
+  document.getElementById("xpFill").style.width=Math.min(100,state.xp/need*100)+"%";
+  document.getElementById("dailyText").textContent=`今日學習：${state.daily.count} 題`;
+  document.getElementById("dailyFill").style.width=Math.min(100,state.daily.count/10*100)+"%";
+}
+function saveSettings(){
+  state.settings.autoSpeak=document.getElementById("autoSpeak").checked;
+  state.settings.celebrate=document.getElementById("celebrate").value;
+  saveState()
+}
+function renderSettings(){
+  document.getElementById("autoSpeak").checked=state.settings.autoSpeak;
+  document.getElementById("celebrate").value=state.settings.celebrate;
+}
+
+function renderMap(){
+  const el=document.getElementById("stageMap");
+  el.innerHTML=STAGES.map((s,i)=>{
+    const st=state.stageStats[s.id]||{best:0,plays:0};
+    const locked=!state.unlocked.includes(s.id);
+    const mastery=stageMastery(s);
+    const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
+    const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning.mastery[masterySkill(q)]?.needsReview));
+    return `<div class="card stage ${locked?"locked":""}" ${locked?"":"onclick=\"startStage('${s.id}')\""}>
+      <span class="num">STAGE ${i+1}</span><span class="badge">${locked?"🔒":status}</span>
+      <h3>${s.title}</h3><p>${s.desc}</p>
+      <div class="small-note" style="margin-top:12px">${locked?"尚未解鎖":review?"🔁 建議複習": "▶ 點擊進入"}</div>
+    </div>`
+  }).join("");
+  const candidates=STAGES.filter(s=>state.unlocked.includes(s.id));
+  const reviewStage=candidates.find(s=>stageMastery(s)>=70 && stageMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning.mastery[masterySkill(q)]?.needsReview)));
+  const weak=candidates.find(s=>stageMastery(s)<85);
+  const r=reviewStage||weak||candidates[0]||STAGES[0];
+  const st=state.stageStats[r.id]||{plays:0};
+  document.getElementById("recommendation").innerHTML=
+    `<b>⭐ 建議：${r.title}</b><p class="muted">${stageMastery(r)>=90?"已熟練，可以自由回訪。":stageMastery(r)>=70?"已掌握基礎，建議再練習一次。":"目前正在建立這項技能。"}</p>
+     <button class="btn primary small" onclick="startStage('${r.id}')">去冒險</button>`;
+}
+
+function stageQuestions(stageId,count=8){
+  const s=STAGES.find(x=>x.id===stageId);
+  if(!s) return [];
+  let pool=[];
+  s.types.forEach(t=>{pool=pool.concat(QUESTION_BANK[t]||[])});
+  if(!pool.length) return [];
+  const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}`),q])).values()];
+  const picked=shuffle(unique).slice(0,Math.min(count,unique.length));
+  while(picked.length<count && unique.length) picked.push(unique[picked.length%unique.length]);
+  if(s.types.includes("error")) return picked.map(q=>({...q,type:"error"}));
+  return picked;
+}
+function mixedTestQuestions(count=10){
+  const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id));
+  let pool=[];
+  unlocked.forEach(s=>s.types.forEach(t=>pool=pool.concat(QUESTION_BANK[t]||[])));
+  const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}`),q])).values()];
+  return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>({
+    ...q,
+    type:q.type || (q.poke ? "rule" : (q.error ? "error" : (q.rule==="CVC"||q.rule==="+ing" ? "ing" : "sentence")))
+  }));
+}
+function startStage(stageId,test=false){
+  resetDaily();
+  const stage=STAGES.find(x=>x.id===stageId);
+  if(!stage || !state.unlocked.includes(stageId)) return;
+  currentSession={
+    stageId,test,
+    questions:test ? mixedTestQuestions(10) : stageQuestions(stageId,8),
+    index:0,
+    correct:0,
+    independent:0,
+    hintCorrect:0,
+    wrong:0,
+    started:Date.now(),
+    attempts:0,
+    questionScores:[],
+    answerAttempts:0,
+    hintCount:0,
+    suspiciousAttempts:0,
+    improvementCount:0,
+    questionAttemptData:{},
+    levelUps:0,
+    uniqueCompleted:0,
+    learningSegmentStartedAt:test?null:Date.now()
+  };
+  document.getElementById("stageTitle").textContent=test?"測試模式 · "+stage.title:stage.title;
+  showScreen("learn");
+  renderQuestion();
+}
+
+function startTest(){
+  const questions=mixedTestQuestions(10);
+  if(!questions.length) return;
+  currentSession={stageId:"mixed-test",test:true,questions,index:0,correct:0,independent:0,hintCorrect:0,wrong:0,started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0};
+  document.getElementById("stageTitle").textContent="測試模式 · Mixed Test";
+  showScreen("learn");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answerLocked=false;hintLevel=0;
+  currentQuestion=currentSession.questions[currentSession.index];
+  currentSession.questionStartedAt=Date.now();
+  const type=questionType(currentQuestion);
+  const total=currentSession.questions.length;
+  document.getElementById("questionCounter").textContent=`${currentSession.index+1} / ${total}`;
+  document.getElementById("stageProgress").style.width=(currentSession.index/total*100)+"%";
+  let html="";
+  if(type==="rule"){
+    const options=makeRuleOptions(currentQuestion.answer);
+    html=`<span class="rule-chip">RULE HUNT</span>
+      <div class="question"><button class="speaker" onclick="speak('Which one is an ${currentQuestion.answer} Pokémon?')">🔊</button>
+      Which one is an <span class="red">${currentQuestion.answer}</span> Pokémon?</div>
+      <div class="options">${options.map(o=>{
+        const p=POKEMON[o.poke];
+        return `<button class="option" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
+          <img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'">
+          <span class="word">${o.verb}</span>
+          <span class="word-speaker" onclick="event.stopPropagation();speak('${o.verb}')">🔊</span>
+        </button>`
+      }).join("")}</div>`;
+  }else{
+    const isError=type==="error";
+    html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(currentQuestion.sentence)}')">🔊</button>
+      ${highlightBlank(currentQuestion.sentence)}</div>
+      <div class="baseverb">(${currentQuestion.verb}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${currentQuestion.verb}')">🔊</button></div>
+      <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
+  }
+  html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
+    <div class="actions"><button class="btn gold" onclick="showHint()">💡 Hint</button></div>`;
+  document.getElementById("questionCard").innerHTML=html;
+  if(state.settings.autoSpeak && !currentSession.test) setTimeout(()=>speak(getSpeakText()),250);
+}
+function getSpeakText(){
+  if(questionType(currentQuestion)==="rule") return `Which one is an ${currentQuestion.answer} Pokémon?`;
+  return currentQuestion.sentence.replace("_____","blank");
+}
+function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
+function questionType(q){
+  if(q.type) return q.type;
+  if(q.poke) return "rule";
+  if(q.rule==="CVC"||q.rule==="+ing") return "ing";
+  if(q.error) return "error";
+  return "sentence";
+}
+function makeRuleOptions(answer){
+  const stage=STAGES.find(s=>s.id===currentSession.stageId);
+  const isolatedTypes=stage && stage.types && stage.types.length===1 && ["ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleS","ruleIES"].includes(stage.types[0]);
+  const scoped=isolatedTypes ? (QUESTION_BANK[stage.types[0]]||[]) : [...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO,...QUESTION_BANK.ruleIES];
+  const all=[...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO,...QUESTION_BANK.ruleIES];
+  const correct=currentQuestion;
+  const same=shuffle(scoped.filter(x=>x.answer===answer && x.verb!==correct.verb));
+  const sameRule=shuffle(scoped.filter(x=>x.rule===correct.rule && x.verb!==correct.verb));
+  const distractors=shuffle(all.filter(x=>x.answer!==answer));
+  const pool=[correct,...same.slice(0,2),...sameRule.slice(0,2),...distractors];
+  const seen=new Set();
+  return shuffle(pool.filter(x=>{const k=`${x.verb}|${x.answer}|${x.rule}`;if(seen.has(k))return false;seen.add(k);return true})).slice(0,4);
+}
+function showHint(){
+  if(answerLocked)return;
+  hintLevel=Math.min(3,hintLevel+1);
+  const rule=["CH","SH","SS","X","O"].includes(currentQuestion.rule)?currentQuestion.rule:
+    currentQuestion.rule==="consonant+y"?"IES":
+    currentQuestion.rule==="CVC"?"CVC":
+    currentQuestion.rule==="subject"||currentQuestion.rule==="plural"?"subject":
+    currentQuestion.rule==="S"?"S":"+ing";
+  const h=HINTS[rule]?.[hintLevel-1]||HINTS.subject[hintLevel-1];
+  let visual="";
+  if(hintLevel>=2 && currentQuestion.verb){
+    if(["CH","SH","SS","X","O"].includes(rule)){
+      const v=currentQuestion.verb;
+      const show=rule==="CH"||rule==="SH"||rule==="SS"?rule:v.slice(-1).toUpperCase();
+      const idx=v.toUpperCase().lastIndexOf(show);
+      visual=idx>=0?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,idx))}<span class="red">${escapeHtml(v.slice(idx,idx+show.length))}</span>${escapeHtml(v.slice(idx+show.length))}</div>`:"";
+    }else if(rule==="IES"){
+      const v=currentQuestion.verb; const y=v.length-1;
+      visual=`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,y-1))}<span class="red">${escapeHtml(v[y-1])}</span>y</div>`;
+    }
+  }
+  document.getElementById("hintArea").innerHTML=`<div class="hintbox">
+    <div class="hint-head"><span class="hint-title">💡 Hint ${hintLevel} / 3</span><span class="muted">${hintLevel===3?"":"→"}</span></div>
+    <div class="hint-en"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="speak('${escapeHtml(h[0]+" "+h[1])}')">🔊</button>${escapeHtml(h[0])}</div>
+    ${visual}
+    <div class="hint-en"><b>${escapeHtml(h[1])}</b></div>
+    <div class="actions"><button class="btn gold small" onclick="showHint()">${hintLevel<3?"下一個提示":"已看到完整提示"}</button></div>
+  </div>`;
+  currentSession.hintCount++;
+  if(hintLevel===3) speak(h[0]+" "+h[1]);
+}
+function answerRule(verb,answer,poke){
+  if(answerLocked)return;
+  const correct=answer===currentQuestion.answer;
+  handleAnswer(correct,answer,{selectedVerb:verb,poke});
+}
+function answerSentence(answer){
+  if(answerLocked)return;
+  const correct=answer===currentQuestion.answer;
+  handleAnswer(correct,answer,{});
+}
+function handleAnswer(correct,answer,extra){
+  if(answerLocked)return;
+  answerLocked=true;
+  const responseTime=Date.now()-(currentSession.questionStartedAt||Date.now());
+  const hintUsed=hintLevel>0;
+
+  currentSession.answerAttempts++;
+  currentSession.attempts=currentSession.answerAttempts;
+
+  const key=currentSession.index;
+  const qd=currentSession.questionAttemptData[key] || {answers:[],wrong:0,correct:false,completed:false,hintUsed:false};
+  const wasCompleted=qd.completed;
+  qd.answers.push({answer,correct,responseTime,hintUsed});
+  qd.hintUsed = qd.hintUsed || hintUsed;
+  if(!correct) qd.wrong++;
+  if(correct) qd.correct=true;
+  currentSession.questionAttemptData[key]=qd;
+  const firstCompletion=correct && !wasCompleted;
+  if(firstCompletion && !currentSession.test && !qd.dailyCounted){
+    qd.dailyCounted=true;
+    state.daily.count++;
+  }
+
+  // 防止「快速亂點同一錯誤」被誤判為努力練習。
+  if(!correct && !hintUsed && qd.wrong>=3 && responseTime<1500){
+    currentSession.suspiciousAttempts++;
+  }
+  if(correct && qd.wrong>0) currentSession.improvementCount++;
+
+  const exp=currentSession.test ? 0 : (firstCompletion ? (qd.hintUsed?15:25):0);
+
+  if(correct){
+    if(firstCompletion){
+      qd.completed=true;
+      currentSession.uniqueCompleted++;
+      currentSession.correct++;
+      if(qd.hintUsed) currentSession.hintCorrect++;
+      else currentSession.independent++;
+      if(!currentSession.test) addExp(exp);
+      if(!currentSession.test) updateMastery(currentQuestion,true,qd.hintUsed,qd);
+    }
+  }else{
+    if(qd.wrong===1) currentSession.wrong++;
+    if(!currentSession.test) markMasteryReview(currentQuestion);
+  }
+
+  const type=questionType(currentQuestion);
+  const errorType=correct?null:detectError(currentQuestion,answer);
+  const integrity=currentSession.test
+    ?"excluded"
+    :(currentSession.suspiciousAttempts>0?"suspicious":"normal");
+
+  const logEntry={
+    ts:Date.now(),
+    mode:currentSession.test?"TEST":"LEARNING",
+    stage:currentSession.stageId,
+    type,
+    question:type==="rule"?`Which one is an ${currentQuestion.answer} Pokémon?`:currentQuestion.sentence,
+    answer,
+    correct,
+    hintLevel:currentSession.test?0:hintLevel,
+    exp,
+    errorType,
+    responseTime,
+    learningIntegrity:integrity
+  };
+  if(currentSession.test) state.testLogs.unshift(logEntry); else state.logs.unshift(logEntry);
+  saveState();
+  renderFeedback(correct,answer,errorType,exp);
+}
+function masterySkill(q){
+  if(q.rule==="CH") return "ch";
+  if(q.rule==="SH") return "sh";
+  if(q.rule==="SS") return "ss";
+  if(q.rule==="X") return "x";
+  if(q.rule==="O") return "o";
+  if(q.rule==="consonant+y") return "y";
+  if(q.rule==="S" || q.rule==="vowel+y") return "s";
+  if(q.rule==="subject" || q.rule==="plural") return "subject";
+  if(q.rule==="CVC" || q.rule==="+ing") return "ing";
+  return currentSession.stageId || "unknown";
+}
+function updateMastery(q,correct,hintUsed,qd){
+  const skill=masterySkill(q);
+  const m=state.learning.mastery[skill]||{
+    attempts:0,correct:0,independentCorrect:0,hintCorrect:0,corrections:0,
+    mastery:0,lastPracticed:0,lastError:0,needsReview:false
+  };
+  // Only call this function once per completed question.
+  m.attempts++;
+  m.correct++;
+  if(hintUsed) m.hintCorrect++; else m.independentCorrect++;
+  if(qd.wrong>0) m.corrections++;
+  m.lastPracticed=Date.now();
+  m.lastError=0;
+  // Mastery measures how independently the child can complete questions.
+  // It does not decay, so a previously mastered skill is never "taken away".
+  const n=Math.max(1,m.attempts);
+  const independentRate=m.independentCorrect/n;
+  const hintRate=m.hintCorrect/n;
+  const correctionRate=Math.min(m.corrections/n,1);
+  m.mastery=Math.min(100,Math.round(
+    independentRate*70 + hintRate*20 + correctionRate*10
+  ));
+  // A successful independent correction can clear a review flag.
+  if(!hintUsed && m.mastery>=70) m.needsReview=false;
+  state.learning.mastery[skill]=m;
+}
+function markMasteryReview(q){
+  if(!state.learning || !state.learning.mastery) return;
+  const skill=masterySkill(q);
+  const m=state.learning.mastery[skill];
+  if(!m) return;
+  m.lastError=Date.now();
+  if(m.mastery>=70) m.needsReview=true;
+  state.learning.mastery[skill]=m;
+}
+function stageMastery(stage){
+  if(!stage) return 0;
+  const skills=new Set();
+  (stage.types||[]).forEach(t=>{
+    (QUESTION_BANK[t]||[]).forEach(q=>skills.add(masterySkill(q)));
+  });
+  if(stage.id==='mixed') ['s','ch','sh','ss','x','o','y'].forEach(k=>skills.add(k));
+  const vals=[...skills].map(k=>state.learning.mastery[k]?.mastery||0).filter(v=>v>0);
+  return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+}
+
+function renderFeedback(correct,answer,errorType,exp){
+  const f=document.getElementById("feedback");
+  if(correct){
+    f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
+      <div class="sub">${currentSession.test?"測試紀錄，不計入學習統計":`+${exp} EXP`}</div>
+      <div class="actions"><button class="btn primary" onclick="nextQuestion()">下一題</button></div>`;
+    speak("Correct!");
+    if(state.settings.celebrate==="full" && Math.random()<.35) tinyConfetti();
+  }else{
+    f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
+      <div class="sub">Try again or use a hint.</div>
+      <div class="actions">
+        <button class="btn primary" onclick="retryQuestion()">再試一次</button>
+        <button class="btn gold" onclick="unlockRetryHint()">💡 Hint</button>
+      </div>`;
+    speak("Not quite. Try again.");
+  }
+}
+function unlockRetryHint(){
+  answerLocked=false;hintLevel=Math.max(0,hintLevel);showHint();
+  const f=document.getElementById("feedback"); if(f)f.innerHTML="";
+}
+function retryQuestion(){
+  answerLocked=false;hintLevel=0;renderQuestion();
+}
+function nextQuestion(){
+  currentSession.index++;
+  if(currentSession.index>=currentSession.questions.length){finishSession();return}
+  renderQuestion();
+}
+function finishSession(){
+  const s=currentSession;
+  const total=s.questions.length;
+  const cleanIndependent=Object.values(s.questionAttemptData||{}).filter(q=>q.completed && !q.hintUsed).length;
+  const pct=Math.round(cleanIndependent/total*100);
+  if(!s.test){
+    const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
+    old.best=Math.max(old.best,pct); old.plays++; old.totalCorrect+=s.correct; old.totalQuestions+=total;
+    state.stageStats[s.stageId]=old;
+    let unlockedText="";
+    if(pct>=70){
+      const idx=STAGES.findIndex(x=>x.id===s.stageId);
+      if(idx<STAGES.length-1){
+        const next=STAGES[idx+1].id;
+        if(!state.unlocked.includes(next)){
+          state.unlocked.push(next);
+          unlockedText=`<p style="color:#9ec8e7">🔓 已解鎖：${STAGES[idx+1].title}</p>`;
+        }
+      }
+    }
+    s.reward=maybeReward(s,pct);
+    saveState();
+    const rewardHtml=s.reward?`
+      <div class="card" style="margin-top:14px">
+        <b>${s.reward.kind==="evolution"?"✨ 寶可夢進化":"🎁 學習夥伴解鎖"}</b>
+        ${s.reward.kind==="evolution"?`<div class="muted">${POKEMON[s.reward.from].name} → ${POKEMON[s.reward.to].name}</div>`:`<div class="muted">透過持續練習解鎖新的夥伴</div>`}
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
+          <img src="${POKEMON[s.reward.kind==="evolution"?s.reward.to:s.reward.id].img}" alt="" style="width:72px;height:72px">
+          <span><b>${POKEMON[s.reward.kind==="evolution"?s.reward.to:s.reward.id].name}</b></span>
+        </div>
+      </div>`:"";
+    const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 LEVEL UP! Lv. ${state.level}</b></div>`:"";
+    let shouldRest=false;
+    if(s.learningSegmentStartedAt){
+      const before=learningTimeToday().restRequired;
+      accumulateLearningTime(true);
+      shouldRest=!before && learningTimeToday().restRequired;
+    }
+    showModal(`<div class="reward-poke"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
+      <div class="reward-title">Mission Complete!</div>
+      <p>完成 ${total} 題 · ${pct}% 獨立完成</p>
+      <p class="muted">獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
+      ${unlockedText}${levelHtml}${rewardHtml}
+      <div class="actions"><button class="btn primary" onclick="closeModal();showScreen('home')">回首頁</button>
+      <button class="btn" onclick="closeModal();showScreen('map')">繼續冒險</button></div>`);
+    if(pct>=70 && state.settings.celebrate!=="off") celebration(!!s.levelUps);
+    currentSession=null;
+    if(shouldRest) setTimeout(showRestReminder,250);
+  }else{
+    showModal(`<div class="reward-poke"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
+      <div class="reward-title">測試完成</div>
+      <p>這次結果不會影響學習統計、EXP、Mastery 或抽卡。</p>
+      <p class="muted">TEST · ${total} 題 · ${pct}% 獨立完成</p>
+      <div class="actions"><button class="btn primary" onclick="closeModal();showScreen('home')">回首頁</button>
+      <button class="btn" onclick="closeModal();showScreen('logs')">查看紀錄</button></div>`);
+    currentSession=null;
+  }
+}
+function maybeReward(s,pct){
+  const todayReward=state.reward;
+  if(!todayReward.upgradeUsed && pct>=90 && s.independent>=Math.ceil(s.questions.length*.6)){
+    const evolved=evolveActivePokemon();
+    if(evolved){ todayReward.upgradeUsed=true; return {kind:"evolution",from:evolved.from,to:evolved.to}; }
+  }
+  if(!todayReward.effortUsed && isGoodEffort(s)){
+    const id=unlockProgressPokemon(s);
+    if(id){ todayReward.effortUsed=true; return {kind:"effort",id}; }
+  }
+  return null;
+}
+function isGoodEffort(s){
+  if(s.test || s.answerAttempts<4)return false;
+  const meaningful=s.hintCorrect+s.independent;
+  const completed=Object.values(s.questionAttemptData||{}).filter(q=>q.completed);
+  const uniqueWrong=Object.values(s.questionAttemptData||{}).filter(q=>q.wrong>0 && !q.completed).length;
+  const wrongRatio=completed.length?uniqueWrong/(completed.length+uniqueWrong):1;
+  const hasLearningBehavior=s.hintCount>0 || s.improvementCount>0;
+  const notFarming=s.suspiciousAttempts<3;
+  return meaningful>=3 && hasLearningBehavior && notFarming && wrongRatio<.75;
+}
+const EVOLUTIONS={
+  25:{to:133,need:3},
+  4:{to:10,need:3},
+  7:{to:54,need:3},
+  1:{to:27,need:3}
+};
+function evolveActivePokemon(){
+  const from=Number(state.activePokemon||25);
+  const e=EVOLUTIONS[from];
+  if(!e || !POKEMON[e.to]) return null;
+  const source=state.collection[from]||{level:1,xp:0,evolutionProgress:0};
+  if(state.collection[e.to]){
+    source.evolutionProgress=Math.max(source.evolutionProgress||0,e.need);
+    source.evolutionComplete=true;
+    state.collection[from]=source;
+    saveState();
+    return null;
+  }
+  if(source.evolutionComplete) return null;
+  source.evolutionProgress=(source.evolutionProgress||0)+1;
+  state.collection[from]=source;
+  if(source.evolutionProgress<e.need){ saveState(); return null; }
+  const to=e.to;
+  state.collection[to]={level:Math.max(source.level+1,2),xp:0,tag:"學習進化",evolvedFrom:from};
+  source.evolutionComplete=true;
+  state.collection[from]=source;
+  state.activePokemon=to;
+  saveState(); updateHeroPokemon();
+  return {from,to};
+}
+const SKILL_REWARD_POKEMON={
+  s:35,ch:39,sh:52,ss:10,x:16,o:54,y:1,mixed:27,subject:7,sentence:4,ing:133,error:25
+};
+function unlockProgressPokemon(s){
+  const id=SKILL_REWARD_POKEMON[s.stageId] || SKILL_REWARD_POKEMON[masterySkill(s.questions?.[0]||{})];
+  if(!id || !POKEMON[id] || state.collection[id]) return null;
+  state.collection[id]={level:1,xp:0,tag:`${s.stageId} 技能夥伴`};
+  saveState();
+  return id;
+}
+
+function addExp(amount){
+  if(!amount)return;
+  state.xp+=amount;
+  if(currentSession && !currentSession.levelUps) currentSession.levelUps=0;
+  while(state.xp>=100+(state.level-1)*50){
+    state.xp-=100+(state.level-1)*50;
+    state.level++;
+    currentSession.levelUps++;
+    const active=state.collection[state.activePokemon||25];
+    if(active)active.level=Math.max(active.level,state.level);
+  }
+  saveState();updateHeader();
+}
+function celebration(levelup){
+  if(state.settings.celebrate==="off")return;
+  if(state.settings.celebrate==="simple"){ tinyConfetti(); return; }
+  const c=document.getElementById("confetti");c.innerHTML="";
+  for(let i=0;i<(levelup?90:55);i++){
+    const el=document.createElement("i");
+    el.style.left=Math.random()*100+"%";
+    el.style.setProperty("--x",(Math.random()*280-140)+"px");
+    el.style.background=["#6e9fc4","#9bc9a8","#d5bd68","#b08bbf","#d27f85"][i%5];
+    el.style.animationDelay=(Math.random()*.45)+"s";
+    c.appendChild(el);
+  }
+  if(levelup){
+    for(let i=0;i<7;i++){
+      const fw=document.createElement("i");
+      fw.style.position="absolute";fw.style.left=(10+Math.random()*80)+"%";fw.style.top=(10+Math.random()*45)+"%";
+      fw.style.width="8px";fw.style.height="8px";fw.style.borderRadius="50%";
+      fw.style.background=["#d5bd68","#7fb2d8","#9bc9a8","#c39ad0"][i%4];
+      fw.style.boxShadow="0 0 18px 6px rgba(255,255,255,.18)";
+      fw.style.animation="burst 1.1s ease-out forwards";
+      c.appendChild(fw);
+    }
+  }
+  setTimeout(()=>c.innerHTML="",2600);
+}
+function tinyConfetti(){
+  const c=document.getElementById("confetti");c.innerHTML="";
+  for(let i=0;i<14;i++){
+    const el=document.createElement("i");el.style.left=(45+Math.random()*10)+"%";el.style.setProperty("--x",(Math.random()*160-80)+"px");el.style.background="#d6c06e";c.appendChild(el)
+  }
+  setTimeout(()=>c.innerHTML="",1200)
+}
+function showModal(content){document.getElementById("modalBox").innerHTML=content;document.getElementById("modal").classList.remove("hidden")}
+function closeModal(){document.getElementById("modal").classList.add("hidden")}
+function endSession(){
+  if(!currentSession){showScreen("home");return}
+  if(confirm("確定要離開目前任務嗎？已完成的題目紀錄會保留，但本次任務不會算完成。")){
+    accumulateLearningTime();
+    currentSession=null;showScreen("home");
+  }
+}
+function detectError(q,answer){
+  if(q.rule==="consonant+y") return "consonant_y_rule";
+  if(q.rule==="CVC") return "cvc_doubling";
+  if(q.rule==="plural") return "subject_plural";
+  if(q.rule==="subject") return "subject_verb_agreement";
+  if(["CH","SH","SS","X","O"].includes(q.rule)) return "ES_rule";
+  return "rule_selection";
+}
+function renderMyPokemon(){
+  const entries=Object.entries(state.collection);
+  document.getElementById("collectionCount").textContent=`已捕捉 ${entries.length} / ${Object.keys(POKEMON).length}`;
+  const main=Number(state.activePokemon||entries[0]?.[0]||25);const p=POKEMON[main];
+  document.getElementById("myPokemonSummary").innerHTML=`<div style="display:flex;align-items:center;gap:16px">
+    <img src="${p.img}" alt="${p.name}" style="width:100px;height:100px">
+    <div><h2 style="margin:0">${p.name}</h2><p class="muted">目前夥伴 · Lv. ${state.collection[main]?.level||1}</p>
+    <button class="btn small primary" onclick="setMainPokemon()">設為夥伴</button></div></div>`;
+  document.getElementById("myPokemonGrid").innerHTML=entries.map(([id,v])=>{
+    const p=POKEMON[id];
+    return `<div class="poke ${Number(id)===main?"selected":""}">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="name">${p.name}</div><div class="no">#${p.no}</div><div class="lv">Lv.${v.level||1}</div>
+      <span class="tag">${v.tag||"捕捉"}</span>
+      <div style="margin-top:7px"><button class="btn small" onclick="setActivePokemon(${id})">${Number(id)===main?"目前夥伴":"設為夥伴"}</button></div>
+    </div>`
+  }).join("");
+}
+function setMainPokemon(){showScreen("myPokemon")}
+function setActivePokemon(id){
+  if(!state.collection[id])return;
+  state.activePokemon=Number(id);saveState();updateHeroPokemon();renderMyPokemon();
+}
+function updateHeroPokemon(){
+  const id=state.activePokemon||25;
+  const img=document.getElementById("heroPoke");
+  if(img)img.src=POKEMON[id].img;
+}
+function renderDex(){
+  const ids=Object.keys(POKEMON).map(Number);
+  const got=ids.filter(id=>state.collection[id]).length;
+  document.getElementById("dexCount").textContent=`已捕捉 ${got} / ${ids.length}`;
+  document.getElementById("pokedexGrid").innerHTML=ids.map(id=>{
+    const p=POKEMON[id],v=state.collection[id];
+    return `<div class="poke ${v?"":"unknown"}"><img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'"><div class="name">${v?p.name:"???"}</div><div class="no">#${p.no}</div><div class="lv">${v?"已捕捉":"尚未發現"}</div></div>`
+  }).join("");
+}
+function renderLogs(){
+  const learning=state.logs.filter(l=>l.mode==="LEARNING");
+  const correct=learning.filter(l=>l.correct).length;
+  const independent=learning.filter(l=>l.correct&&l.hintLevel===0).length;
+  const hintCorrect=learning.filter(l=>l.correct&&l.hintLevel>0).length;
+  const acc=learning.length?Math.round(correct/learning.length*100):0;
+  document.getElementById("stats").innerHTML=`
+    <div class="card stat"><span>學習答題</span><b>${learning.length}</b></div>
+    <div class="card stat"><span>整體正確率</span><b>${acc}%</b></div>
+    <div class="card stat"><span>獨立答對</span><b>${independent}</b></div>
+    <div class="card stat"><span>Hint 後答對</span><b>${hintCorrect}</b></div>`;
+  const all=[...state.logs,...state.testLogs].sort((a,b)=>b.ts-a.ts).slice(0,120);
+  const groups={};
+  all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
+  const rows=[];
+  Object.keys(groups).forEach(date=>{
+    rows.push(`<tr class="date-row"><td colspan="6"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
+    groups[date].forEach(l=>rows.push(`<tr><td>${fmtTime(l.ts)}</td><td class="${l.mode==="TEST"?"testtag":""}">${l.mode==="TEST"?"TEST":"學習"}</td><td>${escapeHtml(l.question)}</td><td class="${l.correct?"ok":"bad"}">${l.correct?"✓":"✗"}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`));
+  });
+  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="6" class="muted">目前還沒有紀錄。</td></tr>`;
+}
+function clearLogs(){
+  const choice=prompt("輸入 1 清除學習紀錄；輸入 2 清除 TEST 紀錄；輸入 3 全部清除。Mastery、EXP、關卡進度與寶可夢不會被清除。","1");
+  if(!choice)return;
+  if(choice==="1" && confirm("確定清除學習紀錄？")) state.logs=[];
+  else if(choice==="2" && confirm("確定清除 TEST 紀錄？")) state.testLogs=[];
+  else if(choice==="3" && confirm("確定清除全部紀錄？")){state.logs=[];state.testLogs=[];}
+  else return;
+  saveState(); renderLogs();
+}
+function speak(text){
+  if(!("speechSynthesis" in window)){alert("此瀏覽器不支援語音播放。");return}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="en-US";u.rate=.9;u.pitch=1;
+  speechSynthesis.speak(u);
+}
+function shuffle(array){
+  const a=[...array];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+let learningTicker=null;
+function learningTimeToday(){
+  if(!state.learning) state.learning={mastery:{},learningTime:{date:today(),activeMs:0,restRequired:false}};
+  if(!state.learning.learningTime || state.learning.learningTime.date!==today()){
+    state.learning.learningTime={date:today(),activeMs:0,restRequired:false};
+  }
+  return state.learning.learningTime;
+}
+function accumulateLearningTime(suppressReminder=false){
+  if(!currentSession || currentSession.test || !currentSession.learningSegmentStartedAt) return;
+  const now=Date.now();
+  const t=learningTimeToday();
+  t.activeMs += Math.max(0,now-currentSession.learningSegmentStartedAt);
+  currentSession.learningSegmentStartedAt=now;
+  if(t.activeMs>=30*60*1000 && !t.restRequired){
+    t.restRequired=true;
+    saveState();
+    if(!suppressReminder && currentSession) showRestReminder();
+  }
+  saveState();
+}
+function showRestReminder(){
+  if(currentSession && currentSession.test) return;
+  if(currentSession) currentSession.restPaused=true;
+  showModal(`<div style="font-size:48px">🌿</div><div class="reward-title" style="font-size:30px">Time to rest</div><p>你已經學習約 30 分鐘了。</p><p class="muted">建議休息 10 分鐘，讓眼睛和大腦休息一下。</p><p class="small-note">這是健康提醒，不是遊戲懲罰。你可以現在休息，也可以稍後再休息。</p><div class="actions"><button class="btn primary" onclick="dismissRestReminder()">知道了</button></div>`);
+}
+function dismissRestReminder(){
+  const t=learningTimeToday();
+  t.restRequired=false;
+  if(currentSession){
+    currentSession.restPaused=false;
+    currentSession.learningSegmentStartedAt=Date.now();
+  }
+  saveState(); closeModal();
+}
+function startLearningTicker(){
+  if(learningTicker) clearInterval(learningTicker);
+  learningTicker=setInterval(()=>{
+    if(currentSession && !currentSession.test && !currentSession.restPaused && document.getElementById("learn")?.classList.contains("active")){
+      const t=learningTimeToday();
+      if(currentSession.learningSegmentStartedAt && Date.now()-currentSession.learningSegmentStartedAt>=10000){
+        accumulateLearningTime();
+      }
+    }
+  },10000);
+}
+
+function init(){
+  resetDaily();
+  updateHeroPokemon();
+  renderMap();updateHeader();startLearningTicker();
+}
+init();
+</script>
+<button class="btn gold" style="position:fixed;right:16px;bottom:16px;z-index:80;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.35)" onclick="startTest()">🧪 測試</button>
+</body>
+</html>
