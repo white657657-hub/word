@@ -59,7 +59,10 @@ button{cursor:pointer}
 }
 .iconbtn:hover,.btn:hover{filter:brightness(1.08)}
 .btn.primary{background:#27547c;border-color:#3d79ae}
-.btn.gold{background:#6b5a2d;border-color:#a48a42}
+.btn.gold{background:#3f5f78;border-color:#668eaa}
+.btn.guide-action{background:#245f78;border-color:#4b93b3}
+.btn.hint-action{background:#51487f;border-color:#8178b2}
+.preanswer-actions .btn,.hint-action-btn{min-width:140px;min-height:40px}
 .btn.green{background:#27553f;border-color:#3d8060}
 .btn.red{background:#5b3035;border-color:#8e4c54}
 .btn.small{padding:7px 10px;font-size:13px}
@@ -103,12 +106,16 @@ main{margin-top:18px}
   text-align:center;font-size:30px;font-weight:800;line-height:1.4;margin:8px 0 22px
 }
  .red{color:#e67b7f}
-.y-focus-letter{color:#62c9e8;font-weight:1000;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
-.y-focus-y{color:#e67b7f;font-weight:1000}
+/* Unified grammar colors: judgment letter = cyan, Y/I = purple, S = blue, ES = orange. */
+.y-focus-letter{color:#4DD0E1;font-weight:1000;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.y-focus-y{color:#CE93D8;font-weight:1000}
 .rule-teach{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;font-size:18px;font-weight:900;color:#dfeaf2;line-height:1.35;flex-wrap:wrap}
-.rule-teach .focus{color:#62c9e8;font-weight:1000}
-.rule-teach .focus-y{color:#e67b7f;font-weight:1000}
-.rule-teach .rule-label{color:#62c9e8;font-weight:1000}
+.rule-teach .focus{color:#4DD0E1;font-weight:1000}
+.rule-teach .focus-y{color:#CE93D8;font-weight:1000}
+.rule-teach .rule-label{color:#4DD0E1;font-weight:1000}
+.rule-teach .rule-s{color:#64B5F6;font-weight:1000}
+.rule-teach .rule-ies{color:#CE93D8;font-weight:1000}
+.rule-teach .rule-es{color:#FFB74D;font-weight:1000}
 .rule-teach .speaker{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:14px!important;margin-right:0!important}
 .rule-teach-small{font-size:16px;color:var(--muted);font-weight:700}
 .y-focus-note{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;font-size:17px;font-weight:900;color:#62c9e8}
@@ -177,12 +184,6 @@ main{margin-top:18px}
 .poke img{width:90px;height:90px}.poke .name{font-weight:800}.poke .no{color:#7f93a3;font-size:11px}.poke .lv{color:#bfcbd5;font-size:12px;margin-top:3px}
 .poke .tag{display:inline-block;margin-top:6px;font-size:11px;padding:3px 7px;border-radius:999px;background:#233a4b;color:#a9cbe5}
 '.poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
-.poke-peek-target{cursor:pointer;border-radius:12px;display:inline-block;line-height:0;padding:3px;transition:transform .15s ease,background .15s ease}
-.poke-peek-target:hover{background:rgba(157,196,229,.08)}
-.poke-peek-target:focus-visible{outline:3px solid rgba(157,196,229,.8);outline-offset:3px}
-.poke-peek-target.peek{animation:pokemonPeek .72s ease-out}
-@keyframes pokemonPeek{0%{transform:translateY(0) rotate(0) scale(1)}25%{transform:translateY(-7px) rotate(-3deg) scale(1.035)}50%{transform:translateY(0) rotate(3deg) scale(1.035)}75%{transform:translateY(-3px) rotate(-2deg) scale(1.02)}100%{transform:translateY(0) rotate(0) scale(1)}}
-@media (prefers-reduced-motion:reduce){.poke-peek-target.peek{animation:none;transform:translateY(-3px) scale(1.02)}}
 .pokemon-transform{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:900;margin-top:6px}.pokemon-correct{font-size:16px;font-weight:800;color:#8ed19e;margin-top:7px}.pokemon-correct .thumb{font-size:16px;margin-right:4px}.pokemon-transform .arrow{color:var(--muted);font-size:18px}.pokemon-transform b{color:#8ed19e}.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.qa-diagnostic{margin:10px auto;padding:8px 10px;border:1px dashed var(--border);border-radius:8px;color:#d7c98b;font-size:12px}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
@@ -408,7 +409,7 @@ main{margin-top:18px}
   </div>
   <div class="card">
     <b>QA 原則</b>
-    <p class="small-note">QA 可以逐題檢查題目、選項、正確答案、提示、語音、Pokémon 圖片、例句與流程。Y Rule 會同時驗證「母音 + Y → S」與「子音 + Y → IES」。QA 檢查與孩子的學習紀錄完全分開，也不影響 EXP、Mastery、進度、休息計時或獎勵。</p>
+    <p class="small-note">QA 可以逐題檢查題目、選項、正確答案、提示、語音、Pokémon 圖片、例句與流程。Y Rule 會同時驗證「母音 + y → s」與「子音 + y → ies」。QA 檢查與孩子的學習紀錄完全分開，也不影響 EXP、Mastery、進度、休息計時或獎勵。</p>
   </div>
 </section>
 
@@ -439,22 +440,22 @@ main{margin-top:18px}
 
 <script>
 const POKEMON = {
-  25:{name:"Pikachu", no:"025", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"},
-  4:{name:"Charmander", no:"004", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"},
-  7:{name:"Squirtle", no:"007", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"},
-  1:{name:"Bulbasaur", no:"001", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"},
-  26:{name:"Raichu", no:"026", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/26.png"},
-  5:{name:"Charmeleon", no:"005", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png"},
-  8:{name:"Wartortle", no:"008", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png"},
-  2:{name:"Ivysaur", no:"002", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"},
-  133:{name:"Eevee", no:"133", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"},
-  54:{name:"Psyduck", no:"054", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png"},
-  39:{name:"Jigglypuff", no:"039", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"},
-  52:{name:"Meowth", no:"052", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/52.png"},
-  10:{name:"Caterpie", no:"010", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10.png"},
-  16:{name:"Pidgey", no:"016", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/16.png"},
-  27:{name:"Sandshrew", no:"027", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/27.png"},
-  35:{name:"Clefairy", no:"035", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png"}
+  25:{name:"Pikachu", no:"025", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/25.png"},
+  4:{name:"Charmander", no:"004", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/4.png"},
+  7:{name:"Squirtle", no:"007", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/7.png"},
+  1:{name:"Bulbasaur", no:"001", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png"},
+  26:{name:"Raichu", no:"026", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/26.png"},
+  5:{name:"Charmeleon", no:"005", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/5.png"},
+  8:{name:"Wartortle", no:"008", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/8.png"},
+  2:{name:"Ivysaur", no:"002", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/2.png"},
+  133:{name:"Eevee", no:"133", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/133.png"},
+  54:{name:"Psyduck", no:"054", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/54.png"},
+  39:{name:"Jigglypuff", no:"039", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/39.png"},
+  52:{name:"Meowth", no:"052", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/52.png"},
+  10:{name:"Caterpie", no:"010", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/10.png"},
+  16:{name:"Pidgey", no:"016", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/16.png"},
+  27:{name:"Sandshrew", no:"027", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/27.png"},
+  35:{name:"Clefairy", no:"035", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/35.png"}
 };
 
 const STAGES = [
@@ -1171,21 +1172,21 @@ function showYRuleIntro(){
   card.innerHTML=`
     <div class="y-rule-intro">
       <div class="y-rule-title">Y Rule</div>
-      <p class="y-rule-lead">Look at the letter before Y. <span class="y-focus-letter">Before Y</span> = vowel or consonant.</p>
+      <p class="y-rule-lead">Look at the letter before y. <span class="y-focus-letter">Before y</span> = vowel or consonant.</p>
 
       <div class="y-rule-grid">
         <div class="y-rule-box vowel-box">
-          <div class="y-rule-label">Vowel + Y → <span class="red">S</span></div>
+          <div class="y-rule-label">Vowel + Y → <span class="red">s</span></div>
           <div class="y-rule-letters">A · E · I · O · U</div>
-          <div class="y-rule-example">play → play<span class="y-focus-y">s</span></div>
-          <div class="y-rule-example">enjoy → enjoy<span class="y-focus-y">s</span></div>
+          <div class="y-rule-example">play → play<span class="rule-s">s</span></div>
+          <div class="y-rule-example">enjoy → enjoy<span class="rule-s">s</span></div>
           <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('vowel')">🔊 vowel</button>
         </div>
 
         <div class="y-rule-box consonant-box">
-          <div class="y-rule-label">Consonant + Y → <span class="red">IES</span></div>
-          <div class="y-rule-example">tr<span class="y-focus-letter">r</span><span class="y-focus-y">y</span> → tr<span class="y-focus-letter">i</span><span class="y-focus-y">es</span></div>
-          <div class="y-rule-example">stud<span class="y-focus-letter">d</span><span class="y-focus-y">y</span> → stud<span class="y-focus-letter">d</span>i<span class="y-focus-y">es</span></div>
+          <div class="y-rule-label">Consonant + Y → <span class="red">ies</span></div>
+          <div class="y-rule-example">tr<span class="y-focus-letter">r</span><span class="y-focus-y">y</span> → tr<span class="rule-ies">i</span><span class="rule-es">es</span></div>
+          <div class="y-rule-example">stud<span class="y-focus-letter">d</span><span class="y-focus-y">y</span> → stud<span class="y-focus-letter">d</span><span class="rule-ies">i</span><span class="rule-es">es</span></div>
           <div class="y-rule-consonant-note">Consonants = other letters</div>
           <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('consonant')">🔊 consonant</button>
         </div>
@@ -1308,10 +1309,9 @@ function renderWarmupQuestion(){
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
     <div class="preanswer-actions" id="preAnswerActions">
-      <button class="btn" id="answerModeBtn" onclick="showAnswerMode()">✏️ 我要答題</button>
-      <button class="btn gold" id="judgmentBtn" onclick="showJudgmentGuide()">👀 我要先看看怎麼判斷</button>
+      <button class="btn guide-action" id="judgmentBtn" onclick="showJudgmentGuide()">How to Decide</button>
     </div>
-    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
+    <div class="actions" id="hintTrigger"><button class="btn hint-action hint-action-btn" onclick="showHint()">Hint</button></div>`;
   card.innerHTML=html;
   const learn=document.getElementById("learn");
   if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
@@ -1622,6 +1622,10 @@ function runRegressionCheck(){
   if(!/normalizeProductionInput/.test(source.production)) problems.push("Regression: production input normalization is missing");
   if(!/expectedProductionRule/.test(source.production)) problems.push("Regression: production rule validation is missing");
   if(!/productionInput\.disabled=true/.test(source.renderFeedback)) problems.push("Regression: correct production answer must lock input controls");
+  if(!/y-focus-letter/.test(document.head.innerHTML+document.body.innerHTML)) problems.push("Regression: Y judgment-letter color class is missing");
+  if(!/y-focus-y/.test(document.head.innerHTML+document.body.innerHTML)) problems.push("Regression: Y color class is missing");
+  if(!/rule-s/.test(document.head.innerHTML+document.body.innerHTML) || !/rule-es/.test(document.head.innerHTML+document.body.innerHTML) || !/rule-ies/.test(document.head.innerHTML+document.body.innerHTML)) problems.push("Regression: unified S/ES/IES teaching colors are missing");
+  if(document.querySelector(".poke-peek-target") || document.querySelector("[data-poke-peek]") || document.getElementById("pokemonPeekStyle")) problems.push("Regression: Pokémon idle animation controls should remain absent in the child UI");
 
   const health=document.getElementById("qaHealth");
   if(health){
@@ -1714,10 +1718,9 @@ function renderQuestion(){
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
     <div class="preanswer-actions" id="preAnswerActions">
-      <button class="btn" id="answerModeBtn" onclick="showAnswerMode()">✏️ 我要答題</button>
-      <button class="btn gold" id="judgmentBtn" onclick="showJudgmentGuide()">👀 我要先看看怎麼判斷</button>
+      <button class="btn guide-action" id="judgmentBtn" onclick="showJudgmentGuide()">How to Decide</button>
     </div>
-    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
+    <div class="actions" id="hintTrigger"><button class="btn hint-action hint-action-btn" onclick="showHint()">Hint</button></div>`;
   document.getElementById("questionCard").innerHTML=html;
   // A new question must start with no feedback/Next state from the previous question.
   const freshFeedback=document.getElementById("feedback");
@@ -1733,9 +1736,9 @@ function renderProductionQuestion(q){
   let controls="";
   if(mode==="rule-input" || mode==="ending-input"){
     controls=`<div class="production-rule-row" id="productionRuleRow">
-      <button class="choice" data-production-rule="S" onclick="chooseProductionRule('S')">＋ S</button>
-      <button class="choice" data-production-rule="ES" onclick="chooseProductionRule('ES')">＋ ES</button>
-      <button class="choice" data-production-rule="IES" onclick="chooseProductionRule('IES')">＋ IES</button>
+      <button class="choice" data-production-rule="S" onclick="chooseProductionRule('S')">＋ s</button>
+      <button class="choice" data-production-rule="ES" onclick="chooseProductionRule('ES')">＋ es</button>
+      <button class="choice" data-production-rule="IES" onclick="chooseProductionRule('IES')">＋ ies</button>
     </div>`;
     if(mode==="ending-input") controls+=`<div class="production-stage-note">選完字尾後，再把完整變化打出來。</div>`;
   }else{
@@ -1757,7 +1760,7 @@ function chooseProductionRule(rule){
     b.classList.toggle("selected",b.dataset.productionRule===rule);
   });
   const selected=document.getElementById("productionSelected");
-  if(selected){selected.style.display="flex";selected.textContent=`你選了：＋ ${rule}`;}
+  if(selected){selected.style.display="flex";selected.textContent=`你選了：＋ ${rule.toLowerCase()}`;}
   showProductionInput();
 }
 function showProductionInput(){
@@ -1808,24 +1811,24 @@ function ruleQuestionPrompt(q){
   const isUnit2=currentSession?.stageId==="unit2" && ["CH","SH","SS","X","O"].includes(q?.rule);
   if(isUnit2){
     const prompts={
-      CH:["Which verb ends in <span class=\"red\">CH</span>?","Find the verb ending in <span class=\"red\">CH</span>.","Which verb has <span class=\"red\">CH</span> at the end?"] ,
-      SH:["Which verb ends in <span class=\"red\">SH</span>?","Find the verb ending in <span class=\"red\">SH</span>.","Which verb has <span class=\"red\">SH</span> at the end?"] ,
-      SS:["Which verb ends in <span class=\"red\">SS</span>?","Find the verb ending in <span class=\"red\">SS</span>.","Which verb has <span class=\"red\">SS</span> at the end?"] ,
-      X:["Which verb ends in <span class=\"red\">X</span>?","Find the verb ending in <span class=\"red\">X</span>.","Which verb has <span class=\"red\">X</span> at the end?"] ,
-      O:["Which verb ends in <span class=\"red\">O</span>?","Find the verb ending in <span class=\"red\">O</span>.","Which verb has <span class=\"red\">O</span> at the end?"]
+      CH:["Which verb ends in <span class=\"red\">ch</span>?","Find the verb ending in <span class=\"red\">ch</span>.","Which verb has <span class=\"red\">ch</span> at the end?"] ,
+      SH:["Which verb ends in <span class=\"red\">sh</span>?","Find the verb ending in <span class=\"red\">sh</span>.","Which verb has <span class=\"red\">sh</span> at the end?"] ,
+      SS:["Which verb ends in <span class=\"red\">ss</span>?","Find the verb ending in <span class=\"red\">ss</span>.","Which verb has <span class=\"red\">ss</span> at the end?"] ,
+      X:["Which verb ends in <span class=\"red\">x</span>?","Find the verb ending in <span class=\"red\">x</span>.","Which verb has <span class=\"red\">x</span> at the end?"] ,
+      O:["Which verb ends in <span class=\"red\">o</span>?","Find the verb ending in <span class=\"red\">o</span>.","Which verb has <span class=\"red\">o</span> at the end?"]
     };
     const list=prompts[q.rule];
     return list[(String(q?.id||"").length)%list.length];
   }
   if(isY){
     const prompts=answer==="IES"
-      ? ["Which one changes Y to <span class=\"red\">IES</span>?","Find the verb that needs <span class=\"red\">IES</span>.","Which verb needs <span class=\"red\">IES</span> after Y?"]
-      : ["Which one keeps Y and adds <span class=\"red\">S</span>?","Find the verb that needs <span class=\"red\">S</span>.","Which verb keeps Y and adds <span class=\"red\">S</span>?"];
+      ? ["Which one changes y to <span class=\"red\">ies</span>?","Find the verb that needs <span class=\"red\">ies</span>.","Which verb needs <span class=\"red\">ies</span> after y?"]
+      : ["Which one keeps y and adds <span class=\"red\">s</span>?","Find the verb that needs <span class=\"red\">s</span>.","Which verb keeps y and adds <span class=\"red\">s</span>?"];
     return prompts[(String(q.id||"").length)%prompts.length];
   }
   const prompts={
-    S:["Which one needs <span class=\"red\">S</span>?","Find the verb that needs <span class=\"red\">S</span>.","Which verb needs <span class=\"red\">S</span>?"] ,
-    ES:["Which one needs <span class=\"red\">ES</span>?","Find the verb that needs <span class=\"red\">ES</span>.","Which verb needs <span class=\"red\">ES</span>?"]
+    S:["Which one needs <span class=\"red\">s</span>?","Find the verb that needs <span class=\"red\">s</span>.","Which verb needs <span class=\"red\">s</span>?"] ,
+    ES:["Which one needs <span class=\"red\">es</span>?","Find the verb that needs <span class=\"red\">es</span>.","Which verb needs <span class=\"red\">es</span>?"]
   };
   const list=prompts[answer]||[`Which one is an <span class=\"red\">${escapeHtml(answer)}</span> Pokémon?`];
   return list[(String(q?.id||"").length)%list.length];
@@ -1834,8 +1837,8 @@ function ruleQuestionPrompt(q){
 function yRulePrompt(q){
   if(!q || q.rule!="consonant+y" && q.rule!="vowel+y") return `Which one is an ${q?.answer||""} Pokémon?`;
   return q.answer==="IES"
-    ? `Which one changes Y to IES?`
-    : `Which one keeps Y and adds S?`;
+    ? `Which one changes y to ies?`
+    : `Which one keeps y and adds s?`;
 }
 
 function stripHtml(s){ const d=document.createElement("div"); d.innerHTML=s; return d.textContent||d.innerText||""; }
@@ -1961,24 +1964,12 @@ function makeRuleOptions(answer){
   return distractors.length===3 ? shuffle([correct,...distractors]) : [correct,...distractors];
 }
 
-function showAnswerMode(){
-  const guide=document.getElementById("judgmentGuide");
-  if(guide) guide.remove();
-  const btn=document.getElementById("answerModeBtn");
-  if(btn) btn.style.display="none";
-  const j=document.getElementById("judgmentBtn");
-  if(j) j.style.display="inline-flex";
-  const options=document.querySelectorAll(".option,.choice");
-  options.forEach(b=>{b.disabled=false;b.classList.remove("disabled");b.removeAttribute("aria-disabled");});
-  const target=document.querySelector(".options,.choice-row");
-  if(target) target.scrollIntoView({behavior:"smooth",block:"center"});
-}
 function ruleGuideText(q){
   if(!q) return "";
   const r=q.rule;
-  if(r==="S") return `<div class="guide-rule">① 先看動詞的結尾。</div><div class="guide-rule">② 如果不是特殊結尾，就考慮加 <b>S</b>。</div><div class="guide-rule">③ 特別注意 <b>CH / SH / SS / X / O / Y</b>。</div>`;
-  if(["CH","SH","SS","X","O"].includes(r)) return `<div class="guide-rule">① 看動詞最後面的字母。</div><div class="guide-rule">② 找出題目指定的特殊結尾。</div><div class="guide-rule">③ 這類特殊結尾通常會加 <b>ES</b>。</div>`;
-  if(r==="consonant+y" || r==="vowel+y") return `<div class="guide-rule">① 先找到最後的 <b>Y</b>。</div><div class="guide-rule">② 看 <b>Y 前面的那一個字母</b>。</div><div class="guide-rule">③ 判斷它是 vowel 還是 consonant，再決定變化。</div>`;
+  if(r==="S") return `<div class="guide-rule">① 先看動詞的結尾。</div><div class="guide-rule">② 如果不是特殊結尾，就考慮加 <b>s</b>。</div><div class="guide-rule">③ 特別注意 <b>ch / sh / ss / x / o / y</b>。</div>`;
+  if(["CH","SH","SS","X","O"].includes(r)) return `<div class="guide-rule">① 看動詞最後面的字母。</div><div class="guide-rule">② 找出題目指定的特殊結尾。</div><div class="guide-rule">③ 這類特殊結尾通常會加 <b>es</b>。</div>`;
+  if(r==="consonant+y" || r==="vowel+y") return `<div class="guide-rule">① 先找到最後的 <b>y</b>。</div><div class="guide-rule">② 看 <b>y 前面的那一個字母</b>。</div><div class="guide-rule">③ 判斷它是 vowel 還是 consonant，再決定變化。</div>`;
   if(r==="CVC") return `<div class="guide-rule">① 看單字最後三個字母。</div><div class="guide-rule">② 判斷是不是 <b>C-V-C</b>。</div><div class="guide-rule">③ 如果是，再考慮最後的 consonant doubling。</div>`;
   if(r==="drop-e") return `<div class="guide-rule">① 看動詞最後是不是 silent <b>e</b>。</div><div class="guide-rule">② 加 <b>-ing</b> 時注意最後的 e。</div>`;
   if(r==="subject" || r==="plural" || r==="subject+S+ES") return `<div class="guide-rule">① 先看主詞。</div><div class="guide-rule">② 判斷是 one person/thing，還是 more than one。</div><div class="guide-rule">③ 再決定動詞形式。</div>`;
@@ -1989,19 +1980,17 @@ function showJudgmentGuide(){
   const area=document.getElementById("hintArea");
   if(!area || document.getElementById("judgmentGuide")) return;
   const q=currentQuestion;
-  area.insertAdjacentHTML("beforeend",`<div class="judgment-guide" id="judgmentGuide"><b>🔎 怎麼判斷？</b>${ruleGuideText(q)}<div class="actions" style="margin-top:10px"><button class="btn primary small" onclick="showAnswerMode()">✏️ 我要答題</button></div></div>`);
+  area.insertAdjacentHTML("beforeend",`<div class="judgment-guide" id="judgmentGuide"><b>How to Decide</b>${ruleGuideText(q)}</div>`);
   const j=document.getElementById("judgmentBtn");
   if(j) j.style.display="none";
-  const a=document.getElementById("answerModeBtn");
-  if(a) a.style.display="inline-flex";
 }
 function otherAnswerNote(rule){
-  if(rule==="consonant+y") return "子音 + Y → IES";
-  if(rule==="vowel+y") return "母音 + Y → S";
-  if(["CH","SH","SS","X","O"].includes(rule)) return `${rule} → ES`;
+  if(rule==="consonant+y") return "子音 + y → ies";
+  if(rule==="vowel+y") return "母音 + y → s";
+  if(["CH","SH","SS","X","O"].includes(rule)) return `${rule.toLowerCase()} → es`;
   if(rule==="CVC") return "C-V-C → doubling + ing";
   if(rule==="drop-e") return "drop e + ing";
-  return "加 S";
+  return "加 s";
 }
 function toggleOtherAnswers(){
   const panel=document.getElementById("otherAnswers");
@@ -2072,7 +2061,7 @@ function showHint(){
     <div class="hint-en"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="speak('${escapeHtml(h[0]+" "+h[1])}')">🔊</button>${hintTextWithPronunciation(h[0])}</div>
     ${visual}
     <div class="hint-en"><b>${hintTextWithPronunciation(h[1])}</b></div>
-    ${hintLevel<3 ? `<div class="actions"><button class="btn gold small" onclick="showHint()">顯示下一個提示</button></div>` : `<div class="small-note" style="margin-top:12px">提示已完整顯示，可以回答了。</div><div class="actions" style="margin-top:10px"><button class="btn small" onclick="showHelpOptions()">🙋 我不會</button></div>`}
+    ${hintLevel<3 ? `<div class="actions"><button class="btn gold small" onclick="showHint()">Next Hint</button></div>` : `<div class="small-note" style="margin-top:12px">提示已完整顯示，可以回答了。</div><div class="actions" style="margin-top:10px"><button class="btn small" onclick="showHelpOptions()">🙋 我不會</button></div>`}
   </div>`;
   currentSession.hintCount++;
   if(hintLevel===3) speak(h[0]+" "+h[1]);
@@ -2316,9 +2305,9 @@ function yTransformMarkup(q,ex){
   const form=ex.form;
   let resultMarked;
   if(q.rule==="vowel+y") {
-    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="y-focus-y">s</span>`;
+    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="rule-s">s</span>`;
   } else {
-    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="y-focus-y">ies</span>`;
+    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="rule-ies">i</span><span class="rule-es">es</span>`;
   }
   return `<span>${baseMarked}</span><span class="arrow">→</span><b>${resultMarked}</b>`;
 }
@@ -2330,20 +2319,21 @@ function ruleTeachingMarkup(q,ex){
     const beforeY=v.slice(-2,-1), y=v.slice(-1);
     const kind=q.rule==="vowel+y" ? "vowel" : "consonant";
     const label=kind==="vowel" ? "vowel" : "consonant";
-    return `<div class="rule-teach"><span><span class="focus">${escapeHtml(beforeY)}</span><span class="focus-y">${escapeHtml(y)}</span> = <span class="rule-label">${label}</span></span><button class="speaker" aria-label="Hear ${label}" onclick="event.stopPropagation();speak('${label}')">🔊</button><span class="rule-teach-small">Look at the letter before Y.</span></div>`;
+    const result = q.rule==="vowel+y" ? `<span class="rule-s">s</span>` : `<span class="rule-ies">ies</span>`;
+    return `<div class="rule-teach"><span>This <span class="focus">${escapeHtml(beforeY)}</span> is in front of <span class="focus-y">${escapeHtml(y)}</span>, so it's <span class="rule-label">${label}</span>, needs ${result}.</span><button class="speaker" aria-label="Hear ${label}" onclick="event.stopPropagation();speak('${label}')">🔊</button></div>`;
   }
-  const special={CH:"CH",SH:"SH",SS:"SS",X:"X",O:"O"};
+  const special={CH:"ch",SH:"sh",SS:"ss",X:"x",O:"o"};
   if(special[q.rule]){
     const ending=special[q.rule];
     const base=v.slice(0,-ending.length), marked=`${escapeHtml(base)}<span class="focus">${escapeHtml(ending)}</span>`;
-    return `<div class="rule-teach"><span>${marked} → <b class="red">ES</b></span><span class="rule-teach-small">${escapeHtml(ending)} ending → ES</span></div>`;
+    return `<div class="rule-teach"><span>${marked} → <b class="rule-es">es</b></span><span class="rule-teach-small">${escapeHtml(ending)} ending → <span class="rule-es">es</span></span></div>`;
   }
   if(q.rule==="S"){
     const last=v.slice(-1), marked=`${escapeHtml(v.slice(0,-1))}<span class="focus">${escapeHtml(last)}</span>`;
-    return `<div class="rule-teach"><span>${marked} → <b class="red">S</b></span><span class="rule-teach-small">Most verbs → S</span></div>`;
+    return `<div class="rule-teach"><span>${marked} → <b class="rule-s">s</b></span><span class="rule-teach-small">Most verbs → <span class="rule-s">s</span></span></div>`;
   }
   if(q.rule==="CVC"){
-    const tail=v.slice(-3); return `<div class="rule-teach"><span class="focus">${escapeHtml(tail)}</span> → double the last consonant + <b class="red">ing</b></div>`;
+    const tail=v.slice(-3); return `<div class="rule-teach"><span class="focus">${escapeHtml(tail)}</span> → double the last consonant + <b class="rule-s">ing</b></div>`;
   }
   return "";
 }
@@ -2351,23 +2341,23 @@ function ruleTeachingMarkup(q,ex){
 function productionWrongHint(q,errorType){
   if(!q) return "";
   if(errorType==="ruleSelectionError"){
-    if(q.rule==="consonant+y" || q.rule==="vowel+y") return `<div class="production-error">Look at the letter before <b>Y</b>.</div>`;
+    if(q.rule==="consonant+y" || q.rule==="vowel+y") return `<div class="production-error">Look at the letter before <b>y</b>.</div>`;
     if(["CH","SH","SS","X","O"].includes(q.rule)) return `<div class="production-error">Look at the ending of the verb.</div>`;
     return `<div class="production-error">Check whether this verb is a regular verb.</div>`;
   }
   if(errorType==="ruleError"){
     if(["CH","SH","SS","X","O"].includes(q.rule)) return `<div class="production-error">Look at the ending: <b>${escapeHtml(q.verb.slice(-2))}</b> is the clue.</div>`;
-    if(q.rule==="consonant+y") return `<div class="production-error">Look at the letter before <b>Y</b>.</div>`;
+    if(q.rule==="consonant+y") return `<div class="production-error">Look at the letter before <b>y</b>.</div>`;
   }
   if(errorType==="spellingError") return `<div class="production-error">The rule may be right. Check each letter carefully.</div>`;
   return `<div class="production-error">Look at the verb and apply the rule again.</div>`;
 }
 
 function productionRuleLabel(q){
-  if(q.rule==="consonant+y") return "子音 + Y → IES";
-  if(q.rule==="vowel+y") return "母音 + Y → S";
-  if(["CH","SH","SS","X","O"].includes(q.rule)) return `${q.rule} → ES`;
-  return "一般動詞 → S";
+  if(q.rule==="consonant+y") return "子音 + y → ies";
+  if(q.rule==="vowel+y") return "母音 + y → s";
+  if(["CH","SH","SS","X","O"].includes(q.rule)) return `${q.rule.toLowerCase()} → es`;
+  return "一般動詞 → s";
 }
 
 function renderFeedback(correct,answer,errorType,exp){
@@ -2693,13 +2683,13 @@ function renderMyPokemon(){
   document.getElementById("collectionCount").textContent=`已捕捉 ${entries.length} / ${Object.keys(POKEMON).length}`;
   const main=Number(state.activePokemon||entries[0]?.[0]||25);const p=POKEMON[main];
   document.getElementById("myPokemonSummary").innerHTML=`<div style="display:flex;align-items:center;gap:16px">
-    <button class="poke-peek-target" data-poke-peek="${main}" type="button" onclick="playPokemonPeek(this)" aria-label="看看 ${escapeHtml(p.name)} 的可愛動作" title="點一下看看動作"><img src="${p.img}" alt="${p.name}" style="width:100px;height:100px"></button>
+    <div aria-hidden="true"><img src="${p.img}" alt="${p.name}" style="width:100px;height:100px"></div>
     <div><h2 style="margin:0">${escapeHtml(p.name)}</h2><p class="muted">目前夥伴 · Lv. ${state.collection[main]?.level||1}</p>
-    <button class="btn small primary" onclick="setMainPokemon()">設為夥伴</button><div class="small-note" style="margin-top:6px">點寶可夢一下，看看牠的小動作。</div></div></div>`;
+    <button class="btn small primary" onclick="setMainPokemon()">設為夥伴</button></div></div>`;
   document.getElementById("myPokemonGrid").innerHTML=entries.map(([id,v])=>{
     const p=POKEMON[id];
     return `<div class="poke ${Number(id)===main?"selected":""}">
-      <button class="poke-peek-target" data-poke-peek="${Number(id)}" type="button" onclick="playPokemonPeek(this)" aria-label="看看 ${escapeHtml(p.name)} 的可愛動作" title="點一下看看動作"><img src="${p.img}" alt="${p.name}"></button>
+      <img src="${p.img}" alt="${p.name}">
       <div class="name">${escapeHtml(p.name)}</div><div class="no">#${p.no}</div><div class="lv">Lv.${v.level||1}</div>
       <span class="tag">${escapeHtml(v.tag||"捕捉")}</span>
       <div style="margin-top:7px"><button class="btn small" onclick="setActivePokemon(${Number(id)})">${Number(id)===main?"目前夥伴":"設為夥伴"}</button></div>
@@ -2768,14 +2758,6 @@ function speakMilestone(kind){
   // This uses the browser's neutral English TTS voice, not an official Pokémon voice.
   const line=kind==="evolution"?"Anson, you did it!":"Anson, good job!";
   speak(line);
-}
-function playPokemonPeek(wrap){
-  if(!wrap || !wrap.classList) return;
-  wrap.classList.remove("peek");
-  void wrap.offsetWidth;
-  wrap.classList.add("peek");
-  clearTimeout(wrap._peekTimer);
-  wrap._peekTimer=setTimeout(()=>wrap.classList.remove("peek"),850);
 }
 function speak(text){
   if(!("speechSynthesis" in window)){alert("此瀏覽器不支援語音播放。");return}
