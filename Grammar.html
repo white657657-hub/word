@@ -1249,8 +1249,13 @@ function startWarmup(){
 }
 
 function beginFormalPractice(){
+  // Warm-up and formal practice share the same screen, but their state must be
+  // explicitly separated.  The old flow could leave the warm-up answer lock
+  // active when the child pressed 「開始正式練習」.
   if(!currentSession) return;
   currentSession.warmup=false;
+  currentSession.warmupIndex=null;
+  currentSession.warmupQuestions=null;
   currentSession.index=0;
   currentSession.correct=0;
   currentSession.independent=0;
@@ -1265,7 +1270,21 @@ function beginFormalPractice(){
   currentSession.questionAttemptData={};
   currentSession.levelUps=0;
   currentSession.uniqueCompleted=0;
+  currentSession.productionRuleChoice=null;
   currentSession.learningSegmentStartedAt=Date.now();
+
+  // Critical reset: the warm-up intentionally locks its answered choice.
+  // Formal practice must always start in a fresh, interactive state.
+  answerLocked=false;
+  hintLevel=0;
+  answerRevealed=false;
+  currentQuestion=null;
+
+  const card=document.getElementById("questionCard");
+  if(card) card.classList.remove("warmup-mode");
+  const learn=document.getElementById("learn");
+  if(learn){ learn.onclick=null; learn.dataset.feedbackPhase=""; }
+
   renderQuestion();
 }
 
@@ -1349,7 +1368,7 @@ function handleWarmupAnswer(correct,answer,extra){
       }
       const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}`;
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始正式練習':'→ Next'}</button></div>`;
+      f.innerHTML=`${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice();return false;':'nextWarmupQuestion();return false;'}">${last?'開始正式練習':'→ Next'}</button></div>`;
       speak("Correct");
       speak(ex.sentence);
       return;
@@ -1370,7 +1389,7 @@ function handleWarmupAnswer(correct,answer,extra){
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始正式練習':'→ Next'}</button></div>`;
+    f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice();return false;':'nextWarmupQuestion();return false;'}">${last?'開始正式練習':'→ Next'}</button></div>`;
     speak("Correct");
     if(q.sentence) speak(q.sentence.replace("_____",answer));
     return;
@@ -2475,6 +2494,10 @@ function retryQuestion(keepHint=false){
   renderQuestion();
 }
 function nextQuestion(){
+  // Feedback buttons are rendered dynamically. If an old button is clicked after
+  // a session has already been cleared, do nothing instead of throwing.
+  if(!currentSession) return;
+  if(currentSession.warmup){ nextWarmupQuestion(); return; }
   currentSession.index++;
   if(currentSession.index>=currentSession.questions.length){finishSession();return}
   renderQuestion();
