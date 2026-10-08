@@ -503,7 +503,7 @@ const QUESTION_BANK = {
     {id:"ss11",verb:"floss",answer:"ES",poke:10,rule:"SS"},
     {id:"ss12",verb:"discuss",answer:"ES",poke:133,rule:"SS"},{id:"ss13",verb:"express",answer:"ES",poke:54,rule:"SS"},{id:"ss14",verb:"address",answer:"ES",poke:39,rule:"SS"},
     {id:"ss15",verb:"impress",answer:"ES",poke:52,rule:"SS"},{id:"ss16",verb:"stress",answer:"ES",poke:10,rule:"SS"},{id:"ss17",verb:"confess",answer:"ES",poke:16,rule:"SS"},
-    {id:"ss18",verb:"possess",answer:"ES",poke:27,rule:"SS"},{id:"ss19",verb:"obsess",answer:"ES",poke:35,rule:"SS"},{id:"ss20",verb:"toss",answer:"ES",poke:26,rule:"SS"}
+    {id:"ss18",verb:"possess",answer:"ES",poke:27,rule:"SS"},{id:"ss19",verb:"obsess",answer:"ES",poke:35,rule:"SS"},{id:"ss20",verb:"hiss",answer:"ES",poke:26,rule:"SS"}
 ],
   ruleX:[
     {id:"x01",verb:"fix",answer:"ES",poke:10,rule:"X"},{id:"x02",verb:"mix",answer:"ES",poke:16,rule:"X"},
@@ -569,7 +569,7 @@ const QUESTION_BANK = {
     {id:"fill09",sentence:"Leo _____ to school.",choices:["go","gos","goes","goies"],answer:"goes",verb:"go",rule:"O"},
     {id:"fill10",sentence:"Max _____ a box.",choices:["mix","mixs","mixes","mixies"],answer:"mixes",verb:"mix",rule:"X"},
     {id:"fill11",sentence:"Lily _____ her name.",choices:["copy","copys","copies","copyes"],answer:"copies",verb:"copy",rule:"consonant+y"},
-    {id:"fill12",sentence:"The teacher _____ the answer.",choices:["check","checks","checkes","checkies"],answer:"checks",verb:"check",rule:"CH"},
+    {id:"fill12",sentence:"The teacher _____ the students.",choices:["watch","watchs","watches","watchies"],answer:"watches",verb:"watch",rule:"CH"},
     {id:"fill13",sentence:"He _____ the door.",choices:["push","pushes","pushs","pushies"],answer:"pushes",verb:"push",rule:"SH"},{id:"fill14",sentence:"The boy _____ the ball.",choices:["catch","catches","catchs","catchies"],answer:"catches",verb:"catch",rule:"CH"},
     {id:"fill15",sentence:"Dad _____ the box.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"X"},{id:"fill16",sentence:"The girl _____ the answer.",choices:["guess","guesses","guesss","guessies"],answer:"guesses",verb:"guess",rule:"SS"},
     {id:"fill17",sentence:"He _____ to school.",choices:["go","goes","gos","goies"],answer:"goes",verb:"go",rule:"O"},{id:"fill18",sentence:"The dog _____ fast.",choices:["run","runs","runes","runns"],answer:"runs",verb:"run",rule:"S"},
@@ -1613,13 +1613,6 @@ function ruleQuestionPrompt(q){
   return list[(String(q?.id||"").length)%list.length];
 }
 
-function yRulePrompt(q){
-  if(!q || q.rule!="consonant+y" && q.rule!="vowel+y") return `Which one is an ${q?.answer||""} Pokémon?`;
-  return q.answer==="IES"
-    ? `Which one changes Y to IES?`
-    : `Which one keeps Y and adds S?`;
-}
-
 function stripHtml(s){ const d=document.createElement("div"); d.innerHTML=s; return d.textContent||d.innerText||""; }
 
 function getSpeakText(){
@@ -1690,11 +1683,23 @@ function makeRuleOptions(answer){
       usedWords.add(item.verb);
     }
   }else if(stageId==="unit3"){
-    // All four choices are Y-ending verbs. Exactly one matches the requested outcome.
-    // This teaches the contrast without mixing in unrelated S/ES rules.
-    takeOne(x=>x.rule===oppositeYRule(correct));
-    takeOne(x=>x.rule===oppositeYRule(correct));
-    takeOne(x=>x.rule===oppositeYRule(correct));
+    // All four choices are Y-ending verbs. Prefer three opposite-rule distractors,
+    // but if that pool is too small, safely fall back to any other Y-rule item.
+    const opposite=oppositeYRule(correct);
+    takeOne(x=>x.rule===opposite);
+    takeOne(x=>x.rule===opposite);
+    takeOne(x=>x.rule===opposite);
+    if(distractors.length<3){
+      for(const item of candidates){
+        if(distractors.length>=3) break;
+        if((item.rule!==correct.rule) && (item.rule===opposite || isY(item)) &&
+           !usedPokes.has(Number(item.poke)) && !usedWords.has(item.verb)){
+          distractors.push(item);
+          usedPokes.add(Number(item.poke));
+          usedWords.add(item.verb);
+        }
+      }
+    }
   }else if(currentQuestion.difficulty==="medium" || currentQuestion.difficulty==="hard"){
     // Y Rule: later review may contrast vowel + Y with consonant + Y.
     if(isY(correct)) takeOne(x=>x.rule===oppositeYRule(correct));
