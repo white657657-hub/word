@@ -1523,11 +1523,14 @@ function renderFeedback(correct,answer,errorType,exp){
     if(ex) speak(ex.sentence);
     return;
   }
+  // Wrong answer NEVER advances the session. Keep the exact same question
+  // so the child can practice the rule until it is understood.
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
-    <div class="sub">Try again.</div>`;
-  speak("Not quite. Try again.");
+    <div class="sub">Try the same question again.</div>`;
+  speak("Not quite. Try the same question again.");
   setTimeout(()=>{
     if(!currentSession)return;
+    // Re-render the SAME question; do not increment currentSession.index.
     retryQuestion(false);
   },700);
 }
