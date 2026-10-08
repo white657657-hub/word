@@ -100,7 +100,17 @@ main{margin-top:18px}
 .question{
   text-align:center;font-size:30px;font-weight:800;line-height:1.4;margin:8px 0 22px
 }
-.red{color:#e67b7f}
+ .red{color:#e67b7f}
+.y-focus-letter{color:#62c9e8;font-weight:1000;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.y-focus-y{color:#e67b7f;font-weight:1000}
+.rule-teach{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;font-size:18px;font-weight:900;color:#dfeaf2;line-height:1.35;flex-wrap:wrap}
+.rule-teach .focus{color:#62c9e8;font-weight:1000}
+.rule-teach .focus-y{color:#e67b7f;font-weight:1000}
+.rule-teach .rule-label{color:#62c9e8;font-weight:1000}
+.rule-teach .speaker{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:14px!important;margin-right:0!important}
+.rule-teach-small{font-size:16px;color:var(--muted);font-weight:700}
+.y-focus-note{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;font-size:17px;font-weight:900;color:#62c9e8}
+.y-focus-note .speaker{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:14px!important}
 .speaker{
   display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;
   background:#244d73;border:1px solid #386f9f;color:#fff;border:0;margin-right:8px;
@@ -417,6 +427,10 @@ const POKEMON = {
   4:{name:"Charmander", no:"004", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"},
   7:{name:"Squirtle", no:"007", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"},
   1:{name:"Bulbasaur", no:"001", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"},
+  26:{name:"Raichu", no:"026", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/26.png"},
+  5:{name:"Charmeleon", no:"005", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png"},
+  8:{name:"Wartortle", no:"008", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png"},
+  2:{name:"Ivysaur", no:"002", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"},
   133:{name:"Eevee", no:"133", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"},
   54:{name:"Psyduck", no:"054", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png"},
   39:{name:"Jigglypuff", no:"039", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"},
@@ -434,7 +448,7 @@ const STAGES = [
  {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
  {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
  {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
- {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"V-ing：CVC words double the final consonant",types:["ing"],newTypes:["ing"],unlock:6},
+ {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"V-ing：CVC words double the final consonant",types:["ingCVC"],newTypes:["ingCVC"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
@@ -610,6 +624,16 @@ function verbExample(q){
   else sentence=`He ${form}${obj ? " "+obj : ""}.`;
   return {base:q.verb,form,sentence};
 }
+function yFocusMarkup(q){
+  if(!q || !q.verb || !["consonant+y","vowel+y"].includes(q.rule)) return "";
+  const word=q.verb;
+  const beforeY=word.slice(-2,-1);
+  const kind=q.rule==="vowel+y" ? "vowel" : "consonant";
+  const label=kind==="vowel" ? "vowel" : "consonant";
+  const cls="y-focus-letter";
+  const marked=escapeHtml(word.slice(0,-2)) + `<span class="${cls}">${escapeHtml(beforeY)}</span>` + `<span>${escapeHtml(word.slice(-1))}</span>`;
+  return `<div class="y-focus-note"><span>${marked} = ${label}</span><button class="speaker" aria-label="Hear ${label}" onclick="event.stopPropagation();speak('${label}')">🔊</button></div>`;
+}
 
 // Build the mixed bank from the real rule banks instead of maintaining a second, stale list.
 QUESTION_BANK.mixed=[
@@ -630,6 +654,9 @@ QUESTION_BANK.ruleES=[
   ...QUESTION_BANK.ruleX.slice(0,2),
   ...QUESTION_BANK.ruleO.slice(0,2)
 ];
+
+// Unit 7 is explicitly CVC doubling. Keep regular -ing and drop-e items for later cumulative review.
+QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
 
 
 const HINTS = {
@@ -1039,21 +1066,21 @@ function showYRuleIntro(){
   card.innerHTML=`
     <div class="y-rule-intro">
       <div class="y-rule-title">Y Rule</div>
-      <p class="y-rule-lead">Look at the letter before Y.</p>
+      <p class="y-rule-lead">Look at the letter before Y. <span class="y-focus-letter">Before Y</span> = vowel or consonant.</p>
 
       <div class="y-rule-grid">
         <div class="y-rule-box vowel-box">
           <div class="y-rule-label">Vowel + Y → <span class="red">S</span></div>
           <div class="y-rule-letters">A · E · I · O · U</div>
-          <div class="y-rule-example">play → play<span class="red">s</span></div>
-          <div class="y-rule-example">enjoy → enjoy<span class="red">s</span></div>
+          <div class="y-rule-example">play → play<span class="y-focus-y">s</span></div>
+          <div class="y-rule-example">enjoy → enjoy<span class="y-focus-y">s</span></div>
           <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('vowel')">🔊 vowel</button>
         </div>
 
         <div class="y-rule-box consonant-box">
           <div class="y-rule-label">Consonant + Y → <span class="red">IES</span></div>
-          <div class="y-rule-example">try → tr<span class="red">ies</span></div>
-          <div class="y-rule-example">study → stud<span class="red">ies</span></div>
+          <div class="y-rule-example">tr<span class="y-focus-letter">r</span><span class="y-focus-y">y</span> → tr<span class="y-focus-letter">i</span><span class="y-focus-y">es</span></div>
+          <div class="y-rule-example">stud<span class="y-focus-letter">d</span><span class="y-focus-y">y</span> → stud<span class="y-focus-letter">d</span>i<span class="y-focus-y">es</span></div>
           <div class="y-rule-consonant-note">Consonants = other letters</div>
           <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('consonant')">🔊 consonant</button>
         </div>
@@ -1205,11 +1232,11 @@ function handleWarmupAnswer(correct,answer,extra){
       if(selected){
         const word=selected.querySelector('.word');
         const speaker=selected.querySelector('.word-speaker');
-        if(word) word.innerHTML=`<span class="pokemon-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>`;
+        if(word) word.innerHTML=`<span class="pokemon-transform">${yTransformMarkup(q,ex)}</span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>${yFocusMarkup(q)}`;
         if(speaker) speaker.style.display="none";
         selected.classList.add("correct-choice");
       }
-      const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>`;
+      const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}`;
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
       f.innerHTML=`${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
       speak("Correct");
@@ -1474,6 +1501,18 @@ function renderQuestion(){
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
   const isY=q?.rule==="consonant+y" || q?.rule==="vowel+y";
+  const isUnit2=currentSession?.stageId==="unit2" && ["CH","SH","SS","X","O"].includes(q?.rule);
+  if(isUnit2){
+    const prompts={
+      CH:["Which verb ends in <span class=\"red\">CH</span>?","Find the verb ending in <span class=\"red\">CH</span>.","Which verb has <span class=\"red\">CH</span> at the end?"] ,
+      SH:["Which verb ends in <span class=\"red\">SH</span>?","Find the verb ending in <span class=\"red\">SH</span>.","Which verb has <span class=\"red\">SH</span> at the end?"] ,
+      SS:["Which verb ends in <span class=\"red\">SS</span>?","Find the verb ending in <span class=\"red\">SS</span>.","Which verb has <span class=\"red\">SS</span> at the end?"] ,
+      X:["Which verb ends in <span class=\"red\">X</span>?","Find the verb ending in <span class=\"red\">X</span>.","Which verb has <span class=\"red\">X</span> at the end?"] ,
+      O:["Which verb ends in <span class=\"red\">O</span>?","Find the verb ending in <span class=\"red\">O</span>.","Which verb has <span class=\"red\">O</span> at the end?"]
+    };
+    const list=prompts[q.rule];
+    return list[(String(q?.id||"").length)%list.length];
+  }
   if(isY){
     const prompts=answer==="IES"
       ? ["Which one changes Y to <span class=\"red\">IES</span>?","Find the verb that needs <span class=\"red\">IES</span>.","Which verb needs <span class=\"red\">IES</span> after Y?"]
@@ -1521,8 +1560,9 @@ function makeRuleOptions(answer){
     // Unit 3 is deliberately focused: only Y-ending verbs appear.
     all=[...QUESTION_BANK.ruleIES];
   }else if(stageId==="unit2"){
-    // Unit 2 is ES-only as a learning target. Ordinary-S verbs may appear only as distractors.
-    all=[...QUESTION_BANK.ruleES,...QUESTION_BANK.ruleS];
+    // Unit 2 stays inside the ES family. Distractors use a different ES-trigger
+    // (CH / SH / SS / X / O), never ordinary-S or Y verbs.
+    all=[...QUESTION_BANK.ruleES];
   }else if(stageId==="unit1"){
     // Unit 1 stays simple: ordinary verbs are the target; distractors are special endings.
     all=[...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH.slice(0,6),...QUESTION_BANK.ruleSH.slice(0,6),...QUESTION_BANK.ruleX.slice(0,6)];
@@ -1539,7 +1579,10 @@ function makeRuleOptions(answer){
   }
   const usedPokes=new Set([Number(correct.poke)]);
   const usedWords=new Set([correct.verb]);
-  const candidates=shuffle(all.filter(x=>x.verb!==correct.verb && x.answer!==answer));
+  const isUnit2=stageId==="unit2";
+  const candidates=shuffle(all.filter(x=>
+    x.verb!==correct.verb && (isUnit2 ? x.rule!==correct.rule : x.answer!==answer)
+  ));
   const distractors=[];
   const isY=(q)=>q.rule==="consonant+y" || q.rule==="vowel+y";
   const oppositeYRule=(q)=>q.rule==="consonant+y"?"vowel+y":q.rule==="vowel+y"?"consonant+y":null;
@@ -1549,7 +1592,12 @@ function makeRuleOptions(answer){
     distractors.push(item); usedPokes.add(Number(item.poke)); usedWords.add(item.verb); return true;
   };
 
-  if(stageId==="unit3"){
+  if(stageId==="unit2"){
+    // All four choices remain inside the ES family, but only one has the
+    // specific ending being taught in this question.
+    const specialRules=["CH","SH","SS","X","O"].filter(r=>r!==correct.rule);
+    specialRules.forEach(r=>{ if(distractors.length<3) takeOne(x=>x.rule===r); });
+  }else if(stageId==="unit3"){
     // All four choices are Y-ending verbs. Exactly one matches the requested outcome.
     // This teaches the contrast without mixing in unrelated S/ES rules.
     takeOne(x=>x.rule===oppositeYRule(correct));
@@ -1823,9 +1871,12 @@ function updateMastery(q,correct,hintUsed,qd){
   const independentRate=m.independentCorrect/n;
   const hintRate=m.hintCorrect/n;
   const correctionRate=Math.min(m.corrections/n,1);
-  m.mastery=Math.min(100,Math.round(
+  const computedMastery=Math.min(100,Math.round(
     independentRate*70 + hintRate*20 + correctionRate*10
   ));
+  // Mastery is a cumulative achievement indicator: later hint-assisted work
+  // must not erase an already-earned mastery level.
+  m.mastery=Math.max(m.mastery||0,computedMastery);
   // A successful independent correction can clear a review flag.
   if(!hintUsed && m.mastery>=70) m.needsReview=false;
   state.learning.mastery[skill]=m;
@@ -1847,6 +1898,48 @@ function stageMastery(stage){
   });
   const vals=[...skills].map(k=>state.learning.mastery[k]?.mastery||0).filter(v=>v>0);
   return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
+}
+
+function yTransformMarkup(q,ex){
+  if(!q || !["consonant+y","vowel+y"].includes(q.rule)) {
+    return `<span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b>`;
+  }
+  const word=q.verb;
+  const beforeY=word.slice(-2,-1);
+  const baseMarked=escapeHtml(word.slice(0,-2)) + `<span class="y-focus-letter">${escapeHtml(beforeY)}</span><span class="y-focus-y">${escapeHtml(word.slice(-1))}</span>`;
+  const form=ex.form;
+  let resultMarked;
+  if(q.rule==="vowel+y") {
+    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="y-focus-y">s</span>`;
+  } else {
+    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="y-focus-y">ies</span>`;
+  }
+  return `<span>${baseMarked}</span><span class="arrow">→</span><b>${resultMarked}</b>`;
+}
+
+function ruleTeachingMarkup(q,ex){
+  if(!q) return "";
+  const v=q.verb||ex?.base||"";
+  if(["consonant+y","vowel+y"].includes(q.rule)){
+    const beforeY=v.slice(-2,-1), y=v.slice(-1);
+    const kind=q.rule==="vowel+y" ? "vowel" : "consonant";
+    const label=kind==="vowel" ? "vowel" : "consonant";
+    return `<div class="rule-teach"><span><span class="focus">${escapeHtml(beforeY)}</span><span class="focus-y">${escapeHtml(y)}</span> = <span class="rule-label">${label}</span></span><button class="speaker" aria-label="Hear ${label}" onclick="event.stopPropagation();speak('${label}')">🔊</button><span class="rule-teach-small">Look at the letter before Y.</span></div>`;
+  }
+  const special={CH:"CH",SH:"SH",SS:"SS",X:"X",O:"O"};
+  if(special[q.rule]){
+    const ending=special[q.rule];
+    const base=v.slice(0,-ending.length), marked=`${escapeHtml(base)}<span class="focus">${escapeHtml(ending)}</span>`;
+    return `<div class="rule-teach"><span>${marked} → <b class="red">ES</b></span><span class="rule-teach-small">${escapeHtml(ending)} ending → ES</span></div>`;
+  }
+  if(q.rule==="S"){
+    const last=v.slice(-1), marked=`${escapeHtml(v.slice(0,-1))}<span class="focus">${escapeHtml(last)}</span>`;
+    return `<div class="rule-teach"><span>${marked} → <b class="red">S</b></span><span class="rule-teach-small">Most verbs → S</span></div>`;
+  }
+  if(q.rule==="CVC"){
+    const tail=v.slice(-3); return `<div class="rule-teach"><span class="focus">${escapeHtml(tail)}</span> → double the last consonant + <b class="red">ing</b></div>`;
+  }
+  return "";
 }
 
 function renderFeedback(correct,answer,errorType,exp){
@@ -1888,12 +1981,13 @@ function renderFeedback(correct,answer,errorType,exp){
       if(selected){
         const word=selected.querySelector('.word');
         const speaker=selected.querySelector('.word-speaker');
-        if(word) word.innerHTML=`<span class="pokemon-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>`;
+        if(word) word.innerHTML=`<span class="pokemon-transform">${yTransformMarkup(q,ex)}</span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>${yFocusMarkup(q)}`;
         if(speaker) speaker.style.display="none";
         selected.classList.add("correct-choice");
       }
     }
-    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
+    const type=questionType(q);
+    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}` : "";
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
@@ -1912,14 +2006,16 @@ function renderFeedback(correct,answer,errorType,exp){
           <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
         </div>`;
     }
-    speak("Correct");
-    if(ex) speak(ex.sentence);
+    speakSequence(ex ? ["Correct",ex.sentence] : ["Correct"]);
     return;
   }
   // Wrong answer NEVER advances the session. Keep the exact same question
   // so the child can practice the rule until it is understood.
+  const wrongTeach=(currentQuestion && currentQuestion.poke)
+    ? ruleTeachingMarkup(currentQuestion, verbExample(currentQuestion))
+    : "";
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
-    <div class="sub">Try the same question again.</div>`;
+    <div class="sub">Try the same question again.</div>${wrongTeach}`;
   speak("Not quite. Try the same question again.");
   setTimeout(()=>{
     if(!currentSession)return;
@@ -2008,8 +2104,8 @@ function finishSession(){
     const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 LEVEL UP! Lv. ${state.level}</b></div>`:"";
     showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
       <div class="reward-title">🌟 Mission Complete!</div>
-      <p>你完成了 ${total} 題！</p>
-      <p class="muted">獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
+      <p>本次練習共 ${total} 題。</p>
+      <p class="muted">完成 ${s.uniqueCompleted} / ${total} 題 · 獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
       ${unlockedText}${levelHtml}${rewardHtml}
       ${((state.stageStats[s.stageId]?.best||0)>=70) ? `<p class="small-note">💡 想挑戰看看？通關後可以隨時開啟「加強難度」，也可以隨時取消。</p>` : ""}
       ${pct>=70 ? `<p class="muted">✓ 本關達成通關標準。</p>` : `<p style="color:#e5c86f">再練一次就好。達到 70% 即可解鎖下一關。</p>`}
@@ -2033,11 +2129,14 @@ function maybeReward(s,pct){
   return null;
 }
 
+// Canonical evolution lines used by this learning app.
+// Learning milestones trigger the evolution; the app does not use random evolution.
+// Pikachu NEVER evolves into Eevee. Pikachu evolves to Raichu.
 const EVOLUTIONS={
-  25:{to:133,need:3},
-  4:{to:10,need:3},
-  7:{to:54,need:3},
-  1:{to:27,need:3}
+  25:{to:26,need:4}, // Pikachu → Raichu
+  4:{to:5,need:4},   // Charmander → Charmeleon
+  7:{to:8,need:4},   // Squirtle → Wartortle
+  1:{to:2,need:4}    // Bulbasaur → Ivysaur
 };
 function evolveActivePokemon(){
   const from=Number(state.activePokemon||25);
@@ -2202,6 +2301,20 @@ function speak(text){
   const u=new SpeechSynthesisUtterance(text);
   u.lang="en-US";u.rate=.9;u.pitch=1;
   speechSynthesis.speak(u);
+}
+function speakSequence(texts){
+  if(!Array.isArray(texts) || !texts.length) return;
+  if(!("speechSynthesis" in window)){alert("此瀏覽器不支援語音播放。");return}
+  speechSynthesis.cancel();
+  let i=0;
+  const playNext=()=>{
+    if(i>=texts.length) return;
+    const u=new SpeechSynthesisUtterance(String(texts[i++]));
+    u.lang="en-US";u.rate=.9;u.pitch=1;
+    u.onend=playNext;
+    speechSynthesis.speak(u);
+  };
+  playNext();
 }
 function shuffle(array){
   const a=[...array];
