@@ -193,7 +193,7 @@ main{margin-top:18px}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
 }
 
-.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)}
+.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:14px;justify-content:center}.next-arrow{width:64px;height:48px;padding:0;font-size:30px;line-height:1;border-radius:14px}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
 </style>
 </head>
 <body>
@@ -1509,21 +1509,18 @@ function renderFeedback(correct,answer,errorType,exp){
     const transform=ex ? `<div class="feedback-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></div>` : "";
     const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
     // Learning mode: show the verb transformation and example immediately.
-    // No click is required to reveal the teaching feedback.
+    // The child advances only by pressing the visible arrow button.
+    clearTimeout(window._learningAdvanceTimer);
+    const nextLabel = currentSession.index + 1 < currentSession.questions.length ? "下一題" : "完成";
     f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
       ${transform}
       <div class="feedback-note">${ex?"Great!":"Nice work!"}</div>
-      <div class="feedback-example">${example}</div>`;
+      ${example}
+      <div class="actions feedback-next">
+        <button class="btn primary next-arrow" aria-label="${nextLabel}" title="${nextLabel}" onclick="nextQuestion()">→</button>
+      </div>`;
     speak("Correct!");
     if(ex) speak(ex.sentence);
-    // Advance automatically after the child has a brief moment to see/hear the correction.
-    // TEST/QA mode is excluded: QA has its own explicit Next button above.
-    const learn=document.getElementById("learn");
-    if(learn) learn.onclick=null;
-    clearTimeout(window._learningAdvanceTimer);
-    window._learningAdvanceTimer=setTimeout(()=>{
-      if(currentSession && !currentSession.qa && answerLocked) nextQuestion();
-    }, 1800);
     return;
   }
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
