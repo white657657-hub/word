@@ -1119,6 +1119,8 @@ function beginFormalPractice(){
 }
 
 function renderWarmupQuestion(){
+  // Warm-up uses the EXACT same question UI as formal practice.
+  // The only intentional visual difference is the subtle warm-up background.
   answerLocked=false; hintLevel=0;
   const q=currentSession.warmupQuestions[currentSession.warmupIndex];
   currentQuestion=q;
@@ -1129,25 +1131,38 @@ function renderWarmupQuestion(){
   const total=currentSession.warmupQuestions.length;
   document.getElementById("questionCounter").textContent=`小練習 ${currentSession.warmupIndex+1} / ${total}`;
   document.getElementById("stageProgress").style.width=(currentSession.warmupIndex/total*100)+"%";
-  let html=`<div class="warmup-card">
-    <div class="warmup-badge">小練習・不計分</div>
-    <div class="warmup-title">Let's Practice!</div>
-    <div class="warmup-subtitle">先練習一下，再開始本關。</div>`;
+
+  let html="";
   const type=questionType(q);
   if(type==="rule"){
     const options=makeRuleOptions(q.answer);
-    html+=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>Which one is an <span class="red">${escapeHtml(q.answer)}</span> Pokémon?</div>
-      <div class="options">${options.map(o=>{const p=POKEMON[o.poke];return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')"><img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'"><span class="word">${escapeHtml(o.verb)}</span><span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span></button>`}).join("")}</div>`;
+    html=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
+      Which one is an <span class="red">${q.answer}</span> Pokémon?</div>
+      <div class="options">${options.map(o=>{
+        const p=POKEMON[o.poke];
+        return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
+          <img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'">
+          <span class="word">${o.verb}</span>
+          <span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span>
+        </button>`;
+      }).join("")}</div>`;
   }else{
-    html+=`<span class="rule-chip">${type==="error"?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>${highlightBlank(q.sentence)}</div>
+    const isError=type==="error";
+    html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>
+      ${highlightBlank(q.sentence)}</div>
       <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
       <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
-  html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div><div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div></div>`;
+  html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
+    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   card.innerHTML=html;
   const learn=document.getElementById("learn");
   if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
+  const freshFeedback=document.getElementById("feedback");
+  if(freshFeedback) freshFeedback.innerHTML="";
+  const freshHint=document.getElementById("hintTrigger");
+  if(freshHint) freshHint.style.display="flex";
   if(state.settings.autoSpeak) setTimeout(()=>speak(getSpeakText()),250);
 }
 
@@ -1165,9 +1180,10 @@ function handleWarmupAnswer(correct,answer,extra){
 
     // Keep warm-up feedback visually identical to formal practice.
     // The only difference is the subtle warm-up background and the fact that it is not logged/scored.
-    if(type==="rule" && q.poke){
-      const ex=verbExample(q);
-      const selected=document.querySelector(`.option[data-poke="${Number(q.poke)}"]`);
+    if(type==="rule" && extra?.poke && extra?.selectedVerb){
+      // Use the ACTUALLY selected correct option; the correct Pokémon is shuffled.
+      const ex=verbExample({...q, verb:extra.selectedVerb});
+      const selected=document.querySelector(`.option[data-poke="${Number(extra.poke)}"]`);
       if(selected){
         const word=selected.querySelector('.word');
         const speaker=selected.querySelector('.word-speaker');
