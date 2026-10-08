@@ -1508,34 +1508,22 @@ function renderFeedback(correct,answer,errorType,exp){
     const ex=q.poke ? verbExample(q) : null;
     const transform=ex ? `<div class="feedback-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></div>` : "";
     const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
+    // Learning mode: show the verb transformation and example immediately.
+    // No click is required to reveal the teaching feedback.
     f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
       ${transform}
-      <div class="feedback-note">${ex?"再點一下，看這個動詞放進句子裡。":"Nice work!"}</div>
-      <div class="feedback-example hidden-example">${example}</div>`;
+      <div class="feedback-note">${ex?"Great!":"Nice work!"}</div>
+      <div class="feedback-example">${example}</div>`;
     speak("Correct!");
-    // Learning mode: first safe-area click reveals the example; second safe-area click advances.
-    // Buttons, speakers and form controls are excluded so the whole learning screen is not accidentally hijacked.
-    f.dataset.exampleShown="0";
+    if(ex) speak(ex.sentence);
+    // Advance automatically after the child has a brief moment to see/hear the correction.
+    // TEST/QA mode is excluded: QA has its own explicit Next button above.
     const learn=document.getElementById("learn");
-    if(learn){
-      learn.dataset.feedbackPhase="correct";
-      learn.onclick=function(event){
-        if(event.target.closest("button,select,input,a,[role=button]")) return;
-        if(learn.dataset.feedbackPhase==="correct"){
-          learn.dataset.feedbackPhase="example";
-          if(ex){
-            const box=f.querySelector(".feedback-example");
-            if(box){box.classList.remove("hidden-example"); speak(ex.sentence);}
-            const note=f.querySelector(".feedback-note");
-            if(note)note.textContent="再點一下，進入下一題。";
-          }else{
-            nextQuestion();
-          }
-        }else if(learn.dataset.feedbackPhase==="example"){
-          nextQuestion();
-        }
-      };
-    }
+    if(learn) learn.onclick=null;
+    clearTimeout(window._learningAdvanceTimer);
+    window._learningAdvanceTimer=setTimeout(()=>{
+      if(currentSession && !currentSession.qa && answerLocked) nextQuestion();
+    }, 1800);
     return;
   }
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
