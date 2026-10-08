@@ -95,8 +95,7 @@ main{margin-top:18px}
 .progress{height:8px;background:#24313c;border-radius:99px;overflow:hidden;flex:1;max-width:420px}
 .progress > div{height:100%;background:#d1b85e;transition:.3s}
 .question-card{
-  max-width:880px;margin:0 auto;background:#101b25;border:1px solid var(--border);
-  border-radius:22px;padding:24px;box-shadow:var(--shadow)
+  max-width:880px;margin:0 auto;padding:8px 0 18px
 }
 .question{
   text-align:center;font-size:30px;font-weight:800;line-height:1.4;margin:8px 0 22px
@@ -132,14 +131,15 @@ main{margin-top:18px}
 .sentence{
   text-align:center;font-size:29px;font-weight:800;line-height:1.5;
   padding:20px 12px
-}
+}.filled-answer{font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
 .baseverb{text-align:center;color:var(--muted);font-size:15px;margin-top:-8px}
 .choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
 .choice{
+  min-width:0;
   padding:18px 10px;border-radius:15px;border:1px solid var(--border);
   background:#172532;color:var(--text);font-size:20px;font-weight:800
 }
-.choice:hover{border-color:#6599c0}
+.choice:hover{border-color:#6599c0}.choice:disabled{cursor:default;opacity:1}
 .choice.correct{background:#193a2b;border-color:#69ad86}
 .choice.wrong{background:#3a2227;border-color:#a85b64}
 .backrow{margin-bottom:12px}
@@ -188,7 +188,7 @@ main{margin-top:18px}
   .pokemon-transform{font-size:27px}
   .pokemon-correct{font-size:17px}
   .feedback-example{font-size:20px}
-  .next-arrow{font-size:17px;height:42px;min-width:88px}
+  .next-arrow{font-size:17px;height:42px;min-width:108px}
   .small-note{font-size:16px}
 }
 @media(max-width:900px){
@@ -204,8 +204,32 @@ main{margin-top:18px}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
 }
 
-.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:14px;justify-content:center}.next-arrow{width:82px;height:38px;padding:0 12px;font-size:15px;line-height:1;border-radius:10px}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
-.mission-finished{margin:14px 0 6px;text-align:center;color:#8ed19e;font-weight:800;font-size:18px}.mission-finished + .feedback-next{margin-top:6px}.feedback-next .next-arrow{min-width:82px;padding:9px 16px;font-size:15px}</style>
+.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:12px;justify-content:center}.next-arrow{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:108px;height:40px;padding:0 16px;font-size:16px;line-height:1;white-space:nowrap;border-radius:10px;background:#2f78b7;color:#fff;border:1px solid #5598d0;box-shadow:none}.next-arrow:hover{background:#3b87c7;transform:translateY(-1px)}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
+.mission-finished{margin:14px 0 6px;text-align:center;color:#8ed19e;font-weight:800;font-size:18px}.mission-finished + .feedback-next{margin-top:6px}.feedback-next .next-arrow{min-width:108px;padding:0 16px;font-size:16px}
+/* Warm-up: short, non-graded practice before every formal mission */
+.warmup-card{max-width:860px;margin:0 auto;padding:10px 4px 20px;text-align:center}
+.warmup-title{font-size:28px;font-weight:900;margin:6px 0 6px}
+.warmup-subtitle{font-size:18px;color:var(--muted);margin:0 0 18px}
+.warmup-progress{font-size:14px;color:var(--muted);margin-bottom:14px}
+.warmup-card .question{margin-top:8px}
+.warmup-card .warmup-actions{margin-top:18px}
+.warmup-done{font-size:20px;font-weight:800;color:#8ed19e;margin:14px 0}
+@media(min-width:621px) and (max-width:1024px){
+  .warmup-title{font-size:28px}.warmup-subtitle{font-size:18px}.warmup-progress{font-size:16px}
+}
+.y-rule-intro{max-width:900px;margin:0 auto;padding:8px 4px 20px;text-align:center}
+.y-rule-title{font-size:30px;font-weight:900;margin:4px 0 8px}
+.y-rule-lead{font-size:22px;margin:0 0 18px;color:#dfeaf2}
+.y-rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.y-rule-box{border:1px solid var(--border);border-radius:16px;background:#172532;padding:20px 18px;min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.y-rule-label{font-size:22px;font-weight:800;line-height:1.35}
+.y-rule-letters{font-size:24px;font-weight:900;letter-spacing:.08em}
+.y-rule-example{font-size:25px;font-weight:900}
+.y-rule-speak{font-size:16px!important;min-height:36px!important;padding:6px 12px!important}
+.y-rule-focus{margin:18px auto 0;font-size:19px;color:#cfe0ec}
+.y-rule-start{margin-top:22px}
+@media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -966,7 +990,175 @@ function startStage(stageId){
   };
   document.getElementById("stageTitle").textContent=stage.title;
   showScreen("learn");
+  if(stageId==="unit3"){
+    showYRuleIntro();
+  }else{
+    startWarmup();
+  }
+}
+
+function showYRuleIntro(){
+  const card=document.getElementById("questionCard");
+  if(!card) return;
+  card.innerHTML=`
+    <div class="y-rule-intro">
+      <div class="y-rule-title">Y Rule</div>
+      <p class="y-rule-lead">Look at the letter before Y.</p>
+
+      <div class="y-rule-grid">
+        <div class="y-rule-box vowel-box">
+          <div class="y-rule-label">Vowel + Y → <span class="red">S</span></div>
+          <div class="y-rule-letters">A · E · I · O · U</div>
+          <div class="y-rule-example">play → play<span class="red">s</span></div>
+          <div class="y-rule-example">enjoy → enjoy<span class="red">s</span></div>
+          <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('vowel')">🔊 vowel</button>
+        </div>
+
+        <div class="y-rule-box consonant-box">
+          <div class="y-rule-label">Consonant + Y → <span class="red">IES</span></div>
+          <div class="y-rule-example">try → tr<span class="red">ies</span></div>
+          <div class="y-rule-example">study → stud<span class="red">ies</span></div>
+          <div class="y-rule-consonant-note">Consonants = other letters</div>
+          <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('consonant')">🔊 consonant</button>
+        </div>
+      </div>
+
+      <div class="y-rule-focus">
+        <b>Remember:</b> look at the letter <span class="red">before Y</span>.
+      </div>
+
+      <div class="actions y-rule-start">
+        <button class="btn primary" onclick="startYRulePractice()">開始小練習</button>
+      </div>
+    </div>`;
+  const learn=document.getElementById("learn");
+  if(learn){ learn.dataset.feedbackPhase="intro"; }
+}
+
+function startYRulePractice(){
+  if(!currentSession) return;
+  currentSession.yRuleIntroSeen=true;
+  currentSession.learningSegmentStartedAt=Date.now();
+  startWarmup();
+}
+
+function buildWarmupQuestions(stageId){
+  const stage=STAGES.find(x=>x.id===stageId);
+  if(!stage) return [];
+  const types=[...(stage.newTypes||[]),...(stage.types||[])];
+  const seen=new Set();
+  const pool=[];
+  types.forEach(t=>{
+    (QUESTION_BANK[t]||[]).forEach(q=>{
+      if(seen.has(q.id)) return;
+      seen.add(q.id);
+      pool.push({...q,_sourceType:t});
+    });
+  });
+  // Warm-up is intentionally easy and short. Prefer the new rule, then review.
+  const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
+  const source=easy.length>=2?easy:pool;
+  return shuffle(source).slice(0,Math.min(2,source.length)).map(q=>{
+    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
+    const {_sourceType,...clean}=q;
+    return {...clean,type};
+  });
+}
+
+function startWarmup(){
+  if(!currentSession) return;
+  const warmup=buildWarmupQuestions(currentSession.stageId);
+  currentSession.warmup=true;
+  currentSession.warmupQuestions=warmup;
+  currentSession.warmupIndex=0;
+  currentSession.warmupCorrect=0;
+  currentSession.warmupHintCount=0;
+  currentSession.questions=currentSession.questions||[];
+  currentQuestion=null;
+  if(!warmup.length){ beginFormalPractice(); return; }
+  renderWarmupQuestion();
+}
+
+function beginFormalPractice(){
+  if(!currentSession) return;
+  currentSession.warmup=false;
+  currentSession.index=0;
+  currentSession.correct=0;
+  currentSession.independent=0;
+  currentSession.hintCorrect=0;
+  currentSession.wrong=0;
+  currentSession.attempts=0;
+  currentSession.questionScores=[];
+  currentSession.answerAttempts=0;
+  currentSession.hintCount=0;
+  currentSession.suspiciousAttempts=0;
+  currentSession.improvementCount=0;
+  currentSession.questionAttemptData={};
+  currentSession.levelUps=0;
+  currentSession.uniqueCompleted=0;
+  currentSession.learningSegmentStartedAt=Date.now();
   renderQuestion();
+}
+
+function renderWarmupQuestion(){
+  answerLocked=false; hintLevel=0;
+  const q=currentSession.warmupQuestions[currentSession.warmupIndex];
+  currentQuestion=q;
+  currentSession.questionStartedAt=Date.now();
+  const card=document.getElementById("questionCard");
+  if(!card||!q) return;
+  const total=currentSession.warmupQuestions.length;
+  document.getElementById("questionCounter").textContent=`小練習 ${currentSession.warmupIndex+1} / ${total}`;
+  document.getElementById("stageProgress").style.width=(currentSession.warmupIndex/total*100)+"%";
+  let html=`<div class="warmup-card">
+    <div class="warmup-title">Let's Practice!</div>
+    <div class="warmup-subtitle">先練習一下，再開始本關。</div>
+    <div class="warmup-progress">小練習 ${currentSession.warmupIndex+1} / ${total}</div>`;
+  const type=questionType(q);
+  if(type==="rule"){
+    const options=makeRuleOptions(q.answer);
+    html+=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>Which one is an <span class="red">${escapeHtml(q.answer)}</span> Pokémon?</div>
+      <div class="options">${options.map(o=>{const p=POKEMON[o.poke];return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')"><img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'"><span class="word">${escapeHtml(o.verb)}</span><span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span></button>`}).join("")}</div>`;
+  }else{
+    html+=`<div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>${highlightBlank(q.sentence)}</div>
+      <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
+      <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+  }
+  html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div><div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div></div>`;
+  card.innerHTML=html;
+  const learn=document.getElementById("learn");
+  if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
+  if(state.settings.autoSpeak) setTimeout(()=>speak(getSpeakText()),250);
+}
+
+function handleWarmupAnswer(correct,answer,extra){
+  if(answerLocked||!currentSession?.warmup) return;
+  answerLocked=true;
+  const f=document.getElementById("feedback");
+  if(correct){
+    currentSession.warmupCorrect++;
+    document.getElementById("hintTrigger")?.style.setProperty("display","none");
+    document.querySelectorAll(".option,.choice").forEach(b=>b.disabled=true);
+    const q=currentQuestion;
+    if(q.sentence){
+      const sentenceEl=document.querySelector(".sentence");
+      if(sentenceEl){const sp=sentenceEl.querySelector(".speaker");const spHtml=sp?sp.outerHTML:"";sentenceEl.innerHTML=spHtml+escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);}
+    }
+    const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
+    f.innerHTML=last?`<div class="big" style="color:#8ed19e">✓ Correct</div><div class="warmup-done">小練習完成，開始正式練習！</div><div class="actions"><button class="btn primary next-arrow" onclick="beginFormalPractice()">開始練習</button></div>`:`<div class="big" style="color:#8ed19e">✓ Correct</div><div class="actions"><button class="btn primary next-arrow" onclick="nextWarmupQuestion()">→ Next</button></div>`;
+    speak("Correct");
+    return;
+  }
+  f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>`;
+  speak("Not quite. Try again.");
+  setTimeout(()=>{answerLocked=false;},600);
+}
+
+function nextWarmupQuestion(){
+  if(!currentSession?.warmup) return;
+  currentSession.warmupIndex++;
+  if(currentSession.warmupIndex>=currentSession.warmupQuestions.length){beginFormalPractice();return;}
+  renderWarmupQuestion();
 }
 
 function buildTestQuestions(source,count){
@@ -1187,6 +1379,11 @@ function renderQuestion(){
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
     <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   document.getElementById("questionCard").innerHTML=html;
+  // A new question must start with no feedback/Next state from the previous question.
+  const freshFeedback=document.getElementById("feedback");
+  if(freshFeedback) freshFeedback.innerHTML="";
+  const freshHint=document.getElementById("hintTrigger");
+  if(freshHint) freshHint.style.display="flex";
   if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
 }
 function getSpeakText(){
@@ -1320,7 +1517,7 @@ function helpQuestionText(){
   return q.answer||"";
 }
 function logLearningHelp(action){
-  if(!currentSession || currentSession.qa) return;
+  if(!currentSession || currentSession.qa || currentSession.warmup) return;
   const q=currentQuestion;
   const entry={
     ts:Date.now(), mode:"LEARNING_HELP", stage:currentSession.stageId, type:questionType(q),
@@ -1348,6 +1545,14 @@ function showHelpOptions(){
 }
 function revealAnswer(){
   if(answerLocked || !currentSession || currentSession.qa) return;
+  if(currentSession.warmup){
+    answerLocked=true;
+    const q=currentQuestion;
+    const answer=helpQuestionText();
+    const f=document.getElementById("feedback");
+    if(f) f.innerHTML=`<div class="big" style="color:#e7ca73">👀 Answer</div><div class="feedback-transform"><b>${escapeHtml(answer)}</b></div><div class="actions"><button class="btn primary small" onclick="nextWarmupQuestion()">繼續</button></div>`;
+    return;
+  }
   answerLocked=true;
   logLearningHelp("revealed");
   const q=currentQuestion;
@@ -1364,6 +1569,7 @@ function revealAnswer(){
 }
 function skipQuestion(){
   if(answerLocked || !currentSession || currentSession.qa) return;
+  if(currentSession.warmup){ nextWarmupQuestion(); return; }
   logLearningHelp("skipped");
   nextQuestion();
 }
@@ -1371,11 +1577,13 @@ function skipQuestion(){
 function answerRule(verb,answer,poke){
   if(answerLocked)return;
   const correct=answer===currentQuestion.answer;
+  if(currentSession?.warmup){ handleWarmupAnswer(correct,answer,{selectedVerb:verb,poke}); return; }
   handleAnswer(correct,answer,{selectedVerb:verb,poke});
 }
 function answerSentence(answer){
   if(answerLocked)return;
   const correct=answer===currentQuestion.answer;
+  if(currentSession?.warmup){ handleWarmupAnswer(correct,answer,{}); return; }
   handleAnswer(correct,answer,{});
 }
 function handleAnswer(correct,answer,extra){
@@ -1524,9 +1732,25 @@ function renderFeedback(correct,answer,errorType,exp){
       return;
     }
     const ex=q.poke ? verbExample(q) : null;
+    // Lock the answered UI: the child may review the result, then press Next.
+    const hintTrigger=document.getElementById("hintTrigger");
+    if(hintTrigger) hintTrigger.style.display="none";
+    const choiceRow=document.querySelector(".choice-row");
+    if(choiceRow){
+      choiceRow.querySelectorAll("button").forEach(btn=>{ btn.disabled=true; btn.classList.add("disabled"); });
+    }
+    // For sentence-fill questions, put the selected correct form directly into the blank.
+    if(!q.poke && q.sentence){
+      const sentenceEl=document.querySelector(".sentence");
+      if(sentenceEl){
+        const speaker=sentenceEl.querySelector(".speaker");
+        const speakerHtml=speaker?speaker.outerHTML:"";
+        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        sentenceEl.innerHTML=speakerHtml+filled;
+      }
+    }
     // Put the grammar transformation inside the correct Pokémon card so the child
     // can connect the Pokémon, verb, and rule in one visual unit.
-    let transform="";
     if(ex){
       const selected=document.querySelector(`.option[data-poke="${Number(q.poke)}"]`);
       if(selected){
@@ -1537,7 +1761,7 @@ function renderFeedback(correct,answer,errorType,exp){
         selected.classList.add("correct-choice");
       }
     }
-    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
+    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
@@ -1567,8 +1791,10 @@ function renderFeedback(correct,answer,errorType,exp){
   speak("Not quite. Try the same question again.");
   setTimeout(()=>{
     if(!currentSession)return;
-    // Re-render the SAME question; do not increment currentSession.index.
-    retryQuestion(false);
+    // Keep the exact same question and the same visible choices.
+    // Do NOT re-render: re-rendering can reshuffle Pokémon/options and make
+    // the child think the question changed. Unlock the current question only.
+    answerLocked=false;
   },700);
 }
 
