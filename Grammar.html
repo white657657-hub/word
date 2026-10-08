@@ -1266,7 +1266,8 @@ function handleWarmupAnswer(correct,answer,extra){
 }
 
 function nextWarmupQuestion(){
-  if(!currentSession?.warmup) return;
+  if(!currentSession?.warmup || !Array.isArray(currentSession.warmupQuestions)) return;
+  if(!Number.isInteger(currentSession.warmupIndex)) currentSession.warmupIndex=0;
   currentSession.warmupIndex++;
   if(currentSession.warmupIndex>=currentSession.warmupQuestions.length){beginFormalPractice();return;}
   renderWarmupQuestion();
@@ -2032,6 +2033,8 @@ function retryQuestion(keepHint=false){
   renderQuestion();
 }
 function nextQuestion(){
+  if(!currentSession || !Array.isArray(currentSession.questions)) return;
+  if(!Number.isInteger(currentSession.index)) currentSession.index=0;
   currentSession.index++;
   if(currentSession.index>=currentSession.questions.length){finishSession();return}
   renderQuestion();
