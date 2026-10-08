@@ -142,10 +142,6 @@ main{margin-top:18px}
 .choice:hover{border-color:#6599c0}
 .choice.correct{background:#193a2b;border-color:#69ad86}
 .choice.wrong{background:#3a2227;border-color:#a85b64}
-.rule-chip{
-  display:inline-block;padding:4px 9px;border-radius:999px;background:#1c3040;color:#9ec4e4;
-  font-size:12px;margin-bottom:8px
-}
 .backrow{margin-bottom:12px}
 .map{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .stage{
@@ -180,6 +176,21 @@ main{margin-top:18px}
 .fireworks span{position:absolute;width:8px;height:8px;border-radius:50%;background:#e8cb72;animation:burst 1.2s ease-out forwards}
 @keyframes burst{0%{transform:scale(.1);opacity:1}100%{transform:scale(16);opacity:0}}
 .small-note{font-size:12px;color:#8ea1af;line-height:1.6}
+@media(min-width:621px) and (max-width:1024px){
+  /* iPad child-reading sizes: keep primary learning text comfortably legible. */
+  .question{font-size:28px;line-height:1.35}
+  .option{font-size:29px;min-height:132px}
+  .option .word{font-size:29px}
+  .sentence{font-size:24px}
+  .hint-en{font-size:19px;line-height:1.55}
+  .hint-cn{font-size:16px}
+  .feedback .big{font-size:25px}
+  .pokemon-transform{font-size:27px}
+  .pokemon-correct{font-size:17px}
+  .feedback-example{font-size:20px}
+  .next-arrow{font-size:17px;height:42px;min-width:88px}
+  .small-note{font-size:16px}
+}
 @media(max-width:900px){
   .hero{grid-template-columns:1fr}.hero-poke{display:none}
   .grid,.map{grid-template-columns:repeat(2,1fr)}
@@ -1128,7 +1139,7 @@ function validateQuestionBank(){
     globalIds.add(q.id);
   });
   const uniquePokes=new Set(all.map(q=>q.poke));
-  if(uniquePokes.size<4) problems.push("Rule Hunt needs at least 4 distinct Pokémon.");
+  if(uniquePokes.size<4) problems.push("Rule questions need at least 4 distinct Pokémon.");
   if(problems.length) console.warn("Question bank validation:",problems);
   return problems.length===0;
 }
@@ -1147,8 +1158,7 @@ function renderQuestion(){
   let html="";
   if(type==="rule"){
     const options=makeRuleOptions(currentQuestion.answer);
-    html=`<span class="rule-chip">RULE HUNT</span>
-      <div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
+    html=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
       Which one is an <span class="red">${currentQuestion.answer}</span> Pokémon?</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
