@@ -403,12 +403,18 @@ const POKEMON = {
 };
 
 const STAGES = [
- {id:"unit1",title:"第一森林｜S",rule:"S",desc:"Unit 1 · Third-person singular verbs → S",types:["ruleS"],newTypes:["ruleS"],unlock:0},
- {id:"unit2",title:"第二森林｜ES",rule:"ES",desc:"Unit 2 · ES rules + Unit 1 review",types:["ruleS","ruleES"],newTypes:["ruleES"],unlock:1},
- {id:"unit3",title:"第三森林｜Y Rule",rule:"Y Rule",desc:"Unit 3 · Vowel + Y → S · Consonant + Y → IES",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:2},
- {id:"unit4",title:"第四森林｜CVC / V-ing",rule:"CVC",desc:"Unit 4 · CVC doubling + cumulative review",types:["ruleS","ruleES","ruleIES","ing"],newTypes:["ing"],unlock:3}
+ {id:"unit1",title:"1. S",rule:"S",desc:"Third-person singular verbs → S",types:["ruleS"],newTypes:["ruleS"],unlock:0},
+ {id:"unit2",title:"2. ES",rule:"ES",desc:"CH / SH / SS / X / O → ES",types:["ruleS","ruleES"],newTypes:["ruleES"],unlock:1},
+ {id:"unit3",title:"3. Y → S / IES",rule:"Y",desc:"Vowel + Y → S · Consonant + Y → IES",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:2},
+ {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Review S and ES together",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
+ {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Review S, ES and Y rules",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
+ {id:"unit6",title:"6. S + ES + Y + IES",rule:"S + ES + Y + IES",desc:"Mixed practice of all Y outcomes",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:5},
+ {id:"unit7",title:"7. CVC Doubling",rule:"CVC Doubling",desc:"CVC → double the final consonant + ing",types:["ruleS","ruleES","ruleIES","ing"],newTypes:["ing"],unlock:6},
+ {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
+ {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
 
+// 9-unit progression: each unit has a short warm-up, then formal practice.
 const QUESTION_BANK = {
   // Rule Hunt banks: each skill has a healthy pool so an 8-question mission does not immediately repeat.
   // `poke` is only the visual skin; the answer is determined by `rule`.
@@ -733,13 +739,17 @@ function loadState(){
     });
     Object.values(s.collection||{}).forEach(v=>{if(v && v.evolutionProgress==null) v.evolutionProgress=0});
     if(!Array.isArray(s.unlocked)) s.unlocked=["unit1"];
-    // Migrate old stage IDs into the new cumulative Unit map without deleting learning data.
+    // Migrate legacy progress into the current 9-unit map without deleting learning data.
     const oldUnlocked=new Set(s.unlocked);
-    const migrated=new Set(["unit1"]);
-    if(["ch","sh","ss","x","o","mixed"].some(id=>oldUnlocked.has(id))) migrated.add("unit2");
-    if(oldUnlocked.has("y") || oldUnlocked.has("mixed")) migrated.add("unit3");
-    if(oldUnlocked.has("ing") || oldUnlocked.has("sentence") || oldUnlocked.has("error")) migrated.add("unit4");
-    s.unlocked=[...migrated];
+    let highest=0;
+    if(oldUnlocked.has("unit2") || ["ch","sh","ss","x","o","mixed"].some(id=>oldUnlocked.has(id))) highest=Math.max(highest,1);
+    if(oldUnlocked.has("unit3") || oldUnlocked.has("y")) highest=Math.max(highest,2);
+    // Legacy unit4 was the old CVC/V-ing unit; it now corresponds to Unit 7.
+    if(oldUnlocked.has("unit4") || oldUnlocked.has("ing") || oldUnlocked.has("sentence") || oldUnlocked.has("error")) highest=Math.max(highest,6);
+    // Preserve already-created current IDs if present.
+    oldUnlocked.forEach(id=>{const m=id.match(/^unit([1-9])$/); if(m) highest=Math.max(highest,Number(m[1])-1);});
+    s.unlocked=STAGES.slice(0,highest+1).map(x=>x.id);
+    if(!s.unlocked.length) s.unlocked=["unit1"];
     if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
     if(!s.settings || typeof s.settings !== "object") s.settings={autoSpeak:true};
     if(typeof s.settings.autoSpeak !== "boolean") s.settings.autoSpeak=true;
