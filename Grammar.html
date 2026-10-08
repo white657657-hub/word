@@ -208,6 +208,14 @@ main{margin-top:18px}
 .mission-finished{margin:14px 0 6px;text-align:center;color:#8ed19e;font-weight:800;font-size:18px}.mission-finished + .feedback-next{margin-top:6px}.feedback-next .next-arrow{min-width:108px;padding:0 16px;font-size:16px}
 /* Warm-up: short, non-graded practice before every formal mission */
 .warmup-card{max-width:860px;margin:0 auto;padding:10px 4px 20px;text-align:center}
+/* Warm-up uses the same learning UI, with a subtle background cue only. It is not a separate interaction model. */
+#questionCard.warmup-mode{background:rgba(55,102,145,.10);border-color:rgba(90,150,205,.30)}
+.warmup-mode .warmup-title{color:#9fc9e8}
+.warmup-mode .warmup-subtitle{color:#9eb4c5}
+.warmup-badge{display:inline-flex;align-items:center;justify-content:center;margin:2px auto 8px;padding:5px 10px;border-radius:999px;background:rgba(78,132,177,.18);border:1px solid rgba(108,164,207,.28);color:#a9cee8;font-size:14px;font-weight:800}
+.warmup-mode .feedback-example{margin-top:12px}
+.warmup-mode .pokemon-transform{font-size:27px}
+.warmup-mode .pokemon-correct{font-size:17px}
 .warmup-title{font-size:28px;font-weight:900;margin:6px 0 6px}
 .warmup-subtitle{font-size:18px;color:var(--muted);margin:0 0 18px}
 .warmup-progress{font-size:14px;color:var(--muted);margin-bottom:14px}
@@ -1117,20 +1125,22 @@ function renderWarmupQuestion(){
   currentSession.questionStartedAt=Date.now();
   const card=document.getElementById("questionCard");
   if(!card||!q) return;
+  card.classList.add("warmup-mode");
   const total=currentSession.warmupQuestions.length;
   document.getElementById("questionCounter").textContent=`小練習 ${currentSession.warmupIndex+1} / ${total}`;
   document.getElementById("stageProgress").style.width=(currentSession.warmupIndex/total*100)+"%";
   let html=`<div class="warmup-card">
+    <div class="warmup-badge">小練習・不計分</div>
     <div class="warmup-title">Let's Practice!</div>
-    <div class="warmup-subtitle">先練習一下，再開始本關。</div>
-    <div class="warmup-progress">小練習 ${currentSession.warmupIndex+1} / ${total}</div>`;
+    <div class="warmup-subtitle">先練習一下，再開始本關。</div>`;
   const type=questionType(q);
   if(type==="rule"){
     const options=makeRuleOptions(q.answer);
     html+=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>Which one is an <span class="red">${escapeHtml(q.answer)}</span> Pokémon?</div>
       <div class="options">${options.map(o=>{const p=POKEMON[o.poke];return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')"><img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'"><span class="word">${escapeHtml(o.verb)}</span><span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span></button>`}).join("")}</div>`;
   }else{
-    html+=`<div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>${highlightBlank(q.sentence)}</div>
+    html+=`<span class="rule-chip">${type==="error"?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>${highlightBlank(q.sentence)}</div>
       <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
       <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
@@ -1145,23 +1155,53 @@ function handleWarmupAnswer(correct,answer,extra){
   if(answerLocked||!currentSession?.warmup) return;
   answerLocked=true;
   const f=document.getElementById("feedback");
+  if(!f) return;
   if(correct){
     currentSession.warmupCorrect++;
     document.getElementById("hintTrigger")?.style.setProperty("display","none");
     document.querySelectorAll(".option,.choice").forEach(b=>b.disabled=true);
     const q=currentQuestion;
+    const type=questionType(q);
+
+    // Keep warm-up feedback visually identical to formal practice.
+    // The only difference is the subtle warm-up background and the fact that it is not logged/scored.
+    if(type==="rule" && q.poke){
+      const ex=verbExample(q);
+      const selected=document.querySelector(`.option[data-poke="${Number(q.poke)}"]`);
+      if(selected){
+        const word=selected.querySelector('.word');
+        const speaker=selected.querySelector('.word-speaker');
+        if(word) word.innerHTML=`<span class="pokemon-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>`;
+        if(speaker) speaker.style.display="none";
+        selected.classList.add("correct-choice");
+      }
+      const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>`;
+      const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
+      f.innerHTML=`${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
+      speak("Correct");
+      speak(ex.sentence);
+      return;
+    }
+
+    // Sentence-fill warm-up follows the formal sentence-fill behavior.
     if(q.sentence){
       const sentenceEl=document.querySelector(".sentence");
-      if(sentenceEl){const sp=sentenceEl.querySelector(".speaker");const spHtml=sp?sp.outerHTML:"";sentenceEl.innerHTML=spHtml+escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);}
+      if(sentenceEl){
+        const speaker=sentenceEl.querySelector(".speaker");
+        const speakerHtml=speaker?speaker.outerHTML:"";
+        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        sentenceEl.innerHTML=speakerHtml+filled;
+      }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    f.innerHTML=last?`<div class="big" style="color:#8ed19e">✓ Correct</div><div class="warmup-done">小練習完成，開始正式練習！</div><div class="actions"><button class="btn primary next-arrow" onclick="beginFormalPractice()">開始練習</button></div>`:`<div class="big" style="color:#8ed19e">✓ Correct</div><div class="actions"><button class="btn primary next-arrow" onclick="nextWarmupQuestion()">→ Next</button></div>`;
+    f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
     speak("Correct");
+    if(q.sentence) speak(q.sentence.replace("_____",answer));
     return;
   }
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>`;
-  speak("Not quite. Try again.");
-  setTimeout(()=>{answerLocked=false;},600);
+  speak("Not quite. Try the same question again.");
+  setTimeout(()=>{answerLocked=false;},700);
 }
 
 function nextWarmupQuestion(){
@@ -1357,6 +1397,7 @@ validateQuestionBank();
 
 function renderQuestion(){
   answerLocked=false;hintLevel=0;
+  document.getElementById("questionCard")?.classList.remove("warmup-mode");
   const learn=document.getElementById("learn");
   if(learn){ learn.onclick=null; learn.dataset.feedbackPhase=""; }
   currentQuestion=currentSession.questions[currentSession.index];
