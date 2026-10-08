@@ -35,12 +35,12 @@ body{
 button,input{font:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
-.app{max-width:1180px;margin:auto;padding:18px}
+.app{max-width:1180px;margin:auto;padding:18px 18px 105px}
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
   gap:14px;padding:12px 16px;background:rgba(16,26,36,.94);
   border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);
-  position:sticky;top:10px;z-index:20;backdrop-filter:blur(12px)
+  position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(1146px,calc(100% - 36px));z-index:90;backdrop-filter:blur(12px)
 }
 .profile{display:flex;align-items:center;gap:12px}
 .avatar{
@@ -187,7 +187,7 @@ main{margin-top:18px}
   .stats{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:620px){
-  .app{padding:10px}.topbar{position:static}.xpwrap{width:120px}
+  .app{padding:10px 10px 92px}.topbar{width:calc(100% - 20px);bottom:10px}.xpwrap{width:120px}
   .hero h1{font-size:31px}.question{font-size:24px}.sentence{font-size:23px}
   .options,.choice-row{grid-template-columns:repeat(2,1fr)}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
