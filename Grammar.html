@@ -204,6 +204,8 @@ main{margin-top:18px}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
 }
 
+
+.challenge-control,.map-challenge{display:inline-flex;align-items:center;gap:5px;color:#a9cbe5;font-size:12px;font-weight:700;white-space:nowrap}.challenge-control input,.map-challenge input{accent-color:#79aeda;width:16px;height:16px}.map-challenge{margin-top:9px;font-size:12px}
 .hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:12px;justify-content:center}.next-arrow{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:108px;height:40px;padding:0 16px;font-size:16px;line-height:1;white-space:nowrap;border-radius:10px;background:#2f78b7;color:#fff;border:1px solid #5598d0;box-shadow:none}.next-arrow:hover{background:#3b87c7;transform:translateY(-1px)}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
 .mission-finished{margin:14px 0 6px;text-align:center;color:#8ed19e;font-weight:800;font-size:18px}.mission-finished + .feedback-next{margin-top:6px}.feedback-next .next-arrow{min-width:108px;padding:0 16px;font-size:16px}
 /* Warm-up: short, non-graded practice before every formal mission */
@@ -221,6 +223,20 @@ main{margin-top:18px}
 .warmup-progress{font-size:14px;color:var(--muted);margin-bottom:14px}
 .warmup-card .question{margin-top:8px}
 .warmup-card .warmup-actions{margin-top:18px}
+/* Child-friendly feedback: small, calm motion instead of arcade-style effects. */
+@keyframes pokemonCorrectPop{0%{transform:scale(1)}45%{transform:scale(1.055) translateY(-4px)}100%{transform:scale(1)}}
+.option.correct-choice{animation:pokemonCorrectPop .42s ease-out;box-shadow:0 0 0 2px rgba(142,209,158,.55),0 8px 22px rgba(60,120,90,.16)}
+.option.correct-choice .pokemon-transform{display:flex;align-items:center;justify-content:center;gap:7px;font-size:27px;line-height:1.15;font-weight:900;margin-top:2px}
+.option.correct-choice .pokemon-transform .arrow{opacity:.75}
+.pokemon-correct{margin-top:5px;font-size:16px;font-weight:900;color:#8ed19e;line-height:1.15}
+.pokemon-correct .thumb{margin-right:3px}
+.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 0;max-width:820px;font-size:24px;line-height:1.35;font-weight:800;text-align:center}
+.feedback-example .speaker{flex:0 0 auto}
+.mission-complete-pulse{animation:completePulse .55s ease-out}
+@keyframes completePulse{0%{transform:scale(.96);opacity:.65}100%{transform:scale(1);opacity:1}}
+.micro-note{font-size:13px;color:var(--muted);margin-top:4px}
+@media(max-width:620px){.feedback-example{font-size:22px}.option.correct-choice .pokemon-transform{font-size:24px}}
+
 .warmup-done{font-size:20px;font-weight:800;color:#8ed19e;margin:14px 0}
 @media(min-width:621px) and (max-width:1024px){
   .warmup-title{font-size:28px}.warmup-subtitle{font-size:18px}.warmup-progress{font-size:16px}
@@ -310,6 +326,7 @@ main{margin-top:18px}
     <div style="flex:1;display:flex;justify-content:center;gap:10px;align-items:center">
       <b id="stageTitle">ES 森林</b>
       <span class="muted" id="questionCounter">1 / 10</span>
+      <span id="challengeControl"></span>
     </div>
     <div class="progress"><div id="stageProgress" style="width:0"></div></div>
   </div>
@@ -412,12 +429,12 @@ const POKEMON = {
 
 const STAGES = [
  {id:"unit1",title:"1. S",rule:"S",desc:"Third-person singular verbs → S",types:["ruleS"],newTypes:["ruleS"],unlock:0},
- {id:"unit2",title:"2. ES",rule:"ES",desc:"CH / SH / SS / X / O → ES",types:["ruleS","ruleES"],newTypes:["ruleES"],unlock:1},
- {id:"unit3",title:"3. Y → S / IES",rule:"Y",desc:"Vowel + Y → S · Consonant + Y → IES",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:2},
- {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Review S and ES together",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
- {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Review S, ES and Y rules",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
- {id:"unit6",title:"6. S + ES + Y + IES",rule:"S + ES + Y + IES",desc:"Mixed practice of all Y outcomes",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:5},
- {id:"unit7",title:"7. CVC Doubling",rule:"CVC Doubling",desc:"CVC → double the final consonant + ing",types:["ruleS","ruleES","ruleIES","ing"],newTypes:["ing"],unlock:6},
+ {id:"unit2",title:"2. ES",rule:"ES",desc:"CH / SH / SS / X / O → ES",types:["ruleES"],newTypes:["ruleES"],unlock:1},
+ {id:"unit3",title:"3. Y → S / IES",rule:"Y",desc:"Look at the letter before Y",types:["ruleIES"],newTypes:["ruleIES"],unlock:2},
+ {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
+ {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
+ {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
+ {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"V-ing：CVC words double the final consonant",types:["ing"],newTypes:["ing"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
@@ -443,58 +460,30 @@ const QUESTION_BANK = {
     {id:"ch03",verb:"reach",answer:"ES",poke:54,rule:"CH"},{id:"ch04",verb:"touch",answer:"ES",poke:39,rule:"CH"},
     {id:"ch05",verb:"catch",answer:"ES",poke:52,rule:"CH"},{id:"ch06",verb:"match",answer:"ES",poke:10,rule:"CH"},
     {id:"ch07",verb:"switch",answer:"ES",poke:16,rule:"CH"},{id:"ch08",verb:"fetch",answer:"ES",poke:27,rule:"CH"},
-    {id:"ch09",verb:"search",answer:"ES",poke:35,rule:"CH"},{id:"ch10",verb:"march",answer:"ES",poke:25,rule:"CH"},
-    {id:"ch11",verb:"scratch",answer:"ES",poke:1,rule:"CH"},{id:"ch12",verb:"stretch",answer:"ES",poke:133,rule:"CH"},
-    {id:"ch13",verb:"punch",answer:"ES",poke:25,rule:"CH"},{id:"ch14",verb:"munch",answer:"ES",poke:4,rule:"CH"},
-    {id:"ch15",verb:"coach",answer:"ES",poke:7,rule:"CH"},{id:"ch16",verb:"launch",answer:"ES",poke:54,rule:"CH"},
-    {id:"ch17",verb:"branch",answer:"ES",poke:39,rule:"CH"},{id:"ch18",verb:"preach",answer:"ES",poke:52,rule:"CH"},
-    {id:"ch19",verb:"approach",answer:"ES",poke:10,rule:"CH"},{id:"ch20",verb:"attach",answer:"ES",poke:16,rule:"CH"}
+    {id:"ch09",verb:"punch",answer:"ES",poke:25,rule:"CH"},{id:"ch10",verb:"munch",answer:"ES",poke:1,rule:"CH"}
   ],
   ruleSH:[
     {id:"sh01",verb:"wash",answer:"ES",poke:39,rule:"SH"},{id:"sh02",verb:"push",answer:"ES",poke:10,rule:"SH"},
     {id:"sh03",verb:"finish",answer:"ES",poke:16,rule:"SH"},{id:"sh04",verb:"brush",answer:"ES",poke:52,rule:"SH"},
     {id:"sh05",verb:"rush",answer:"ES",poke:54,rule:"SH"},{id:"sh06",verb:"wish",answer:"ES",poke:7,rule:"SH"},
     {id:"sh07",verb:"flash",answer:"ES",poke:25,rule:"SH"},{id:"sh08",verb:"crash",answer:"ES",poke:4,rule:"SH"},
-    {id:"sh09",verb:"polish",answer:"ES",poke:35,rule:"SH"},{id:"sh10",verb:"splash",answer:"ES",poke:27,rule:"SH"},
-    {id:"sh11",verb:"punish",answer:"ES",poke:1,rule:"SH"},{id:"sh12",verb:"publish",answer:"ES",poke:133,rule:"SH"},
-    {id:"sh13",verb:"fish",answer:"ES",poke:25,rule:"SH"},{id:"sh14",verb:"crush",answer:"ES",poke:4,rule:"SH"},
-    {id:"sh15",verb:"smash",answer:"ES",poke:7,rule:"SH"},{id:"sh16",verb:"vanish",answer:"ES",poke:54,rule:"SH"},
-    {id:"sh17",verb:"relish",answer:"ES",poke:39,rule:"SH"},{id:"sh18",verb:"hush",answer:"ES",poke:52,rule:"SH"},
-    {id:"sh19",verb:"flush",answer:"ES",poke:10,rule:"SH"},{id:"sh20",verb:"dash",answer:"ES",poke:16,rule:"SH"}
+    {id:"sh09",verb:"polish",answer:"ES",poke:35,rule:"SH"},{id:"sh10",verb:"splash",answer:"ES",poke:27,rule:"SH"}
   ],
   ruleSS:[
     {id:"ss01",verb:"miss",answer:"ES",poke:52,rule:"SS"},{id:"ss02",verb:"kiss",answer:"ES",poke:39,rule:"SS"},
     {id:"ss03",verb:"pass",answer:"ES",poke:10,rule:"SS"},{id:"ss04",verb:"dress",answer:"ES",poke:16,rule:"SS"},
     {id:"ss05",verb:"guess",answer:"ES",poke:54,rule:"SS"},{id:"ss06",verb:"cross",answer:"ES",poke:7,rule:"SS"},
     {id:"ss07",verb:"press",answer:"ES",poke:25,rule:"SS"},{id:"ss08",verb:"bless",answer:"ES",poke:4,rule:"SS"},
-    {id:"ss09",verb:"discuss",answer:"ES",poke:1,rule:"SS"},{id:"ss10",verb:"express",answer:"ES",poke:133,rule:"SS"},
-    {id:"ss11",verb:"address",answer:"ES",poke:35,rule:"SS"},{id:"ss12",verb:"impress",answer:"ES",poke:27,rule:"SS"},
-    {id:"ss13",verb:"stress",answer:"ES",poke:25,rule:"SS"},{id:"ss14",verb:"confess",answer:"ES",poke:4,rule:"SS"},
-    {id:"ss15",verb:"possess",answer:"ES",poke:7,rule:"SS"},{id:"ss16",verb:"obsess",answer:"ES",poke:54,rule:"SS"},
-    {id:"ss17",verb:"toss",answer:"ES",poke:39,rule:"SS"},{id:"ss18",verb:"boss",answer:"ES",poke:52,rule:"SS"},
-    {id:"ss19",verb:"floss",answer:"ES",poke:10,rule:"SS"},{id:"ss20",verb:"trespass",answer:"ES",poke:16,rule:"SS"}
+    {id:"ss09",verb:"toss",answer:"ES",poke:39,rule:"SS"},{id:"ss10",verb:"boss",answer:"ES",poke:52,rule:"SS"},
+    {id:"ss11",verb:"floss",answer:"ES",poke:10,rule:"SS"}
   ],
   ruleX:[
     {id:"x01",verb:"fix",answer:"ES",poke:10,rule:"X"},{id:"x02",verb:"mix",answer:"ES",poke:16,rule:"X"},
-    {id:"x03",verb:"box",answer:"ES",poke:54,rule:"X"},{id:"x04",verb:"tax",answer:"ES",poke:39,rule:"X"},
-    {id:"x05",verb:"relax",answer:"ES",poke:25,rule:"X"},{id:"x06",verb:"fax",answer:"ES",poke:7,rule:"X"},
-    {id:"x07",verb:"wax",answer:"ES",poke:52,rule:"X"},{id:"x08",verb:"index",answer:"ES",poke:4,rule:"X"},
-    {id:"x09",verb:"flex",answer:"ES",poke:35,rule:"X"},{id:"x10",verb:"vex",answer:"ES",poke:27,rule:"X"},
-    {id:"x11",verb:"prefix",answer:"ES",poke:1,rule:"X"},{id:"x12",verb:"suffix",answer:"ES",poke:133,rule:"X"},
-    {id:"x13",verb:"unbox",answer:"ES",poke:25,rule:"X"},{id:"x14",verb:"outfox",answer:"ES",poke:4,rule:"X"},
-    {id:"x15",verb:"affix",answer:"ES",poke:7,rule:"X"},{id:"x16",verb:"coax",answer:"ES",poke:54,rule:"X"},
-    {id:"x17",verb:"detox",answer:"ES",poke:39,rule:"X"},{id:"x18",verb:"transfix",answer:"ES",poke:52,rule:"X"},
-    {id:"x19",verb:"remix",answer:"ES",poke:10,rule:"X"},{id:"x20",verb:"fox",answer:"ES",poke:16,rule:"X"}
+    {id:"x03",verb:"box",answer:"ES",poke:54,rule:"X"},{id:"x04",verb:"relax",answer:"ES",poke:39,rule:"X"},
+    {id:"x05",verb:"unbox",answer:"ES",poke:25,rule:"X"},{id:"x06",verb:"remix",answer:"ES",poke:7,rule:"X"}
   ],
   ruleO:[
-    {id:"o01",verb:"go",answer:"ES",poke:16,rule:"O"},{id:"o02",verb:"do",answer:"ES",poke:54,rule:"O"},
-    {id:"o03",verb:"echo",answer:"ES",poke:39,rule:"O"},{id:"o04",verb:"veto",answer:"ES",poke:52,rule:"O"},
-    {id:"o05",verb:"embargo",answer:"ES",poke:25,rule:"O"},{id:"o06",verb:"zero",answer:"ES",poke:7,rule:"O"},
-    {id:"o07",verb:"solo",answer:"ES",poke:10,rule:"O"},{id:"o08",verb:"lasso",answer:"ES",poke:4,rule:"O"},
-    {id:"o09",verb:"torpedo",answer:"ES",poke:1,rule:"O"},{id:"o10",verb:"video",answer:"ES",poke:133,rule:"O"},
-    {id:"o11",verb:"redo",answer:"ES",poke:35,rule:"O"},{id:"o12",verb:"undo",answer:"ES",poke:27,rule:"O"},
-    {id:"o13",verb:"outdo",answer:"ES",poke:25,rule:"O"},{id:"o14",verb:"overdo",answer:"ES",poke:4,rule:"O"},
-    {id:"o15",verb:"forgo",answer:"ES",poke:7,rule:"O"},{id:"o16",verb:"undergo",answer:"ES",poke:54,rule:"O"}
+    {id:"o01",verb:"go",answer:"ES",poke:16,rule:"O"},{id:"o02",verb:"do",answer:"ES",poke:54,rule:"O"}
   ],
   ruleIES:[
     // Y Rule: consonant + Y → IES; vowel + Y → S. Keep both forms in the same skill.
@@ -503,11 +492,8 @@ const QUESTION_BANK = {
     {id:"y05",verb:"worry",answer:"IES",poke:54,rule:"consonant+y"},{id:"y06",verb:"hurry",answer:"IES",poke:39,rule:"consonant+y"},
     {id:"y07",verb:"copy",answer:"IES",poke:52,rule:"consonant+y"},{id:"y08",verb:"fly",answer:"IES",poke:10,rule:"consonant+y"},
     {id:"y09",verb:"reply",answer:"IES",poke:16,rule:"consonant+y"},{id:"y10",verb:"dry",answer:"IES",poke:27,rule:"consonant+y"},
-    {id:"y11",verb:"marry",answer:"IES",poke:35,rule:"consonant+y"},{id:"y12",verb:"tidy",answer:"IES",poke:133,rule:"consonant+y"},
-    {id:"y13",verb:"empty",answer:"IES",poke:25,rule:"consonant+y"},{id:"y14",verb:"apply",answer:"IES",poke:4,rule:"consonant+y"},
-    {id:"y15",verb:"deny",answer:"IES",poke:7,rule:"consonant+y"},{id:"y16",verb:"identify",answer:"IES",poke:54,rule:"consonant+y"},
-    {id:"y17",verb:"satisfy",answer:"IES",poke:39,rule:"consonant+y"},{id:"y18",verb:"modify",answer:"IES",poke:52,rule:"consonant+y"},
-    {id:"y19",verb:"simplify",answer:"IES",poke:10,rule:"consonant+y"},{id:"y20",verb:"verify",answer:"IES",poke:16,rule:"consonant+y"},
+    {id:"y11",verb:"tidy",answer:"IES",poke:35,rule:"consonant+y"},{id:"y12",verb:"empty",answer:"IES",poke:133,rule:"consonant+y"},
+    {id:"y13",verb:"apply",answer:"IES",poke:4,rule:"consonant+y"},
     {id:"y21",verb:"play",answer:"S",poke:35,rule:"vowel+y"},{id:"y22",verb:"enjoy",answer:"S",poke:133,rule:"vowel+y"},
     {id:"y23",verb:"buy",answer:"S",poke:54,rule:"vowel+y"},{id:"y24",verb:"stay",answer:"S",poke:39,rule:"vowel+y"},
     {id:"y25",verb:"obey",answer:"S",poke:52,rule:"vowel+y"},{id:"y26",verb:"employ",answer:"S",poke:7,rule:"vowel+y"},
@@ -516,7 +502,7 @@ const QUESTION_BANK = {
   mixed:[],
   sentenceSubject:[
     {id:"sub01",sentence:"He _____ soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
-    {id:"sub02",sentence:"She _____ statues in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
+    {id:"sub02",sentence:"She _____ a model in art class.",choices:["make","makes","makies","makees"],answer:"makes",verb:"make",rule:"subject"},
     {id:"sub03",sentence:"They _____ soccer after school.",choices:["plays","play","playes","plaies"],answer:"play",verb:"play",rule:"plural"},
     {id:"sub04",sentence:"The boys and girls _____ the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"},
     {id:"sub05",sentence:"Tom _____ his homework every day.",choices:["do","does","dos","doies"],answer:"does",verb:"do",rule:"subject"},
@@ -568,7 +554,7 @@ const QUESTION_BANK = {
     {id:"err05",sentence:"My sister try to help.",choices:["try","trys","tries","tryes"],answer:"tries",verb:"try",rule:"subject"},
     {id:"err06",sentence:"The teacher fix the box.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"subject"},
     {id:"err07",sentence:"Tom go to school by bus.",choices:["go","goes","gos","goies"],answer:"goes",verb:"go",rule:"subject"},
-    {id:"err08",sentence:"The girls wash the cups.",choices:["wash","washes","washs","washies"],answer:"wash",verb:"wash",rule:"plural"}
+    {id:"err08",sentence:"The girls washes the cups.",choices:["wash","washes","washs","washies"],answer:"wash",verb:"wash",rule:"plural"}
   ]
 };
 
@@ -653,18 +639,18 @@ const HINTS = {
   ["S → S","Add S: play → plays"]
  ],
  CH:[
-  ["Look at the end of the word.","Check the last two letters."],
-  ["The word ends in CH.","CH is the clue."],
+  ["Look at the ending.","Do you see a special ending?"],
+  ["Look at the last two letters.","CH is the clue."],
   ["CH → ES","Add ES: teach → teaches"]
  ],
  SH:[
-  ["Look at the end of the word.","Check the last two letters."],
-  ["The word ends in SH.","SH is the clue."],
+  ["Look at the ending.","Do you see a special ending?"],
+  ["Look at the last two letters.","SH is the clue."],
   ["SH → ES","Add ES: wash → washes"]
  ],
  SS:[
-  ["Look at the end of the word.","Check the last two letters."],
-  ["The word ends in SS.","SS is the clue."],
+  ["Look at the ending.","Do you see a special ending?"],
+  ["Look at the last two letters.","SS is the clue."],
   ["SS → ES","Add ES: miss → misses"]
  ],
  X:[
@@ -678,9 +664,9 @@ const HINTS = {
   ["O → ES","Add ES: go → goes"]
  ],
  Y:[
-  ["Look at the letter before Y.","Check the letter right before Y."],
-  ["Is it a consonant or a vowel?","A, E, I, O, U are vowels."],
-  ["Consonant + Y → IES; Vowel + Y → S","Choose IES for a consonant + Y, but S for a vowel + Y."]
+  ["Look at the letter before Y.","Is it a vowel or a consonant?"],
+  ["Vowel + Y → S · Consonant + Y → IES","Now choose the matching Y pattern."],
+  ["Y rule","play → plays · try → tries"]
  ],
  subject:[
   ["Find the subject.","Who is doing the action?"],
@@ -705,7 +691,7 @@ const HINTS = {
 };
 
 const STORAGE_KEY = "ansonGrammarAdventureV2";
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 7;
 const state = loadState();
 let currentSession = null;
 let currentQuestion = null;
@@ -837,7 +823,8 @@ function renderMap(){
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
         ${locked
           ? `<div class="small-note" style="margin-top:12px">🔒 尚未解鎖</div>`
-          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>`}
+          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
+             ${(st.best||0)>=70 ? `<label class="map-challenge"><input type="checkbox" ${isStageChallengeEnabled(s.id)?"checked":""} data-challenge-stage="${s.id}"><span>想挑戰看看？ 加強難度</span></label>` : ""}`}
       </div>`;
     }catch(e){
       console.warn("stage card render fallback",s?.id,e);
@@ -848,6 +835,12 @@ function renderMap(){
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
   el.onclick=(event)=>{
+    const challenge=event.target.closest('[data-challenge-stage]');
+    if(challenge && el.contains(challenge)){
+      event.stopPropagation();
+      setStageChallenge(challenge.dataset.challengeStage, challenge.checked);
+      return;
+    }
     const button=event.target.closest('.stage-enter[data-enter-stage]');
     if(button && el.contains(button)){
       event.stopPropagation();
@@ -896,6 +889,27 @@ function renderSuperBossStatus(){
   status.textContent=ready ? "✓ 已解鎖：3 題全部 Hard" : "🔒 完成前四個 Unit 後解鎖";
 }
 
+function isStageChallengeEnabled(stageId){
+  return !!(state.stageStats?.[stageId]?.challenge);
+}
+function setStageChallenge(stageId, enabled){
+  if(!state.stageStats[stageId]) state.stageStats[stageId]={best:0,plays:0,totalCorrect:0,totalQuestions:0};
+  state.stageStats[stageId].challenge=!!enabled;
+  saveState();
+  if(currentSession && currentSession.stageId===stageId) currentSession.challenge=!!enabled;
+  renderMap();
+  if(currentSession && currentSession.stageId===stageId) renderChallengeControl(stageId);
+}
+function renderChallengeControl(stageId){
+  const el=document.getElementById("challengeControl");
+  if(!el) return;
+  const st=state.stageStats?.[stageId]||{};
+  const available=(st.best||0)>=70;
+  if(!available){ el.innerHTML=""; return; }
+  const checked=isStageChallengeEnabled(stageId);
+  el.innerHTML=`<label class="challenge-control"><input type="checkbox" ${checked?"checked":""} onchange="setStageChallenge('${stageId}',this.checked)"><span>想挑戰看看？ 加強難度</span></label>`;
+}
+
 function weightedStagePool(stage){
   const weights={};
   (stage.types||[]).forEach(t=>{weights[t]=1;});
@@ -931,13 +945,16 @@ function stageQuestions(stageId,count=5){
   picked.push(...fallback.slice(0,Math.max(0,count-picked.length)));
 
   // Difficulty policy:
-  // - Normal missions always contain at most ONE hard question.
-  // - The rest are mostly easy/medium.
-  // - Hard is selected from a question that can support meaningful contrast distractors.
+  // - Normal missions are intentionally easy/medium only.
+  // - Hard questions appear only after the child opts into 加強難度.
+  // - Challenge mode uses meaningful rule contrasts, not harder vocabulary.
   const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q; return clean;});
-  const hardIndex=chooseHardQuestionIndex(result);
+  const challenge=isStageChallengeEnabled(stageId);
+  const hardIndex=challenge ? chooseHardQuestionIndex(result) : -1;
   result.forEach((q,i)=>{
-    q.difficulty = i===hardIndex ? "hard" : (Math.random()<0.55 ? "medium" : "easy");
+    q.difficulty = challenge
+      ? (i===hardIndex ? "hard" : (Math.random()<0.65 ? "medium" : "easy"))
+      : (Math.random()<0.25 ? "medium" : "easy");
   });
 
   state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,24);
@@ -978,8 +995,7 @@ function missionQuestionCount(stageId){
   const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
   if(max===0 && avg===0) return 4;
   if(avg<70) return 5;
-  if(avg<90) return 6;
-  return 7;
+  return 6;
 }
 
 function startStage(stageId){
@@ -1004,9 +1020,11 @@ function startStage(stageId){
     questionAttemptData:{},
     levelUps:0,
     uniqueCompleted:0,
-    learningSegmentStartedAt:Date.now()
+    learningSegmentStartedAt:Date.now(),
+    challenge:isStageChallengeEnabled(stageId)
   };
   document.getElementById("stageTitle").textContent=stage.title;
+  renderChallengeControl(stageId);
   showScreen("learn");
   if(stageId==="unit3"){
     showYRuleIntro();
@@ -1137,7 +1155,7 @@ function renderWarmupQuestion(){
   if(type==="rule"){
     const options=makeRuleOptions(q.answer);
     html=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
-      Which one is an <span class="red">${q.answer}</span> Pokémon?</div>
+      ${ruleQuestionPrompt(q)}</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
         return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
@@ -1426,7 +1444,7 @@ function renderQuestion(){
   if(type==="rule"){
     const options=makeRuleOptions(currentQuestion.answer);
     html=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
-      Which one is an <span class="red">${currentQuestion.answer}</span> Pokémon?</div>
+      ${ruleQuestionPrompt(currentQuestion)}</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
         return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
@@ -1453,8 +1471,36 @@ function renderQuestion(){
   if(freshHint) freshHint.style.display="flex";
   if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
 }
+function ruleQuestionPrompt(q){
+  const answer=q?.answer||"";
+  const isY=q?.rule==="consonant+y" || q?.rule==="vowel+y";
+  if(isY){
+    const prompts=answer==="IES"
+      ? ["Which one changes Y to <span class=\"red\">IES</span>?","Find the verb that needs <span class=\"red\">IES</span>.","Which verb needs <span class=\"red\">IES</span> after Y?"]
+      : ["Which one keeps Y and adds <span class=\"red\">S</span>?","Find the verb that needs <span class=\"red\">S</span>.","Which verb keeps Y and adds <span class=\"red\">S</span>?"];
+    return prompts[(String(q.id||"").length)%prompts.length];
+  }
+  const prompts={
+    S:["Which one needs <span class=\"red\">S</span>?","Find the verb that needs <span class=\"red\">S</span>.","Which verb needs <span class=\"red\">S</span>?"] ,
+    ES:["Which one needs <span class=\"red\">ES</span>?","Find the verb that needs <span class=\"red\">ES</span>.","Which verb needs <span class=\"red\">ES</span>?"]
+  };
+  const list=prompts[answer]||[`Which one is an <span class=\"red\">${escapeHtml(answer)}</span> Pokémon?`];
+  return list[(String(q?.id||"").length)%list.length];
+}
+
+function yRulePrompt(q){
+  if(!q || q.rule!="consonant+y" && q.rule!="vowel+y") return `Which one is an ${q?.answer||""} Pokémon?`;
+  return q.answer==="IES"
+    ? `Which one changes Y to IES?`
+    : `Which one keeps Y and adds S?`;
+}
+
+function stripHtml(s){ const d=document.createElement("div"); d.innerHTML=s; return d.textContent||d.innerText||""; }
+
 function getSpeakText(){
-  if(questionType(currentQuestion)==="rule") return `Which one is an ${currentQuestion.answer} Pokémon?`;
+  if(questionType(currentQuestion)==="rule"){
+    return stripHtml(ruleQuestionPrompt(currentQuestion));
+  }
   return currentQuestion.sentence.replace("_____","blank");
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
@@ -1468,16 +1514,29 @@ function questionType(q){
 function makeRuleOptions(answer){
   // Rule Hunt: exactly ONE option may satisfy the requested ending.
   // Difficulty changes distractor quality; it never changes answer validity.
-  const all=[
-    ...QUESTION_BANK.ruleS,
-    ...QUESTION_BANK.ruleCH,
-    ...QUESTION_BANK.ruleSH,
-    ...QUESTION_BANK.ruleSS,
-    ...QUESTION_BANK.ruleX,
-    ...QUESTION_BANK.ruleO,
-    ...QUESTION_BANK.ruleIES
-  ];
   const correct=currentQuestion;
+  const stageId=currentSession?.stageId;
+  let all;
+  if(stageId==="unit3"){
+    // Unit 3 is deliberately focused: only Y-ending verbs appear.
+    all=[...QUESTION_BANK.ruleIES];
+  }else if(stageId==="unit2"){
+    // Unit 2 is ES-only as a learning target. Ordinary-S verbs may appear only as distractors.
+    all=[...QUESTION_BANK.ruleES,...QUESTION_BANK.ruleS];
+  }else if(stageId==="unit1"){
+    // Unit 1 stays simple: ordinary verbs are the target; distractors are special endings.
+    all=[...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH.slice(0,6),...QUESTION_BANK.ruleSH.slice(0,6),...QUESTION_BANK.ruleX.slice(0,6)];
+  }else{
+    all=[
+      ...QUESTION_BANK.ruleS,
+      ...QUESTION_BANK.ruleCH,
+      ...QUESTION_BANK.ruleSH,
+      ...QUESTION_BANK.ruleSS,
+      ...QUESTION_BANK.ruleX,
+      ...QUESTION_BANK.ruleO,
+      ...QUESTION_BANK.ruleIES
+    ];
+  }
   const usedPokes=new Set([Number(correct.poke)]);
   const usedWords=new Set([correct.verb]);
   const candidates=shuffle(all.filter(x=>x.verb!==correct.verb && x.answer!==answer));
@@ -1490,8 +1549,14 @@ function makeRuleOptions(answer){
     distractors.push(item); usedPokes.add(Number(item.poke)); usedWords.add(item.verb); return true;
   };
 
-  if(currentQuestion.difficulty==="medium" || currentQuestion.difficulty==="hard"){
-    // Y Rule: always force the child to distinguish vowel + Y from consonant + Y.
+  if(stageId==="unit3"){
+    // All four choices are Y-ending verbs. Exactly one matches the requested outcome.
+    // This teaches the contrast without mixing in unrelated S/ES rules.
+    takeOne(x=>x.rule===oppositeYRule(correct));
+    takeOne(x=>x.rule===oppositeYRule(correct));
+    takeOne(x=>x.rule===oppositeYRule(correct));
+  }else if(currentQuestion.difficulty==="medium" || currentQuestion.difficulty==="hard"){
+    // Y Rule: later review may contrast vowel + Y with consonant + Y.
     if(isY(correct)) takeOne(x=>x.rule===oppositeYRule(correct));
   }
 
@@ -1543,7 +1608,7 @@ function showHint(){
   let visual="";
   // Visual clue starts at Hint 1: highlight ONLY the grammar key, never the whole word.
   // This gives Anson a clue without revealing the rule/result too early.
-  if(hintLevel>=1 && currentQuestion.verb){
+  if(hintLevel>=3 && currentQuestion.verb){
     const v=currentQuestion.verb;
     if(["CH","SH","SS"].includes(rule)){
       const show=rule;
@@ -1912,15 +1977,19 @@ function finishSession(){
     state.stageStats[s.stageId]=old;
     let unlockedText="";
     let unlockedNextId=null;
-    if(pct>=70){
-      const idx=STAGES.findIndex(x=>x.id===s.stageId);
-      if(idx<STAGES.length-1){
-        const next=STAGES[idx+1].id;
-        if(!state.unlocked.includes(next)){
-          state.unlocked.push(next);
-          unlockedNextId=next;
-          unlockedText=`<p style="color:#9ec8e7">🔓 已解鎖：${STAGES[idx+1].title}</p>`;
-        }
+    const idx=STAGES.findIndex(x=>x.id===s.stageId);
+    if(s.stageId==="unit4" && pct>=70){
+      // Passing Unit 4 completes the foundation path. From then on,
+      // Units 5–9 are all open; mastery can guide practice, but never blocks access.
+      state.unlocked=STAGES.map(x=>x.id);
+      unlockedText=`<p style="color:#9ec8e7">🔓 前四關完成！第 5～9 關全部開放，可以自由選擇。</p>`;
+      unlockedNextId=STAGES[4]?.id||null;
+    }else if(pct>=70 && idx<STAGES.length-1){
+      const next=STAGES[idx+1].id;
+      if(!state.unlocked.includes(next)){
+        state.unlocked.push(next);
+        unlockedNextId=next;
+        unlockedText=`<p style="color:#9ec8e7">🔓 已解鎖：${STAGES[idx+1].title}</p>`;
       }
     }
     s.reward=maybeReward(s,pct);
@@ -1937,13 +2006,15 @@ function finishSession(){
         ${s.reward.kind==="evolution"?`<div class="muted">${POKEMON[s.reward.from].name} → ${POKEMON[s.reward.to].name}</div>`:`<div class="muted">透過持續練習解鎖新的夥伴</div>`}
       </div>`:"";
     const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 LEVEL UP! Lv. ${state.level}</b></div>`:"";
-    showModal(`<div class="reward-poke"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
-      <div class="reward-title">Mission Complete!</div>
-      <p>完成 ${total} 題</p>
+    showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
+      <div class="reward-title">🌟 Mission Complete!</div>
+      <p>你完成了 ${total} 題！</p>
       <p class="muted">獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
       ${unlockedText}${levelHtml}${rewardHtml}
+      ${((state.stageStats[s.stageId]?.best||0)>=70) ? `<p class="small-note">💡 想挑戰看看？通關後可以隨時開啟「加強難度」，也可以隨時取消。</p>` : ""}
+      ${pct>=70 ? `<p class="muted">✓ 本關達成通關標準。</p>` : `<p style="color:#e5c86f">再練一次就好。達到 70% 即可解鎖下一關。</p>`}
       <div class="actions">
-        ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入下一關</button>`:""}
+        ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入第 5 關</button>`:""}
         <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
         <button class="btn" onclick="closeModal();showScreen('home')">回首頁</button>
       </div>`);
