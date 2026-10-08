@@ -193,7 +193,7 @@ main{margin-top:18px}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
 }
 
-.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:14px;justify-content:center}.next-arrow{width:64px;height:48px;padding:0;font-size:30px;line-height:1;border-radius:14px}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
+.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:14px;justify-content:center}.next-arrow{width:82px;height:38px;padding:0 12px;font-size:15px;line-height:1;border-radius:10px}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
 </style>
 </head>
 <body>
@@ -1148,7 +1148,7 @@ function renderQuestion(){
   if(type==="rule"){
     const options=makeRuleOptions(currentQuestion.answer);
     html=`<span class="rule-chip">RULE HUNT</span>
-      <div class="question"><button class="speaker" onclick="speak('Which one has a verb that needs ${currentQuestion.answer}?')">🔊</button>
+      <div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
       Which one is an <span class="red">${currentQuestion.answer}</span> Pokémon?</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
@@ -1172,7 +1172,7 @@ function renderQuestion(){
   if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
 }
 function getSpeakText(){
-  if(questionType(currentQuestion)==="rule") return `Which one has a verb that needs ${currentQuestion.answer}?`;
+  if(questionType(currentQuestion)==="rule") return `Which one is an ${currentQuestion.answer} Pokémon?`;
   return currentQuestion.sentence.replace("_____","blank");
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
@@ -1514,10 +1514,9 @@ function renderFeedback(correct,answer,errorType,exp){
     const nextLabel = currentSession.index + 1 < currentSession.questions.length ? "下一題" : "完成";
     f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
       ${transform}
-      <div class="feedback-note">${ex?"Great!":"Nice work!"}</div>
       ${example}
       <div class="actions feedback-next">
-        <button class="btn primary next-arrow" aria-label="${nextLabel}" title="${nextLabel}" onclick="nextQuestion()">→</button>
+        <button class="btn primary next-arrow" aria-label="${nextLabel}" title="${nextLabel}" onclick="nextQuestion()">→ Next</button>
       </div>`;
     speak("Correct!");
     if(ex) speak(ex.sentence);
