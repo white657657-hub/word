@@ -149,7 +149,7 @@ main{margin-top:18px}
 }
 .stage.locked{opacity:.48;cursor:not-allowed}
 .stage .num{font-size:12px;color:#8ea2b2}
-.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px}.stage-enter{font-size:16px;padding:9px 14px;min-height:40px}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
 .badge{position:absolute;right:12px;top:12px;font-size:12px;color:#c8d4dd}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .stat b{display:block;font-size:25px;margin-top:5px}.stat span{color:var(--muted);font-size:13px}
@@ -793,7 +793,9 @@ function renderMap(){
       return `<div class="card stage ${locked?"locked":""}" ${locked?"":"data-stage=\"${s.id}\" role=\"button\" tabindex=\"0\" aria-label=\"進入 ${escapeHtml(s.title)}\""}>
         <span class="num">STAGE ${i+1}</span><span class="badge">${locked?"🔒":status}</span>
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
-        <div class="small-note" style="margin-top:12px">${locked?"尚未解鎖":review?"🔁 建議複習":"▶ 點擊進入"}</div>
+        ${locked
+          ? `<div class="small-note" style="margin-top:12px">🔒 尚未解鎖</div>`
+          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>`}
       </div>`;
     }catch(e){
       console.warn("stage card render fallback",s?.id,e);
@@ -804,6 +806,12 @@ function renderMap(){
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
   el.onclick=(event)=>{
+    const button=event.target.closest('.stage-enter[data-enter-stage]');
+    if(button && el.contains(button)){
+      event.stopPropagation();
+      startStage(button.dataset.enterStage);
+      return;
+    }
     const card=event.target.closest('.stage[data-stage]');
     if(!card || !el.contains(card)) return;
     startStage(card.dataset.stage);
@@ -1610,12 +1618,14 @@ function finishSession(){
     old.best=Math.max(old.best,pct); old.plays++; old.totalCorrect+=s.correct; old.totalQuestions+=total;
     state.stageStats[s.stageId]=old;
     let unlockedText="";
+    let unlockedNextId=null;
     if(pct>=70){
       const idx=STAGES.findIndex(x=>x.id===s.stageId);
       if(idx<STAGES.length-1){
         const next=STAGES[idx+1].id;
         if(!state.unlocked.includes(next)){
           state.unlocked.push(next);
+          unlockedNextId=next;
           unlockedText=`<p style="color:#9ec8e7">🔓 已解鎖：${STAGES[idx+1].title}</p>`;
         }
       }
@@ -1640,6 +1650,7 @@ function finishSession(){
       <p class="muted">獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
       ${unlockedText}${levelHtml}${rewardHtml}
       <div class="actions">
+        ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入下一關</button>`:""}
         <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
         <button class="btn" onclick="closeModal();showScreen('home')">回首頁</button>
       </div>`);
