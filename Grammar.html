@@ -164,7 +164,7 @@ main{margin-top:18px}
 .poke img{width:90px;height:90px}.poke .name{font-weight:800}.poke .no{color:#7f93a3;font-size:11px}.poke .lv{color:#bfcbd5;font-size:12px;margin-top:3px}
 .poke .tag{display:inline-block;margin-top:6px;font-size:11px;padding:3px 7px;border-radius:999px;background:#233a4b;color:#a9cbe5}
 .poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
-.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.qa-diagnostic{margin:10px auto;padding:8px 10px;border:1px dashed var(--border);border-radius:8px;color:#d7c98b;font-size:12px}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
+.pokemon-transform{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:900;margin-top:6px}.pokemon-transform .arrow{color:var(--muted);font-size:18px}.pokemon-transform b{color:#8ed19e}.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.qa-diagnostic{margin:10px auto;padding:8px 10px;border:1px dashed var(--border);border-radius:8px;color:#d7c98b;font-size:12px}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
 .toggle{accent-color:#79aeda}
@@ -1152,7 +1152,7 @@ function renderQuestion(){
       Which one is an <span class="red">${currentQuestion.answer}</span> Pokémon?</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
-        return `<button class="option" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
+        return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
           <img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'">
           <span class="word">${o.verb}</span>
           <span class="word-speaker" onclick="event.stopPropagation();speak('${o.verb}')">🔊</span>
@@ -1506,19 +1506,30 @@ function renderFeedback(correct,answer,errorType,exp){
       return;
     }
     const ex=q.poke ? verbExample(q) : null;
-    const transform=ex ? `<div class="feedback-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></div>` : "";
+    // Put the grammar transformation inside the correct Pokémon card so the child
+    // can connect the Pokémon, verb, and rule in one visual unit.
+    let transform="";
+    if(ex){
+      const selected=document.querySelector(`.option[data-poke="${Number(q.poke)}"]`);
+      if(selected){
+        const word=selected.querySelector('.word');
+        const speaker=selected.querySelector('.word-speaker');
+        if(word) word.innerHTML=`<span class="pokemon-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></span>`;
+        if(speaker) speaker.style.display="none";
+        selected.classList.add("correct-choice");
+      }
+    }
     const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
-    // Learning mode: show the verb transformation and example immediately.
+    // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
     const nextLabel = currentSession.index + 1 < currentSession.questions.length ? "下一題" : "完成";
-    f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
-      ${transform}
+    f.innerHTML=`<div class="big" style="color:#8ed19e">✓ Correct</div>
       ${example}
       <div class="actions feedback-next">
         <button class="btn primary next-arrow" aria-label="${nextLabel}" title="${nextLabel}" onclick="nextQuestion()">→ Next</button>
       </div>`;
-    speak("Correct!");
+    speak("Correct");
     if(ex) speak(ex.sentence);
     return;
   }
