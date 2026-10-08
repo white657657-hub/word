@@ -164,7 +164,7 @@ main{margin-top:18px}
 .poke img{width:90px;height:90px}.poke .name{font-weight:800}.poke .no{color:#7f93a3;font-size:11px}.poke .lv{color:#bfcbd5;font-size:12px;margin-top:3px}
 .poke .tag{display:inline-block;margin-top:6px;font-size:11px;padding:3px 7px;border-radius:999px;background:#233a4b;color:#a9cbe5}
 .poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
-.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}.testtag{color:#e2c46e}
+.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.qa-diagnostic{margin:10px auto;padding:8px 10px;border:1px dashed var(--border);border-radius:8px;color:#d7c98b;font-size:12px}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
 .toggle{accent-color:#79aeda}
@@ -192,6 +192,8 @@ main{margin-top:18px}
   .options,.choice-row{grid-template-columns:repeat(2,1fr)}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+.hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)}
 </style>
 </head>
 <body>
@@ -218,26 +220,17 @@ main{margin-top:18px}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p>English questions. Audio support. Short missions. Pokémon rewards.</p>
+      <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
         <button class="btn" onclick="showScreen('myPokemon')">⭐ 我的寶可夢</button>
         <button class="btn" onclick="showScreen('pokedex')">📖 寶可夢圖鑑</button>
         <button class="btn" onclick="showScreen('logs')">📊 學習紀錄</button>
-        <button class="btn gold" onclick="startTest()">🧪 測試</button>
       </div>
     </div>
     <div class="hero-poke"><img id="heroPoke" alt="Pikachu"></div>
   </div>
 
-  <div class="section-title"><h2>今日任務</h2><span class="muted" id="dailyText">今日學習：0 題</span></div>
-  <div class="card">
-    <div style="display:flex;align-items:center;gap:12px">
-      <span style="font-size:28px">📋</span>
-      <div style="flex:1"><b>完成一個小任務即可結束今天的學習</b><br><span class="muted">建議 10–15 分鐘，不需要一直玩。</span></div>
-      <div class="progress"><div id="dailyFill" style="width:0"></div></div>
-    </div>
-  </div>
 
   <div class="section-title"><h2>快速入口</h2></div>
   <div class="grid">
@@ -252,8 +245,20 @@ main{margin-top:18px}
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
   <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">可以自由回到已解鎖的關卡</span></div>
   <div class="map" id="stageMap"></div>
-  <div class="section-title"><h2>⭐ 今日推薦</h2></div>
+  <div class="section-title"><h2>⭐ 下一步建議</h2></div>
   <div class="card" id="recommendation"></div>
+  <div class="section-title" style="margin-top:18px"><h2>🔥 超級魔王關</h2></div>
+  <div class="card" id="superBossCard">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="font-size:42px">👑</div>
+      <div style="flex:1">
+        <b>3 題超級挑戰</b><br>
+        <span class="muted">全部都是難題，會混合已學過的規則。</span>
+      </div>
+      <button class="btn gold small" id="superBossBtn" onclick="startSuperBoss()">挑戰</button>
+    </div>
+    <div id="superBossStatus" class="small-note" style="margin-top:10px"></div>
+  </div>
 </section>
 
 <section id="learn" class="screen">
@@ -286,8 +291,39 @@ main{margin-top:18px}
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
   <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
   <div class="stats" id="stats"></div>
-  <div class="section-title"><h2>最近紀錄</h2><span class="muted">TEST 不會進入學習統計</span></div>
+  <div class="section-title"><h2>最近紀錄</h2></div>
   <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
+</section>
+
+
+<section id="qa" class="screen">
+  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
+  <div class="section-title"><h2>🧪 QA 測試</h2><span class="muted">僅供媽媽／開發測試，不計入孩子學習</span></div>
+  <div class="card">
+    <div class="setting-row"><span>測試單元</span>
+      <select id="qaUnit" style="background:#172532;color:#fff;border:1px solid var(--border);padding:8px;border-radius:8px">
+        <option value="mixed">Mixed：S / ES / IES</option>
+        <option value="ruleS">S</option><option value="ruleCH">CH → ES</option><option value="ruleSH">SH → ES</option>
+        <option value="ruleSS">SS → ES</option><option value="ruleX">X → ES</option><option value="ruleO">O → ES</option>
+        <option value="ruleIES">Y Rule：S / IES</option><option value="sentenceSubject">Subject</option>
+        <option value="sentenceFill">Sentence</option><option value="ing">V-ing</option><option value="error">Error Detective</option>
+      </select>
+    </div>
+    <div class="setting-row"><span>題數</span>
+      <select id="qaCount" style="background:#172532;color:#fff;border:1px solid var(--border);padding:8px;border-radius:8px">
+        <option>5</option><option selected>10</option><option>20</option><option>30</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button class="btn gold" onclick="startQATest()">開始 QA</button>
+      <button class="btn" onclick="runQuestionBankHealthCheck()">題庫健康檢查</button>
+    </div>
+    <div id="qaHealth" class="small-note" style="margin-top:12px"></div>
+  </div>
+  <div class="card">
+    <b>QA 原則</b>
+    <p class="small-note">QA 可以逐題檢查題目、選項、正確答案、提示、語音、Pokémon 圖片、例句與流程。Y Rule 會同時驗證「母音 + Y → S」與「子音 + Y → IES」。QA 檢查與孩子的學習紀錄完全分開，也不影響 EXP、Mastery、進度、休息計時或獎勵。</p>
+  </div>
 </section>
 
 <section id="settings" class="screen">
@@ -296,13 +332,16 @@ main{margin-top:18px}
   <div class="settings">
     <div class="card">
       <div class="setting-row"><span>🔊 題目自動播放</span><input class="toggle" id="autoSpeak" type="checkbox" checked onchange="saveSettings()"></div>
-      <div class="setting-row"><span>🎉 慶祝動畫</span><select id="celebrate" onchange="saveSettings()" style="background:#172532;color:#fff;border:1px solid var(--border);padding:7px;border-radius:8px"><option value="full">完整</option><option value="simple">簡單</option><option value="off">關閉</option></select></div>
-      <div class="setting-row"><span>🧪 測試模式</span><span class="muted">不納入學習統計／EXP／Mastery</span></div>
+          </div>
+    <div class="card">
+      <h3>家長／開發工具</h3>
+      <p class="small-note">QA 檢查不會進入孩子的學習紀錄，也不影響 EXP、Mastery 或關卡。</p>
+      <button class="btn gold small" onclick="showScreen('qa')">🧪 開啟 QA 檢查</button>
     </div>
     <div class="card">
       <h3>學習原則</h3>
-      <p class="small-note">每天完成一個短任務即可。可以自由回訪喜歡的關卡；重玩時遊戲獎勵會遞減，但真正進步仍會被記錄與鼓勵。</p>
-      <p class="small-note">不設連續登入獎勵、不設等待恢復、不設付費抽卡。</p>
+      <p class="small-note">沒有每日任務、連續登入、倒數、生命或等待機制。可以自由回訪已解鎖關卡；進步會被記錄，但不要求每天完成。</p>
+      <p class="small-note">學習約 30 分鐘時只提供健康休息提醒，不是遊戲懲罰。</p>
     </div>
   </div>
 </section>
@@ -329,30 +368,26 @@ const POKEMON = {
 };
 
 const STAGES = [
- {id:"s",title:"S 草原",rule:"S",desc:"Most verbs → S",types:["ruleS"],unlock:0},
- {id:"ch",title:"CH 小徑",rule:"ES",desc:"CH → ES",types:["ruleCH"],unlock:0},
- {id:"sh",title:"SH 山谷",rule:"ES",desc:"SH → ES",types:["ruleSH"],unlock:0},
- {id:"ss",title:"SS 湖畔",rule:"ES",desc:"SS → ES",types:["ruleSS"],unlock:0},
- {id:"x",title:"X 峽谷",rule:"ES",desc:"X → ES",types:["ruleX"],unlock:0},
- {id:"o",title:"O 洞窟",rule:"ES",desc:"O → ES",types:["ruleO"],unlock:0},
- {id:"y",title:"Y 森林",rule:"IES",desc:"Consonant + Y → IES",types:["ruleIES"],unlock:0},
- {id:"mixed",title:"S / ES / IES 混合區",rule:"Mixed",desc:"Choose the correct ending",types:["mixed"],unlock:1},
- {id:"subject",title:"主詞峽谷",rule:"Subject",desc:"Subject → correct verb",types:["sentenceSubject"],unlock:1},
- {id:"sentence",title:"句子森林",rule:"Sentence",desc:"Sentence fill-in",types:["sentenceFill"],unlock:2},
- {id:"ing",title:"-ing 山谷",rule:"-ing",desc:"Present continuous + CVC",types:["ing"],unlock:3},
- {id:"error",title:"錯誤偵探村",rule:"Error Detective",desc:"Find the correct sentence",types:["error"],unlock:4}
+ {id:"unit1",title:"第一森林｜S",rule:"S",desc:"Unit 1 · Third-person singular verbs → S",types:["ruleS"],newTypes:["ruleS"],unlock:0},
+ {id:"unit2",title:"第二森林｜ES",rule:"ES",desc:"Unit 2 · ES rules + Unit 1 review",types:["ruleS","ruleES"],newTypes:["ruleES"],unlock:1},
+ {id:"unit3",title:"第三森林｜Y Rule",rule:"Y Rule",desc:"Unit 3 · Vowel + Y → S · Consonant + Y → IES",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:2},
+ {id:"unit4",title:"第四森林｜CVC / V-ing",rule:"CVC",desc:"Unit 4 · CVC doubling + cumulative review",types:["ruleS","ruleES","ruleIES","ing"],newTypes:["ing"],unlock:3}
 ];
 
 const QUESTION_BANK = {
   // Rule Hunt banks: each skill has a healthy pool so an 8-question mission does not immediately repeat.
   // `poke` is only the visual skin; the answer is determined by `rule`.
   ruleS:[
-    {id:"s01",verb:"play",answer:"S",poke:25,rule:"S"},{id:"s02",verb:"jump",answer:"S",poke:4,rule:"S"},
+    {id:"s01",verb:"eat",answer:"S",poke:25,rule:"S"},{id:"s02",verb:"jump",answer:"S",poke:4,rule:"S"},
     {id:"s03",verb:"listen",answer:"S",poke:7,rule:"S"},{id:"s04",verb:"read",answer:"S",poke:1,rule:"S"},
     {id:"s05",verb:"work",answer:"S",poke:133,rule:"S"},{id:"s06",verb:"clean",answer:"S",poke:54,rule:"S"},
     {id:"s07",verb:"help",answer:"S",poke:39,rule:"S"},{id:"s08",verb:"open",answer:"S",poke:52,rule:"S"},
     {id:"s09",verb:"need",answer:"S",poke:10,rule:"S"},{id:"s10",verb:"cook",answer:"S",poke:16,rule:"S"},
-    {id:"s11",verb:"draw",answer:"S",poke:27,rule:"S"},{id:"s12",verb:"sing",answer:"S",poke:35,rule:"S"}
+    {id:"s11",verb:"draw",answer:"S",poke:27,rule:"S"},{id:"s12",verb:"sing",answer:"S",poke:35,rule:"S"},
+    {id:"s13",verb:"love",answer:"S",poke:25,rule:"S"},{id:"s14",verb:"like",answer:"S",poke:4,rule:"S"},
+    {id:"s15",verb:"want",answer:"S",poke:7,rule:"S"},{id:"s16",verb:"use",answer:"S",poke:1,rule:"S"},
+    {id:"s17",verb:"live",answer:"S",poke:133,rule:"S"},{id:"s18",verb:"walk",answer:"S",poke:54,rule:"S"},
+    {id:"s19",verb:"talk",answer:"S",poke:39,rule:"S"},{id:"s20",verb:"look",answer:"S",poke:52,rule:"S"}
   ],
   ruleCH:[
     {id:"ch01",verb:"teach",answer:"ES",poke:4,rule:"CH"},{id:"ch02",verb:"watch",answer:"ES",poke:7,rule:"CH"},
@@ -360,7 +395,11 @@ const QUESTION_BANK = {
     {id:"ch05",verb:"catch",answer:"ES",poke:52,rule:"CH"},{id:"ch06",verb:"match",answer:"ES",poke:10,rule:"CH"},
     {id:"ch07",verb:"switch",answer:"ES",poke:16,rule:"CH"},{id:"ch08",verb:"fetch",answer:"ES",poke:27,rule:"CH"},
     {id:"ch09",verb:"search",answer:"ES",poke:35,rule:"CH"},{id:"ch10",verb:"march",answer:"ES",poke:25,rule:"CH"},
-    {id:"ch11",verb:"scratch",answer:"ES",poke:1,rule:"CH"},{id:"ch12",verb:"stretch",answer:"ES",poke:133,rule:"CH"}
+    {id:"ch11",verb:"scratch",answer:"ES",poke:1,rule:"CH"},{id:"ch12",verb:"stretch",answer:"ES",poke:133,rule:"CH"},
+    {id:"ch13",verb:"punch",answer:"ES",poke:25,rule:"CH"},{id:"ch14",verb:"munch",answer:"ES",poke:4,rule:"CH"},
+    {id:"ch15",verb:"coach",answer:"ES",poke:7,rule:"CH"},{id:"ch16",verb:"launch",answer:"ES",poke:54,rule:"CH"},
+    {id:"ch17",verb:"branch",answer:"ES",poke:39,rule:"CH"},{id:"ch18",verb:"preach",answer:"ES",poke:52,rule:"CH"},
+    {id:"ch19",verb:"approach",answer:"ES",poke:10,rule:"CH"},{id:"ch20",verb:"attach",answer:"ES",poke:16,rule:"CH"}
   ],
   ruleSH:[
     {id:"sh01",verb:"wash",answer:"ES",poke:39,rule:"SH"},{id:"sh02",verb:"push",answer:"ES",poke:10,rule:"SH"},
@@ -368,7 +407,11 @@ const QUESTION_BANK = {
     {id:"sh05",verb:"rush",answer:"ES",poke:54,rule:"SH"},{id:"sh06",verb:"wish",answer:"ES",poke:7,rule:"SH"},
     {id:"sh07",verb:"flash",answer:"ES",poke:25,rule:"SH"},{id:"sh08",verb:"crash",answer:"ES",poke:4,rule:"SH"},
     {id:"sh09",verb:"polish",answer:"ES",poke:35,rule:"SH"},{id:"sh10",verb:"splash",answer:"ES",poke:27,rule:"SH"},
-    {id:"sh11",verb:"punish",answer:"ES",poke:1,rule:"SH"},{id:"sh12",verb:"publish",answer:"ES",poke:133,rule:"SH"}
+    {id:"sh11",verb:"punish",answer:"ES",poke:1,rule:"SH"},{id:"sh12",verb:"publish",answer:"ES",poke:133,rule:"SH"},
+    {id:"sh13",verb:"fish",answer:"ES",poke:25,rule:"SH"},{id:"sh14",verb:"crush",answer:"ES",poke:4,rule:"SH"},
+    {id:"sh15",verb:"smash",answer:"ES",poke:7,rule:"SH"},{id:"sh16",verb:"vanish",answer:"ES",poke:54,rule:"SH"},
+    {id:"sh17",verb:"relish",answer:"ES",poke:39,rule:"SH"},{id:"sh18",verb:"hush",answer:"ES",poke:52,rule:"SH"},
+    {id:"sh19",verb:"flush",answer:"ES",poke:10,rule:"SH"},{id:"sh20",verb:"dash",answer:"ES",poke:16,rule:"SH"}
   ],
   ruleSS:[
     {id:"ss01",verb:"miss",answer:"ES",poke:52,rule:"SS"},{id:"ss02",verb:"kiss",answer:"ES",poke:39,rule:"SS"},
@@ -376,7 +419,11 @@ const QUESTION_BANK = {
     {id:"ss05",verb:"guess",answer:"ES",poke:54,rule:"SS"},{id:"ss06",verb:"cross",answer:"ES",poke:7,rule:"SS"},
     {id:"ss07",verb:"press",answer:"ES",poke:25,rule:"SS"},{id:"ss08",verb:"bless",answer:"ES",poke:4,rule:"SS"},
     {id:"ss09",verb:"discuss",answer:"ES",poke:1,rule:"SS"},{id:"ss10",verb:"express",answer:"ES",poke:133,rule:"SS"},
-    {id:"ss11",verb:"address",answer:"ES",poke:35,rule:"SS"},{id:"ss12",verb:"impress",answer:"ES",poke:27,rule:"SS"}
+    {id:"ss11",verb:"address",answer:"ES",poke:35,rule:"SS"},{id:"ss12",verb:"impress",answer:"ES",poke:27,rule:"SS"},
+    {id:"ss13",verb:"stress",answer:"ES",poke:25,rule:"SS"},{id:"ss14",verb:"confess",answer:"ES",poke:4,rule:"SS"},
+    {id:"ss15",verb:"possess",answer:"ES",poke:7,rule:"SS"},{id:"ss16",verb:"obsess",answer:"ES",poke:54,rule:"SS"},
+    {id:"ss17",verb:"toss",answer:"ES",poke:39,rule:"SS"},{id:"ss18",verb:"boss",answer:"ES",poke:52,rule:"SS"},
+    {id:"ss19",verb:"floss",answer:"ES",poke:10,rule:"SS"},{id:"ss20",verb:"trespass",answer:"ES",poke:16,rule:"SS"}
   ],
   ruleX:[
     {id:"x01",verb:"fix",answer:"ES",poke:10,rule:"X"},{id:"x02",verb:"mix",answer:"ES",poke:16,rule:"X"},
@@ -384,7 +431,11 @@ const QUESTION_BANK = {
     {id:"x05",verb:"relax",answer:"ES",poke:25,rule:"X"},{id:"x06",verb:"fax",answer:"ES",poke:7,rule:"X"},
     {id:"x07",verb:"wax",answer:"ES",poke:52,rule:"X"},{id:"x08",verb:"index",answer:"ES",poke:4,rule:"X"},
     {id:"x09",verb:"flex",answer:"ES",poke:35,rule:"X"},{id:"x10",verb:"vex",answer:"ES",poke:27,rule:"X"},
-    {id:"x11",verb:"prefix",answer:"ES",poke:1,rule:"X"},{id:"x12",verb:"suffix",answer:"ES",poke:133,rule:"X"}
+    {id:"x11",verb:"prefix",answer:"ES",poke:1,rule:"X"},{id:"x12",verb:"suffix",answer:"ES",poke:133,rule:"X"},
+    {id:"x13",verb:"unbox",answer:"ES",poke:25,rule:"X"},{id:"x14",verb:"outfox",answer:"ES",poke:4,rule:"X"},
+    {id:"x15",verb:"affix",answer:"ES",poke:7,rule:"X"},{id:"x16",verb:"coax",answer:"ES",poke:54,rule:"X"},
+    {id:"x17",verb:"detox",answer:"ES",poke:39,rule:"X"},{id:"x18",verb:"transfix",answer:"ES",poke:52,rule:"X"},
+    {id:"x19",verb:"remix",answer:"ES",poke:10,rule:"X"},{id:"x20",verb:"fox",answer:"ES",poke:16,rule:"X"}
   ],
   ruleO:[
     {id:"o01",verb:"go",answer:"ES",poke:16,rule:"O"},{id:"o02",verb:"do",answer:"ES",poke:54,rule:"O"},
@@ -392,15 +443,26 @@ const QUESTION_BANK = {
     {id:"o05",verb:"embargo",answer:"ES",poke:25,rule:"O"},{id:"o06",verb:"zero",answer:"ES",poke:7,rule:"O"},
     {id:"o07",verb:"solo",answer:"ES",poke:10,rule:"O"},{id:"o08",verb:"lasso",answer:"ES",poke:4,rule:"O"},
     {id:"o09",verb:"torpedo",answer:"ES",poke:1,rule:"O"},{id:"o10",verb:"video",answer:"ES",poke:133,rule:"O"},
-    {id:"o11",verb:"redo",answer:"ES",poke:35,rule:"O"},{id:"o12",verb:"undo",answer:"ES",poke:27,rule:"O"}
+    {id:"o11",verb:"redo",answer:"ES",poke:35,rule:"O"},{id:"o12",verb:"undo",answer:"ES",poke:27,rule:"O"},
+    {id:"o13",verb:"outdo",answer:"ES",poke:25,rule:"O"},{id:"o14",verb:"overdo",answer:"ES",poke:4,rule:"O"},
+    {id:"o15",verb:"forgo",answer:"ES",poke:7,rule:"O"},{id:"o16",verb:"undergo",answer:"ES",poke:54,rule:"O"}
   ],
   ruleIES:[
+    // Y Rule: consonant + Y → IES; vowel + Y → S. Keep both forms in the same skill.
     {id:"y01",verb:"try",answer:"IES",poke:25,rule:"consonant+y"},{id:"y02",verb:"study",answer:"IES",poke:1,rule:"consonant+y"},
     {id:"y03",verb:"cry",answer:"IES",poke:7,rule:"consonant+y"},{id:"y04",verb:"carry",answer:"IES",poke:4,rule:"consonant+y"},
     {id:"y05",verb:"worry",answer:"IES",poke:54,rule:"consonant+y"},{id:"y06",verb:"hurry",answer:"IES",poke:39,rule:"consonant+y"},
     {id:"y07",verb:"copy",answer:"IES",poke:52,rule:"consonant+y"},{id:"y08",verb:"fly",answer:"IES",poke:10,rule:"consonant+y"},
     {id:"y09",verb:"reply",answer:"IES",poke:16,rule:"consonant+y"},{id:"y10",verb:"dry",answer:"IES",poke:27,rule:"consonant+y"},
-    {id:"y11",verb:"marry",answer:"IES",poke:35,rule:"consonant+y"},{id:"y12",verb:"tidy",answer:"IES",poke:133,rule:"consonant+y"}
+    {id:"y11",verb:"marry",answer:"IES",poke:35,rule:"consonant+y"},{id:"y12",verb:"tidy",answer:"IES",poke:133,rule:"consonant+y"},
+    {id:"y13",verb:"empty",answer:"IES",poke:25,rule:"consonant+y"},{id:"y14",verb:"apply",answer:"IES",poke:4,rule:"consonant+y"},
+    {id:"y15",verb:"deny",answer:"IES",poke:7,rule:"consonant+y"},{id:"y16",verb:"identify",answer:"IES",poke:54,rule:"consonant+y"},
+    {id:"y17",verb:"satisfy",answer:"IES",poke:39,rule:"consonant+y"},{id:"y18",verb:"modify",answer:"IES",poke:52,rule:"consonant+y"},
+    {id:"y19",verb:"simplify",answer:"IES",poke:10,rule:"consonant+y"},{id:"y20",verb:"verify",answer:"IES",poke:16,rule:"consonant+y"},
+    {id:"y21",verb:"play",answer:"S",poke:35,rule:"vowel+y"},{id:"y22",verb:"enjoy",answer:"S",poke:133,rule:"vowel+y"},
+    {id:"y23",verb:"buy",answer:"S",poke:54,rule:"vowel+y"},{id:"y24",verb:"stay",answer:"S",poke:39,rule:"vowel+y"},
+    {id:"y25",verb:"obey",answer:"S",poke:52,rule:"vowel+y"},{id:"y26",verb:"employ",answer:"S",poke:7,rule:"vowel+y"},
+    {id:"y27",verb:"annoy",answer:"S",poke:4,rule:"vowel+y"},{id:"y28",verb:"delay",answer:"S",poke:1,rule:"vowel+y"}
   ],
   mixed:[],
   sentenceSubject:[
@@ -461,6 +523,59 @@ const QUESTION_BANK = {
   ]
 };
 
+
+// Rule Hunt examples: every vocabulary item is a VERB. Examples are contextual,
+// not noun-plural examples. They appear after a correct answer, before the next question.
+const VERB_EXAMPLE_OBJECTS = {
+  play:"soccer", jump:"high", listen:"carefully", read:"books", work:"hard", clean:"the room",
+  help:"his friend", open:"the door", need:"help", cook:"dinner", draw:"a picture", sing:"a song",
+  love:"animals", like:"ice cream", want:"a snack", use:"a pencil", live:"in Taipei",
+  walk:"to school", talk:"to his friend", look:"at the sky",
+  teach:"English", watch:"TV", reach:"the finish line", touch:"the ball", catch:"the ball",
+  match:"the colors", switch:"the light", fetch:"the ball", search:"for bugs", march:"forward",
+  scratch:"the paper", stretch:"his arms", punch:"the bag", munch:"an apple", coach:"the team",
+  launch:"the rocket", branch:"the project", preach:"kindness", approach:"the door", attach:"the card",
+  wash:"the dishes", push:"the door", finish:"his homework", brush:"his teeth", rush:"to school",
+  wish:"for a toy", flash:"a smile", crash:"into the wall", polish:"his shoes", splash:"in the water",
+  punish:"the player", publish:"a book", fish:"in the lake", crush:"the can", smash:"the box",
+  vanish:"quickly", relish:"the moment", hush:"the room",
+  miss:"the bus", kiss:"his mom", pass:"the ball", dress:"quickly", guess:"the answer",
+  cross:"the street", press:"the button", bless:"the food", discuss:"the plan", express:"his idea",
+  address:"the problem", impress:"his teacher", stress:"the importance", confess:"the truth",
+  possess:"a key", obsess:"over details", toss:"the ball", boss:"the team", floss:"his teeth",
+  fix:"the bike", mix:"the colors", box:"the gift", tax:"the company", relax:"at home", fax:"the form",
+  wax:"the car", index:"the files", flex:"his muscles", vex:"his brother", prefix:"the word",
+  suffix:"the name", unbox:"the toy", annex:"the room",
+  go:"to school", do:"his homework", echo:"through the hall", veto:"the plan", embargo:"the goods",
+  zero:"the score", solo:"on stage", lasso:"the horse", torpedo:"the target", video:"the event",
+  redo:"the task", undo:"the change", outdo:"his record", overdo:"the exercise", forgo:"the treat",
+  undergo:"training",
+  outfox:"his opponent", affix:"the label", coax:"the dog", detox:"his body", hex:"the code", transfix:"the audience", remix:"the song", fox:"the opponent",
+  flush:"the toilet", dash:"to the door", trespass:"on the land", apply:"the rule",
+  try:"to help", study:"English", cry:"when sad", carry:"a bag", worry:"about the test",
+  play:"soccer", enjoy:"the game", buy:"a book", stay:"at home", obey:"the rules", delay:"the task",
+  hurry:"to school", copy:"the sentence", fly:"in the sky", reply:"to the message", dry:"the dishes",
+  marry:"in a story", tidy:"the room", empty:"the box", deny:"the claim", identify:"the insect",
+  satisfy:"the need", modify:"the plan", simplify:"the problem", verify:"the answer"
+};
+function thirdPersonVerb(verb, rule){
+  if(rule==="consonant+y") return verb.slice(0,-1)+"ies";
+  if(rule==="vowel+y") return verb+"s";
+  if(["CH","SH","SS","X","O"].includes(rule)) return verb+"es";
+  return verb+"s";
+}
+function verbExample(q){
+  const form=thirdPersonVerb(q.verb,q.rule);
+  const obj=VERB_EXAMPLE_OBJECTS[q.verb];
+  let sentence;
+  if(q.verb==="go") sentence=`He ${form} to school.`;
+  else if(q.verb==="live") sentence=`He ${form} in Taipei.`;
+  else if(q.verb==="rush") sentence=`She ${form} to school.`;
+  else if(["jump","listen","work","dress","relax","solo","fly","cry","hurry","vanish"].includes(q.verb)) sentence=`He ${form}${obj ? " "+obj : ""}.`;
+  else sentence=`He ${form}${obj ? " "+obj : ""}.`;
+  return {base:q.verb,form,sentence};
+}
+
 // Build the mixed bank from the real rule banks instead of maintaining a second, stale list.
 QUESTION_BANK.mixed=[
   ...QUESTION_BANK.ruleS.slice(0,6),
@@ -485,7 +600,7 @@ QUESTION_BANK.ruleES=[
 const HINTS = {
  S:[
   ["Look at the verb.","Which ending does this verb need?"],
-  ["Most verbs use S.","Check that the verb does not end in CH, SH, SS, X, or O."],
+  ["Most verbs use S.","Check CH, SH, SS, X, O, and Y endings."],
   ["S → S","Add S: play → plays"]
  ],
  CH:[
@@ -513,10 +628,10 @@ const HINTS = {
   ["The word ends in O.","O is the clue."],
   ["O → ES","Add ES: go → goes"]
  ],
- IES:[
+ Y:[
   ["Look at the letter before Y.","Check the letter right before Y."],
   ["Is it a consonant or a vowel?","A, E, I, O, U are vowels."],
-  ["Consonant + Y → IES","Change Y to IES."]
+  ["Consonant + Y → IES; Vowel + Y → S","Choose IES for a consonant + Y, but S for a vowel + Y."]
  ],
  subject:[
   ["Find the subject.","Who is doing the action?"],
@@ -524,19 +639,24 @@ const HINTS = {
   ["He / She / It → S / ES / IES","Plural subjects use the base verb."]
  ],
  CVC:[
-  ["Look at the last three letters.","Check the consonant-vowel-consonant pattern."],
-  ["Is the verb CVC?","sit, hop, win, stop are examples."],
+  ["Look at the last three letters.","Check the final consonant-vowel-consonant pattern."],
+  ["Does the final three-letter pattern end CVC?","sit → sitting; hop → hopping; stop → stopping."],
   ["CVC → double the last consonant + ing","sit → sitting"]
  ],
  "+ing":[
   ["Look at the verb.","Most verbs simply add -ing."],
   ["Do not double every verb.","drink → drinking; jump → jumping."],
   ["verb + ing","Add -ing."]
+ ],
+ "drop-e":[
+  ["Look at the end of the verb.","Check whether the verb ends with silent e."],
+  ["Drop the final e before -ing.","write → writing; make → making."],
+  ["drop e + ing","write → writing"]
  ]
 };
 
 const STORAGE_KEY = "ansonGrammarAdventureV2";
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 5;
 const state = loadState();
 let currentSession = null;
 let currentQuestion = null;
@@ -546,16 +666,13 @@ let answerLocked = false;
 function defaultState(){
   return {
     level:1,xp:0,
-    settings:{autoSpeak:true,celebrate:"full"},
-    unlocked:["s","ch","sh","y"],
+    settings:{autoSpeak:true},
+    unlocked:["unit1"],
     stageStats:{},
     logs:[],
     collection:{25:{level:1,xp:0,evolutionProgress:0},4:{level:1,xp:0,evolutionProgress:0},7:{level:1,xp:0,evolutionProgress:0}},
-    daily:{date:today(),count:0},
-    reward:{upgradeUsed:false,effortUsed:false},
     activePokemon:25,
-    learning:{mastery:{},learningTime:{date:today(),activeMs:0,restRequired:false}},
-    testLogs:[],
+    learning:{mastery:{},recentQuestionIds:[],learningTime:{activeMs:0,restRequired:false}},
     schemaVersion:SCHEMA_VERSION
   };
 }
@@ -564,12 +681,14 @@ function loadState(){
     const raw=localStorage.getItem(STORAGE_KEY) || localStorage.getItem("ansonGrammarV1");
     const s=raw?JSON.parse(raw):null;
     if(!s || !s.level) return defaultState();
-    // Migrate V1 data without destroying learning progress.
-    if(!s.learning) s.learning={mastery:{},learningTime:{date:today(),activeMs:0,restRequired:false}};
-    if(!s.testLogs) s.testLogs=[];
-    if(!s.learning.learningTime) s.learning.learningTime={date:today(),activeMs:0,restRequired:false};
+    // Migrate older data without destroying learning progress.
+    if(!s.learning) s.learning={mastery:{},learningTime:{activeMs:0,restRequired:false}};
+    if(!s.learning.learningTime) s.learning.learningTime={activeMs:0,restRequired:false};
     if(!s.logs) s.logs=[];
+    if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
+    if(!s.collection || typeof s.collection !== "object") s.collection={};
     if(!s.learning.mastery) s.learning.mastery={};
+    if(!Array.isArray(s.learning.recentQuestionIds)) s.learning.recentQuestionIds=[];
     Object.values(s.learning.mastery).forEach(m=>{
       m.attempts=m.attempts||0; m.correct=m.correct||0;
       m.independentCorrect=m.independentCorrect||0; m.hintCorrect=m.hintCorrect||0;
@@ -578,36 +697,51 @@ function loadState(){
       m.needsReview=!!m.needsReview;
     });
     Object.values(s.collection||{}).forEach(v=>{if(v && v.evolutionProgress==null) v.evolutionProgress=0});
-    if(!Array.isArray(s.unlocked)) s.unlocked=["s","ch","sh","y"];
+    if(!Array.isArray(s.unlocked)) s.unlocked=["unit1"];
+    // Migrate old stage IDs into the new cumulative Unit map without deleting learning data.
+    const oldUnlocked=new Set(s.unlocked);
+    const migrated=new Set(["unit1"]);
+    if(["ch","sh","ss","x","o","mixed"].some(id=>oldUnlocked.has(id))) migrated.add("unit2");
+    if(oldUnlocked.has("y") || oldUnlocked.has("mixed")) migrated.add("unit3");
+    if(oldUnlocked.has("ing") || oldUnlocked.has("sentence") || oldUnlocked.has("error")) migrated.add("unit4");
+    s.unlocked=[...migrated];
+    if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
+    if(!s.settings || typeof s.settings !== "object") s.settings={autoSpeak:true};
+    if(typeof s.settings.autoSpeak !== "boolean") s.settings.autoSpeak=true;
     // Do not silently unlock future stages during migration. Existing progress is preserved.
     return s;
   }catch(e){return defaultState()}
 }
 function saveState(){state.schemaVersion=SCHEMA_VERSION;localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
-function today(){
-  const d=new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-}
-function resetDaily(){
-  const d=today();
-  if(state.daily.date!==d){
-    state.daily={date:d,count:0};
-    state.reward={upgradeUsed:false,effortUsed:false};
-  }
-  if(!state.learning) state.learning={mastery:{},learningTime:{date:d,activeMs:0,restRequired:false}};
-  if(!state.learning.learningTime || state.learning.learningTime.date!==d){
-    state.learning.learningTime={date:d,activeMs:0,restRequired:false};
-  }
-  saveState();
+function ensureLearningTime(){
+  if(!state.learning) state.learning={mastery:{},recentQuestionIds:[],learningTime:{activeMs:0,restRequired:false}};
+  if(!state.learning.learningTime) state.learning.learningTime={activeMs:0,restRequired:false};
+  if(typeof state.learning.learningTime.activeMs!=="number") state.learning.learningTime.activeMs=0;
+  state.learning.learningTime.restRequired=!!state.learning.learningTime.restRequired;
 }
 function fmtTime(ts){return new Date(ts).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
+const PRONUNCIATION_TERMS = ["consonant", "vowel", "singular", "plural", "subject", "verb", "ending", "silent e"];
+function escapeRegExp(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+function hintTextWithPronunciation(text){
+  const safe=escapeHtml(text);
+  const pattern=new RegExp("\\b("+PRONUNCIATION_TERMS.map(escapeRegExp).join("|")+ ")\\b", "gi");
+  return safe.replace(pattern, m=>`<button class="hint-word" onclick="event.stopPropagation();speak('${m.replace(/'/g,"\\'")}')" title="聽發音">${m}<span aria-hidden="true">🔊</span></button>`);
+}
+
 function showScreen(id){
-  resetDaily();
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  if(id==="map")renderMap();
+  if(id==="map"){
+    try{ renderMap(); }catch(e){
+      console.error("Map render failed",e);
+      const mapEl=document.getElementById("stageMap");
+      if(mapEl) mapEl.innerHTML=`<div class="card" style="grid-column:1/-1">🗺️ 關卡資料正在修復，請重新整理頁面。</div>`;
+      const rec=document.getElementById("recommendation");
+      if(rec) rec.innerHTML=`<p class="muted">目前無法載入推薦關卡，請重新整理頁面。</p>`;
+    }
+  }
   if(id==="myPokemon")renderMyPokemon();
   if(id==="pokedex")renderDex();
   if(id==="logs")renderLogs();
@@ -621,32 +755,39 @@ function updateHeader(){
   document.getElementById("levelText").textContent=`Lv. ${state.level}`;
   document.getElementById("xpText").textContent=`${state.xp} / ${need} EXP`;
   document.getElementById("xpFill").style.width=Math.min(100,state.xp/need*100)+"%";
-  document.getElementById("dailyText").textContent=`今日學習：${state.daily.count} 題`;
-  document.getElementById("dailyFill").style.width="0%";
 }
 function saveSettings(){
   state.settings.autoSpeak=document.getElementById("autoSpeak").checked;
-  state.settings.celebrate=document.getElementById("celebrate").value;
   saveState()
 }
 function renderSettings(){
   document.getElementById("autoSpeak").checked=state.settings.autoSpeak;
-  document.getElementById("celebrate").value=state.settings.celebrate;
 }
 
 function renderMap(){
   const el=document.getElementById("stageMap");
+  if(!el) return;
+  // Defensive normalization: old/local data must never prevent the map from rendering.
+  if(!state.stageStats || typeof state.stageStats !== "object") state.stageStats={};
+  if(!Array.isArray(state.unlocked)) state.unlocked=["unit1"];
+  if(!state.learning || typeof state.learning !== "object") state.learning={mastery:{},recentQuestionIds:[],learningTime:{activeMs:0,restRequired:false}};
+  if(!state.learning.mastery || typeof state.learning.mastery !== "object") state.learning.mastery={};
   el.innerHTML=STAGES.map((s,i)=>{
-    const st=state.stageStats[s.id]||{best:0,plays:0};
-    const locked=!state.unlocked.includes(s.id);
-    const mastery=stageMastery(s);
-    const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
-    const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning.mastery[masterySkill(q)]?.needsReview));
-    return `<div class="card stage ${locked?"locked":""}" ${locked?"":"data-stage=\"${s.id}\" role=\"button\" tabindex=\"0\" aria-label=\"進入 ${escapeHtml(s.title)}\""}>
-      <span class="num">STAGE ${i+1}</span><span class="badge">${locked?"🔒":status}</span>
-      <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
-      <div class="small-note" style="margin-top:12px">${locked?"尚未解鎖":review?"🔁 建議複習": "▶ 點擊進入"}</div>
-    </div>`
+    try{
+      const st=state.stageStats[s.id]||{best:0,plays:0};
+      const locked=!state.unlocked.includes(s.id);
+      const mastery=stageMastery(s);
+      const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
+      const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview));
+      return `<div class="card stage ${locked?"locked":""}" ${locked?"":"data-stage=\"${s.id}\" role=\"button\" tabindex=\"0\" aria-label=\"進入 ${escapeHtml(s.title)}\""}>
+        <span class="num">STAGE ${i+1}</span><span class="badge">${locked?"🔒":status}</span>
+        <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
+        <div class="small-note" style="margin-top:12px">${locked?"尚未解鎖":review?"🔁 建議複習":"▶ 點擊進入"}</div>
+      </div>`;
+    }catch(e){
+      console.warn("stage card render fallback",s?.id,e);
+      return `<div class="card stage"><span class="num">STAGE ${i+1}</span><h3>${escapeHtml(s?.title||"Grammar Skill")}</h3><p>目前正在準備這個關卡。</p></div>`;
+    }
   }).join("");
 
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
@@ -663,28 +804,95 @@ function renderMap(){
     event.preventDefault();
     startStage(card.dataset.stage);
   };
-  const candidates=STAGES.filter(s=>state.unlocked.includes(s.id));
-  const reviewStage=candidates.find(s=>stageMastery(s)>=70 && stageMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning.mastery[masterySkill(q)]?.needsReview)));
-  const weak=candidates.find(s=>stageMastery(s)<85);
+  const candidates=STAGES.filter(s=>Array.isArray(state.unlocked) && state.unlocked.includes(s.id));
+  const safeMastery=(s)=>{ try{return stageMastery(s)}catch(e){console.warn("stageMastery warning",s?.id,e);return 0;} };
+  const reviewStage=candidates.find(s=>safeMastery(s)>=70 && safeMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview)));
+  const weak=candidates.find(s=>safeMastery(s)<85);
   const r=reviewStage||weak||candidates[0]||STAGES[0];
-  const st=state.stageStats[r.id]||{plays:0};
-  document.getElementById("recommendation").innerHTML=
-    `<b>⭐ 建議：${r.title}</b><p class="muted">${stageMastery(r)>=90?"已熟練，可以自由回訪。":stageMastery(r)>=70?"已掌握基礎，建議再練習一次。":"目前正在建立這項技能。"}</p>
-     <button class="btn primary small" onclick="startStage('${r.id}')">去冒險</button>`;
+  const recommendation=document.getElementById("recommendation");
+  if(recommendation){
+    const rm=safeMastery(r);
+    recommendation.innerHTML=
+      `<b>⭐ 系統建議：${escapeHtml(r.title)}</b><p class="muted">${rm>=90?"已熟練，可以自由回訪。":rm>=70?"可以再練習一次，也可以自由回訪其他已解鎖關卡。":"目前正在建立這項技能。"}</p>
+       <button class="btn primary small" data-recommend-stage="${escapeHtml(r.id)}">去冒險</button>`;
+    recommendation.onclick=(event)=>{
+      const btn=event.target.closest("[data-recommend-stage]");
+      if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
+    };
+  }
+  renderSuperBossStatus();
 }
 
-function stageQuestions(stageId,count=8){
+function renderSuperBossStatus(){
+  const card=document.getElementById("superBossCard");
+  const btn=document.getElementById("superBossBtn");
+  const status=document.getElementById("superBossStatus");
+  if(!card||!btn||!status) return;
+  const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id)).length;
+  const ready=unlocked>=4;
+  btn.disabled=!ready;
+  btn.style.opacity=ready?"1":".45";
+  status.textContent=ready ? "✓ 已解鎖：3 題全部 Hard" : "🔒 完成前四個 Unit 後解鎖";
+}
+
+function weightedStagePool(stage){
+  const weights={};
+  (stage.types||[]).forEach(t=>{weights[t]=1;});
+  (stage.newTypes||[]).forEach(t=>{weights[t]=3;});
+  const pool=[];
+  Object.entries(weights).forEach(([type,w])=>{
+    const bank=QUESTION_BANK[type]||[];
+    bank.forEach(q=>{
+      for(let i=0;i<w;i++) pool.push({...q,_sourceType:type});
+    });
+  });
+  return pool;
+}
+function stageQuestions(stageId,count=5){
   const s=STAGES.find(x=>x.id===stageId);
   if(!s) return [];
-  let pool=[];
-  s.types.forEach(t=>{pool=pool.concat(QUESTION_BANK[t]||[])});
+  const pool=weightedStagePool(s);
   if(!pool.length) return [];
-  const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}`),q])).values()];
-  const picked=shuffle(unique).slice(0,Math.min(count,unique.length));
-  while(picked.length<count && unique.length) picked.push(unique[picked.length%unique.length]);
-  if(s.types.includes("error")) return picked.map(q=>({...q,type:"error"}));
-  return picked;
+  const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
+  const recent=new Set(state.learning?.recentQuestionIds||[]);
+  const fresh=shuffle(unique.filter(q=>!recent.has(q.id)));
+  const old=shuffle(unique.filter(q=>recent.has(q.id)));
+  const picked=[];
+  const newTypes=new Set(s.newTypes||[]);
+  const newPool=shuffle(unique.filter(q=>newTypes.has(q._sourceType)));
+  const oldPool=shuffle(unique.filter(q=>!newTypes.has(q._sourceType)));
+  const newTarget=Math.min(Math.max(1,Math.round(count*0.6)),newPool.length);
+  picked.push(...newPool.slice(0,newTarget));
+  const remaining=count-picked.length;
+  const reviewPool=shuffle([...oldPool,...fresh,...old]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
+  picked.push(...reviewPool.slice(0,remaining));
+  const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
+  picked.push(...fallback.slice(0,Math.max(0,count-picked.length)));
+
+  // Difficulty policy:
+  // - Normal missions always contain at most ONE hard question.
+  // - The rest are mostly easy/medium.
+  // - Hard is selected from a question that can support meaningful contrast distractors.
+  const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q; return clean;});
+  const hardIndex=chooseHardQuestionIndex(result);
+  result.forEach((q,i)=>{
+    q.difficulty = i===hardIndex ? "hard" : (Math.random()<0.55 ? "medium" : "easy");
+  });
+
+  state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,24);
+  saveState();
+  return result;
 }
+
+function chooseHardQuestionIndex(questions){
+  if(!questions.length) return -1;
+  const preferred=questions.map((q,i)=>({q,i})).filter(({q})=>
+    q.poke && (q.rule==="consonant+y" || q.rule==="vowel+y" || ["CH","SH","SS","X","O"].includes(q.rule))
+  );
+  const candidates=preferred.length?preferred:questions.map((q,i)=>({q,i})).filter(({q})=>q.poke || q.type==="sentence" || q.type==="ing");
+  return candidates.length ? candidates[Math.floor(Math.random()*candidates.length)].i : 0;
+}
+
 function mixedTestQuestions(count=10){
   const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id));
   let pool=[];
@@ -699,13 +907,27 @@ function mixedTestQuestions(count=10){
   });
 }
 
-function startStage(stageId,test=false){
-  resetDaily();
+function missionQuestionCount(stageId){
+  const stage=STAGES.find(x=>x.id===stageId);
+  if(!stage) return 4;
+  const skills=new Set();
+  (stage.types||[]).forEach(t=>(QUESTION_BANK[t]||[]).forEach(q=>skills.add(masterySkill(q))));
+  const vals=[...skills].map(k=>state.learning?.mastery?.[k]?.mastery||0);
+  const max=Math.max(0,...vals);
+  const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+  if(max===0 && avg===0) return 4;
+  if(avg<70) return 5;
+  if(avg<90) return 6;
+  return 7;
+}
+
+function startStage(stageId){
   const stage=STAGES.find(x=>x.id===stageId);
   if(!stage || !state.unlocked.includes(stageId)) return;
+  const missionCount=missionQuestionCount(stageId);
   currentSession={
-    stageId,test,
-    questions:test ? mixedTestQuestions(10) : stageQuestions(stageId,8),
+    stageId,qa:false,
+    questions:stageQuestions(stageId,missionCount),
     index:0,
     correct:0,
     independent:0,
@@ -721,33 +943,164 @@ function startStage(stageId,test=false){
     questionAttemptData:{},
     levelUps:0,
     uniqueCompleted:0,
-    learningSegmentStartedAt:test?null:Date.now()
+    learningSegmentStartedAt:Date.now()
   };
-  document.getElementById("stageTitle").textContent=test?"測試模式 · "+stage.title:stage.title;
+  document.getElementById("stageTitle").textContent=stage.title;
   showScreen("learn");
   renderQuestion();
 }
 
-function startTest(){
-  const questions=mixedTestQuestions(10);
-  if(!questions.length) return;
-  currentSession={stageId:"mixed-test",test:true,questions,index:0,correct:0,independent:0,hintCorrect:0,wrong:0,started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0};
-  document.getElementById("stageTitle").textContent="測試模式 · Mixed Test";
+function buildTestQuestions(source,count){
+  let pool=[];
+  if(source==="mixed"){
+    // QA Mixed means ONLY third-person singular S / ES / IES.
+    const allowed=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"];
+    allowed.forEach(t=>(QUESTION_BANK[t]||[]).forEach(q=>pool.push({...q,_sourceType:t})));
+  }else{
+    (QUESTION_BANK[source]||[]).forEach(q=>pool.push({...q,_sourceType:source}));
+  }
+  const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
+  return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
+    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
+    const {_sourceType,...clean}=q;
+    return {...clean,type};
+  });
+}
+function superBossQuestions(){
+  // Exactly three hard questions. Each has one and only one valid answer.
+  // Two Rule Hunt questions deliberately contrast close grammar rules; the third
+  // applies a rule in a sentence so the boss is not just a larger Rule Hunt.
+  const y = {...QUESTION_BANK.ruleIES.find(q=>q.id==="y05"), difficulty:"hard", type:"rule", id:"boss-y-worry"};
+  const es = {...QUESTION_BANK.ruleSH.find(q=>q.id==="sh01"), difficulty:"hard", type:"rule", id:"boss-es-wash"};
+  const sentence = {
+    id:"boss-sentence-mixed",
+    sentence:"Amy _____ to school, and Tom _____ TV.",
+    choices:["walk / watch","walks / watches","walks / watch","walk / watches"],
+    answer:"walks / watches",
+    verb:"walk + watch",
+    rule:"subject+S+ES",
+    difficulty:"hard",
+    type:"sentence"
+  };
+  return [y,es,sentence];
+}
+
+function startSuperBoss(){
+  const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id)).length;
+  if(unlocked<4){
+    alert("完成前四個 Unit 後，就可以挑戰超級魔王關！");
+    return;
+  }
+  currentSession={
+    stageId:"super-boss",qa:false,superBoss:true,
+    questions:superBossQuestions(),index:0,correct:0,independent:0,hintCorrect:0,wrong:0,
+    started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,
+    suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0,
+    learningSegmentStartedAt:Date.now()
+  };
+  document.getElementById("stageTitle").textContent="🔥 超級魔王關";
   showScreen("learn");
   renderQuestion();
+}
+
+function startQATest(){
+  const source=document.getElementById("qaUnit")?.value||"mixed";
+  const count=Number(document.getElementById("qaCount")?.value||10);
+  const questions=buildTestQuestions(source,count);
+  if(!questions.length){alert("這個單元目前沒有可測試的題目。");return;}
+  currentSession={stageId:"qa-"+source,qa:true,qaSource:source,questions,index:0,correct:0,independent:0,hintCorrect:0,wrong:0,started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0};
+  document.getElementById("stageTitle").textContent=`QA · ${source==="mixed"?"Mixed":source}`;
+  showScreen("learn");
+  renderQuestion();
+}
+function runQuestionBankHealthCheck(){
+  const problems=[];
+  const ruleTypes=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"];
+  const all=[];
+  ruleTypes.forEach(t=>(QUESTION_BANK[t]||[]).forEach(q=>all.push({q,t})));
+  const ids=new Set(), words=new Set();
+  all.forEach(({q,t})=>{
+    if(ids.has(q.id)) problems.push(`${t}: duplicate ID ${q.id}`); ids.add(q.id);
+    if(words.has(q.verb)) problems.push(`${t}: duplicate verb ${q.verb}`); words.add(q.verb);
+    if(!q.verb || !q.poke || !q.answer) problems.push(`${t}: incomplete ${q.id}`);
+    if(t==="ruleS" && q.answer!=="S") problems.push(`${q.id}: S answer mismatch`);
+    if(t==="ruleIES" && !["S","IES"].includes(q.answer)) problems.push(`${q.id}: Y Rule answer must be S or IES`);
+    if(q.rule==="consonant+y" && (!/[^aeiou]y$/i.test(q.verb) || q.answer!=="IES")) problems.push(`${q.id}: consonant+y must be IES`);
+    if(q.rule==="vowel+y" && (!/[aeiou]y$/i.test(q.verb) || q.answer!=="S")) problems.push(`${q.id}: vowel+y must be S`);
+    if(t==="ruleS" && /[^aeiou]y$/i.test(q.verb)) problems.push(`${q.id}: consonant+y incorrectly placed in S bank`);
+    if(q.poke && !POKEMON[q.poke]) problems.push(`${q.id}: missing Pokémon ${q.poke}`);
+    if(q.poke){
+      const ex=verbExample(q);
+      if(!ex.form || !ex.sentence) problems.push(`${q.id}: missing example`);
+    }
+  });
+  ["sentenceSubject","sentenceFill","ing","error"].forEach(type=>{
+    (QUESTION_BANK[type]||[]).forEach(q=>{
+      if(!q.id) problems.push(`${type}: missing ID`);
+      if(Array.isArray(q.choices)){
+        if(q.choices.filter(c=>c===q.answer).length!==1) problems.push(`${q.id}: answer-choice mismatch`);
+      }
+    });
+  });
+  const mixed=QUESTION_BANK.mixed||[];
+  const mixedBad=mixed.some(q=>!["S","ES","IES"].includes(q.answer) || !["S","CH","SH","SS","X","O","consonant+y","vowel+y"].includes(q.rule));
+  if(mixedBad) problems.push("mixed: contains a non S/ES/IES rule item");
+  const yBank=QUESTION_BANK.ruleIES||[];
+  const hasConsonantY=yBank.some(q=>q.rule==="consonant+y");
+  const hasVowelY=yBank.some(q=>q.rule==="vowel+y");
+  if(!hasConsonantY || !hasVowelY) problems.push("Y Rule must contain both consonant+y and vowel+y examples");
+
+  // Difficulty / answer-quality checks.
+  const allLearningBanks=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES","sentenceSubject","sentenceFill","ing","error"];
+  allLearningBanks.forEach(type=>{
+    (QUESTION_BANK[type]||[]).forEach(q=>{
+      if(Array.isArray(q.choices) && q.choices.filter(c=>c===q.answer).length!==1){
+        problems.push(`${q.id}: must have exactly one correct choice`);
+      }
+    });
+  });
+  const yHardPool=yBank.filter(q=>q.rule==="consonant+y" || q.rule==="vowel+y");
+  if(!yHardPool.length) problems.push("Y Rule has no hard-question candidates");
+  if((QUESTION_BANK.sentenceFill||[]).length<3) problems.push("Sentence Fill needs at least 3 challenge candidates");
+
+  // Hard-question quality: Hard must test a meaningful contrast, not just a harder word.
+  const hardRuleCandidates=(QUESTION_BANK.ruleS||[]).concat(QUESTION_BANK.ruleCH||[],QUESTION_BANK.ruleSH||[],QUESTION_BANK.ruleSS||[],QUESTION_BANK.ruleX||[],QUESTION_BANK.ruleO||[],QUESTION_BANK.ruleIES||[]);
+  ["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"].forEach(type=>{
+    const bank=QUESTION_BANK[type]||[];
+    if(!bank.length) return;
+    const sample=bank[0];
+    const alt=hardRuleCandidates.some(x=>x.answer!==sample.answer && x.verb!==sample.verb);
+    if(!alt) problems.push(`${type}: no valid hard distractor candidate`);
+  });
+  const boss=superBossQuestions();
+  if(boss.length!==3) problems.push("Super Boss must contain exactly 3 questions");
+  boss.forEach(q=>{
+    if(q.difficulty!=="hard") problems.push(`${q.id}: Super Boss question must be hard`);
+    if(q.choices && q.choices.filter(c=>c===q.answer).length!==1) problems.push(`${q.id}: Super Boss answer is not unique`);
+  });
+
+  const health=document.getElementById("qaHealth");
+  if(health){
+    health.innerHTML=problems.length
+      ? `<b style="color:#e7838b">發現 ${problems.length} 個問題</b><br>${problems.slice(0,30).map(escapeHtml).join("<br>")}`
+      : `<b style="color:#84cb9b">✓ 題庫健康檢查通過</b><br>Rule Hunt、選項、Pokémon、例句、S/ES/IES（含母音+Y／子音+Y）規則目前沒有發現結構性問題。`;
+  }
+  console.log("Question Bank Health Check",problems);
+  return problems;
 }
 
 function validateQuestionBank(){
   const ruleTypes=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"];
   const problems=[];
   const validEnd={
-    S:q=>q.answer==="S" && !/(ch|sh|ss|x|o)$/i.test(q.verb),
+    S:q=>q.answer==="S" && !/(ch|sh|ss|x|o)$/i.test(q.verb) && !/[^aeiou]y$/i.test(q.verb),
     CH:q=>q.answer==="ES" && /ch$/i.test(q.verb),
     SH:q=>q.answer==="ES" && /sh$/i.test(q.verb),
     SS:q=>q.answer==="ES" && /ss$/i.test(q.verb),
     X:q=>q.answer==="ES" && /x$/i.test(q.verb),
     O:q=>q.answer==="ES" && /o$/i.test(q.verb),
-    "consonant+y":q=>q.answer==="IES" && /[^aeiou]y$/i.test(q.verb)
+    "consonant+y":q=>q.answer==="IES" && /[^aeiou]y$/i.test(q.verb),
+    "vowel+y":q=>q.answer==="S" && /[aeiou]y$/i.test(q.verb)
   };
   ruleTypes.forEach(type=>{
     const seen=new Set();
@@ -758,8 +1111,22 @@ function validateQuestionBank(){
       if(!POKEMON[q.poke]) problems.push(`${type}: missing pokemon ${q.poke}`);
     });
   });
+  ["sentenceSubject","sentenceFill","ing","error"].forEach(type=>{
+    (QUESTION_BANK[type]||[]).forEach(q=>{
+      if(!Array.isArray(q.choices) || q.choices.length<2) problems.push(`${type}: missing choices ${q.id}`);
+      if(Array.isArray(q.choices)){
+        const matches=q.choices.filter(c=>c===q.answer).length;
+        if(matches!==1) problems.push(`${type}: answer count ${q.id} = ${matches}`);
+      }
+    });
+  });
   // Every Rule Hunt page must have enough unique visual options to show 1 correct + 3 distractors.
   const all=[...ruleTypes.flatMap(t=>QUESTION_BANK[t]||[])];
+  const globalIds=new Set();
+  all.forEach(q=>{
+    if(globalIds.has(q.id)) problems.push(`duplicate rule-bank ID: ${q.id}`);
+    globalIds.add(q.id);
+  });
   const uniquePokes=new Set(all.map(q=>q.poke));
   if(uniquePokes.size<4) problems.push("Rule Hunt needs at least 4 distinct Pokémon.");
   if(problems.length) console.warn("Question bank validation:",problems);
@@ -769,6 +1136,8 @@ validateQuestionBank();
 
 function renderQuestion(){
   answerLocked=false;hintLevel=0;
+  const learn=document.getElementById("learn");
+  if(learn){ learn.onclick=null; learn.dataset.feedbackPhase=""; }
   currentQuestion=currentSession.questions[currentSession.index];
   currentSession.questionStartedAt=Date.now();
   const type=questionType(currentQuestion);
@@ -779,7 +1148,7 @@ function renderQuestion(){
   if(type==="rule"){
     const options=makeRuleOptions(currentQuestion.answer);
     html=`<span class="rule-chip">RULE HUNT</span>
-      <div class="question"><button class="speaker" onclick="speak('Which one is an ${currentQuestion.answer} Pokémon?')">🔊</button>
+      <div class="question"><button class="speaker" onclick="speak('Which one has a verb that needs ${currentQuestion.answer}?')">🔊</button>
       Which one is an <span class="red">${currentQuestion.answer}</span> Pokémon?</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
@@ -798,12 +1167,12 @@ function renderQuestion(){
       <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
-    <div class="actions"><button class="btn gold" onclick="showHint()">💡 Hint</button></div>`;
+    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   document.getElementById("questionCard").innerHTML=html;
-  if(state.settings.autoSpeak && !currentSession.test) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
 }
 function getSpeakText(){
-  if(questionType(currentQuestion)==="rule") return `Which one is an ${currentQuestion.answer} Pokémon?`;
+  if(questionType(currentQuestion)==="rule") return `Which one has a verb that needs ${currentQuestion.answer}?`;
   return currentQuestion.sentence.replace("_____","blank");
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
@@ -815,8 +1184,8 @@ function questionType(q){
   return "sentence";
 }
 function makeRuleOptions(answer){
-  // Rule Hunt must have exactly ONE correct option. Never place another
-  // option with the same answer ending on the same page.
+  // Rule Hunt: exactly ONE option may satisfy the requested ending.
+  // Difficulty changes distractor quality; it never changes answer validity.
   const all=[
     ...QUESTION_BANK.ruleS,
     ...QUESTION_BANK.ruleCH,
@@ -829,18 +1198,52 @@ function makeRuleOptions(answer){
   const correct=currentQuestion;
   const usedPokes=new Set([Number(correct.poke)]);
   const usedWords=new Set([correct.verb]);
-  const candidates=shuffle(all.filter(x=>x.answer!==answer && x.verb!==correct.verb));
+  const candidates=shuffle(all.filter(x=>x.verb!==correct.verb && x.answer!==answer));
   const distractors=[];
-  for(const item of candidates){
-    const poke=Number(item.poke);
-    if(usedPokes.has(poke) || usedWords.has(item.verb)) continue;
-    usedPokes.add(poke);
-    usedWords.add(item.verb);
-    distractors.push(item);
-    if(distractors.length===3) break;
+  const isY=(q)=>q.rule==="consonant+y" || q.rule==="vowel+y";
+  const oppositeYRule=(q)=>q.rule==="consonant+y"?"vowel+y":q.rule==="vowel+y"?"consonant+y":null;
+  const takeOne=(predicate)=>{
+    const item=candidates.find(x=>predicate(x) && !usedPokes.has(Number(x.poke)) && !usedWords.has(x.verb));
+    if(!item) return false;
+    distractors.push(item); usedPokes.add(Number(item.poke)); usedWords.add(item.verb); return true;
+  };
+
+  if(currentQuestion.difficulty==="medium" || currentQuestion.difficulty==="hard"){
+    // Y Rule: always force the child to distinguish vowel + Y from consonant + Y.
+    if(isY(correct)) takeOne(x=>x.rule===oppositeYRule(correct));
   }
-  // The app currently has 12 Pokémon, so this should always produce 3 distinct distractors.
-  // If a future data change makes the pool too small, fail safely instead of showing a malformed question.
+
+  if(currentQuestion.difficulty==="hard"){
+    // Hard Rule Hunt questions deliberately mix close alternatives.
+    const rules = answer==="ES"
+      ? ["S","consonant+y","vowel+y"]
+      : answer==="IES"
+        ? ["vowel+y","S","ES"]
+        : ["ES","consonant+y","vowel+y","IES"];
+    for(const rule of rules){
+      if(distractors.length>=3) break;
+      takeOne(x=>x.rule===rule);
+    }
+  }else if(currentQuestion.difficulty==="medium"){
+    const rules = answer==="ES"
+      ? ["S","vowel+y","consonant+y"]
+      : answer==="IES"
+        ? ["vowel+y","ES","S"]
+        : ["ES","IES","vowel+y","consonant+y"];
+    for(const rule of rules){
+      if(distractors.length>=3) break;
+      takeOne(x=>x.rule===rule);
+    }
+  }
+
+  // Fill remaining slots safely. No distractor is allowed to have the target answer.
+  for(const item of candidates){
+    if(distractors.length>=3) break;
+    if(usedPokes.has(Number(item.poke)) || usedWords.has(item.verb)) continue;
+    distractors.push(item); usedPokes.add(Number(item.poke)); usedWords.add(item.verb);
+  }
+
+  // Runtime safety: malformed questions are never intentionally generated.
   return distractors.length===3 ? shuffle([correct,...distractors]) : [correct,...distractors];
 }
 
@@ -848,34 +1251,105 @@ function showHint(){
   if(answerLocked)return;
   hintLevel=Math.min(3,hintLevel+1);
   const rule=["CH","SH","SS","X","O"].includes(currentQuestion.rule)?currentQuestion.rule:
-    currentQuestion.rule==="consonant+y"?"IES":
+    (currentQuestion.rule==="consonant+y" || currentQuestion.rule==="vowel+y")?"Y":
     currentQuestion.rule==="CVC"?"CVC":
-    currentQuestion.rule==="subject"||currentQuestion.rule==="plural"?"subject":
+    currentQuestion.rule==="drop-e"?"drop-e":
+    currentQuestion.rule==="subject"||currentQuestion.rule==="plural"||currentQuestion.rule==="subject+S+ES"?"subject":
     currentQuestion.rule==="S"||currentQuestion.rule==="vowel+y"?"S":"+ing";
   const hintSet=HINTS[rule] || HINTS.subject;
   const h=hintSet[Math.min(hintLevel,3)-1] || ["Look at the word.","Find the clue."];
   let visual="";
-  if(hintLevel>=2 && currentQuestion.verb){
-    if(["CH","SH","SS","X","O"].includes(rule)){
-      const v=currentQuestion.verb;
-      const show=rule==="CH"||rule==="SH"||rule==="SS"?rule:v.slice(-1).toUpperCase();
+  // Visual clue starts at Hint 1: highlight ONLY the grammar key, never the whole word.
+  // This gives Anson a clue without revealing the rule/result too early.
+  if(hintLevel>=1 && currentQuestion.verb){
+    const v=currentQuestion.verb;
+    if(["CH","SH","SS"].includes(rule)){
+      const show=rule;
       const idx=v.toUpperCase().lastIndexOf(show);
       visual=idx>=0?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,idx))}<span class="red">${escapeHtml(v.slice(idx,idx+show.length))}</span>${escapeHtml(v.slice(idx+show.length))}</div>`:"";
-    }else if(rule==="IES"){
-      const v=currentQuestion.verb; const y=v.length-1;
-      visual=`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,y-1))}<span class="red">${escapeHtml(v[y-1])}</span>y</div>`;
+    }else if(["X","O"].includes(rule)){
+      const show=rule.toLowerCase();
+      const idx=v.toLowerCase().lastIndexOf(show);
+      visual=idx>=0?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,idx))}<span class="red">${escapeHtml(v.slice(idx,idx+1))}</span>${escapeHtml(v.slice(idx+1))}</div>`:"";
+    }else if(rule==="Y"){
+      const y=v.length-1;
+      visual=y>0?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,y-1))}<span class="red">${escapeHtml(v[y-1])}</span>y</div>`:"";
+    }else if(rule==="CVC"){
+      // Highlight the final three letters; the child still has to identify C-V-C.
+      visual=v.length>=3?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,-3))}<span class="red">${escapeHtml(v.slice(-3))}</span></div>`:"";
+    }else if(rule==="drop-e"){
+      const idx=v.toLowerCase().lastIndexOf("e");
+      visual=idx>=0?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,idx))}<span class="red">${escapeHtml(v[idx])}</span>${escapeHtml(v.slice(idx+1))}</div>`:"";
     }
   }
+  const trigger=document.getElementById("hintTrigger");
+  if(trigger) trigger.style.display="none";
   document.getElementById("hintArea").innerHTML=`<div class="hintbox">
     <div class="hint-head"><span class="hint-title">💡 Hint ${hintLevel} / 3</span><span class="muted">${hintLevel===3?"":"→"}</span></div>
-    <div class="hint-en"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="speak('${escapeHtml(h[0]+" "+h[1])}')">🔊</button>${escapeHtml(h[0])}</div>
+    <div class="hint-en"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="speak('${escapeHtml(h[0]+" "+h[1])}')">🔊</button>${hintTextWithPronunciation(h[0])}</div>
     ${visual}
-    <div class="hint-en"><b>${escapeHtml(h[1])}</b></div>
-    <div class="actions"><button class="btn gold small" onclick="showHint()">${hintLevel<3?"下一個提示":"已看到完整提示"}</button></div>
+    <div class="hint-en"><b>${hintTextWithPronunciation(h[1])}</b></div>
+    ${hintLevel<3 ? `<div class="actions"><button class="btn gold small" onclick="showHint()">顯示下一個提示</button></div>` : `<div class="small-note" style="margin-top:12px">提示已完整顯示，可以回答了。</div><div class="actions" style="margin-top:10px"><button class="btn small" onclick="showHelpOptions()">🙋 我不會</button></div>`}
   </div>`;
   currentSession.hintCount++;
   if(hintLevel===3) speak(h[0]+" "+h[1]);
 }
+function helpQuestionText(){
+  const q=currentQuestion;
+  if(!q) return "";
+  if(q.poke) return `${q.verb} → ${thirdPersonVerb(q.verb,q.rule)}`;
+  if(q.sentence) return q.sentence.replace(/_____/g,q.answer||"_____");
+  return q.answer||"";
+}
+function logLearningHelp(action){
+  if(!currentSession || currentSession.qa) return;
+  const q=currentQuestion;
+  const entry={
+    ts:Date.now(), mode:"LEARNING_HELP", stage:currentSession.stageId, type:questionType(q),
+    question:q.type==="rule"||q.poke?`Which one has a verb that needs ${q.answer}?`:q.sentence,
+    selectedAnswer:"—", correctAnswer:q.poke?thirdPersonVerb(q.verb,q.rule):(q.answer||"—"),
+    selectedPokemon:null, ruleAnswer:q.poke?q.answer:null, questionId:q.id||`${currentSession.stageId}-${currentSession.index}`,
+    difficulty:q.difficulty||"medium", attemptNumber:(currentSession.questionAttemptData[currentSession.index]?.answers?.length||0),
+    correct:false, hintLevel, exp:0, errorType:null, responseTime:Date.now()-(currentSession.questionStartedAt||Date.now()),
+    learningIntegrity:"help", helpAction:action
+  };
+  state.logs.unshift(entry); saveState();
+}
+function showHelpOptions(){
+  if(answerLocked) return;
+  if(hintLevel<3){ showHint(); return; }
+  const area=document.getElementById("hintArea");
+  if(!area) return;
+  if(document.getElementById("helpActions")) return;
+  area.insertAdjacentHTML("beforeend",`<div class="actions" id="helpActions" style="margin-top:12px">
+    <button class="btn gold small" onclick="revealAnswer()">👀 看答案</button>
+    <button class="btn small" onclick="skipQuestion()">⏭️ 先跳過</button>
+  </div>`);
+  const trigger=document.getElementById("hintTrigger");
+  if(trigger) trigger.style.display="none";
+}
+function revealAnswer(){
+  if(answerLocked || !currentSession || currentSession.qa) return;
+  answerLocked=true;
+  logLearningHelp("revealed");
+  const q=currentQuestion;
+  const answer=helpQuestionText();
+  const f=document.getElementById("feedback");
+  if(f){
+    f.innerHTML=`<div class="big" style="color:#e7ca73">👀 Answer</div>
+      <div class="feedback-transform"><b>${escapeHtml(answer)}</b></div>
+      <div class="feedback-note">這題不算答對，也不扣任何進度。看完答案後繼續就好。</div>
+      <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
+  }
+  if(q?.sentence) speak(q.sentence.replace(/_____/g,q.answer||""));
+  else if(q?.poke) speak(thirdPersonVerb(q.verb,q.rule));
+}
+function skipQuestion(){
+  if(answerLocked || !currentSession || currentSession.qa) return;
+  logLearningHelp("skipped");
+  nextQuestion();
+}
+
 function answerRule(verb,answer,poke){
   if(answerLocked)return;
   const correct=answer===currentQuestion.answer;
@@ -904,10 +1378,6 @@ function handleAnswer(correct,answer,extra){
   if(correct) qd.correct=true;
   currentSession.questionAttemptData[key]=qd;
   const firstCompletion=correct && !wasCompleted;
-  if(firstCompletion && !currentSession.test && !qd.dailyCounted){
-    qd.dailyCounted=true;
-    state.daily.count++;
-  }
 
   // 防止「快速亂點同一錯誤」被誤判為努力練習。
   if(!correct && !hintUsed && qd.wrong>=3 && responseTime<1500){
@@ -915,7 +1385,7 @@ function handleAnswer(correct,answer,extra){
   }
   if(correct && qd.wrong>0) currentSession.improvementCount++;
 
-  const exp=currentSession.test ? 0 : (firstCompletion ? (qd.hintUsed?15:25):0);
+  const exp=(currentSession.qa || currentSession.superBoss) ? 0 : (firstCompletion ? (qd.hintUsed?15:25):0);
 
   if(correct){
     if(firstCompletion){
@@ -924,40 +1394,42 @@ function handleAnswer(correct,answer,extra){
       currentSession.correct++;
       if(qd.hintUsed) currentSession.hintCorrect++;
       else currentSession.independent++;
-      if(!currentSession.test) addExp(exp);
-      if(!currentSession.test) updateMastery(currentQuestion,true,qd.hintUsed,qd);
+      if(!currentSession.qa) addExp(exp);
+      if(!currentSession.qa) updateMastery(currentQuestion,true,qd.hintUsed,qd);
     }
   }else{
     if(qd.wrong===1) currentSession.wrong++;
-    if(!currentSession.test) markMasteryReview(currentQuestion);
+    if(!currentSession.qa && !currentSession.superBoss) markMasteryReview(currentQuestion);
   }
 
   const type=questionType(currentQuestion);
   const errorType=correct?null:detectError(currentQuestion,answer);
-  const integrity=currentSession.test
+  const integrity=currentSession.qa
     ?"excluded"
     :(currentSession.suspiciousAttempts>0?"suspicious":"normal");
 
   const logEntry={
     ts:Date.now(),
-    mode:currentSession.test?"TEST":"LEARNING",
+    mode:currentSession.qa?"QA":(currentSession.superBoss?"SUPER_BOSS":"LEARNING"),
     stage:currentSession.stageId,
     type,
-    question:type==="rule"?`Which one is an ${currentQuestion.answer} Pokémon?`:currentQuestion.sentence,
+    question:type==="rule"?`Which one has a verb that needs ${currentQuestion.answer}?`:currentQuestion.sentence,
     answer,
     selectedAnswer:type==="rule"?(extra?.selectedVerb||answer):answer,
     correctAnswer:type==="rule"?currentQuestion.verb:currentQuestion.answer,
     selectedPokemon:type==="rule"?(extra?.poke||null):null,
+    ruleAnswer:type==="rule"?currentQuestion.answer:null,
     questionId:currentQuestion.id||`${currentSession.stageId}-${currentSession.index}`,
+    difficulty:currentQuestion.difficulty||"medium",
     attemptNumber:qd.answers.length,
     correct,
-    hintLevel:currentSession.test?0:hintLevel,
+    hintLevel:hintLevel,
     exp,
     errorType,
     responseTime,
     learningIntegrity:integrity
   };
-  if(currentSession.test) state.testLogs.unshift(logEntry); else state.logs.unshift(logEntry);
+  if(!currentSession.qa) state.logs.unshift(logEntry);
   saveState();
   renderFeedback(correct,answer,errorType,exp);
 }
@@ -968,10 +1440,11 @@ function masterySkill(q){
   if(q.rule==="X") return "x";
   if(q.rule==="O") return "o";
   if(q.rule==="consonant+y") return "y";
-  if(q.rule==="S" || q.rule==="vowel+y") return "s";
+  if(q.rule==="S") return "s";
+  if(q.rule==="vowel+y") return "y";
   if(q.rule==="subject" || q.rule==="plural") return "subject";
-  if(q.rule==="CVC" || q.rule==="+ing") return "ing";
-  return currentSession.stageId || "unknown";
+  if(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e") return "ing";
+  return "unknown";
 }
 function updateMastery(q,correct,hintUsed,qd){
   const skill=masterySkill(q);
@@ -1014,7 +1487,6 @@ function stageMastery(stage){
   (stage.types||[]).forEach(t=>{
     (QUESTION_BANK[t]||[]).forEach(q=>skills.add(masterySkill(q)));
   });
-  if(stage.id==='mixed') ['s','ch','sh','ss','x','o','y'].forEach(k=>skills.add(k));
   const vals=[...skills].map(k=>state.learning.mastery[k]?.mastery||0).filter(v=>v>0);
   return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
 }
@@ -1023,32 +1495,58 @@ function renderFeedback(correct,answer,errorType,exp){
   const f=document.getElementById("feedback");
   if(!f)return;
   if(correct){
+    const q=currentQuestion;
+    if(currentSession.qa){
+      const diagnostic = q.poke
+        ? `<div class="qa-diagnostic"><b>QA</b> · Rule: ${escapeHtml(q.rule)} · Expected: ${escapeHtml(q.verb)} → ${escapeHtml(thirdPersonVerb(q.verb,q.rule))}</div>`
+        : `<div class="qa-diagnostic"><b>QA</b> · Answer: ${escapeHtml(q.answer||"—")}</div>`;
+      f.innerHTML=`<div class="big" style="color:#8ed19e">✓ Correct</div>${diagnostic}
+        <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
+      speak("Correct");
+      return;
+    }
+    const ex=q.poke ? verbExample(q) : null;
+    const transform=ex ? `<div class="feedback-transform"><span>${escapeHtml(ex.base)}</span><span class="arrow">→</span><b>${escapeHtml(ex.form)}</b></div>` : "";
+    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
     f.innerHTML=`<div class="big" style="color:#8ed19e">👍 Correct!</div>
-      <div class="sub">${currentSession.test?"測試紀錄，不計入學習統計":`+${exp} EXP`}</div>`;
+      ${transform}
+      <div class="feedback-note">${ex?"再點一下，看這個動詞放進句子裡。":"Nice work!"}</div>
+      <div class="feedback-example hidden-example">${example}</div>`;
     speak("Correct!");
-    if(state.settings.celebrate==="full" && Math.random()<.35) tinyConfetti();
-    // Correct answers advance automatically. No Next button and no Hint button.
-    setTimeout(()=>{
-      if(!currentSession)return;
-      nextQuestion();
-    },700);
-  }else{
-    // Wrong answers keep the SAME question. Only the existing Hint button remains available.
-    f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
-      <div class="sub">Try again.</div>`;
-    speak("Not quite. Try again.");
-    setTimeout(()=>{
-      if(!currentSession)return;
-      retryQuestion(false);
-    },700);
+    // Learning mode: first safe-area click reveals the example; second safe-area click advances.
+    // Buttons, speakers and form controls are excluded so the whole learning screen is not accidentally hijacked.
+    f.dataset.exampleShown="0";
+    const learn=document.getElementById("learn");
+    if(learn){
+      learn.dataset.feedbackPhase="correct";
+      learn.onclick=function(event){
+        if(event.target.closest("button,select,input,a,[role=button]")) return;
+        if(learn.dataset.feedbackPhase==="correct"){
+          learn.dataset.feedbackPhase="example";
+          if(ex){
+            const box=f.querySelector(".feedback-example");
+            if(box){box.classList.remove("hidden-example"); speak(ex.sentence);}
+            const note=f.querySelector(".feedback-note");
+            if(note)note.textContent="再點一下，進入下一題。";
+          }else{
+            nextQuestion();
+          }
+        }else if(learn.dataset.feedbackPhase==="example"){
+          nextQuestion();
+        }
+      };
+    }
+    return;
   }
+  f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
+    <div class="sub">Try again.</div>`;
+  speak("Not quite. Try again.");
+  setTimeout(()=>{
+    if(!currentSession)return;
+    retryQuestion(false);
+  },700);
 }
 
-function unlockRetryHint(){
-  answerLocked=false;
-  showHint();
-  const f=document.getElementById("feedback"); if(f)f.innerHTML="";
-}
 function retryQuestion(keepHint=false){
   answerLocked=false;
   if(!keepHint) hintLevel=0;
@@ -1063,8 +1561,34 @@ function finishSession(){
   const s=currentSession;
   const total=s.questions.length;
   const cleanIndependent=Object.values(s.questionAttemptData||{}).filter(q=>q.completed && !q.hintUsed).length;
-  const pct=Math.round(cleanIndependent/total*100);
-  if(!s.test){
+  const pct=Math.round(cleanIndependent/Math.max(1,total)*100);
+
+  if(s.superBoss){
+    const cleared = s.correct===3;
+    const title = cleared ? "👑 超級魔王擊破！" : "🔥 魔王還在等你！";
+    const note = cleared ? "三題全部獨立答對，太強了！" : `答對 ${s.correct} / 3 題。這次不扣分，練熟後再來挑戰。`;
+    showModal(`<div class="reward-title">${title}</div>
+      <p>${note}</p>
+      <p class="muted">超級魔王關不會降低 Mastery，也不會扣 EXP 或關卡進度。</p>
+      <div class="actions">
+        <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
+      </div>`);
+    currentSession=null;
+    return;
+  }
+
+  if(s.qa){
+    showModal(`<div class="reward-title">🧪 QA 檢查完成</div>
+      <p>共 ${total} 題 · ${s.correct} 題首次完成正確</p>
+      <p class="muted">這次 QA 完全獨立於孩子的學習資料，不影響 EXP、Mastery、關卡、休息計時、Pokémon 或獎勵。</p>
+      <div class="actions">
+        <button class="btn primary" onclick="closeModal();showScreen('qa')">回 QA</button>
+      </div>`);
+    currentSession=null;
+    return;
+  }
+
+  if(!s.qa){
     const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
     old.best=Math.max(old.best,pct); old.plays++; old.totalCorrect+=s.correct; old.totalQuestions+=total;
     state.stageStats[s.stageId]=old;
@@ -1081,64 +1605,41 @@ function finishSession(){
     }
     s.reward=maybeReward(s,pct);
     saveState();
+    let shouldRest=false;
+    if(s.learningSegmentStartedAt){
+      const before=learningTime().restRequired;
+      accumulateLearningTime(true);
+      shouldRest=!before && learningTime().restRequired;
+    }
     const rewardHtml=s.reward?`
       <div class="card" style="margin-top:14px">
         <b>${s.reward.kind==="evolution"?"✨ 寶可夢進化":"🎁 學習夥伴解鎖"}</b>
         ${s.reward.kind==="evolution"?`<div class="muted">${POKEMON[s.reward.from].name} → ${POKEMON[s.reward.to].name}</div>`:`<div class="muted">透過持續練習解鎖新的夥伴</div>`}
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
-          <img src="${POKEMON[s.reward.kind==="evolution"?s.reward.to:s.reward.id].img}" alt="" style="width:72px;height:72px">
-          <span><b>${POKEMON[s.reward.kind==="evolution"?s.reward.to:s.reward.id].name}</b></span>
-        </div>
       </div>`:"";
     const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 LEVEL UP! Lv. ${state.level}</b></div>`:"";
-    let shouldRest=false;
-    if(s.learningSegmentStartedAt){
-      const before=learningTimeToday().restRequired;
-      accumulateLearningTime(true);
-      shouldRest=!before && learningTimeToday().restRequired;
-    }
     showModal(`<div class="reward-poke"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
       <div class="reward-title">Mission Complete!</div>
-      <p>完成 ${total} 題 · ${pct}% 獨立完成</p>
+      <p>完成 ${total} 題</p>
       <p class="muted">獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
       ${unlockedText}${levelHtml}${rewardHtml}
-      <div class="actions"><button class="btn primary" onclick="closeModal();showScreen('home')">回首頁</button>
-      <button class="btn" onclick="closeModal();showScreen('map')">繼續冒險</button></div>`);
-    if(pct>=70 && state.settings.celebrate!=="off") celebration(!!s.levelUps);
+      <div class="actions">
+        <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
+        <button class="btn" onclick="closeModal();showScreen('home')">回首頁</button>
+      </div>`);
+    if(s.levelUps || s.reward?.kind==="evolution") celebration(true);
     currentSession=null;
     if(shouldRest) setTimeout(showRestReminder,250);
-  }else{
-    showModal(`<div class="reward-poke"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
-      <div class="reward-title">測試完成</div>
-      <p>這次結果不會影響學習統計、EXP、Mastery 或抽卡。</p>
-      <p class="muted">TEST · ${total} 題 · ${pct}% 獨立完成</p>
-      <div class="actions"><button class="btn primary" onclick="closeModal();showScreen('home')">回首頁</button>
-      <button class="btn" onclick="closeModal();showScreen('logs')">查看紀錄</button></div>`);
-    currentSession=null;
   }
 }
+
 function maybeReward(s,pct){
-  const todayReward=state.reward;
-  if(!todayReward.upgradeUsed && pct>=90 && s.independent>=Math.ceil(s.questions.length*.6)){
+  if(pct>=90 && s.independent>=Math.ceil(s.questions.length*.6)){
     const evolved=evolveActivePokemon();
-    if(evolved){ todayReward.upgradeUsed=true; return {kind:"evolution",from:evolved.from,to:evolved.to}; }
-  }
-  if(!todayReward.effortUsed && isGoodEffort(s)){
-    const id=unlockProgressPokemon(s);
-    if(id){ todayReward.effortUsed=true; return {kind:"effort",id}; }
+    if(evolved) return {kind:"evolution",from:evolved.from,to:evolved.to};
   }
   return null;
 }
-function isGoodEffort(s){
-  if(s.test || s.answerAttempts<4)return false;
-  const meaningful=s.hintCorrect+s.independent;
-  const completed=Object.values(s.questionAttemptData||{}).filter(q=>q.completed);
-  const uniqueWrong=Object.values(s.questionAttemptData||{}).filter(q=>q.wrong>0 && !q.completed).length;
-  const wrongRatio=completed.length?uniqueWrong/(completed.length+uniqueWrong):1;
-  const hasLearningBehavior=s.hintCount>0 || s.improvementCount>0;
-  const notFarming=s.suspiciousAttempts<3;
-  return meaningful>=3 && hasLearningBehavior && notFarming && wrongRatio<.75;
-}
+
 const EVOLUTIONS={
   25:{to:133,need:3},
   4:{to:10,need:3},
@@ -1169,17 +1670,6 @@ function evolveActivePokemon(){
   saveState(); updateHeroPokemon();
   return {from,to};
 }
-const SKILL_REWARD_POKEMON={
-  s:35,ch:39,sh:52,ss:10,x:16,o:54,y:1,mixed:27,subject:7,sentence:4,ing:133,error:25
-};
-function unlockProgressPokemon(s){
-  const id=SKILL_REWARD_POKEMON[s.stageId] || SKILL_REWARD_POKEMON[masterySkill(s.questions?.[0]||{})];
-  if(!id || !POKEMON[id] || state.collection[id]) return null;
-  state.collection[id]={level:1,xp:0,tag:`${s.stageId} 技能夥伴`};
-  saveState();
-  return id;
-}
-
 function addExp(amount){
   if(!amount)return;
   state.xp+=amount;
@@ -1194,8 +1684,9 @@ function addExp(amount){
   saveState();updateHeader();
 }
 function celebration(levelup){
-  if(state.settings.celebrate==="off")return;
-  if(state.settings.celebrate==="simple"){ tinyConfetti(); return; }
+  // Deliberately celebrate only meaningful milestones (level-up / evolution).
+  // Ordinary correct answers stay visually calm to reduce variable-reward pressure.
+  if(!levelup)return;
   const c=document.getElementById("confetti");c.innerHTML="";
   for(let i=0;i<(levelup?90:55);i++){
     const el=document.createElement("i");
@@ -1291,23 +1782,25 @@ function renderLogs(){
     <div class="card stat"><span>整體正確率</span><b>${acc}%</b></div>
     <div class="card stat"><span>獨立答對</span><b>${independent}</b></div>
     <div class="card stat"><span>Hint 後答對</span><b>${hintCorrect}</b></div>`;
-  const all=[...state.logs,...state.testLogs].sort((a,b)=>b.ts-a.ts).slice(0,120);
+  const all=[...state.logs].sort((a,b)=>b.ts-a.ts).slice(0,120);
   const groups={};
   all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
   const rows=[];
   Object.keys(groups).forEach(date=>{
     rows.push(`<tr class="date-row"><td colspan="8"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
-    groups[date].forEach(l=>rows.push(`<tr><td>${fmtTime(l.ts)}</td><td class="${l.mode==="TEST"?"testtag":""}">${l.mode==="TEST"?"TEST":"學習"}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${l.correct?"ok":"bad"}">${l.correct?"✓":"✗"}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`));
+    groups[date].forEach(l=>{
+      const isHelp=l.mode==="LEARNING_HELP";
+      const status=isHelp?(l.helpAction==="revealed"?"👀 看答案":"⏭️ 跳過"):(l.correct?"✓":"✗");
+      const statusClass=isHelp?"":(l.correct?"ok":"bad");
+      const modeLabel=l.mode==="SUPER_BOSS"?"魔王":isHelp?"求助":"學習";
+      rows.push(`<tr><td>${fmtTime(l.ts)}</td><td>${modeLabel}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${statusClass}">${status}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`);
+    });
   });
   document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="8" class="muted">目前還沒有紀錄。</td></tr>`;
 }
 function clearLogs(){
-  const choice=prompt("輸入 1 清除學習紀錄；輸入 2 清除 TEST 紀錄；輸入 3 全部清除。Mastery、EXP、關卡進度與寶可夢不會被清除。","1");
-  if(!choice)return;
-  if(choice==="1" && confirm("確定清除學習紀錄？")) state.logs=[];
-  else if(choice==="2" && confirm("確定清除 TEST 紀錄？")) state.testLogs=[];
-  else if(choice==="3" && confirm("確定清除全部紀錄？")){state.logs=[];state.testLogs=[];}
-  else return;
+  if(!confirm("確定清除學習紀錄？Mastery、EXP、關卡進度與寶可夢不會被清除。")) return;
+  state.logs=[];
   saveState(); renderLogs();
 }
 function speak(text){
@@ -1327,17 +1820,14 @@ function shuffle(array){
 }
 
 let learningTicker=null;
-function learningTimeToday(){
-  if(!state.learning) state.learning={mastery:{},learningTime:{date:today(),activeMs:0,restRequired:false}};
-  if(!state.learning.learningTime || state.learning.learningTime.date!==today()){
-    state.learning.learningTime={date:today(),activeMs:0,restRequired:false};
-  }
+function learningTime(){
+  ensureLearningTime();
   return state.learning.learningTime;
 }
 function accumulateLearningTime(suppressReminder=false){
-  if(!currentSession || currentSession.test || !currentSession.learningSegmentStartedAt) return;
+  if(!currentSession || currentSession.qa || !currentSession.learningSegmentStartedAt) return;
   const now=Date.now();
-  const t=learningTimeToday();
+  const t=learningTime();
   t.activeMs += Math.max(0,now-currentSession.learningSegmentStartedAt);
   currentSession.learningSegmentStartedAt=now;
   if(t.activeMs>=30*60*1000 && !t.restRequired){
@@ -1348,12 +1838,12 @@ function accumulateLearningTime(suppressReminder=false){
   saveState();
 }
 function showRestReminder(){
-  if(currentSession && currentSession.test) return;
+  if(currentSession && currentSession.qa) return;
   if(currentSession) currentSession.restPaused=true;
   showModal(`<div style="font-size:48px">🌿</div><div class="reward-title" style="font-size:30px">Time to rest</div><p>你已經學習約 30 分鐘了。</p><p class="muted">建議休息 10 分鐘，讓眼睛和大腦休息一下。</p><p class="small-note">這是健康提醒，不是遊戲懲罰。你可以現在休息，也可以稍後再休息。</p><div class="actions"><button class="btn primary" onclick="dismissRestReminder()">知道了</button></div>`);
 }
 function dismissRestReminder(){
-  const t=learningTimeToday();
+  const t=learningTime();
   t.restRequired=false;
   if(currentSession){
     currentSession.restPaused=false;
@@ -1364,8 +1854,8 @@ function dismissRestReminder(){
 function startLearningTicker(){
   if(learningTicker) clearInterval(learningTicker);
   learningTicker=setInterval(()=>{
-    if(currentSession && !currentSession.test && !currentSession.restPaused && document.getElementById("learn")?.classList.contains("active")){
-      const t=learningTimeToday();
+    if(currentSession && !currentSession.qa && !currentSession.restPaused && document.getElementById("learn")?.classList.contains("active")){
+      const t=learningTime();
       if(currentSession.learningSegmentStartedAt && Date.now()-currentSession.learningSegmentStartedAt>=10000){
         accumulateLearningTime();
       }
@@ -1374,12 +1864,10 @@ function startLearningTicker(){
 }
 
 function init(){
-  resetDaily();
   updateHeroPokemon();
   renderMap();updateHeader();startLearningTicker();
 }
 init();
 </script>
-<button class="btn gold" style="position:fixed;right:16px;bottom:16px;z-index:80;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.35)" onclick="startTest()">🧪 測試</button>
 </body>
 </html>
