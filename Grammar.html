@@ -1368,7 +1368,7 @@ function handleWarmupAnswer(correct,answer,extra){
       }
       const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}`;
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`${example}<div class="actions feedback-next"><button type="button" class="btn primary next-arrow" data-warmup-action="${last?'formal':'next'}" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}">${last?'開始正式練習':'→ Next'}</button></div>`;
+      f.innerHTML=`${example}<div class="actions feedback-next"><button type="button" class="btn primary next-arrow" data-warmup-action="${last?'formal':'next'}" onclick="return handleWarmupAction(this)" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}">${last?'開始正式練習':'→ Next'}</button></div>`;
       bindWarmupFeedbackAction(f);
       speak("Correct");
       speak(ex.sentence);
@@ -1390,7 +1390,7 @@ function handleWarmupAnswer(correct,answer,extra){
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    f.innerHTML=`<div class="actions feedback-next"><button type="button" class="btn primary next-arrow" data-warmup-action="${last?'formal':'next'}" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}">${last?'開始正式練習':'→ Next'}</button></div>`;
+    f.innerHTML=`<div class="actions feedback-next"><button type="button" class="btn primary next-arrow" data-warmup-action="${last?'formal':'next'}" onclick="return handleWarmupAction(this)" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}">${last?'開始正式練習':'→ Next'}</button></div>`;
     bindWarmupFeedbackAction(f);
     speak("Correct");
     if(q.sentence) speak(q.sentence.replace("_____",answer));
@@ -1408,30 +1408,51 @@ function bindWarmupFeedbackAction(feedbackEl){
   return !!feedbackEl;
 }
 
-// Session navigation is also delegated because formal feedback is recreated
-// after every answer.
-document.addEventListener("click", function(event){
-  const btn=event.target.closest("button[data-session-action]");
-  if(!btn || btn.disabled) return;
-  event.preventDefault();
-  event.stopPropagation();
-  btn.disabled=true;
-  nextQuestion();
-}, true);
+// Dynamic navigation uses a direct handler on the generated button.
+// This is intentionally simple: the button is recreated with each question,
+// so there is no need for document-level event delegation here.
+function handleNextClick(btn){
+  if(!btn || btn.dataset.busy==="1") return false;
+  // Do not disable the button before the state transition. In some browsers,
+  // replacing the parent #feedback while the clicked button is disabled can
+  // cancel the click lifecycle. Mark it busy instead, then transition.
+  btn.dataset.busy="1";
+  btn.setAttribute("aria-busy","true");
+  try{
+    nextQuestion();
+  }catch(err){
+    console.error("Next navigation error:", err);
+    btn.dataset.busy="";
+    btn.removeAttribute("aria-busy");
+    alert("這一題切換時發生錯誤，請再按一次 Next。");
+  }
+  return false;
+}
 
-// Dynamic feedback buttons must survive innerHTML replacement. Use one stable
-// document-level handler instead of binding a new listener to every generated
-// button. This also prevents the warm-up/formal transition from depending on
-// a stale DOM node.
-document.addEventListener("click", function(event){
-  const btn=event.target.closest("button[data-warmup-action]");
-  if(!btn || btn.disabled) return;
-  event.preventDefault();
-  event.stopPropagation();
-  btn.disabled=true;
-  if(btn.dataset.warmupAction==="formal") beginFormalPractice();
-  else if(btn.dataset.warmupAction==="next") nextWarmupQuestion();
-}, true);
+function handleWarmupAction(btn){
+  if(!btn || btn.dataset.busy==="1") return false;
+  const action=btn.dataset.warmupAction;
+  btn.dataset.busy="1";
+  btn.setAttribute("aria-busy","true");
+  try{
+    if(action==="formal") beginFormalPractice();
+    else if(action==="next") nextWarmupQuestion();
+  }catch(err){
+    console.error("Warm-up navigation error:", err);
+    btn.dataset.busy="";
+    btn.removeAttribute("aria-busy");
+    alert("這一題切換時發生錯誤，請再按一次。");
+  }
+  return false;
+}
+
+// Last-resort navigation guard: if a browser reports an exception during a
+// transition, keep the current session alive rather than leaving a dead screen.
+window.addEventListener("error", function(event){
+  if(/renderQuestion|nextQuestion|beginFormalPractice|nextWarmupQuestion/.test(String(event.message||""))){
+    console.error("Grammar navigation error:", event.error||event.message);
+  }
+});
 
 function nextWarmupQuestion(){
   if(!currentSession?.warmup) return;
@@ -2423,7 +2444,7 @@ function renderFeedback(correct,answer,errorType,exp){
         ? `<div class="qa-diagnostic"><b>QA</b> · Rule: ${escapeHtml(q.rule)} · Expected: ${escapeHtml(q.verb)} → ${escapeHtml(thirdPersonVerb(q.verb,q.rule))}</div>`
         : `<div class="qa-diagnostic"><b>QA</b> · Answer: ${escapeHtml(q.answer||"—")}</div>`;
       f.innerHTML=`<div class="big" style="color:#8ed19e">✓ Correct</div>${diagnostic}
-        <div class="actions"><button type="button" class="btn primary small" data-session-action="next">下一題</button></div>`;
+        <div class="actions"><button type="button" class="btn primary small" onclick="return handleNextClick(this)">下一題</button></div>`;
       speak("Correct");
       return;
     }
@@ -2493,12 +2514,12 @@ function renderFeedback(correct,answer,errorType,exp){
       f.innerHTML=`${example}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
-          <button type="button" class="btn primary next-arrow" aria-label="完成本關" title="完成本關" data-session-action="next">完成</button>
+          <button type="button" class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="return handleNextClick(this)">完成</button>
         </div>`;
     }else{
       f.innerHTML=`${example}
         <div class="actions feedback-next">
-          <button type="button" class="btn primary next-arrow" aria-label="Next" title="Next" data-session-action="next">→ Next</button>
+          <button type="button" class="btn primary next-arrow" aria-label="Next" title="Next" onclick="return handleNextClick(this)">→ Next</button>
         </div>`;
     }
     const spokenProduction=q.type==="sentenceProduce" ? q.sentence.replace(/_____/g,q.answer) : null;
@@ -2528,13 +2549,22 @@ function retryQuestion(keepHint=false){
   renderQuestion();
 }
 function nextQuestion(){
-  // Feedback buttons are rendered dynamically. If an old button is clicked after
-  // a session has already been cleared, do nothing instead of throwing.
-  if(!currentSession) return;
-  if(currentSession.warmup){ nextWarmupQuestion(); return; }
-  currentSession.index++;
-  if(currentSession.index>=currentSession.questions.length){finishSession();return}
+  if(!currentSession) return false;
+  if(currentSession.warmup){
+    nextWarmupQuestion();
+    return false;
+  }
+  const total=Array.isArray(currentSession.questions)?currentSession.questions.length:0;
+  if(!total) return false;
+  const nextIndex=Number(currentSession.index)+1;
+  if(!Number.isInteger(nextIndex)) return false;
+  currentSession.index=nextIndex;
+  if(nextIndex>=total){
+    finishSession();
+    return false;
+  }
   renderQuestion();
+  return false;
 }
 function finishSession(){
   const s=currentSession;
