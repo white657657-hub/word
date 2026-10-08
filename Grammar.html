@@ -45,10 +45,8 @@ button{cursor:pointer}
 .profile{display:flex;align-items:center;gap:12px}
 .avatar{
   width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
-  background:#172536;border:1px solid rgba(255,255,255,.12);font-size:25px;overflow:hidden
+  background:#172536;border:1px solid rgba(255,255,255,.12);font-size:25px
 }
-.avatar img{width:42px;height:42px;object-fit:contain;display:block}
-.avatar span{display:none;line-height:1}
 .profile b{font-size:18px}.profile small{color:var(--muted)}
 .xpwrap{width:180px}.xpbar{height:8px;background:#253542;border-radius:99px;overflow:hidden;margin-top:6px}
 .xpfill{height:100%;width:0;background:linear-gradient(90deg,#6faecf,#8ccf9c);transition:.4s}
@@ -59,10 +57,7 @@ button{cursor:pointer}
 }
 .iconbtn:hover,.btn:hover{filter:brightness(1.08)}
 .btn.primary{background:#27547c;border-color:#3d79ae}
-.btn.gold{background:#3f5f78;border-color:#668eaa}
-.btn.guide-action{background:#245f78;border-color:#4b93b3}
-.btn.hint-action{background:#51487f;border-color:#8178b2}
-.preanswer-actions .btn,.hint-action-btn{min-width:140px;min-height:40px}
+.btn.gold{background:#6b5a2d;border-color:#a48a42}
 .btn.green{background:#27553f;border-color:#3d8060}
 .btn.red{background:#5b3035;border-color:#8e4c54}
 .btn.small{padding:7px 10px;font-size:13px}
@@ -106,16 +101,12 @@ main{margin-top:18px}
   text-align:center;font-size:30px;font-weight:800;line-height:1.4;margin:8px 0 22px
 }
  .red{color:#e67b7f}
-/* Unified grammar colors: judgment letter = cyan, Y/I = purple, S = blue, ES = orange. */
-.y-focus-letter{color:#4DD0E1;font-weight:1000;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
-.y-focus-y{color:#CE93D8;font-weight:1000}
+.y-focus-letter{color:#62c9e8;font-weight:1000;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.y-focus-y{color:#e67b7f;font-weight:1000}
 .rule-teach{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;font-size:18px;font-weight:900;color:#dfeaf2;line-height:1.35;flex-wrap:wrap}
-.rule-teach .focus{color:#4DD0E1;font-weight:1000}
-.rule-teach .focus-y{color:#CE93D8;font-weight:1000}
-.rule-teach .rule-label{color:#4DD0E1;font-weight:1000}
-.rule-teach .rule-s{color:#64B5F6;font-weight:1000}
-.rule-teach .rule-ies{color:#CE93D8;font-weight:1000}
-.rule-teach .rule-es{color:#FFB74D;font-weight:1000}
+.rule-teach .focus{color:#62c9e8;font-weight:1000}
+.rule-teach .focus-y{color:#e67b7f;font-weight:1000}
+.rule-teach .rule-label{color:#62c9e8;font-weight:1000}
 .rule-teach .speaker{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:14px!important;margin-right:0!important}
 .rule-teach-small{font-size:16px;color:var(--muted);font-weight:700}
 .y-focus-note{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;font-size:17px;font-weight:900;color:#62c9e8}
@@ -145,10 +136,7 @@ main{margin-top:18px}
 .hint-title{color:#e5c86f;font-weight:800}.hint-en{font-size:17px;line-height:1.5;margin:10px 0}
 .hint-cn{color:var(--muted);font-size:13px}
 .actions{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap}
- .feedback{text-align:center;margin-top:16px;min-height:80px}
-.preanswer-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}.preanswer-actions .btn{min-height:38px}
-.judgment-guide{margin:12px auto 0;max-width:760px;text-align:left;border:1px solid rgba(157,196,229,.22);background:#111d28;border-radius:14px;padding:14px 16px;line-height:1.6}.judgment-guide b{color:#9dc4e5}.judgment-guide .guide-rule{margin:5px 0}.judgment-guide .guide-key{font-weight:900}.other-answers{margin:12px auto 0;max-width:760px;text-align:left;border:1px solid rgba(142,185,221,.20);background:#101c27;border-radius:14px;padding:12px 14px}.other-answers-title{font-weight:800;margin-bottom:8px}.other-answer-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}.other-answer-row:last-child{border-bottom:0}.other-answer-row .oa-word{font-size:21px;font-weight:800;min-width:100px}.other-answer-row .oa-form{font-size:21px;font-weight:900}.other-answer-row .oa-note{color:var(--muted);font-size:14px;margin-left:auto}
-
+.feedback{text-align:center;margin-top:16px;min-height:80px}
 .feedback .big{font-size:24px;font-weight:900}.feedback .sub{color:var(--muted);margin-top:4px}
 .sentence{
   text-align:center;font-size:29px;font-weight:800;line-height:1.5;
@@ -156,8 +144,6 @@ main{margin-top:18px}
 }.filled-answer{font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
 .baseverb{text-align:center;color:var(--muted);font-size:15px;margin-top:-8px}
 .choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-.production-rule-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.production-rule-row .choice{font-size:18px;font-weight:900}.production-rule-row .choice.selected{border-color:#64b5f6;background:#203746}
-.production-input-row{display:flex;justify-content:center;align-items:center;gap:10px;margin:18px auto 8px;max-width:520px}.production-input{width:min(360px,75vw);font-size:26px;font-weight:900;text-align:center;padding:12px 14px;border:3px solid var(--border);border-radius:14px;background:#fff;color:#1d2a35;outline:none;letter-spacing:1px}.production-input:focus{border-color:#64b5f6;box-shadow:0 0 0 3px rgba(100,181,246,.18)}.production-submit{min-width:92px}.production-stage-note{text-align:center;color:var(--muted);font-size:13px;margin-top:8px}.production-rule-selected{justify-content:center;align-items:center;gap:6px;margin:10px auto 0;padding:6px 10px;border-radius:999px;background:rgba(100,181,246,.12);font-weight:800;color:#d8e7f2;width:max-content}.production-error{font-size:14px;color:#e7838b;text-align:center;margin-top:8px}
 .choice{
   min-width:0;
   padding:18px 10px;border-radius:15px;border:1px solid var(--border);
@@ -183,7 +169,7 @@ main{margin-top:18px}
 }
 .poke img{width:90px;height:90px}.poke .name{font-weight:800}.poke .no{color:#7f93a3;font-size:11px}.poke .lv{color:#bfcbd5;font-size:12px;margin-top:3px}
 .poke .tag{display:inline-block;margin-top:6px;font-size:11px;padding:3px 7px;border-radius:999px;background:#233a4b;color:#a9cbe5}
-'.poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
+.poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
 .pokemon-transform{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:900;margin-top:6px}.pokemon-correct{font-size:16px;font-weight:800;color:#8ed19e;margin-top:7px}.pokemon-correct .thumb{font-size:16px;margin-right:4px}.pokemon-transform .arrow{color:var(--muted);font-size:18px}.pokemon-transform b{color:#8ed19e}.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.qa-diagnostic{margin:10px auto;padding:8px 10px;border:1px dashed var(--border);border-radius:8px;color:#d7c98b;font-size:12px}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
@@ -224,7 +210,7 @@ main{margin-top:18px}
 @media(max-width:620px){
   .app{padding:10px 10px 92px}.topbar{width:calc(100% - 20px);bottom:10px}.xpwrap{width:120px}
   .hero h1{font-size:31px}.question{font-size:24px}.sentence{font-size:23px}
-  .options,.choice-row{grid-template-columns:repeat(2,1fr)}.production-rule-row{grid-template-columns:repeat(3,1fr)}.production-input-row{max-width:100%}
+  .options,.choice-row{grid-template-columns:repeat(2,1fr)}
   .grid,.map,.settings{grid-template-columns:1fr}.poke-grid{grid-template-columns:repeat(2,1fr)}
 }
 
@@ -283,12 +269,9 @@ main{margin-top:18px}
 <div class="app">
 <header class="topbar">
   <div class="profile">
-    <div class="avatar" id="profileAvatar">
-      <img id="profileAvatarImg" alt="Pikachu" onerror="this.style.display='none';document.getElementById('profileAvatarFallback').style.display='block'">
-      <span id="profileAvatarFallback">🔴⚪</span>
-    </div>
+    <div class="avatar">🧒</div>
     <div>
-      <b id="companionText">Pikachu</b><br><small id="levelText">Lv. 1</small>
+      <b>Anson</b><br><small id="levelText">Lv. 1</small>
     </div>
     <div class="xpwrap">
       <small id="xpText">0 / 100 EXP</small>
@@ -306,6 +289,7 @@ main{margin-top:18px}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
+      <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
         <button class="btn" onclick="showScreen('myPokemon')">⭐ 我的寶可夢</button>
@@ -392,7 +376,7 @@ main{margin-top:18px}
         <option value="ruleS">S</option><option value="ruleCH">CH → ES</option><option value="ruleSH">SH → ES</option>
         <option value="ruleSS">SS → ES</option><option value="ruleX">X → ES</option><option value="ruleO">O → ES</option>
         <option value="ruleIES">Y Rule：S / IES</option><option value="sentenceSubject">Subject</option>
-        <option value="sentenceFill">Sentence</option><option value="sentenceProduce">造句填空</option><option value="ing">V-ing</option><option value="error">Error Detective</option>
+        <option value="sentenceFill">Sentence</option><option value="ing">V-ing</option><option value="error">Error Detective</option>
       </select>
     </div>
     <div class="setting-row"><span>題數</span>
@@ -403,13 +387,12 @@ main{margin-top:18px}
     <div class="actions">
       <button class="btn gold" onclick="startQATest()">開始 QA</button>
       <button class="btn" onclick="runQuestionBankHealthCheck()">題庫健康檢查</button>
-      <button class="btn" onclick="runRegressionCheck()">回歸檢查</button>
     </div>
     <div id="qaHealth" class="small-note" style="margin-top:12px"></div>
   </div>
   <div class="card">
     <b>QA 原則</b>
-    <p class="small-note">QA 可以逐題檢查題目、選項、正確答案、提示、語音、Pokémon 圖片、例句與流程。Y Rule 會同時驗證「母音 + y → s」與「子音 + y → ies」。QA 檢查與孩子的學習紀錄完全分開，也不影響 EXP、Mastery、進度、休息計時或獎勵。</p>
+    <p class="small-note">QA 可以逐題檢查題目、選項、正確答案、提示、語音、Pokémon 圖片、例句與流程。Y Rule 會同時驗證「母音 + Y → S」與「子音 + Y → IES」。QA 檢查與孩子的學習紀錄完全分開，也不影響 EXP、Mastery、進度、休息計時或獎勵。</p>
   </div>
 </section>
 
@@ -440,31 +423,31 @@ main{margin-top:18px}
 
 <script>
 const POKEMON = {
-  25:{name:"Pikachu", no:"025", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/25.png"},
-  4:{name:"Charmander", no:"004", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/4.png"},
-  7:{name:"Squirtle", no:"007", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/7.png"},
-  1:{name:"Bulbasaur", no:"001", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png"},
-  26:{name:"Raichu", no:"026", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/26.png"},
-  5:{name:"Charmeleon", no:"005", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/5.png"},
-  8:{name:"Wartortle", no:"008", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/8.png"},
-  2:{name:"Ivysaur", no:"002", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/2.png"},
-  133:{name:"Eevee", no:"133", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/133.png"},
-  54:{name:"Psyduck", no:"054", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/54.png"},
-  39:{name:"Jigglypuff", no:"039", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/39.png"},
-  52:{name:"Meowth", no:"052", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/52.png"},
-  10:{name:"Caterpie", no:"010", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/10.png"},
-  16:{name:"Pidgey", no:"016", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/16.png"},
-  27:{name:"Sandshrew", no:"027", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/27.png"},
-  35:{name:"Clefairy", no:"035", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/35.png"}
+  25:{name:"Pikachu", no:"025", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"},
+  4:{name:"Charmander", no:"004", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"},
+  7:{name:"Squirtle", no:"007", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"},
+  1:{name:"Bulbasaur", no:"001", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"},
+  26:{name:"Raichu", no:"026", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/26.png"},
+  5:{name:"Charmeleon", no:"005", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png"},
+  8:{name:"Wartortle", no:"008", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png"},
+  2:{name:"Ivysaur", no:"002", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"},
+  133:{name:"Eevee", no:"133", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"},
+  54:{name:"Psyduck", no:"054", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png"},
+  39:{name:"Jigglypuff", no:"039", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"},
+  52:{name:"Meowth", no:"052", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/52.png"},
+  10:{name:"Caterpie", no:"010", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/10.png"},
+  16:{name:"Pidgey", no:"016", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/16.png"},
+  27:{name:"Sandshrew", no:"027", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/27.png"},
+  35:{name:"Clefairy", no:"035", img:"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png"}
 };
 
 const STAGES = [
- {id:"unit1",title:"1. S",rule:"S",desc:"Third-person singular verbs → S",types:["ruleS"],newTypes:["ruleS"],practiceTypes:["sentenceProduce"],unlock:0},
- {id:"unit2",title:"2. ES",rule:"ES",desc:"CH / SH / SS / X / O → ES",types:["ruleES"],newTypes:["ruleES"],practiceTypes:["sentenceProduce"],unlock:1},
- {id:"unit3",title:"3. Y → S / IES",rule:"Y",desc:"Look at the letter before Y",types:["ruleIES"],newTypes:["ruleIES"],practiceTypes:["sentenceProduce"],unlock:2},
- {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],practiceTypes:["sentenceProduce"],unlock:3},
- {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],practiceTypes:["sentenceProduce"],unlock:4},
- {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],practiceTypes:["sentenceProduce"],unlock:5},
+ {id:"unit1",title:"1. S",rule:"S",desc:"Third-person singular verbs → S",types:["ruleS"],newTypes:["ruleS"],unlock:0},
+ {id:"unit2",title:"2. ES",rule:"ES",desc:"CH / SH / SS / X / O → ES",types:["ruleES"],newTypes:["ruleES"],unlock:1},
+ {id:"unit3",title:"3. Y → S / IES",rule:"Y",desc:"Look at the letter before Y",types:["ruleIES"],newTypes:["ruleIES"],unlock:2},
+ {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
+ {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
+ {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
  {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"V-ing：CVC words double the final consonant",types:["ingCVC"],newTypes:["ingCVC"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
@@ -558,30 +541,6 @@ const QUESTION_BANK = {
     {id:"fill10",sentence:"Max _____ a box.",choices:["mix","mixs","mixes","mixies"],answer:"mixes",verb:"mix",rule:"X"},
     {id:"fill11",sentence:"Lily _____ her name.",choices:["copy","copys","copies","copyes"],answer:"copies",verb:"copy",rule:"consonant+y"},
     {id:"fill12",sentence:"The teacher _____ the answer.",choices:["check","checks","checkes","checkies"],answer:"checks",verb:"check",rule:"CH"}
-  ],
-  sentenceProduce:[
-    {id:"prod-s01",sentence:"Mia _____ books every night.",verb:"read",answer:"reads",rule:"S"},
-    {id:"prod-s02",sentence:"Tom _____ soccer after school.",verb:"play",answer:"plays",rule:"S"},
-    {id:"prod-s03",sentence:"Ben _____ his room on Saturday.",verb:"clean",answer:"cleans",rule:"S"},
-    {id:"prod-s04",sentence:"Amy _____ to music every day.",verb:"listen",answer:"listens",rule:"S"},
-    {id:"prod-s05",sentence:"Dad _____ dinner at six.",verb:"cook",answer:"cooks",rule:"S"},
-    {id:"prod-s06",sentence:"Leo _____ at the picture.",verb:"look",answer:"looks",rule:"S"},
-    {id:"prod-es01",sentence:"Mia _____ TV every night.",verb:"watch",answer:"watches",rule:"CH"},
-    {id:"prod-es02",sentence:"Ben _____ his hands before dinner.",verb:"wash",answer:"washes",rule:"SH"},
-    {id:"prod-es03",sentence:"Tom _____ the ball across the field.",verb:"toss",answer:"tosses",rule:"SS"},
-    {id:"prod-es04",sentence:"Amy _____ the broken box.",verb:"fix",answer:"fixes",rule:"X"},
-    {id:"prod-es05",sentence:"Leo _____ to school every day.",verb:"go",answer:"goes",rule:"O"},
-    {id:"prod-es06",sentence:"The teacher _____ English on Monday.",verb:"teach",answer:"teaches",rule:"CH"},
-    {id:"prod-es07",sentence:"Dad _____ the dishes after dinner.",verb:"wash",answer:"washes",rule:"SH"},
-    {id:"prod-es08",sentence:"Lily _____ the race.",verb:"finish",answer:"finishes",rule:"SH"},
-    {id:"prod-y01",sentence:"Ben _____ to school every day.",verb:"hurry",answer:"hurries",rule:"consonant+y"},
-    {id:"prod-y02",sentence:"Mia _____ her name on the paper.",verb:"copy",answer:"copies",rule:"consonant+y"},
-    {id:"prod-y03",sentence:"Tom _____ to solve the puzzle.",verb:"try",answer:"tries",rule:"consonant+y"},
-    {id:"prod-y04",sentence:"Amy _____ the picture every day.",verb:"study",answer:"studies",rule:"consonant+y"},
-    {id:"prod-y05",sentence:"Leo _____ video games on Friday.",verb:"enjoy",answer:"enjoys",rule:"vowel+y"},
-    {id:"prod-y06",sentence:"The boy _____ with his friends.",verb:"play",answer:"plays",rule:"vowel+y"},
-    {id:"prod-y07",sentence:"Dad _____ a new phone online.",verb:"buy",answer:"buys",rule:"vowel+y"},
-    {id:"prod-y08",sentence:"The dog _____ outside all day.",verb:"stay",answer:"stays",rule:"vowel+y"}
   ],
   ing:[
     {id:"ing01",sentence:"I am _____ on a chair.",choices:["sit","sitting","siting","sitted"],answer:"sitting",verb:"sit",rule:"CVC"},
@@ -700,44 +659,41 @@ QUESTION_BANK.ruleES=[
 QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
 
 
-// Regression checklist: retry same question; no auto-advance; hint/help does not reveal answer prematurely;
-// answer reveal still allows retry with zero EXP; sentence multi-blank filling; unique choices;
-// Y/ES/CVC rule correctness; question-bank uniqueness; mastery never downgrades; QA isolation.
 const HINTS = {
  S:[
   ["Look at the verb.","Which ending does this verb need?"],
   ["Most verbs use S.","Check CH, SH, SS, X, O, and Y endings."],
-  ["S → S","Add S: {{verb}} → {{form}}"]
+  ["S → S","Add S: play → plays"]
  ],
  CH:[
   ["Look at the ending.","Do you see a special ending?"],
   ["Look at the last two letters.","CH is the clue."],
-  ["CH → ES","Add ES: {{verb}} → {{form}}"]
+  ["CH → ES","Add ES: teach → teaches"]
  ],
  SH:[
   ["Look at the ending.","Do you see a special ending?"],
   ["Look at the last two letters.","SH is the clue."],
-  ["SH → ES","Add ES: {{verb}} → {{form}}"]
+  ["SH → ES","Add ES: wash → washes"]
  ],
  SS:[
   ["Look at the ending.","Do you see a special ending?"],
   ["Look at the last two letters.","SS is the clue."],
-  ["SS → ES","Add ES: {{verb}} → {{form}}"]
+  ["SS → ES","Add ES: miss → misses"]
  ],
  X:[
   ["Look at the last letter.","Check the end of the word."],
   ["The word ends in X.","X is the clue."],
-  ["X → ES","Add ES: {{verb}} → {{form}}"]
+  ["X → ES","Add ES: fix → fixes"]
  ],
  O:[
   ["Look at the last letter.","Check the end of the word."],
   ["The word ends in O.","O is the clue."],
-  ["O → ES","Add ES: {{verb}} → {{form}}"]
+  ["O → ES","Add ES: go → goes"]
  ],
  Y:[
   ["Look at the letter before Y.","Is it a vowel or a consonant?"],
   ["Vowel + Y → S · Consonant + Y → IES","Now choose the matching Y pattern."],
-  ["Y rule","{{verb}} → {{form}}"]
+  ["Y rule","play → plays · try → tries"]
  ],
  subject:[
   ["Find the subject.","Who is doing the action?"],
@@ -747,17 +703,17 @@ const HINTS = {
  CVC:[
   ["Look at the last three letters.","Check the final consonant-vowel-consonant pattern."],
   ["Does the final three-letter pattern end CVC?","sit → sitting; hop → hopping; stop → stopping."],
-  ["CVC → double the last consonant + ing","{{verb}} → {{form}}"]
+  ["CVC → double the last consonant + ing","sit → sitting"]
  ],
  "+ing":[
   ["Look at the verb.","Most verbs simply add -ing."],
   ["Do not double every verb.","drink → drinking; jump → jumping."],
-  ["verb + ing","{{verb}} → {{form}}"]
+  ["verb + ing","Add -ing."]
  ],
  "drop-e":[
   ["Look at the end of the verb.","Check whether the verb ends with silent e."],
   ["Drop the final e before -ing.","write → writing; make → making."],
-  ["drop e + ing","{{verb}} → {{form}}"]
+  ["drop e + ing","write → writing"]
  ]
 };
 
@@ -768,7 +724,6 @@ let currentSession = null;
 let currentQuestion = null;
 let hintLevel = 0;
 let answerLocked = false;
-let answerRevealed = false;
 
 function defaultState(){
   return {
@@ -803,20 +758,7 @@ function loadState(){
       m.lastPracticed=m.lastPracticed||0; m.lastError=m.lastError||0;
       m.needsReview=!!m.needsReview;
     });
-    Object.values(s.collection||{}).forEach(v=>{
-      if(v && v.evolutionProgress==null) v.evolutionProgress=0;
-      if(v && typeof v.level!=="number") v.level=1;
-      if(v && typeof v.xp!=="number") v.xp=0;
-    });
-    // Migrate the old player-level/EXP into the currently selected Pokémon once.
-    // From this version onward, Pokémon level/EXP is authoritative.
-    const activeId=Number(s.activePokemon||25);
-    if(!s.collection[activeId]) s.collection[activeId]={level:Number(s.level)||1,xp:Number(s.xp)||0,evolutionProgress:0};
-    const activeProgress=s.collection[activeId];
-    const legacyLevel=Number(s.level)||1;
-    const legacyXp=Number(s.xp)||0;
-    activeProgress.level=Math.max(Number(activeProgress.level)||1,legacyLevel);
-    if((Number(activeProgress.xp)||0)===0 && legacyXp>0) activeProgress.xp=legacyXp;
+    Object.values(s.collection||{}).forEach(v=>{if(v && v.evolutionProgress==null) v.evolutionProgress=0});
     if(!Array.isArray(s.unlocked)) s.unlocked=["unit1"];
     // Migrate legacy progress into the current 9-unit map without deleting learning data.
     const oldUnlocked=new Set(s.unlocked);
@@ -875,27 +817,10 @@ function showScreen(id){
 }
 
 function updateHeader(){
-  const id=Number(state.activePokemon||25);
-  const p=POKEMON[id]||POKEMON[25];
-  if(!state.collection[id]) state.collection[id]={level:1,xp:0,evolutionProgress:0};
-  const progress=state.collection[id];
-  const level=Math.max(1,Number(progress.level)||1);
-  const xp=Math.max(0,Number(progress.xp)||0);
-  const need=100 + (level-1)*50;
-
-  document.getElementById("companionText").textContent=p.name;
-  document.getElementById("levelText").textContent=`Lv. ${level}`;
-  document.getElementById("xpText").textContent=`${xp} / ${need} EXP`;
-  document.getElementById("xpFill").style.width=Math.min(100,xp/need*100)+"%";
-
-  const img=document.getElementById("profileAvatarImg");
-  const fallback=document.getElementById("profileAvatarFallback");
-  if(img){
-    fallback.style.display="none";
-    img.style.display="block";
-    img.alt=p.name;
-    img.src=p.img;
-  }
+  const need=100 + (state.level-1)*50;
+  document.getElementById("levelText").textContent=`Lv. ${state.level}`;
+  document.getElementById("xpText").textContent=`${state.xp} / ${need} EXP`;
+  document.getElementById("xpFill").style.width=Math.min(100,state.xp/need*100)+"%";
 }
 function saveSettings(){
   state.settings.autoSpeak=document.getElementById("autoSpeak").checked;
@@ -1012,24 +937,6 @@ function renderChallengeControl(stageId){
   el.innerHTML=`<label class="challenge-control"><input type="checkbox" ${checked?"checked":""} onchange="setStageChallenge('${stageId}',this.checked)"><span>想挑戰看看？ 加強難度</span></label>`;
 }
 
-function productionPoolForStage(stageId, bank){
-  const rulesByStage={
-    unit1:["S"],
-    unit2:["CH","SH","SS","X","O"],
-    unit3:["consonant+y","vowel+y"],
-    unit4:["S","CH","SH","SS","X","O"],
-    unit5:["S","CH","SH","SS","X","O","consonant+y","vowel+y"],
-    unit6:["S","CH","SH","SS","X","O","consonant+y","vowel+y"]
-  };
-  const allowed=new Set(rulesByStage[stageId]||[]);
-  return bank.filter(q=>allowed.has(q.rule));
-}
-function productionModeForStage(stageId){
-  if(["unit1","unit2","unit3"].includes(stageId)) return "rule-input";
-  if(stageId==="unit4") return "ending-input";
-  return "direct-input";
-}
-
 function weightedStagePool(stage){
   const weights={};
   (stage.types||[]).forEach(t=>{weights[t]=1;});
@@ -1040,12 +947,6 @@ function weightedStagePool(stage){
     bank.forEach(q=>{
       for(let i=0;i<w;i++) pool.push({...q,_sourceType:type});
     });
-  });
-  // Sentence production is a variation layer for Units 1-6. It shares the same
-  // S/ES/IES mastery rules and is not counted as a separate skill.
-  (stage.practiceTypes||[]).forEach(type=>{
-    const allowed=productionPoolForStage(stage.id,QUESTION_BANK[type]||[]);
-    allowed.forEach(q=>{pool.push({...q,_sourceType:type});pool.push({...q,_sourceType:type});});
   });
   return pool;
 }
@@ -1074,14 +975,7 @@ function stageQuestions(stageId,count=5){
   // - Normal missions are intentionally easy/medium only.
   // - Hard questions appear only after the child opts into 加強難度.
   // - Challenge mode uses meaningful rule contrasts, not harder vocabulary.
-  const result=shuffle(picked.slice(0,count)).map(q=>{
-    const {_sourceType,...clean}=q;
-    if(_sourceType==="sentenceProduce"){
-      clean.type="sentenceProduce";
-      clean.productionMode=productionModeForStage(stageId);
-    }
-    return clean;
-  });
+  const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q; return clean;});
   const challenge=isStageChallengeEnabled(stageId);
   const hardIndex=challenge ? chooseHardQuestionIndex(result) : -1;
   result.forEach((q,i)=>{
@@ -1112,7 +1006,7 @@ function mixedTestQuestions(count=10){
   }));
   const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}|${q._sourceType}`),q])).values()];
   return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
-    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q._sourceType==="sentenceProduce"?"sentenceProduce":q.poke?"rule":"sentence";
+    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
     const { _sourceType, ...clean }=q;
     return {...clean,type};
   });
@@ -1172,21 +1066,21 @@ function showYRuleIntro(){
   card.innerHTML=`
     <div class="y-rule-intro">
       <div class="y-rule-title">Y Rule</div>
-      <p class="y-rule-lead">Look at the letter before y. <span class="y-focus-letter">Before y</span> = vowel or consonant.</p>
+      <p class="y-rule-lead">Look at the letter before Y. <span class="y-focus-letter">Before Y</span> = vowel or consonant.</p>
 
       <div class="y-rule-grid">
         <div class="y-rule-box vowel-box">
-          <div class="y-rule-label">Vowel + Y → <span class="red">s</span></div>
+          <div class="y-rule-label">Vowel + Y → <span class="red">S</span></div>
           <div class="y-rule-letters">A · E · I · O · U</div>
-          <div class="y-rule-example">play → play<span class="rule-s">s</span></div>
-          <div class="y-rule-example">enjoy → enjoy<span class="rule-s">s</span></div>
+          <div class="y-rule-example">play → play<span class="y-focus-y">s</span></div>
+          <div class="y-rule-example">enjoy → enjoy<span class="y-focus-y">s</span></div>
           <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('vowel')">🔊 vowel</button>
         </div>
 
         <div class="y-rule-box consonant-box">
-          <div class="y-rule-label">Consonant + Y → <span class="red">ies</span></div>
-          <div class="y-rule-example">tr<span class="y-focus-letter">r</span><span class="y-focus-y">y</span> → tr<span class="rule-ies">i</span><span class="rule-es">es</span></div>
-          <div class="y-rule-example">stud<span class="y-focus-letter">d</span><span class="y-focus-y">y</span> → stud<span class="y-focus-letter">d</span><span class="rule-ies">i</span><span class="rule-es">es</span></div>
+          <div class="y-rule-label">Consonant + Y → <span class="red">IES</span></div>
+          <div class="y-rule-example">tr<span class="y-focus-letter">r</span><span class="y-focus-y">y</span> → tr<span class="y-focus-letter">i</span><span class="y-focus-y">es</span></div>
+          <div class="y-rule-example">stud<span class="y-focus-letter">d</span><span class="y-focus-y">y</span> → stud<span class="y-focus-letter">d</span>i<span class="y-focus-y">es</span></div>
           <div class="y-rule-consonant-note">Consonants = other letters</div>
           <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('consonant')">🔊 consonant</button>
         </div>
@@ -1249,13 +1143,8 @@ function startWarmup(){
 }
 
 function beginFormalPractice(){
-  // Warm-up and formal practice share the same screen, but their state must be
-  // explicitly separated.  The old flow could leave the warm-up answer lock
-  // active when the child pressed 「開始正式練習」.
   if(!currentSession) return;
   currentSession.warmup=false;
-  currentSession.warmupIndex=null;
-  currentSession.warmupQuestions=null;
   currentSession.index=0;
   currentSession.correct=0;
   currentSession.independent=0;
@@ -1270,21 +1159,7 @@ function beginFormalPractice(){
   currentSession.questionAttemptData={};
   currentSession.levelUps=0;
   currentSession.uniqueCompleted=0;
-  currentSession.productionRuleChoice=null;
   currentSession.learningSegmentStartedAt=Date.now();
-
-  // Critical reset: the warm-up intentionally locks its answered choice.
-  // Formal practice must always start in a fresh, interactive state.
-  answerLocked=false;
-  hintLevel=0;
-  answerRevealed=false;
-  currentQuestion=null;
-
-  const card=document.getElementById("questionCard");
-  if(card) card.classList.remove("warmup-mode");
-  const learn=document.getElementById("learn");
-  if(learn){ learn.dataset.feedbackPhase=""; }
-
   renderQuestion();
 }
 
@@ -1310,14 +1185,12 @@ function renderWarmupQuestion(){
       ${ruleQuestionPrompt(q)}</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
-        return `<button class="option" data-poke="${o.poke}" data-verb="${escapeHtml(o.verb)}" data-rule="${escapeHtml(o.rule)}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
+        return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
           <img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'">
           <span class="word">${o.verb}</span>
           <span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span>
         </button>`;
       }).join("")}</div>`;
-  }else if(type==="sentenceProduce"){
-    html=renderProductionQuestion(currentQuestion);
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
@@ -1327,13 +1200,10 @@ function renderWarmupQuestion(){
       <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
-    <div class="preanswer-actions" id="preAnswerActions">
-      <button class="btn guide-action" id="judgmentBtn" onclick="showJudgmentGuide()">How to Decide</button>
-    </div>
-    <div class="actions" id="hintTrigger"><button class="btn hint-action hint-action-btn" onclick="showHint()">Hint</button></div>`;
+    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   card.innerHTML=html;
   const learn=document.getElementById("learn");
-  if(learn){learn.dataset.feedbackPhase="";}
+  if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
   const freshFeedback=document.getElementById("feedback");
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
@@ -1368,8 +1238,7 @@ function handleWarmupAnswer(correct,answer,extra){
       }
       const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}`;
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`${example}<div class="actions feedback-next"><button type="button" class="btn primary next-arrow" data-warmup-action="${last?'formal':'next'}" onclick="return handleWarmupAction(this)" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}">${last?'開始正式練習':'→ Next'}</button></div>`;
-      bindWarmupFeedbackAction(f);
+      f.innerHTML=`${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
       speak("Correct");
       speak(ex.sentence);
       return;
@@ -1381,17 +1250,12 @@ function handleWarmupAnswer(correct,answer,extra){
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const answers=(q.answers||String(answer).split(" / ")).map(String);
-        let filled=escapeHtml(q.sentence);
-        answers.forEach(a=>{
-          filled=filled.replace("_____",`<span class="filled-answer red">${escapeHtml(a)}</span>`);
-        });
+        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    f.innerHTML=`<div class="actions feedback-next"><button type="button" class="btn primary next-arrow" data-warmup-action="${last?'formal':'next'}" onclick="return handleWarmupAction(this)" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}">${last?'開始正式練習':'→ Next'}</button></div>`;
-    bindWarmupFeedbackAction(f);
+    f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
     speak("Correct");
     if(q.sentence) speak(q.sentence.replace("_____",answer));
     return;
@@ -1400,59 +1264,6 @@ function handleWarmupAnswer(correct,answer,extra){
   speak("Not quite. Try the same question again.");
   setTimeout(()=>{answerLocked=false;},700);
 }
-
-function bindWarmupFeedbackAction(feedbackEl){
-  // Kept for backward compatibility with the existing render flow.
-  // Actual handling is delegated once at document level below, so replacing
-  // #feedback.innerHTML can never lose the click handler.
-  return !!feedbackEl;
-}
-
-// Dynamic navigation uses a direct handler on the generated button.
-// This is intentionally simple: the button is recreated with each question,
-// so there is no need for document-level event delegation here.
-function handleNextClick(btn){
-  if(!btn || btn.dataset.busy==="1") return false;
-  // Do not disable the button before the state transition. In some browsers,
-  // replacing the parent #feedback while the clicked button is disabled can
-  // cancel the click lifecycle. Mark it busy instead, then transition.
-  btn.dataset.busy="1";
-  btn.setAttribute("aria-busy","true");
-  try{
-    nextQuestion();
-  }catch(err){
-    console.error("Next navigation error:", err);
-    btn.dataset.busy="";
-    btn.removeAttribute("aria-busy");
-    alert("這一題切換時發生錯誤，請再按一次 Next。");
-  }
-  return false;
-}
-
-function handleWarmupAction(btn){
-  if(!btn || btn.dataset.busy==="1") return false;
-  const action=btn.dataset.warmupAction;
-  btn.dataset.busy="1";
-  btn.setAttribute("aria-busy","true");
-  try{
-    if(action==="formal") beginFormalPractice();
-    else if(action==="next") nextWarmupQuestion();
-  }catch(err){
-    console.error("Warm-up navigation error:", err);
-    btn.dataset.busy="";
-    btn.removeAttribute("aria-busy");
-    alert("這一題切換時發生錯誤，請再按一次。");
-  }
-  return false;
-}
-
-// Last-resort navigation guard: if a browser reports an exception during a
-// transition, keep the current session alive rather than leaving a dead screen.
-window.addEventListener("error", function(event){
-  if(/renderQuestion|nextQuestion|beginFormalPractice|nextWarmupQuestion/.test(String(event.message||""))){
-    console.error("Grammar navigation error:", event.error||event.message);
-  }
-});
 
 function nextWarmupQuestion(){
   if(!currentSession?.warmup) return;
@@ -1477,72 +1288,23 @@ function buildTestQuestions(source,count){
     return {...clean,type};
   });
 }
-function shufflePick(arr, count){
-  return shuffle([...arr]).slice(0, Math.min(count, arr.length));
-}
-
-// Super Boss has a large pool and selects a different combination each run.
-// The child still gets exactly 3 boss questions, but the questions themselves
-// are no longer hard-coded to worry / wash / walks-watches.
-const SUPER_BOSS_SENTENCES = [
-  {id:"boss-s01",sentence:"Amy _____ to school, and Tom _____ TV.",choices:["walk / watch","walks / watches","walks / watch","walk / watches"],answer:"walks / watches",verb:"walk + watch",rule:"subject+S+ES"},
-  {id:"boss-s02",sentence:"Lily _____ her homework, and Ben _____ the door.",choices:["finish / open","finishes / opens","finish / opens","finishes / open"],answer:"finishes / opens",verb:"finish + open",rule:"ES+S"},
-  {id:"boss-s03",sentence:"Jack _____ to school, and Mia _____ her bag.",choices:["hurry / carry","hurries / carries","hurry / carries","hurries / carry"],answer:"hurries / carries",verb:"hurry + carry",rule:"IES+IES"},
-  {id:"boss-s04",sentence:"Tom _____ the box, and Anna _____ it.",choices:["fix / carry","fixes / carries","fixes / carry","fix / carries"],answer:"fixes / carries",verb:"fix + carry",rule:"ES+IES"},
-  {id:"boss-s05",sentence:"The teacher _____ the class, and Amy _____ the answer.",choices:["watch / copy","watches / copies","watches / copy","watch / copies"],answer:"watches / copies",verb:"watch + copy",rule:"ES+IES"},
-  {id:"boss-s06",sentence:"Dad _____ dinner, and Mom _____ the dishes.",choices:["cook / wash","cooks / washes","cook / washes","cooks / wash"],answer:"cooks / washes",verb:"cook + wash",rule:"S+ES"},
-  {id:"boss-s07",sentence:"The boy _____ the ball, and the girl _____ it.",choices:["toss / catch","tosses / catches","tosses / catch","toss / catches"],answer:"tosses / catches",verb:"toss + catch",rule:"ES+ES"},
-  {id:"boss-s08",sentence:"Ben _____ the game, and his sister _____ him.",choices:["enjoy / help","enjoys / helps","enjoy / helps","enjoys / help"],answer:"enjoys / helps",verb:"enjoy + help",rule:"S+S"},
-  {id:"boss-s09",sentence:"The dog _____ outside, and the cat _____ inside.",choices:["play / stay","plays / stays","plays / stay","play / stays"],answer:"plays / stays",verb:"play + stay",rule:"S+S"},
-  {id:"boss-s10",sentence:"Mia _____ the picture, and Leo _____ the color.",choices:["draw / choose","draws / chooses","draws / choose","draw / chooses"],answer:"draws / chooses",verb:"draw + choose",rule:"S+ES"},
-  {id:"boss-s11",sentence:"The boy _____ his name, and his sister _____ it.",choices:["copy / check","copies / checks","copies / check","copy / checks"],answer:"copies / checks",verb:"copy + check",rule:"IES+ES"},
-  {id:"boss-s12",sentence:"The teacher _____ the class, and the students _____ quietly.",choices:["teach / listens","teaches / listen","teaches / listens","teach / listen"],answer:"teaches / listen",verb:"teach + listen",rule:"ES+plural"},
-  {id:"boss-s13",sentence:"The children are _____ and _____ in the gym.",choices:["run / hop","running / hopping","runing / hoping","ran / hopped"],answer:"running / hopping",verb:"run + hop",rule:"CVC+ing"},
-  {id:"boss-s14",sentence:"We are _____ and _____ for the bus.",choices:["sit / wait","sitting / waiting","siting / waitting","sat / waited"],answer:"sitting / waiting",verb:"sit + wait",rule:"CVC+ing"},
-  {id:"boss-s15",sentence:"The students are _____ and _____ the books.",choices:["get / carry","getting / carrying","geting / carrying","got / carried"],answer:"getting / carrying",verb:"get + carry",rule:"CVC+ing"},
-  {id:"boss-s16",sentence:"She is _____ a letter and _____ for her friend.",choices:["write / wait","writing / waiting","writting / waitting","wrote / waited"],answer:"writing / waiting",verb:"write + wait",rule:"drop-e+ing"}
-];
-
-function hardenBoss(q, idPrefix){
-  return {...q, difficulty:"hard", type:q.poke ? "rule" : "sentence", id:idPrefix+q.id};
-}
-
-function validateSuperBossSentencePool(){
-  const problems=[];
-  SUPER_BOSS_SENTENCES.forEach(q=>{
-    const uniqueChoices=new Set(q.choices||[]);
-    const blankCount=(q.sentence.match(/_____/g)||[]).length;
-    const answerParts=String(q.answer||"").split(" / ");
-    if(uniqueChoices.size!==(q.choices||[]).length) problems.push(`${q.id}: duplicate choices`);
-    if(!q.choices?.includes(q.answer)) problems.push(`${q.id}: answer not in choices`);
-    if((q.choices||[]).filter(c=>c===q.answer).length!==1) problems.push(`${q.id}: answer is not unique`);
-    if(blankCount!==answerParts.length) problems.push(`${q.id}: ${blankCount} blanks but ${answerParts.length} answer parts`);
-  });
-  if(problems.length) console.warn("Super Boss sentence pool validation:",problems);
-  return problems;
-}
-validateSuperBossSentencePool();
-
 function superBossQuestions(){
-  const yPool=(QUESTION_BANK.ruleIES||[]).map(q=>hardenBoss(q,"boss-y-"));
-  const esPool=[
-    ...(QUESTION_BANK.ruleCH||[]), ...(QUESTION_BANK.ruleSH||[]),
-    ...(QUESTION_BANK.ruleSS||[]), ...(QUESTION_BANK.ruleX||[]), ...(QUESTION_BANK.ruleO||[])
-  ].map(q=>hardenBoss(q,"boss-es-"));
-
-  // Always test the Y rule and an ES ending, then choose a third application
-  // question from the mixed sentence / present-continuous pool.
-  const y=shufflePick(yPool,1)[0];
-  const es=shufflePick(esPool,1)[0];
-  const applicationPool=[
-    ...SUPER_BOSS_SENTENCES,
-    ...(QUESTION_BANK.sentenceSubject||[]),
-    ...(QUESTION_BANK.sentenceFill||[]),
-    ...(QUESTION_BANK.ing||[])
-  ].map(q=>hardenBoss(q,"boss-app-"));
-  const application=shufflePick(applicationPool,1)[0];
-
-  return shuffle([y,es,application]);
+  // Exactly three hard questions. Each has one and only one valid answer.
+  // Two Rule Hunt questions deliberately contrast close grammar rules; the third
+  // applies a rule in a sentence so the boss is not just a larger Rule Hunt.
+  const y = {...QUESTION_BANK.ruleIES.find(q=>q.id==="y05"), difficulty:"hard", type:"rule", id:"boss-y-worry"};
+  const es = {...QUESTION_BANK.ruleSH.find(q=>q.id==="sh01"), difficulty:"hard", type:"rule", id:"boss-es-wash"};
+  const sentence = {
+    id:"boss-sentence-mixed",
+    sentence:"Amy _____ to school, and Tom _____ TV.",
+    choices:["walk / watch","walks / watches","walks / watch","walk / watches"],
+    answer:"walks / watches",
+    verb:"walk + watch",
+    rule:"subject+S+ES",
+    difficulty:"hard",
+    type:"sentence"
+  };
+  return [y,es,sentence];
 }
 
 function startSuperBoss(){
@@ -1594,7 +1356,7 @@ function runQuestionBankHealthCheck(){
       if(!ex.form || !ex.sentence) problems.push(`${q.id}: missing example`);
     }
   });
-  ["sentenceSubject","sentenceFill","sentenceProduce","ing","error"].forEach(type=>{
+  ["sentenceSubject","sentenceFill","ing","error"].forEach(type=>{
     (QUESTION_BANK[type]||[]).forEach(q=>{
       if(!q.id) problems.push(`${type}: missing ID`);
       if(Array.isArray(q.choices)){
@@ -1611,7 +1373,7 @@ function runQuestionBankHealthCheck(){
   if(!hasConsonantY || !hasVowelY) problems.push("Y Rule must contain both consonant+y and vowel+y examples");
 
   // Difficulty / answer-quality checks.
-  const allLearningBanks=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES","sentenceSubject","sentenceFill","sentenceProduce","ing","error"];
+  const allLearningBanks=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES","sentenceSubject","sentenceFill","ing","error"];
   allLearningBanks.forEach(type=>{
     (QUESTION_BANK[type]||[]).forEach(q=>{
       if(Array.isArray(q.choices) && q.choices.filter(c=>c===q.answer).length!==1){
@@ -1621,22 +1383,6 @@ function runQuestionBankHealthCheck(){
   });
   const yHardPool=yBank.filter(q=>q.rule==="consonant+y" || q.rule==="vowel+y");
   if(!yHardPool.length) problems.push("Y Rule has no hard-question candidates");
-  const prod=QUESTION_BANK.sentenceProduce||[];
-  if(prod.length<12) problems.push("Sentence production bank needs at least 12 candidates");
-  const prodIds=new Set();
-  prod.forEach(q=>{
-    if(prodIds.has(q.id)) problems.push(`sentenceProduce: duplicate ID ${q.id}`);
-    prodIds.add(q.id);
-    if(!q.sentence || (q.sentence.match(/_____/g)||[]).length!==1) problems.push(`${q.id}: production sentence must have exactly one blank`);
-    if(!q.verb || !q.answer) problems.push(`${q.id}: production missing verb/answer`);
-    const expected=thirdPersonVerb(q.verb,q.rule);
-    if(expected!==q.answer) problems.push(`${q.id}: production answer mismatch ${q.verb} -> ${q.answer}, expected ${expected}`);
-    if(!["S","CH","SH","SS","X","O","consonant+y","vowel+y"].includes(q.rule)) problems.push(`${q.id}: invalid production rule ${q.rule}`);
-  });
-  const prodRules=new Set(prod.map(q=>q.rule));
-  ["S","CH","SH","SS","X","O","consonant+y","vowel+y"].forEach(r=>{if(!prodRules.has(r)) problems.push(`sentenceProduce: missing rule ${r}`);});
-  const prodSentences=new Set();
-  prod.forEach(q=>{if(prodSentences.has(q.sentence)) problems.push(`sentenceProduce: duplicate sentence ${q.id}`); prodSentences.add(q.sentence);});
   if((QUESTION_BANK.sentenceFill||[]).length<3) problems.push("Sentence Fill needs at least 3 challenge candidates");
 
   // Hard-question quality: Hard must test a meaningful contrast, not just a harder word.
@@ -1648,12 +1394,8 @@ function runQuestionBankHealthCheck(){
     const alt=hardRuleCandidates.some(x=>x.answer!==sample.answer && x.verb!==sample.verb);
     if(!alt) problems.push(`${type}: no valid hard distractor candidate`);
   });
-  const bossPoolProblems=validateSuperBossSentencePool();
-  bossPoolProblems.forEach(p=>problems.push("Super Boss pool: "+p));
   const boss=superBossQuestions();
   if(boss.length!==3) problems.push("Super Boss must contain exactly 3 questions");
-  if(!boss.some(q=>q.rule==="consonant+y"||q.rule==="vowel+y")) problems.push("Super Boss must include a Y-rule question");
-  if(!boss.some(q=>["CH","SH","SS","X","O"].includes(q.rule))) problems.push("Super Boss must include an ES-rule question");
   boss.forEach(q=>{
     if(q.difficulty!=="hard") problems.push(`${q.id}: Super Boss question must be hard`);
     if(q.choices && q.choices.filter(c=>c===q.answer).length!==1) problems.push(`${q.id}: Super Boss answer is not unique`);
@@ -1666,48 +1408,6 @@ function runQuestionBankHealthCheck(){
       : `<b style="color:#84cb9b">✓ 題庫健康檢查通過</b><br>Rule Hunt、選項、Pokémon、例句、S/ES/IES（含母音+Y／子音+Y）規則目前沒有發現結構性問題。`;
   }
   console.log("Question Bank Health Check",problems);
-  return problems;
-}
-
-function runRegressionCheck(){
-  const problems=[];
-  const bankProblems=runQuestionBankHealthCheck();
-  bankProblems.forEach(p=>problems.push(p));
-
-  // Regression guards for issues found during real child testing.
-  const source={
-    highlightBlank:highlightBlank.toString(),
-    renderFeedback:renderFeedback.toString(),
-    handleAnswer:handleAnswer.toString(),
-    showHint:showHint.toString(),
-    superBoss:superBossQuestions.toString(),
-    production:renderProductionQuestion.toString()+submitProductionAnswer.toString()+chooseProductionRule.toString()+productionWrongHint.toString()+revealAnswer.toString()
-  };
-  if(!/replace\(\/_____\/g/.test(source.highlightBlank)) problems.push("Regression: multi-blank highlight must replace all blanks");
-  if(!/answers\.forEach/.test(source.renderFeedback)) problems.push("Regression: multi-blank correct feedback must fill every blank");
-  if(!/Try the same question again/.test(source.renderFeedback)) problems.push("Regression: wrong answer must stay on the same question");
-  if(!/→ Next/.test(source.renderFeedback) || !/完成本關/.test(source.renderFeedback)) problems.push("Regression: correct answer must require explicit Next/Finish action");
-  if(!/answerRevealed/.test(source.handleAnswer) || !/exp=/.test(source.handleAnswer)) problems.push("Regression: revealed-answer retry/EXP logic is missing");
-  if(!/SUPER_BOSS/.test(source.handleAnswer)) problems.push("Regression: Super Boss must remain isolated from EXP/Mastery");
-  if(!/\{\{verb\}\}/.test(JSON.stringify(HINTS))) problems.push("Regression: hints should use the current question example, not a fixed example");
-  if(!/validateSuperBossSentencePool/.test(source.superBoss)) problems.push("Regression: Super Boss pool validation is missing");
-  if(!/sentenceProduce/.test(JSON.stringify(QUESTION_BANK))) problems.push("Regression: sentence production bank is missing");
-  if(!/productionRuleChoice/.test(source.production)) problems.push("Regression: production rule selection state is missing");
-  if(!/normalizeProductionInput/.test(source.production)) problems.push("Regression: production input normalization is missing");
-  if(!/expectedProductionRule/.test(source.production)) problems.push("Regression: production rule validation is missing");
-  if(!/productionInput\.disabled=true/.test(source.renderFeedback)) problems.push("Regression: correct production answer must lock input controls");
-  if(!/y-focus-letter/.test(document.head.innerHTML+document.body.innerHTML)) problems.push("Regression: Y judgment-letter color class is missing");
-  if(!/y-focus-y/.test(document.head.innerHTML+document.body.innerHTML)) problems.push("Regression: Y color class is missing");
-  if(!/rule-s/.test(document.head.innerHTML+document.body.innerHTML) || !/rule-es/.test(document.head.innerHTML+document.body.innerHTML) || !/rule-ies/.test(document.head.innerHTML+document.body.innerHTML)) problems.push("Regression: unified S/ES/IES teaching colors are missing");
-  if(document.querySelector(".poke-peek-target") || document.querySelector("[data-poke-peek]") || document.getElementById("pokemonPeekStyle")) problems.push("Regression: Pokémon idle animation controls should remain absent in the child UI");
-
-  const health=document.getElementById("qaHealth");
-  if(health){
-    health.innerHTML=problems.length
-      ? `<b style="color:#e7838b">回歸檢查發現 ${problems.length} 個問題</b><br>${problems.slice(0,40).map(escapeHtml).join("<br>")}`
-      : `<b style="color:#84cb9b">✓ 回歸檢查通過</b><br>已檢查題庫、重複選項、多空格填答、錯答不跳題、答案揭示後可重答、Next／完成流程、Hint 動態例子、Y／ES／CVC 規則及 Super Boss 題庫。`;
-  }
-  console.log("Regression Check",problems);
   return problems;
 }
 
@@ -1739,7 +1439,6 @@ function validateQuestionBank(){
       if(Array.isArray(q.choices)){
         const matches=q.choices.filter(c=>c===q.answer).length;
         if(matches!==1) problems.push(`${type}: answer count ${q.id} = ${matches}`);
-        if(q.answers && (!Array.isArray(q.answers) || q.answers.length<2)) problems.push(`${type}: invalid answers ${q.id}`);
       }
     });
   });
@@ -1758,11 +1457,10 @@ function validateQuestionBank(){
 validateQuestionBank();
 
 function renderQuestion(){
-  answerLocked=false;hintLevel=0;answerRevealed=false;
-  if(currentSession) currentSession.productionRuleChoice=null;
+  answerLocked=false;hintLevel=0;
   document.getElementById("questionCard")?.classList.remove("warmup-mode");
   const learn=document.getElementById("learn");
-  if(learn){ learn.dataset.feedbackPhase=""; }
+  if(learn){ learn.onclick=null; learn.dataset.feedbackPhase=""; }
   currentQuestion=currentSession.questions[currentSession.index];
   currentSession.questionStartedAt=Date.now();
   const type=questionType(currentQuestion);
@@ -1776,7 +1474,7 @@ function renderQuestion(){
       ${ruleQuestionPrompt(currentQuestion)}</div>
       <div class="options">${options.map(o=>{
         const p=POKEMON[o.poke];
-        return `<button class="option" data-poke="${o.poke}" data-verb="${escapeHtml(o.verb)}" data-rule="${escapeHtml(o.rule)}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
+        return `<button class="option" data-poke="${o.poke}" onclick="answerRule('${escapeHtml(o.verb)}','${o.answer}','${o.poke}')">
           <img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'">
           <span class="word">${o.verb}</span>
           <span class="word-speaker" onclick="event.stopPropagation();speak('${o.verb}')">🔊</span>
@@ -1791,10 +1489,7 @@ function renderQuestion(){
       <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
-    <div class="preanswer-actions" id="preAnswerActions">
-      <button class="btn guide-action" id="judgmentBtn" onclick="showJudgmentGuide()">How to Decide</button>
-    </div>
-    <div class="actions" id="hintTrigger"><button class="btn hint-action hint-action-btn" onclick="showHint()">Hint</button></div>`;
+    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   document.getElementById("questionCard").innerHTML=html;
   // A new question must start with no feedback/Next state from the previous question.
   const freshFeedback=document.getElementById("feedback");
@@ -1803,106 +1498,30 @@ function renderQuestion(){
   if(freshHint) freshHint.style.display="flex";
   if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
 }
-function renderProductionQuestion(q){
-  const mode=q.productionMode||productionModeForStage(currentSession?.stageId);
-  const stageLabel=mode==="rule-input"?"先選規則，再輸入":mode==="ending-input"?"先選字尾，再輸入":"自己輸入動詞變化";
-  const base=escapeHtml(q.verb);
-  let controls="";
-  if(mode==="rule-input" || mode==="ending-input"){
-    controls=`<div class="production-rule-row" id="productionRuleRow">
-      <button class="choice" data-production-rule="S" onclick="chooseProductionRule('S')">＋ s</button>
-      <button class="choice" data-production-rule="ES" onclick="chooseProductionRule('ES')">＋ es</button>
-      <button class="choice" data-production-rule="IES" onclick="chooseProductionRule('IES')">＋ ies</button>
-    </div>`;
-    if(mode==="ending-input") controls+=`<div class="production-stage-note">選完字尾後，再把完整變化打出來。</div>`;
-  }else{
-    controls=`<div class="production-input-row">
-      <input id="productionInput" class="production-input" type="text" inputmode="text" enterkeyhint="done" autocorrect="off" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="24" aria-label="輸入動詞變化" placeholder="Type the verb">
-      <button class="btn primary production-submit" onclick="submitProductionAnswer()">✓ 完成</button>
-    </div>`;
-  }
-  return `<span class="rule-chip">造句填空</span>
-    <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>${highlightBlank(q.sentence)}</div>
-    <div class="baseverb">原形動詞：<b>${base}</b> <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${base}')">🔊</button></div>
-    <div class="production-stage-note">${stageLabel}</div>${controls}
-    <div id="productionSelected" class="production-rule-selected" style="display:none"></div>`;
-}
-function chooseProductionRule(rule){
-  if(answerLocked || !currentQuestion || questionType(currentQuestion)!=="sentenceProduce") return;
-  currentSession.productionRuleChoice=rule;
-  document.querySelectorAll("[data-production-rule]").forEach(b=>{
-    b.classList.toggle("selected",b.dataset.productionRule===rule);
-  });
-  const selected=document.getElementById("productionSelected");
-  if(selected){selected.style.display="flex";selected.textContent=`你選了：＋ ${rule.toLowerCase()}`;}
-  showProductionInput();
-}
-function showProductionInput(){
-  if(document.getElementById("productionInput")) return;
-  const wrap=document.createElement("div");
-  wrap.className="production-input-row";
-  wrap.innerHTML=`<input id="productionInput" class="production-input" type="text" inputmode="text" enterkeyhint="done" autocorrect="off" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="24" aria-label="輸入動詞變化" placeholder="Type the verb"><button class="btn primary production-submit" onclick="submitProductionAnswer()">✓ 完成</button>`;
-  const anchor=document.getElementById("productionSelected");
-  if(anchor) anchor.insertAdjacentElement("afterend",wrap);
-  const input=document.getElementById("productionInput");
-  if(input){input.focus();input.addEventListener("keydown",e=>{if(e.key==="Enter")submitProductionAnswer();});}
-}
-function normalizeProductionInput(v){return String(v||"").trim().toLowerCase().replace(/\s+/g,"");}
-function expectedProductionRule(q){
-  if(q.rule==="consonant+y") return "IES";
-  if(q.rule==="vowel+y") return "S";
-  if(["CH","SH","SS","X","O"].includes(q.rule)) return "ES";
-  return "S";
-}
-function productionErrorType(q,typed,selectedRule){
-  const expected=normalizeProductionInput(q.answer);
-  const raw=normalizeProductionInput(typed);
-  const expectedRule=expectedProductionRule(q);
-  if(raw===expected && (!selectedRule || selectedRule===expectedRule)) return null;
-  if(selectedRule && selectedRule!==expectedRule) return "ruleSelectionError";
-  if(expectedRule==="ES" && raw===normalizeProductionInput(q.verb+"s")) return "ruleError";
-  if(expectedRule==="IES" && raw===normalizeProductionInput(q.verb+"s")) return "ruleError";
-  if(raw && raw.length===expected.length) return "spellingError";
-  return "productionError";
-}
-function submitProductionAnswer(){
-  if(answerLocked || !currentSession || !currentQuestion || questionType(currentQuestion)!=="sentenceProduce") return;
-  const input=document.getElementById("productionInput");
-  if(!input) return;
-  const typed=input.value;
-  if(!typed.trim()){input.focus();return;}
-  const q=currentQuestion;
-  const chosen=currentSession.productionRuleChoice||null;
-  const ruleOk=!chosen || chosen===expectedProductionRule(q);
-  const spellingOk=normalizeProductionInput(typed)===normalizeProductionInput(q.answer);
-  const correct=ruleOk && spellingOk;
-  handleAnswer(correct,typed,{production:true,selectedRule:chosen,expectedRule:expectedProductionRule(q),errorType:productionErrorType(q,typed,chosen)});
-}
-
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
   const isY=q?.rule==="consonant+y" || q?.rule==="vowel+y";
   const isUnit2=currentSession?.stageId==="unit2" && ["CH","SH","SS","X","O"].includes(q?.rule);
   if(isUnit2){
     const prompts={
-      CH:["Which verb ends in <span class=\"red\">ch</span>?","Find the verb ending in <span class=\"red\">ch</span>.","Which verb has <span class=\"red\">ch</span> at the end?"] ,
-      SH:["Which verb ends in <span class=\"red\">sh</span>?","Find the verb ending in <span class=\"red\">sh</span>.","Which verb has <span class=\"red\">sh</span> at the end?"] ,
-      SS:["Which verb ends in <span class=\"red\">ss</span>?","Find the verb ending in <span class=\"red\">ss</span>.","Which verb has <span class=\"red\">ss</span> at the end?"] ,
-      X:["Which verb ends in <span class=\"red\">x</span>?","Find the verb ending in <span class=\"red\">x</span>.","Which verb has <span class=\"red\">x</span> at the end?"] ,
-      O:["Which verb ends in <span class=\"red\">o</span>?","Find the verb ending in <span class=\"red\">o</span>.","Which verb has <span class=\"red\">o</span> at the end?"]
+      CH:["Which verb ends in <span class=\"red\">CH</span>?","Find the verb ending in <span class=\"red\">CH</span>.","Which verb has <span class=\"red\">CH</span> at the end?"] ,
+      SH:["Which verb ends in <span class=\"red\">SH</span>?","Find the verb ending in <span class=\"red\">SH</span>.","Which verb has <span class=\"red\">SH</span> at the end?"] ,
+      SS:["Which verb ends in <span class=\"red\">SS</span>?","Find the verb ending in <span class=\"red\">SS</span>.","Which verb has <span class=\"red\">SS</span> at the end?"] ,
+      X:["Which verb ends in <span class=\"red\">X</span>?","Find the verb ending in <span class=\"red\">X</span>.","Which verb has <span class=\"red\">X</span> at the end?"] ,
+      O:["Which verb ends in <span class=\"red\">O</span>?","Find the verb ending in <span class=\"red\">O</span>.","Which verb has <span class=\"red\">O</span> at the end?"]
     };
     const list=prompts[q.rule];
     return list[(String(q?.id||"").length)%list.length];
   }
   if(isY){
     const prompts=answer==="IES"
-      ? ["Which one changes y to <span class=\"red\">ies</span>?","Find the verb that needs <span class=\"red\">ies</span>.","Which verb needs <span class=\"red\">ies</span> after y?"]
-      : ["Which one keeps y and adds <span class=\"red\">s</span>?","Find the verb that needs <span class=\"red\">s</span>.","Which verb keeps y and adds <span class=\"red\">s</span>?"];
+      ? ["Which one changes Y to <span class=\"red\">IES</span>?","Find the verb that needs <span class=\"red\">IES</span>.","Which verb needs <span class=\"red\">IES</span> after Y?"]
+      : ["Which one keeps Y and adds <span class=\"red\">S</span>?","Find the verb that needs <span class=\"red\">S</span>.","Which verb keeps Y and adds <span class=\"red\">S</span>?"];
     return prompts[(String(q.id||"").length)%prompts.length];
   }
   const prompts={
-    S:["Which one needs <span class=\"red\">s</span>?","Find the verb that needs <span class=\"red\">s</span>.","Which verb needs <span class=\"red\">s</span>?"] ,
-    ES:["Which one needs <span class=\"red\">es</span>?","Find the verb that needs <span class=\"red\">es</span>.","Which verb needs <span class=\"red\">es</span>?"]
+    S:["Which one needs <span class=\"red\">S</span>?","Find the verb that needs <span class=\"red\">S</span>.","Which verb needs <span class=\"red\">S</span>?"] ,
+    ES:["Which one needs <span class=\"red\">ES</span>?","Find the verb that needs <span class=\"red\">ES</span>.","Which verb needs <span class=\"red\">ES</span>?"]
   };
   const list=prompts[answer]||[`Which one is an <span class=\"red\">${escapeHtml(answer)}</span> Pokémon?`];
   return list[(String(q?.id||"").length)%list.length];
@@ -1911,8 +1530,8 @@ function ruleQuestionPrompt(q){
 function yRulePrompt(q){
   if(!q || q.rule!="consonant+y" && q.rule!="vowel+y") return `Which one is an ${q?.answer||""} Pokémon?`;
   return q.answer==="IES"
-    ? `Which one changes y to ies?`
-    : `Which one keeps y and adds s?`;
+    ? `Which one changes Y to IES?`
+    : `Which one keeps Y and adds S?`;
 }
 
 function stripHtml(s){ const d=document.createElement("div"); d.innerHTML=s; return d.textContent||d.innerText||""; }
@@ -1923,7 +1542,7 @@ function getSpeakText(){
   }
   return currentQuestion.sentence.replace("_____","blank");
 }
-function highlightBlank(s){return escapeHtml(s).replace(/_____/g,"<span class=\"red\">_____</span>")}
+function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
 function questionType(q){
   if(q.type) return q.type;
   if(q.poke) return "rule";
@@ -1979,17 +1598,11 @@ function makeRuleOptions(answer){
     const specialRules=["CH","SH","SS","X","O"].filter(r=>r!==correct.rule);
     specialRules.forEach(r=>{ if(distractors.length<3) takeOne(x=>x.rule===r); });
   }else if(stageId==="unit3"){
-    // Unit 3 is a pure Y-rule contrast: every option MUST end in Y.
-    // Exactly one option matches the requested outcome; the other three use the opposite Y rule.
-    for(const item of candidates){
-      if(distractors.length>=3) break;
-      if(!isY(item) || item.rule===correct.rule) continue;
-      if(!usedPokes.has(Number(item.poke)) && !usedWords.has(item.verb)){
-        distractors.push(item);
-        usedPokes.add(Number(item.poke));
-        usedWords.add(item.verb);
-      }
-    }
+    // All four choices are Y-ending verbs. Exactly one matches the requested outcome.
+    // This teaches the contrast without mixing in unrelated S/ES rules.
+    takeOne(x=>x.rule===oppositeYRule(correct));
+    takeOne(x=>x.rule===oppositeYRule(correct));
+    takeOne(x=>x.rule===oppositeYRule(correct));
   }else if(currentQuestion.difficulty==="medium" || currentQuestion.difficulty==="hard"){
     // Y Rule: later review may contrast vowel + Y with consonant + Y.
     if(isY(correct)) takeOne(x=>x.rule===oppositeYRule(correct));
@@ -2018,15 +1631,6 @@ function makeRuleOptions(answer){
     }
   }
 
-  // Unit 3 safety net: never fall back to non-Y distractors.
-  if(stageId==="unit3" && distractors.length<3){
-    for(const item of QUESTION_BANK.ruleIES){
-      if(distractors.length>=3) break;
-      if(item.verb===correct.verb || item.rule===correct.rule) continue;
-      if(usedPokes.has(Number(item.poke)) || usedWords.has(item.verb)) continue;
-      distractors.push(item); usedPokes.add(Number(item.poke)); usedWords.add(item.verb);
-    }
-  }
   // Fill remaining slots safely. No distractor is allowed to have the target answer.
   for(const item of candidates){
     if(distractors.length>=3) break;
@@ -2036,53 +1640,6 @@ function makeRuleOptions(answer){
 
   // Runtime safety: malformed questions are never intentionally generated.
   return distractors.length===3 ? shuffle([correct,...distractors]) : [correct,...distractors];
-}
-
-function ruleGuideText(q){
-  if(!q) return "";
-  const r=q.rule;
-  if(r==="S") return `<div class="guide-rule">① 先看動詞的結尾。</div><div class="guide-rule">② 如果不是特殊結尾，就考慮加 <b>s</b>。</div><div class="guide-rule">③ 特別注意 <b>ch / sh / ss / x / o / y</b>。</div>`;
-  if(["CH","SH","SS","X","O"].includes(r)) return `<div class="guide-rule">① 看動詞最後面的字母。</div><div class="guide-rule">② 找出題目指定的特殊結尾。</div><div class="guide-rule">③ 這類特殊結尾通常會加 <b>es</b>。</div>`;
-  if(r==="consonant+y" || r==="vowel+y") return `<div class="guide-rule">① 先找到最後的 <b>y</b>。</div><div class="guide-rule">② 看 <b>y 前面的那一個字母</b>。</div><div class="guide-rule">③ 判斷它是 vowel 還是 consonant，再決定變化。</div>`;
-  if(r==="CVC") return `<div class="guide-rule">① 看單字最後三個字母。</div><div class="guide-rule">② 判斷是不是 <b>C-V-C</b>。</div><div class="guide-rule">③ 如果是，再考慮最後的 consonant doubling。</div>`;
-  if(r==="drop-e") return `<div class="guide-rule">① 看動詞最後是不是 silent <b>e</b>。</div><div class="guide-rule">② 加 <b>-ing</b> 時注意最後的 e。</div>`;
-  if(r==="subject" || r==="plural" || r==="subject+S+ES") return `<div class="guide-rule">① 先看主詞。</div><div class="guide-rule">② 判斷是 one person/thing，還是 more than one。</div><div class="guide-rule">③ 再決定動詞形式。</div>`;
-  return `<div class="guide-rule">① 先讀完整句子。</div><div class="guide-rule">② 找出題目要求的線索。</div><div class="guide-rule">③ 再選最符合句意和文法的答案。</div>`;
-}
-function showJudgmentGuide(){
-  if(answerLocked)return;
-  const area=document.getElementById("hintArea");
-  if(!area || document.getElementById("judgmentGuide")) return;
-  const q=currentQuestion;
-  area.insertAdjacentHTML("beforeend",`<div class="judgment-guide" id="judgmentGuide"><b>How to Decide</b>${ruleGuideText(q)}</div>`);
-  const j=document.getElementById("judgmentBtn");
-  if(j) j.style.display="none";
-}
-function otherAnswerNote(rule){
-  if(rule==="consonant+y") return "子音 + y → ies";
-  if(rule==="vowel+y") return "母音 + y → s";
-  if(["CH","SH","SS","X","O"].includes(rule)) return `${rule.toLowerCase()} → es`;
-  if(rule==="CVC") return "C-V-C → doubling + ing";
-  if(rule==="drop-e") return "drop e + ing";
-  return "加 s";
-}
-function toggleOtherAnswers(){
-  const panel=document.getElementById("otherAnswers");
-  const btn=document.getElementById("otherAnswersBtn");
-  if(!panel || !btn) return;
-  const open=panel.style.display!=="none";
-  panel.style.display=open?"none":"block";
-  btn.textContent=open?"👀 看看其他三個":"▲ 收起";
-}
-function buildOtherAnswers(){
-  const rows=[...document.querySelectorAll(".option[data-verb]")].filter(el=>!el.classList.contains("correct-choice"));
-  if(!rows.length) return "";
-  return rows.map(el=>{
-    const verb=el.dataset.verb||"";
-    const rule=el.dataset.rule||"S";
-    const form=thirdPersonVerb(verb,rule);
-    return `<div class="other-answer-row"><span class="oa-word">${escapeHtml(verb)}</span><span>→</span><span class="oa-form">${escapeHtml(form)}</span><span class="oa-note">${escapeHtml(otherAnswerNote(rule))}</span><button class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(form)}')">🔊</button></div>`;
-  }).join("");
 }
 
 function showHint(){
@@ -2095,15 +1652,7 @@ function showHint(){
     currentQuestion.rule==="subject"||currentQuestion.rule==="plural"||currentQuestion.rule==="subject+S+ES"?"subject":
     currentQuestion.rule==="S"||currentQuestion.rule==="vowel+y"?"S":"+ing";
   const hintSet=HINTS[rule] || HINTS.subject;
-  let h=hintSet[Math.min(hintLevel,3)-1] || ["Look at the word.","Find the clue."];
-  if(currentQuestion?.verb){
-    const form=(currentQuestion.poke && currentQuestion.rule)
-      ? thirdPersonVerb(currentQuestion.verb,currentQuestion.rule)
-      : ((currentQuestion.rule==="CVC" || currentQuestion.rule==="drop-e" || currentQuestion.rule==="+ing")
-        ? String(currentQuestion.answer||currentQuestion.verb+"ing")
-        : String(currentQuestion.answer||currentQuestion.verb));
-    h=h.map(t=>String(t).replace(/\{\{verb\}\}/g,currentQuestion.verb).replace(/\{\{form\}\}/g,form));
-  }
+  const h=hintSet[Math.min(hintLevel,3)-1] || ["Look at the word.","Find the clue."];
   let visual="";
   // Visual clue starts at Hint 1: highlight ONLY the grammar key, never the whole word.
   // This gives Anson a clue without revealing the rule/result too early.
@@ -2135,7 +1684,7 @@ function showHint(){
     <div class="hint-en"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="speak('${escapeHtml(h[0]+" "+h[1])}')">🔊</button>${hintTextWithPronunciation(h[0])}</div>
     ${visual}
     <div class="hint-en"><b>${hintTextWithPronunciation(h[1])}</b></div>
-    ${hintLevel<3 ? `<div class="actions"><button class="btn gold small" onclick="showHint()">Next Hint</button></div>` : `<div class="small-note" style="margin-top:12px">提示已完整顯示，可以回答了。</div><div class="actions" style="margin-top:10px"><button class="btn small" onclick="showHelpOptions()">🙋 我不會</button></div>`}
+    ${hintLevel<3 ? `<div class="actions"><button class="btn gold small" onclick="showHint()">顯示下一個提示</button></div>` : `<div class="small-note" style="margin-top:12px">提示已完整顯示，可以回答了。</div><div class="actions" style="margin-top:10px"><button class="btn small" onclick="showHelpOptions()">🙋 我不會</button></div>`}
   </div>`;
   currentSession.hintCount++;
   if(hintLevel===3) speak(h[0]+" "+h[1]);
@@ -2166,47 +1715,34 @@ function showHelpOptions(){
   if(hintLevel<3){ showHint(); return; }
   const area=document.getElementById("hintArea");
   if(!area) return;
-  let panel=document.getElementById("helpActions");
-  if(!panel){
-    area.insertAdjacentHTML("beforeend",`<div class="actions" id="helpActions" style="margin-top:12px">
-      <button type="button" class="btn gold small" onclick="revealAnswer();return false;">👀 看答案</button>
-      <button type="button" class="btn small" onclick="skipQuestion();return false;">⏭️ 先跳過</button>
-    </div>`);
-    panel=document.getElementById("helpActions");
-  }
-  if(panel) panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  if(document.getElementById("helpActions")) return;
+  area.insertAdjacentHTML("beforeend",`<div class="actions" id="helpActions" style="margin-top:12px">
+    <button class="btn gold small" onclick="revealAnswer()">👀 看答案</button>
+    <button class="btn small" onclick="skipQuestion()">⏭️ 先跳過</button>
+  </div>`);
   const trigger=document.getElementById("hintTrigger");
   if(trigger) trigger.style.display="none";
 }
-function reenableQuestionChoices(){
-  document.querySelectorAll(".option,.choice").forEach(b=>{
-    b.disabled=false;
-    b.classList.remove("disabled");
-    b.removeAttribute("aria-disabled");
-  });
-}
 function revealAnswer(){
   if(answerLocked || !currentSession || currentSession.qa) return;
-  answerRevealed=true;
-  const q=currentQuestion;
-  const qd=currentSession.questionAttemptData?.[currentSession.index];
-  if(qd) qd.answerRevealed=true;
+  if(currentSession.warmup){
+    answerLocked=true;
+    const q=currentQuestion;
+    const answer=helpQuestionText();
+    const f=document.getElementById("feedback");
+    if(f) f.innerHTML=`<div class="big" style="color:#e7ca73">👀 Answer</div><div class="feedback-transform"><b>${escapeHtml(answer)}</b></div><div class="actions"><button class="btn primary small" onclick="nextWarmupQuestion()">繼續</button></div>`;
+    return;
+  }
+  answerLocked=true;
   logLearningHelp("revealed");
-  reenableQuestionChoices();
+  const q=currentQuestion;
   const answer=helpQuestionText();
   const f=document.getElementById("feedback");
   if(f){
     f.innerHTML=`<div class="big" style="color:#e7ca73">👀 Answer</div>
       <div class="feedback-transform"><b>${escapeHtml(answer)}</b></div>
-      <div class="feedback-note">看過答案後，還是可以自己答這一題。這題不給 EXP，但會保留學習紀錄。</div>`;
-  }
-  const help=document.getElementById("helpActions");
-  if(help) help.remove();
-  if(q?.type==="sentenceProduce"){
-    // Revealing the answer must still leave a real retry path. The revealed rule
-    // is stored only for this question and the child can retype the form.
-    currentSession.productionRuleChoice=expectedProductionRule(q);
-    showProductionInput();
+      <div class="feedback-note">這題不算答對，也不扣任何進度。看完答案後繼續就好。</div>
+      <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
   }
   if(q?.sentence) speak(q.sentence.replace(/_____/g,q.answer||""));
   else if(q?.poke) speak(thirdPersonVerb(q.verb,q.rule));
@@ -2240,8 +1776,7 @@ function handleAnswer(correct,answer,extra){
   currentSession.attempts=currentSession.answerAttempts;
 
   const key=currentSession.index;
-  const qd=currentSession.questionAttemptData[key] || {answers:[],wrong:0,correct:false,completed:false,hintUsed:false,answerRevealed:false};
-  qd.answerRevealed = qd.answerRevealed || answerRevealed;
+  const qd=currentSession.questionAttemptData[key] || {answers:[],wrong:0,correct:false,completed:false,hintUsed:false};
   const wasCompleted=qd.completed;
   qd.answers.push({answer,correct,responseTime,hintUsed});
   qd.hintUsed = qd.hintUsed || hintUsed;
@@ -2256,18 +1791,17 @@ function handleAnswer(correct,answer,extra){
   }
   if(correct && qd.wrong>0) currentSession.improvementCount++;
 
-  const assisted = qd.hintUsed || qd.answerRevealed;
-  const exp=(currentSession.qa || currentSession.superBoss) ? 0 : (firstCompletion ? (assisted ? (qd.answerRevealed ? 0 : 15) : 25):0);
+  const exp=(currentSession.qa || currentSession.superBoss) ? 0 : (firstCompletion ? (qd.hintUsed?15:25):0);
 
   if(correct){
     if(firstCompletion){
       qd.completed=true;
       currentSession.uniqueCompleted++;
       currentSession.correct++;
-      if(assisted) currentSession.hintCorrect++;
+      if(qd.hintUsed) currentSession.hintCorrect++;
       else currentSession.independent++;
       if(!currentSession.qa) addExp(exp);
-      if(!currentSession.qa) updateMastery(currentQuestion,true,assisted,qd);
+      if(!currentSession.qa) updateMastery(currentQuestion,true,qd.hintUsed,qd);
     }
   }else{
     if(qd.wrong===1) currentSession.wrong++;
@@ -2275,7 +1809,7 @@ function handleAnswer(correct,answer,extra){
   }
 
   const type=questionType(currentQuestion);
-  const errorType=correct?null:(extra?.errorType||detectError(currentQuestion,answer));
+  const errorType=correct?null:detectError(currentQuestion,answer);
   const integrity=currentSession.qa
     ?"excluded"
     :(currentSession.suspiciousAttempts>0?"suspicious":"normal");
@@ -2290,15 +1824,12 @@ function handleAnswer(correct,answer,extra){
     selectedAnswer:type==="rule"?(extra?.selectedVerb||answer):answer,
     correctAnswer:type==="rule"?currentQuestion.verb:currentQuestion.answer,
     selectedPokemon:type==="rule"?(extra?.poke||null):null,
-    ruleAnswer:type==="rule"?currentQuestion.answer:(type==="sentenceProduce"?currentQuestion.rule:null),
-    selectedRule:type==="sentenceProduce"?(extra?.selectedRule||null):null,
-    expectedRule:type==="sentenceProduce"?(extra?.expectedRule||expectedProductionRule(currentQuestion)):null,
+    ruleAnswer:type==="rule"?currentQuestion.answer:null,
     questionId:currentQuestion.id||`${currentSession.stageId}-${currentSession.index}`,
     difficulty:currentQuestion.difficulty||"medium",
     attemptNumber:qd.answers.length,
     correct,
     hintLevel:hintLevel,
-    answerRevealed:!!qd.answerRevealed,
     exp,
     errorType,
     responseTime,
@@ -2379,9 +1910,9 @@ function yTransformMarkup(q,ex){
   const form=ex.form;
   let resultMarked;
   if(q.rule==="vowel+y") {
-    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="rule-s">s</span>`;
+    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="y-focus-y">s</span>`;
   } else {
-    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="rule-ies">i</span><span class="rule-es">es</span>`;
+    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="y-focus-y">ies</span>`;
   }
   return `<span>${baseMarked}</span><span class="arrow">→</span><b>${resultMarked}</b>`;
 }
@@ -2393,45 +1924,22 @@ function ruleTeachingMarkup(q,ex){
     const beforeY=v.slice(-2,-1), y=v.slice(-1);
     const kind=q.rule==="vowel+y" ? "vowel" : "consonant";
     const label=kind==="vowel" ? "vowel" : "consonant";
-    const result = q.rule==="vowel+y" ? `<span class="rule-s">s</span>` : `<span class="rule-ies">ies</span>`;
-    return `<div class="rule-teach"><span>This <span class="focus">${escapeHtml(beforeY)}</span> is in front of <span class="focus-y">${escapeHtml(y)}</span>, so it's <span class="rule-label">${label}</span>, needs ${result}.</span><button class="speaker" aria-label="Hear ${label}" onclick="event.stopPropagation();speak('${label}')">🔊</button></div>`;
+    return `<div class="rule-teach"><span><span class="focus">${escapeHtml(beforeY)}</span><span class="focus-y">${escapeHtml(y)}</span> = <span class="rule-label">${label}</span></span><button class="speaker" aria-label="Hear ${label}" onclick="event.stopPropagation();speak('${label}')">🔊</button><span class="rule-teach-small">Look at the letter before Y.</span></div>`;
   }
-  const special={CH:"ch",SH:"sh",SS:"ss",X:"x",O:"o"};
+  const special={CH:"CH",SH:"SH",SS:"SS",X:"X",O:"O"};
   if(special[q.rule]){
     const ending=special[q.rule];
     const base=v.slice(0,-ending.length), marked=`${escapeHtml(base)}<span class="focus">${escapeHtml(ending)}</span>`;
-    return `<div class="rule-teach"><span>${marked} → <b class="rule-es">es</b></span><span class="rule-teach-small">${escapeHtml(ending)} ending → <span class="rule-es">es</span></span></div>`;
+    return `<div class="rule-teach"><span>${marked} → <b class="red">ES</b></span><span class="rule-teach-small">${escapeHtml(ending)} ending → ES</span></div>`;
   }
   if(q.rule==="S"){
     const last=v.slice(-1), marked=`${escapeHtml(v.slice(0,-1))}<span class="focus">${escapeHtml(last)}</span>`;
-    return `<div class="rule-teach"><span>${marked} → <b class="rule-s">s</b></span><span class="rule-teach-small">Most verbs → <span class="rule-s">s</span></span></div>`;
+    return `<div class="rule-teach"><span>${marked} → <b class="red">S</b></span><span class="rule-teach-small">Most verbs → S</span></div>`;
   }
   if(q.rule==="CVC"){
-    const tail=v.slice(-3); return `<div class="rule-teach"><span class="focus">${escapeHtml(tail)}</span> → double the last consonant + <b class="rule-s">ing</b></div>`;
+    const tail=v.slice(-3); return `<div class="rule-teach"><span class="focus">${escapeHtml(tail)}</span> → double the last consonant + <b class="red">ing</b></div>`;
   }
   return "";
-}
-
-function productionWrongHint(q,errorType){
-  if(!q) return "";
-  if(errorType==="ruleSelectionError"){
-    if(q.rule==="consonant+y" || q.rule==="vowel+y") return `<div class="production-error">Look at the letter before <b>y</b>.</div>`;
-    if(["CH","SH","SS","X","O"].includes(q.rule)) return `<div class="production-error">Look at the ending of the verb.</div>`;
-    return `<div class="production-error">Check whether this verb is a regular verb.</div>`;
-  }
-  if(errorType==="ruleError"){
-    if(["CH","SH","SS","X","O"].includes(q.rule)) return `<div class="production-error">Look at the ending: <b>${escapeHtml(q.verb.slice(-2))}</b> is the clue.</div>`;
-    if(q.rule==="consonant+y") return `<div class="production-error">Look at the letter before <b>y</b>.</div>`;
-  }
-  if(errorType==="spellingError") return `<div class="production-error">The rule may be right. Check each letter carefully.</div>`;
-  return `<div class="production-error">Look at the verb and apply the rule again.</div>`;
-}
-
-function productionRuleLabel(q){
-  if(q.rule==="consonant+y") return "子音 + y → ies";
-  if(q.rule==="vowel+y") return "母音 + y → s";
-  if(["CH","SH","SS","X","O"].includes(q.rule)) return `${q.rule.toLowerCase()} → es`;
-  return "一般動詞 → s";
 }
 
 function renderFeedback(correct,answer,errorType,exp){
@@ -2444,41 +1952,25 @@ function renderFeedback(correct,answer,errorType,exp){
         ? `<div class="qa-diagnostic"><b>QA</b> · Rule: ${escapeHtml(q.rule)} · Expected: ${escapeHtml(q.verb)} → ${escapeHtml(thirdPersonVerb(q.verb,q.rule))}</div>`
         : `<div class="qa-diagnostic"><b>QA</b> · Answer: ${escapeHtml(q.answer||"—")}</div>`;
       f.innerHTML=`<div class="big" style="color:#8ed19e">✓ Correct</div>${diagnostic}
-        <div class="actions"><button type="button" class="btn primary small" onclick="return handleNextClick(this)">下一題</button></div>`;
+        <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
       speak("Correct");
       return;
     }
     const ex=q.poke ? verbExample(q) : null;
-    // Lock only the answered choice. Other Pokémon remain available as optional
-    // post-answer exploration; they do NOT submit another answer.
+    // Lock the answered UI: the child may review the result, then press Next.
     const hintTrigger=document.getElementById("hintTrigger");
     if(hintTrigger) hintTrigger.style.display="none";
     const choiceRow=document.querySelector(".choice-row");
     if(choiceRow){
       choiceRow.querySelectorAll("button").forEach(btn=>{ btn.disabled=true; btn.classList.add("disabled"); });
     }
-    document.querySelectorAll("[data-production-rule]").forEach(btn=>{btn.disabled=true;btn.classList.add("disabled");});
-    const productionInput=document.getElementById("productionInput");
-    if(productionInput) productionInput.disabled=true;
-    document.querySelectorAll(".production-submit").forEach(btn=>{btn.disabled=true;btn.classList.add("disabled");});
-    document.querySelectorAll(".option[data-verb]").forEach(btn=>{
-      if(!btn.classList.contains("correct-choice")){
-        btn.disabled=true;
-        btn.classList.add("disabled");
-        btn.setAttribute("aria-disabled","true");
-      }
-    });
     // For sentence-fill questions, put the selected correct form directly into the blank.
     if(!q.poke && q.sentence){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const answers=(q.answers||String(answer).split(" / ")).map(String);
-        let filled=escapeHtml(q.sentence);
-        answers.forEach(a=>{
-          filled=filled.replace("_____",`<span class="filled-answer red">${escapeHtml(a)}</span>`);
-        });
+        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
@@ -2495,42 +1987,33 @@ function renderFeedback(correct,answer,errorType,exp){
       }
     }
     const type=questionType(q);
-    if(type==="sentenceProduce"){
-      const prodSummary=`<div class="feedback-transform"><span>${escapeHtml(q.verb)}</span><span class="arrow">→</span><b class="red">${escapeHtml(q.answer)}</b></div><div class="feedback-note">${escapeHtml(productionRuleLabel(q))}</div>`;
-      f.dataset.productionSummary=prodSummary;
-    }
-    const otherAnswers=q.poke ? `<div class="actions" style="margin-top:10px"><button class="btn small" id="otherAnswersBtn" onclick="toggleOtherAnswers()">👀 看看其他三個</button></div><div class="other-answers" id="otherAnswers" style="display:none"><div class="other-answers-title">其他三個怎麼變化？</div>${buildOtherAnswers()}</div>` : "";
-    const productionSummary=type==="sentenceProduce"?`<div class="feedback-transform"><span>${escapeHtml(q.verb)}</span><span class="arrow">→</span><b class="red">${escapeHtml(q.answer)}</b></div><div class="feedback-note">${escapeHtml(productionRuleLabel(q))}</div>`:"";
-    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}${otherAnswers}` : (type==="sentenceProduce"?productionSummary:"");
+    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}` : "";
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
     const isLastQuestion = currentSession.index + 1 >= currentSession.questions.length;
-    const pre=document.getElementById("preAnswerActions");
-    if(pre) pre.style.display="none";
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
       f.innerHTML=`${example}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
-          <button type="button" class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="return handleNextClick(this)">完成</button>
+          <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
         </div>`;
     }else{
       f.innerHTML=`${example}
         <div class="actions feedback-next">
-          <button type="button" class="btn primary next-arrow" aria-label="Next" title="Next" onclick="return handleNextClick(this)">→ Next</button>
+          <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
         </div>`;
     }
-    const spokenProduction=q.type==="sentenceProduce" ? q.sentence.replace(/_____/g,q.answer) : null;
-    speakSequence(ex ? ["Correct",ex.sentence] : (spokenProduction ? ["Correct",spokenProduction] : ["Correct"]));
+    speakSequence(ex ? ["Correct",ex.sentence] : ["Correct"]);
     return;
   }
   // Wrong answer NEVER advances the session. Keep the exact same question
   // so the child can practice the rule until it is understood.
   const wrongTeach=(currentQuestion && currentQuestion.poke)
     ? ruleTeachingMarkup(currentQuestion, verbExample(currentQuestion))
-    : (currentQuestion?.type==="sentenceProduce" ? productionWrongHint(currentQuestion,errorType) : "");
+    : "";
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
     <div class="sub">Try the same question again.</div>${wrongTeach}`;
   speak("Not quite. Try the same question again.");
@@ -2549,22 +2032,9 @@ function retryQuestion(keepHint=false){
   renderQuestion();
 }
 function nextQuestion(){
-  if(!currentSession) return false;
-  if(currentSession.warmup){
-    nextWarmupQuestion();
-    return false;
-  }
-  const total=Array.isArray(currentSession.questions)?currentSession.questions.length:0;
-  if(!total) return false;
-  const nextIndex=Number(currentSession.index)+1;
-  if(!Number.isInteger(nextIndex)) return false;
-  currentSession.index=nextIndex;
-  if(nextIndex>=total){
-    finishSession();
-    return false;
-  }
+  currentSession.index++;
+  if(currentSession.index>=currentSession.questions.length){finishSession();return}
   renderQuestion();
-  return false;
 }
 function finishSession(){
   const s=currentSession;
@@ -2631,9 +2101,7 @@ function finishSession(){
         <b>${s.reward.kind==="evolution"?"✨ 寶可夢進化":"🎁 學習夥伴解鎖"}</b>
         ${s.reward.kind==="evolution"?`<div class="muted">${POKEMON[s.reward.from].name} → ${POKEMON[s.reward.to].name}</div>`:`<div class="muted">透過持續練習解鎖新的夥伴</div>`}
       </div>`:"";
-    const activeForReward=POKEMON[Number(state.activePokemon||25)]||POKEMON[25];
-    const activeProgressForReward=state.collection[Number(state.activePokemon||25)]||{level:1};
-    const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 ${activeForReward.name} LEVEL UP! Lv. ${activeProgressForReward.level}</b></div>`:"";
+    const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 LEVEL UP! Lv. ${state.level}</b></div>`:"";
     showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
       <div class="reward-title">🌟 Mission Complete!</div>
       <p>本次練習共 ${total} 題。</p>
@@ -2646,10 +2114,7 @@ function finishSession(){
         <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
         <button class="btn" onclick="closeModal();showScreen('home')">回首頁</button>
       </div>`);
-    if(s.levelUps || s.reward?.kind==="evolution"){
-      celebration(true);
-      setTimeout(()=>speakMilestone(s.reward?.kind==="evolution"?"evolution":"levelup"),220);
-    }
+    if(s.levelUps || s.reward?.kind==="evolution") celebration(true);
     currentSession=null;
     // REST REMINDER TEMPORARILY DISABLED — re-enable later.
     // if(shouldRest) setTimeout(showRestReminder,250);
@@ -2699,21 +2164,16 @@ function evolveActivePokemon(){
 }
 function addExp(amount){
   if(!amount)return;
-  const id=Number(state.activePokemon||25);
-  if(!state.collection[id]) state.collection[id]={level:1,xp:0,evolutionProgress:0};
-  const active=state.collection[id];
-  active.level=Math.max(1,Number(active.level)||1);
-  active.xp=Math.max(0,Number(active.xp)||0);
-  active.xp+=amount;
-
+  state.xp+=amount;
   if(currentSession && !currentSession.levelUps) currentSession.levelUps=0;
-  while(active.xp>=100+(active.level-1)*50){
-    active.xp-=100+(active.level-1)*50;
-    active.level++;
-    if(currentSession) currentSession.levelUps++;
+  while(state.xp>=100+(state.level-1)*50){
+    state.xp-=100+(state.level-1)*50;
+    state.level++;
+    currentSession.levelUps++;
+    const active=state.collection[state.activePokemon||25];
+    if(active)active.level=Math.max(active.level,state.level);
   }
-  saveState();
-  updateHeader();
+  saveState();updateHeader();
 }
 function celebration(levelup){
   // Deliberately celebrate only meaningful milestones (level-up / evolution).
@@ -2770,34 +2230,29 @@ function renderMyPokemon(){
   document.getElementById("collectionCount").textContent=`已捕捉 ${entries.length} / ${Object.keys(POKEMON).length}`;
   const main=Number(state.activePokemon||entries[0]?.[0]||25);const p=POKEMON[main];
   document.getElementById("myPokemonSummary").innerHTML=`<div style="display:flex;align-items:center;gap:16px">
-    <div aria-hidden="true"><img src="${p.img}" alt="${p.name}" style="width:100px;height:100px"></div>
-    <div><h2 style="margin:0">${escapeHtml(p.name)}</h2><p class="muted">目前夥伴 · Lv. ${state.collection[main]?.level||1}</p>
+    <img src="${p.img}" alt="${p.name}" style="width:100px;height:100px">
+    <div><h2 style="margin:0">${p.name}</h2><p class="muted">目前夥伴 · Lv. ${state.collection[main]?.level||1}</p>
     <button class="btn small primary" onclick="setMainPokemon()">設為夥伴</button></div></div>`;
   document.getElementById("myPokemonGrid").innerHTML=entries.map(([id,v])=>{
     const p=POKEMON[id];
     return `<div class="poke ${Number(id)===main?"selected":""}">
       <img src="${p.img}" alt="${p.name}">
-      <div class="name">${escapeHtml(p.name)}</div><div class="no">#${p.no}</div><div class="lv">Lv.${v.level||1}</div>
-      <span class="tag">${escapeHtml(v.tag||"捕捉")}</span>
-      <div style="margin-top:7px"><button class="btn small" onclick="setActivePokemon(${Number(id)})">${Number(id)===main?"目前夥伴":"設為夥伴"}</button></div>
+      <div class="name">${p.name}</div><div class="no">#${p.no}</div><div class="lv">Lv.${v.level||1}</div>
+      <span class="tag">${v.tag||"捕捉"}</span>
+      <div style="margin-top:7px"><button class="btn small" onclick="setActivePokemon(${id})">${Number(id)===main?"目前夥伴":"設為夥伴"}</button></div>
     </div>`
   }).join("");
 }
 function setMainPokemon(){showScreen("myPokemon")}
 function setActivePokemon(id){
   if(!state.collection[id])return;
-  state.activePokemon=Number(id);
-  saveState();
-  updateHeroPokemon();
-  updateHeader();
-  renderMyPokemon();
+  state.activePokemon=Number(id);saveState();updateHeroPokemon();renderMyPokemon();
 }
 function updateHeroPokemon(){
   const id=POKEMON[state.activePokemon]?Number(state.activePokemon):25;
   if(state.activePokemon!==id){state.activePokemon=id;saveState();}
   const img=document.getElementById("heroPoke");
   if(img)img.src=POKEMON[id].img;
-  updateHeader();
 }
 function renderDex(){
   const ids=Object.keys(POKEMON).map(Number);
@@ -2839,12 +2294,6 @@ function clearLogs(){
   if(!confirm("確定清除學習紀錄？Mastery、EXP、關卡進度與寶可夢不會被清除。")) return;
   state.logs=[];
   saveState(); renderLogs();
-}
-function speakMilestone(kind){
-  // One short, non-looping English encouragement at a meaningful milestone only.
-  // This uses the browser's neutral English TTS voice, not an official Pokémon voice.
-  const line=kind==="evolution"?"Anson, you did it!":"Anson, good job!";
-  speak(line);
 }
 function speak(text){
   if(!("speechSynthesis" in window)){alert("此瀏覽器不支援語音播放。");return}
