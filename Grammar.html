@@ -194,7 +194,7 @@ main{margin-top:18px}
 }
 
 .hint-word{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0 2px;border-radius:5px;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.hint-word span{font-size:.75em;margin-left:3px;opacity:.8}.hint-word:hover{background:rgba(255,255,255,.08)} .feedback-next{margin-top:14px;justify-content:center}.next-arrow{width:82px;height:38px;padding:0 12px;font-size:15px;line-height:1;border-radius:10px}.next-arrow:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
-</style>
+.mission-finished{margin:14px 0 6px;text-align:center;color:#8ed19e;font-weight:800;font-size:18px}.mission-finished + .feedback-next{margin-top:6px}.feedback-next .next-arrow{min-width:82px;padding:9px 16px;font-size:15px}</style>
 </head>
 <body>
 <div class="app">
@@ -341,7 +341,7 @@ main{margin-top:18px}
     <div class="card">
       <h3>學習原則</h3>
       <p class="small-note">沒有每日任務、連續登入、倒數、生命或等待機制。可以自由回訪已解鎖關卡；進步會被記錄，但不要求每天完成。</p>
-      <p class="small-note">學習約 30 分鐘時只提供健康休息提醒，不是遊戲懲罰。</p>
+      <p class="small-note">休息提醒目前暫時停用，之後可重新開啟。</p>
     </div>
   </div>
 </section>
@@ -1523,11 +1523,21 @@ function renderFeedback(correct,answer,errorType,exp){
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
-    const nextLabel = currentSession.index + 1 < currentSession.questions.length ? "下一題" : "完成";
-    f.innerHTML=`${example}
-      <div class="actions feedback-next">
-        <button class="btn primary next-arrow" aria-label="${nextLabel}" title="${nextLabel}" onclick="nextQuestion()">→ Next</button>
-      </div>`;
+    const isLastQuestion = currentSession.index + 1 >= currentSession.questions.length;
+    if(isLastQuestion){
+      // Final question: never show "Next". Make the state explicit so a child
+      // cannot mistake the end of the mission for another question.
+      f.innerHTML=`${example}
+        <div class="mission-finished" role="status">✓ 本關完成</div>
+        <div class="actions feedback-next">
+          <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
+        </div>`;
+    }else{
+      f.innerHTML=`${example}
+        <div class="actions feedback-next">
+          <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
+        </div>`;
+    }
     speak("Correct");
     if(ex) speak(ex.sentence);
     return;
@@ -1625,7 +1635,8 @@ function finishSession(){
       </div>`);
     if(s.levelUps || s.reward?.kind==="evolution") celebration(true);
     currentSession=null;
-    if(shouldRest) setTimeout(showRestReminder,250);
+    // REST REMINDER TEMPORARILY DISABLED — re-enable later.
+    // if(shouldRest) setTimeout(showRestReminder,250);
   }
 }
 
@@ -1827,13 +1838,16 @@ function accumulateLearningTime(suppressReminder=false){
   const t=learningTime();
   t.activeMs += Math.max(0,now-currentSession.learningSegmentStartedAt);
   currentSession.learningSegmentStartedAt=now;
+  /* REST REMINDER TEMPORARILY DISABLED — re-enable later.
   if(t.activeMs>=30*60*1000 && !t.restRequired){
     t.restRequired=true;
     saveState();
     if(!suppressReminder && currentSession) showRestReminder();
   }
+  */
   saveState();
 }
+/* REST REMINDER TEMPORARILY DISABLED — re-enable later.
 function showRestReminder(){
   if(currentSession && currentSession.qa) return;
   if(currentSession) currentSession.restPaused=true;
@@ -1848,6 +1862,7 @@ function dismissRestReminder(){
   }
   saveState(); closeModal();
 }
+*/
 function startLearningTicker(){
   if(learningTicker) clearInterval(learningTicker);
   learningTicker=setInterval(()=>{
