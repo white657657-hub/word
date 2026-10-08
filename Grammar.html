@@ -448,7 +448,7 @@ const STAGES = [
  {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
  {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
  {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
- {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"V-ing：CVC words double the final consonant",types:["ingCVC"],newTypes:["ingCVC"],unlock:6},
+ {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"CVC words double the final consonant; some questions are mixed to check when NOT to double",types:["ingCVC","ingRegular"],newTypes:["ingCVC"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
@@ -467,38 +467,56 @@ const QUESTION_BANK = {
     {id:"s13",verb:"love",answer:"S",poke:25,rule:"S"},{id:"s14",verb:"like",answer:"S",poke:4,rule:"S"},
     {id:"s15",verb:"want",answer:"S",poke:7,rule:"S"},{id:"s16",verb:"use",answer:"S",poke:1,rule:"S"},
     {id:"s17",verb:"live",answer:"S",poke:133,rule:"S"},{id:"s18",verb:"walk",answer:"S",poke:54,rule:"S"},
-    {id:"s19",verb:"talk",answer:"S",poke:39,rule:"S"},{id:"s20",verb:"look",answer:"S",poke:52,rule:"S"}
-  ],
+    {id:"s19",verb:"talk",answer:"S",poke:39,rule:"S"},{id:"s20",verb:"look",answer:"S",poke:52,rule:"S"},
+    {id:"s21",verb:"run",answer:"S",poke:26,rule:"S"},{id:"s22",verb:"play",answer:"S",poke:5,rule:"S"},{id:"s23",verb:"call",answer:"S",poke:8,rule:"S"},{id:"s24",verb:"visit",answer:"S",poke:2,rule:"S"},
+    {id:"s25",verb:"smile",answer:"S",poke:133,rule:"S"},{id:"s26",verb:"start",answer:"S",poke:54,rule:"S"},{id:"s27",verb:"learn",answer:"S",poke:39,rule:"S"},{id:"s28",verb:"drink",answer:"S",poke:52,rule:"S"},
+    {id:"s29",verb:"sleep",answer:"S",poke:10,rule:"S"},{id:"s30",verb:"write",answer:"S",poke:16,rule:"S"},{id:"s31",verb:"drive",answer:"S",poke:27,rule:"S"},{id:"s32",verb:"ride",answer:"S",poke:35,rule:"S"},
+    {id:"s33",verb:"dance",answer:"S",poke:25,rule:"S"},{id:"s34",verb:"paint",answer:"S",poke:4,rule:"S"},{id:"s35",verb:"build",answer:"S",poke:7,rule:"S"},{id:"s36",verb:"answer",answer:"S",poke:1,rule:"S"},
+    {id:"s37",verb:"remember",answer:"S",poke:26,rule:"S"},{id:"s38",verb:"follow",answer:"S",poke:5,rule:"S"},{id:"s39",verb:"turn",answer:"S",poke:8,rule:"S"},{id:"s40",verb:"move",answer:"S",poke:2,rule:"S"}
+],
   ruleCH:[
     {id:"ch01",verb:"teach",answer:"ES",poke:4,rule:"CH"},{id:"ch02",verb:"watch",answer:"ES",poke:7,rule:"CH"},
     {id:"ch03",verb:"reach",answer:"ES",poke:54,rule:"CH"},{id:"ch04",verb:"touch",answer:"ES",poke:39,rule:"CH"},
     {id:"ch05",verb:"catch",answer:"ES",poke:52,rule:"CH"},{id:"ch06",verb:"match",answer:"ES",poke:10,rule:"CH"},
     {id:"ch07",verb:"switch",answer:"ES",poke:16,rule:"CH"},{id:"ch08",verb:"fetch",answer:"ES",poke:27,rule:"CH"},
-    {id:"ch09",verb:"punch",answer:"ES",poke:25,rule:"CH"},{id:"ch10",verb:"munch",answer:"ES",poke:1,rule:"CH"}
-  ],
+    {id:"ch09",verb:"punch",answer:"ES",poke:25,rule:"CH"},{id:"ch10",verb:"munch",answer:"ES",poke:1,rule:"CH"},
+    {id:"ch11",verb:"search",answer:"ES",poke:133,rule:"CH"},{id:"ch12",verb:"march",answer:"ES",poke:54,rule:"CH"},{id:"ch13",verb:"scratch",answer:"ES",poke:39,rule:"CH"},{id:"ch14",verb:"stretch",answer:"ES",poke:52,rule:"CH"},
+    {id:"ch15",verb:"launch",answer:"ES",poke:10,rule:"CH"},{id:"ch16",verb:"branch",answer:"ES",poke:16,rule:"CH"},{id:"ch17",verb:"preach",answer:"ES",poke:27,rule:"CH"},{id:"ch18",verb:"approach",answer:"ES",poke:35,rule:"CH"},
+    {id:"ch19",verb:"attach",answer:"ES",poke:26,rule:"CH"},{id:"ch20",verb:"coach",answer:"ES",poke:5,rule:"CH"}
+],
   ruleSH:[
     {id:"sh01",verb:"wash",answer:"ES",poke:39,rule:"SH"},{id:"sh02",verb:"push",answer:"ES",poke:10,rule:"SH"},
     {id:"sh03",verb:"finish",answer:"ES",poke:16,rule:"SH"},{id:"sh04",verb:"brush",answer:"ES",poke:52,rule:"SH"},
     {id:"sh05",verb:"rush",answer:"ES",poke:54,rule:"SH"},{id:"sh06",verb:"wish",answer:"ES",poke:7,rule:"SH"},
     {id:"sh07",verb:"flash",answer:"ES",poke:25,rule:"SH"},{id:"sh08",verb:"crash",answer:"ES",poke:4,rule:"SH"},
-    {id:"sh09",verb:"polish",answer:"ES",poke:35,rule:"SH"},{id:"sh10",verb:"splash",answer:"ES",poke:27,rule:"SH"}
-  ],
+    {id:"sh09",verb:"polish",answer:"ES",poke:35,rule:"SH"},{id:"sh10",verb:"splash",answer:"ES",poke:27,rule:"SH"},
+    {id:"sh11",verb:"punish",answer:"ES",poke:133,rule:"SH"},{id:"sh12",verb:"publish",answer:"ES",poke:54,rule:"SH"},{id:"sh13",verb:"fish",answer:"ES",poke:39,rule:"SH"},{id:"sh14",verb:"crush",answer:"ES",poke:52,rule:"SH"},
+    {id:"sh15",verb:"smash",answer:"ES",poke:10,rule:"SH"},{id:"sh16",verb:"vanish",answer:"ES",poke:16,rule:"SH"},{id:"sh17",verb:"relish",answer:"ES",poke:27,rule:"SH"},{id:"sh18",verb:"hush",answer:"ES",poke:35,rule:"SH"},
+    {id:"sh19",verb:"dash",answer:"ES",poke:26,rule:"SH"},{id:"sh20",verb:"flush",answer:"ES",poke:5,rule:"SH"}
+],
   ruleSS:[
     {id:"ss01",verb:"miss",answer:"ES",poke:52,rule:"SS"},{id:"ss02",verb:"kiss",answer:"ES",poke:39,rule:"SS"},
     {id:"ss03",verb:"pass",answer:"ES",poke:10,rule:"SS"},{id:"ss04",verb:"dress",answer:"ES",poke:16,rule:"SS"},
     {id:"ss05",verb:"guess",answer:"ES",poke:54,rule:"SS"},{id:"ss06",verb:"cross",answer:"ES",poke:7,rule:"SS"},
     {id:"ss07",verb:"press",answer:"ES",poke:25,rule:"SS"},{id:"ss08",verb:"bless",answer:"ES",poke:4,rule:"SS"},
     {id:"ss09",verb:"toss",answer:"ES",poke:39,rule:"SS"},{id:"ss10",verb:"boss",answer:"ES",poke:52,rule:"SS"},
-    {id:"ss11",verb:"floss",answer:"ES",poke:10,rule:"SS"}
-  ],
+    {id:"ss11",verb:"floss",answer:"ES",poke:10,rule:"SS"},
+    {id:"ss12",verb:"discuss",answer:"ES",poke:133,rule:"SS"},{id:"ss13",verb:"express",answer:"ES",poke:54,rule:"SS"},{id:"ss14",verb:"address",answer:"ES",poke:39,rule:"SS"},
+    {id:"ss15",verb:"impress",answer:"ES",poke:52,rule:"SS"},{id:"ss16",verb:"stress",answer:"ES",poke:10,rule:"SS"},{id:"ss17",verb:"confess",answer:"ES",poke:16,rule:"SS"},
+    {id:"ss18",verb:"possess",answer:"ES",poke:27,rule:"SS"},{id:"ss19",verb:"obsess",answer:"ES",poke:35,rule:"SS"},{id:"ss20",verb:"toss",answer:"ES",poke:26,rule:"SS"}
+],
   ruleX:[
     {id:"x01",verb:"fix",answer:"ES",poke:10,rule:"X"},{id:"x02",verb:"mix",answer:"ES",poke:16,rule:"X"},
     {id:"x03",verb:"box",answer:"ES",poke:54,rule:"X"},{id:"x04",verb:"relax",answer:"ES",poke:39,rule:"X"},
-    {id:"x05",verb:"unbox",answer:"ES",poke:25,rule:"X"},{id:"x06",verb:"remix",answer:"ES",poke:7,rule:"X"}
-  ],
+    {id:"x05",verb:"unbox",answer:"ES",poke:25,rule:"X"},{id:"x06",verb:"remix",answer:"ES",poke:7,rule:"X"},
+    {id:"x07",verb:"tax",answer:"ES",poke:133,rule:"X"},{id:"x08",verb:"wax",answer:"ES",poke:54,rule:"X"},{id:"x09",verb:"index",answer:"ES",poke:39,rule:"X"},
+    {id:"x10",verb:"flex",answer:"ES",poke:52,rule:"X"},{id:"x11",verb:"prefix",answer:"ES",poke:10,rule:"X"},{id:"x12",verb:"suffix",answer:"ES",poke:16,rule:"X"}
+],
   ruleO:[
-    {id:"o01",verb:"go",answer:"ES",poke:16,rule:"O"},{id:"o02",verb:"do",answer:"ES",poke:54,rule:"O"}
-  ],
+    {id:"o01",verb:"go",answer:"ES",poke:16,rule:"O"},{id:"o02",verb:"do",answer:"ES",poke:54,rule:"O"},
+    {id:"o03",verb:"echo",answer:"ES",poke:133,rule:"O"},{id:"o04",verb:"veto",answer:"ES",poke:54,rule:"O"},{id:"o05",verb:"zero",answer:"ES",poke:39,rule:"O"},{id:"o06",verb:"solo",answer:"ES",poke:52,rule:"O"},
+    {id:"o07",verb:"lasso",answer:"ES",poke:10,rule:"O"},{id:"o08",verb:"torpedo",answer:"ES",poke:16,rule:"O"},{id:"o09",verb:"redo",answer:"ES",poke:27,rule:"O"},{id:"o10",verb:"undo",answer:"ES",poke:35,rule:"O"}
+],
   ruleIES:[
     // Y Rule: consonant + Y → IES; vowel + Y → S. Keep both forms in the same skill.
     {id:"y01",verb:"try",answer:"IES",poke:25,rule:"consonant+y"},{id:"y02",verb:"study",answer:"IES",poke:1,rule:"consonant+y"},
@@ -511,8 +529,13 @@ const QUESTION_BANK = {
     {id:"y21",verb:"play",answer:"S",poke:35,rule:"vowel+y"},{id:"y22",verb:"enjoy",answer:"S",poke:133,rule:"vowel+y"},
     {id:"y23",verb:"buy",answer:"S",poke:54,rule:"vowel+y"},{id:"y24",verb:"stay",answer:"S",poke:39,rule:"vowel+y"},
     {id:"y25",verb:"obey",answer:"S",poke:52,rule:"vowel+y"},{id:"y26",verb:"employ",answer:"S",poke:7,rule:"vowel+y"},
-    {id:"y27",verb:"annoy",answer:"S",poke:4,rule:"vowel+y"},{id:"y28",verb:"delay",answer:"S",poke:1,rule:"vowel+y"}
-  ],
+    {id:"y27",verb:"annoy",answer:"S",poke:4,rule:"vowel+y"},{id:"y28",verb:"delay",answer:"S",poke:1,rule:"vowel+y"},
+    {id:"y14",verb:"rely",answer:"IES",poke:26,rule:"consonant+y"},{id:"y15",verb:"deny",answer:"IES",poke:5,rule:"consonant+y"},{id:"y16",verb:"identify",answer:"IES",poke:8,rule:"consonant+y"},
+    {id:"y17",verb:"satisfy",answer:"IES",poke:2,rule:"consonant+y"},{id:"y18",verb:"modify",answer:"IES",poke:133,rule:"consonant+y"},{id:"y19",verb:"simplify",answer:"IES",poke:54,rule:"consonant+y"},{id:"y20",verb:"verify",answer:"IES",poke:39,rule:"consonant+y"},
+    {id:"y29",verb:"say",answer:"S",poke:52,rule:"vowel+y"},{id:"y30",verb:"pay",answer:"S",poke:10,rule:"vowel+y"},{id:"y31",verb:"pray",answer:"S",poke:16,rule:"vowel+y"},{id:"y32",verb:"relay",answer:"S",poke:27,rule:"vowel+y"},
+    {id:"y33",verb:"display",answer:"S",poke:35,rule:"vowel+y"},{id:"y34",verb:"survey",answer:"S",poke:26,rule:"vowel+y"},{id:"y35",verb:"convey",answer:"S",poke:5,rule:"vowel+y"},{id:"y36",verb:"destroy",answer:"S",poke:8,rule:"vowel+y"},
+    {id:"y37",verb:"deploy",answer:"S",poke:2,rule:"vowel+y"},{id:"y38",verb:"betray",answer:"S",poke:133,rule:"vowel+y"},{id:"y39",verb:"spray",answer:"S",poke:54,rule:"vowel+y"},{id:"y40",verb:"repay",answer:"S",poke:39,rule:"vowel+y"}
+],
   mixed:[],
   sentenceSubject:[
     {id:"sub01",sentence:"He _____ soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
@@ -526,8 +549,14 @@ const QUESTION_BANK = {
     {id:"sub09",sentence:"Dad _____ dinner at six.",choices:["cook","cooks","cookes","cokks"],answer:"cooks",verb:"cook",rule:"subject"},
     {id:"sub10",sentence:"They _____ books in class.",choices:["reads","read","reades","red"],answer:"read",verb:"read",rule:"plural"},
     {id:"sub11",sentence:"Amy _____ to school every day.",choices:["walk","walks","walkes","walkies"],answer:"walks",verb:"walk",rule:"subject"},
-    {id:"sub12",sentence:"The children _____ games together.",choices:["enjoys","enjoy","enjoies","enjoyes"],answer:"enjoy",verb:"enjoy",rule:"plural"}
-  ],
+    {id:"sub12",sentence:"The children _____ games together.",choices:["enjoys","enjoy","enjoies","enjoyes"],answer:"enjoy",verb:"enjoy",rule:"plural"},
+    {id:"sub13",sentence:"The bird _____ in the tree.",choices:["sing","sings","singes","singies"],answer:"sings",verb:"sing",rule:"subject"},{id:"sub14",sentence:"Anson _____ the door every morning.",choices:["open","opens","openes","openies"],answer:"opens",verb:"open",rule:"subject"},
+    {id:"sub15",sentence:"Ben _____ a glass of water.",choices:["drink","drinks","drinkes","drinkies"],answer:"drinks",verb:"drink",rule:"subject"},{id:"sub16",sentence:"The cat _____ on the sofa.",choices:["sleep","sleeps","sleepes","sleepies"],answer:"sleeps",verb:"sleep",rule:"subject"},
+    {id:"sub17",sentence:"Dad _____ the car on Sunday.",choices:["wash","washes","washs","washies"],answer:"washes",verb:"wash",rule:"subject"},{id:"sub18",sentence:"The boy _____ his bike to school.",choices:["ride","rides","ridees","rideies"],answer:"rides",verb:"ride",rule:"subject"},
+    {id:"sub19",sentence:"Amy _____ the answer.",choices:["know","knows","knowes","knowies"],answer:"knows",verb:"know",rule:"subject"},{id:"sub20",sentence:"The teacher _____ the class.",choices:["help","helps","helpes","helpies"],answer:"helps",verb:"help",rule:"subject"},
+    {id:"sub21",sentence:"Tom _____ the box.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"subject"},{id:"sub22",sentence:"The dog _____ at the mail carrier.",choices:["rush","rushes","rushs","rushies"],answer:"rushes",verb:"rush",rule:"subject"},
+    {id:"sub23",sentence:"Sam _____ the ball.",choices:["catch","catches","catchs","catchies"],answer:"catches",verb:"catch",rule:"subject"},{id:"sub24",sentence:"The robot _____ the task.",choices:["do","does","dos","doies"],answer:"does",verb:"do",rule:"subject"}
+],
   sentenceFill:[
     {id:"fill01",sentence:"He _____ to play the piano.",choices:["try","trys","tryes","tries"],answer:"tries",verb:"try",rule:"consonant+y"},
     {id:"fill02",sentence:"The music teacher _____ the students.",choices:["teach","teachs","teaches","teachies"],answer:"teaches",verb:"teach",rule:"CH"},
@@ -540,8 +569,14 @@ const QUESTION_BANK = {
     {id:"fill09",sentence:"Leo _____ to school.",choices:["go","gos","goes","goies"],answer:"goes",verb:"go",rule:"O"},
     {id:"fill10",sentence:"Max _____ a box.",choices:["mix","mixs","mixes","mixies"],answer:"mixes",verb:"mix",rule:"X"},
     {id:"fill11",sentence:"Lily _____ her name.",choices:["copy","copys","copies","copyes"],answer:"copies",verb:"copy",rule:"consonant+y"},
-    {id:"fill12",sentence:"The teacher _____ the answer.",choices:["check","checks","checkes","checkies"],answer:"checks",verb:"check",rule:"CH"}
-  ],
+    {id:"fill12",sentence:"The teacher _____ the answer.",choices:["check","checks","checkes","checkies"],answer:"checks",verb:"check",rule:"CH"},
+    {id:"fill13",sentence:"He _____ the door.",choices:["push","pushes","pushs","pushies"],answer:"pushes",verb:"push",rule:"SH"},{id:"fill14",sentence:"The boy _____ the ball.",choices:["catch","catches","catchs","catchies"],answer:"catches",verb:"catch",rule:"CH"},
+    {id:"fill15",sentence:"Dad _____ the box.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"X"},{id:"fill16",sentence:"The girl _____ the answer.",choices:["guess","guesses","guesss","guessies"],answer:"guesses",verb:"guess",rule:"SS"},
+    {id:"fill17",sentence:"He _____ to school.",choices:["go","goes","gos","goies"],answer:"goes",verb:"go",rule:"O"},{id:"fill18",sentence:"The dog _____ fast.",choices:["run","runs","runes","runns"],answer:"runs",verb:"run",rule:"S"},
+    {id:"fill19",sentence:"She _____ her homework.",choices:["do","does","dos","doies"],answer:"does",verb:"do",rule:"O"},{id:"fill20",sentence:"The teacher _____ the plan.",choices:["discuss","discusses","discusss","discussies"],answer:"discusses",verb:"discuss",rule:"SS"},
+    {id:"fill21",sentence:"He _____ the button.",choices:["press","presses","presss","pressies"],answer:"presses",verb:"press",rule:"SS"},{id:"fill22",sentence:"The coach _____ the team.",choices:["coach","coaches","coachs","coachies"],answer:"coaches",verb:"coach",rule:"CH"},
+    {id:"fill23",sentence:"She _____ the room.",choices:["tidy","tidies","tidys","tidyes"],answer:"tidies",verb:"tidy",rule:"consonant+y"},{id:"fill24",sentence:"He _____ the game.",choices:["enjoy","enjoys","enjoies","enjoyes"],answer:"enjoys",verb:"enjoy",rule:"vowel+y"}
+],
   ing:[
     {id:"ing01",sentence:"I am _____ on a chair.",choices:["sit","sitting","siting","sitted"],answer:"sitting",verb:"sit",rule:"CVC"},
     {id:"ing02",sentence:"The children are _____ in the garden.",choices:["hop","hopping","hoping","hopped"],answer:"hopping",verb:"hop",rule:"CVC"},
@@ -558,8 +593,23 @@ const QUESTION_BANK = {
     {id:"ing13",sentence:"Anna is _____ a picture.",choices:["draw","drawing","drawring","drawed"],answer:"drawing",verb:"draw",rule:"+ing"},
     {id:"ing14",sentence:"The baby is _____ now.",choices:["sleep","sleeping","sleping","sleeped"],answer:"sleeping",verb:"sleep",rule:"+ing"},
     {id:"ing15",sentence:"We are _____ for the bus.",choices:["wait","waiting","waitting","waited"],answer:"waiting",verb:"wait",rule:"+ing"},
-    {id:"ing16",sentence:"He is _____ a letter.",choices:["write","writing","writting","writed"],answer:"writing",verb:"write",rule:"drop-e"}
-  ],
+    {id:"ing16",sentence:"He is _____ a letter.",choices:["write","writing","writting","writed"],answer:"writing",verb:"write",rule:"drop-e"},
+    {id:"ing17",sentence:"The dog is _____ around the yard.",choices:["run","running","runing","runned"],answer:"running",verb:"run",rule:"CVC"},{id:"ing18",sentence:"We are _____ the paper.",choices:["cut","cutting","cuting","cutted"],answer:"cutting",verb:"cut",rule:"CVC"},
+    {id:"ing19",sentence:"They are _____ a new schedule.",choices:["plan","planning","planing","planned"],answer:"planning",verb:"plan",rule:"CVC"},{id:"ing20",sentence:"The children are _____ in the pool.",choices:["swim","swimming","swiming","swam"],answer:"swimming",verb:"swim",rule:"CVC"},
+    {id:"ing21",sentence:"He is _____ the bag.",choices:["grab","grabbing","grabing","grabbed"],answer:"grabbing",verb:"grab",rule:"CVC"},{id:"ing22",sentence:"The students are _____ their hands.",choices:["clap","clapping","claping","clapped"],answer:"clapping",verb:"clap",rule:"CVC"},
+    {id:"ing23",sentence:"I am _____ over the puddle.",choices:["skip","skipping","skiping","skipped"],answer:"skipping",verb:"skip",rule:"CVC"},{id:"ing24",sentence:"She is _____ the ball.",choices:["drop","dropping","droping","dropped"],answer:"dropping",verb:"drop",rule:"CVC"},
+    {id:"ing25",sentence:"The bird is _____ its head.",choices:["nod","nodding","noding","nodded"],answer:"nodding",verb:"nod",rule:"CVC"},{id:"ing26",sentence:"The child is _____ his toy.",choices:["hug","hugging","huging","hugged"],answer:"hugging",verb:"hug",rule:"CVC"},
+    {id:"ing27",sentence:"He is _____ the clay.",choices:["rub","rubbing","rubing","rubbed"],answer:"rubbing",verb:"rub",rule:"CVC"},{id:"ing28",sentence:"She is _____ the button.",choices:["tap","tapping","taping","tapped"],answer:"tapping",verb:"tap",rule:"CVC"},
+    {id:"ing29",sentence:"The player is _____ the target.",choices:["fit","fitting","fiting","fitted"],answer:"fitting",verb:"fit",rule:"CVC"},{id:"ing30",sentence:"The boy is _____ a hole.",choices:["dig","digging","diging","dug"],answer:"digging",verb:"dig",rule:"CVC"},
+    {id:"ing31",sentence:"They are _____ in the park.",choices:["jog","jogging","joging","jogged"],answer:"jogging",verb:"jog",rule:"CVC"},{id:"ing32",sentence:"We are _____ soccer today.",choices:["play","playing","playying","played"],answer:"playing",verb:"play",rule:"+ing"},
+    {id:"ing33",sentence:"I am _____ a book.",choices:["read","reading","readding","readed"],answer:"reading",verb:"read",rule:"+ing"},{id:"ing34",sentence:"Dad is _____ dinner.",choices:["cook","cooking","cookking","cooked"],answer:"cooking",verb:"cook",rule:"+ing"},
+    {id:"ing35",sentence:"The children are _____ high.",choices:["jump","jumping","jumpping","jumped"],answer:"jumping",verb:"jump",rule:"+ing"},{id:"ing36",sentence:"We are _____ to school.",choices:["walk","walking","wallking","walked"],answer:"walking",verb:"walk",rule:"+ing"},
+    {id:"ing37",sentence:"He is _____ the room.",choices:["clean","cleaning","cleanning","cleaned"],answer:"cleaning",verb:"clean",rule:"+ing"},{id:"ing38",sentence:"She is _____ her friend.",choices:["help","helping","helpping","helped"],answer:"helping",verb:"help",rule:"+ing"},
+    {id:"ing39",sentence:"They are _____ water.",choices:["drink","drinking","drinkking","drank"],answer:"drinking",verb:"drink",rule:"+ing"},{id:"ing40",sentence:"The baby is _____ now.",choices:["sleep","sleeping","sleepping","slept"],answer:"sleeping",verb:"sleep",rule:"+ing"},
+    {id:"ing41",sentence:"We are _____ for the bus.",choices:["wait","waiting","waitting","waited"],answer:"waiting",verb:"wait",rule:"+ing"},{id:"ing42",sentence:"He is _____ a new shirt.",choices:["make","making","makeing","maked"],answer:"making",verb:"make",rule:"drop-e"},
+    {id:"ing43",sentence:"She is _____ a bike.",choices:["ride","riding","rideing","rode"],answer:"riding",verb:"ride",rule:"drop-e"},{id:"ing44",sentence:"They are _____ the door.",choices:["close","closing","closeing","closed"],answer:"closing",verb:"close",rule:"drop-e"},
+    {id:"ing45",sentence:"I am _____ the picture.",choices:["take","taking","takeing","took"],answer:"taking",verb:"take",rule:"drop-e"},{id:"ing46",sentence:"He is _____ the old rule.",choices:["use","using","useing","used"],answer:"using",verb:"use",rule:"drop-e"}
+],
   error:[
     {id:"err01",sentence:"The boys and girls leaves the room.",choices:["leaves","leave","leavs","leavees"],answer:"leave",verb:"leave",rule:"plural"},
     {id:"err02",sentence:"He play soccer in the park.",choices:["play","plays","plaies","playes"],answer:"plays",verb:"play",rule:"subject"},
@@ -568,8 +618,12 @@ const QUESTION_BANK = {
     {id:"err05",sentence:"My sister try to help.",choices:["try","trys","tries","tryes"],answer:"tries",verb:"try",rule:"subject"},
     {id:"err06",sentence:"The teacher fix the box.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"subject"},
     {id:"err07",sentence:"Tom go to school by bus.",choices:["go","goes","gos","goies"],answer:"goes",verb:"go",rule:"subject"},
-    {id:"err08",sentence:"The girls washes the cups.",choices:["wash","washes","washs","washies"],answer:"wash",verb:"wash",rule:"plural"}
-  ]
+    {id:"err08",sentence:"The girls washes the cups.",choices:["wash","washes","washs","washies"],answer:"wash",verb:"wash",rule:"plural"},
+    {id:"err09",sentence:"The boy watch TV after dinner.",choices:["watch","watches","watchs","watchies"],answer:"watches",verb:"watch",rule:"subject"},{id:"err10",sentence:"She go to the library every week.",choices:["go","goes","gos","goies"],answer:"goes",verb:"go",rule:"subject"},
+    {id:"err11",sentence:"Tom try to open the box.",choices:["try","trys","tries","tryes"],answer:"tries",verb:"try",rule:"subject"},{id:"err12",sentence:"The teacher mix the colors.",choices:["mix","mixes","mixs","mixies"],answer:"mixes",verb:"mix",rule:"subject"},
+    {id:"err13",sentence:"He push the door.",choices:["push","pushes","pushs","pushies"],answer:"pushes",verb:"push",rule:"subject"},{id:"err14",sentence:"My sister study English.",choices:["study","studys","studies","studyes"],answer:"studies",verb:"study",rule:"subject"},
+    {id:"err15",sentence:"The boy carry the bag.",choices:["carry","carrys","carries","carryes"],answer:"carries",verb:"carry",rule:"subject"},{id:"err16",sentence:"Dad fix the bike.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"subject"}
+]
 };
 
 
@@ -605,7 +659,17 @@ const VERB_EXAMPLE_OBJECTS = {
   play:"soccer", enjoy:"the game", buy:"a book", stay:"at home", obey:"the rules", delay:"the task",
   hurry:"to school", copy:"the sentence", fly:"in the sky", reply:"to the message", dry:"the dishes",
   marry:"in a story", tidy:"the room", empty:"the box", deny:"the claim", identify:"the insect",
-  satisfy:"the need", modify:"the plan", simplify:"the problem", verify:"the answer"
+  satisfy:"the need", modify:"the plan", simplify:"the problem", verify:"the answer",
+  run:"around the yard", play:"soccer", call:"his friend", visit:"the museum", smile:"at the camera", start:"the game",
+  learn:"English", drink:"water", sleep:"well", write:"a letter", drive:"the car", ride:"a bike", dance:"on stage", paint:"a picture", build:"a model",
+  answer:"the question", remember:"the rule", follow:"the map", turn:"the page", move:"the chair",
+  search:"for bugs", march:"forward", scratch:"the paper", stretch:"his arms", launch:"the rocket", branch:"the project", preach:"kindness", approach:"the door", attach:"the card", coach:"the team",
+  punish:"the player", publish:"a book", fish:"in the lake", crush:"the can", smash:"the box", vanish:"quickly", relish:"the moment", hush:"the room", dash:"to the door", flush:"the toilet",
+  discuss:"the plan", express:"his idea", address:"the problem", impress:"his teacher", stress:"the importance", confess:"the truth", possess:"a key", obsess:"over details", toss:"the ball",
+  tax:"the company", wax:"the car", index:"the files", flex:"his muscles", prefix:"the word", suffix:"the name",
+  echo:"through the hall", veto:"the plan", embargo:"the goods", redo:"the task", undo:"the change", outdo:"his record", overdo:"the exercise", undergo:"training",
+  rely:"on his team", deny:"the claim", identify:"the insect", satisfy:"the need", modify:"the plan", simplify:"the problem",
+  say:"hello", pay:"the bill", pray:"quietly", relay:"the message", display:"the picture", survey:"the area", convey:"the idea", destroy:"the box", deploy:"the robot", betray:"the secret", spray:"the plant", repay:"the money"
 };
 function thirdPersonVerb(verb, rule){
   if(rule==="consonant+y") return verb.slice(0,-1)+"ies";
@@ -648,15 +712,18 @@ QUESTION_BANK.mixed=[
 
 // Legacy alias retained for old saved data/code paths.
 QUESTION_BANK.ruleES=[
-  ...QUESTION_BANK.ruleCH.slice(0,2),
-  ...QUESTION_BANK.ruleSH.slice(0,2),
-  ...QUESTION_BANK.ruleSS.slice(0,2),
-  ...QUESTION_BANK.ruleX.slice(0,2),
-  ...QUESTION_BANK.ruleO.slice(0,2)
+  ...QUESTION_BANK.ruleCH,
+  ...QUESTION_BANK.ruleSH,
+  ...QUESTION_BANK.ruleSS,
+  ...QUESTION_BANK.ruleX,
+  ...QUESTION_BANK.ruleO
 ];
 
 // Unit 7 is explicitly CVC doubling. Keep regular -ing and drop-e items for later cumulative review.
 QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
+// Unit 7 contrast pool: regular -ing forms are included as deliberate confusion items.
+// They test whether Anson knows when NOT to double the final consonant.
+QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule==="+ing");
 
 
 const HINTS = {
@@ -955,6 +1022,23 @@ function stageQuestions(stageId,count=5){
   if(!s) return [];
   const pool=weightedStagePool(s);
   if(!pool.length) return [];
+
+  // Unit 7 deliberately mixes the new CVC rule with regular -ing contrast
+  // questions. This prevents Anson from learning "always double" as a shortcut.
+  // Prefer questions that were not used recently; fall back only when necessary.
+  // Formal practice is fixed at 6 CVC + 4 contrast items.
+  if(stageId==="unit7"){
+    const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
+    const recent=new Set(state.learning?.recentQuestionIds||[]);
+    const pickGroup=(rule,count)=>{
+      const all=shuffle(unique.filter(q=>q.rule===rule));
+      const fresh=all.filter(q=>!recent.has(q.id));
+      const old=all.filter(q=>recent.has(q.id));
+      return [...fresh,...old].slice(0,count);
+    };
+    const picked=[...pickGroup("CVC",6),...pickGroup("+ing",4)];
+    return shuffle(picked);
+  }
   const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
   const recent=new Set(state.learning?.recentQuestionIds||[]);
   const fresh=shuffle(unique.filter(q=>!recent.has(q.id)));
@@ -1013,6 +1097,9 @@ function mixedTestQuestions(count=10){
 }
 
 function missionQuestionCount(stageId){
+  // Unit 7 is a focused skill check: give Anson 10 questions so CVC doubling
+  // is practiced enough, while keeping several non-CVC contrast questions.
+  if(stageId==="unit7") return 10;
   const stage=STAGES.find(x=>x.id===stageId);
   if(!stage) return 4;
   const skills=new Set();
@@ -1502,17 +1589,15 @@ function renderQuestion(){
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
   const isY=q?.rule==="consonant+y" || q?.rule==="vowel+y";
-  const isUnit2=currentSession?.stageId==="unit2" && ["CH","SH","SS","X","O"].includes(q?.rule);
-  if(isUnit2){
-    const prompts={
-      CH:["Which verb ends in <span class=\"red\">CH</span>?","Find the verb ending in <span class=\"red\">CH</span>.","Which verb has <span class=\"red\">CH</span> at the end?"] ,
-      SH:["Which verb ends in <span class=\"red\">SH</span>?","Find the verb ending in <span class=\"red\">SH</span>.","Which verb has <span class=\"red\">SH</span> at the end?"] ,
-      SS:["Which verb ends in <span class=\"red\">SS</span>?","Find the verb ending in <span class=\"red\">SS</span>.","Which verb has <span class=\"red\">SS</span> at the end?"] ,
-      X:["Which verb ends in <span class=\"red\">X</span>?","Find the verb ending in <span class=\"red\">X</span>.","Which verb has <span class=\"red\">X</span> at the end?"] ,
-      O:["Which verb ends in <span class=\"red\">O</span>?","Find the verb ending in <span class=\"red\">O</span>.","Which verb has <span class=\"red\">O</span> at the end?"]
-    };
-    const list=prompts[q.rule];
-    return list[(String(q?.id||"").length)%list.length];
+  // Unit 2 tests the actual grammar decision: choose the verb that needs ES.
+  // It should NOT test whether Anson can visually spot CH/SH/SS/X/O.
+  if(currentSession?.stageId==="unit2"){
+    const prompts=[
+      "Which verb needs <span class=\"red\">ES</span>?",
+      "Find the verb that needs <span class=\"red\">ES</span>.",
+      "Which verb gets <span class=\"red\">ES</span>?"
+    ];
+    return prompts[(String(q?.id||"").length)%prompts.length];
   }
   if(isY){
     const prompts=answer==="IES"
@@ -1561,9 +1646,9 @@ function makeRuleOptions(answer){
     // Unit 3 is deliberately focused: only Y-ending verbs appear.
     all=[...QUESTION_BANK.ruleIES];
   }else if(stageId==="unit2"){
-    // Unit 2 stays inside the ES family. Distractors use a different ES-trigger
-    // (CH / SH / SS / X / O), never ordinary-S or Y verbs.
-    all=[...QUESTION_BANK.ruleES];
+    // Unit 2 asks "Which verb needs ES?", so the option pool must include
+    // both ES-trigger verbs and ordinary-S verbs.
+    all=[...QUESTION_BANK.ruleES,...QUESTION_BANK.ruleS];
   }else if(stageId==="unit1"){
     // Unit 1 stays simple: ordinary verbs are the target; distractors are special endings.
     all=[...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH.slice(0,6),...QUESTION_BANK.ruleSH.slice(0,6),...QUESTION_BANK.ruleX.slice(0,6)];
@@ -1594,10 +1679,16 @@ function makeRuleOptions(answer){
   };
 
   if(stageId==="unit2"){
-    // All four choices remain inside the ES family, but only one has the
-    // specific ending being taught in this question.
-    const specialRules=["CH","SH","SS","X","O"].filter(r=>r!==correct.rule);
-    specialRules.forEach(r=>{ if(distractors.length<3) takeOne(x=>x.rule===r); });
+    // Unit 2 now tests the grammar choice, not visual pattern recognition.
+    // One ES-trigger verb is the correct answer; the three distractors are
+    // ordinary-S verbs. This mirrors Unit 1's "Which one needs S?" structure.
+    for(const item of QUESTION_BANK.ruleS){
+      if(distractors.length>=3) break;
+      if(usedPokes.has(Number(item.poke)) || usedWords.has(item.verb)) continue;
+      distractors.push(item);
+      usedPokes.add(Number(item.poke));
+      usedWords.add(item.verb);
+    }
   }else if(stageId==="unit3"){
     // All four choices are Y-ending verbs. Exactly one matches the requested outcome.
     // This teaches the contrast without mixing in unrelated S/ES rules.
@@ -2215,10 +2306,9 @@ function showModal(content){document.getElementById("modalBox").innerHTML=conten
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 function endSession(){
   if(!currentSession){showScreen("home");return}
-  if(confirm("確定要離開目前任務嗎？已完成的題目紀錄會保留，但本次任務不會算完成。")){
-    accumulateLearningTime();
-    currentSession=null;showScreen("home");
-  }
+  accumulateLearningTime();
+  currentSession=null;
+  showScreen("home");
 }
 function detectError(q,answer){
   if(q.rule==="consonant+y") return "consonant_y_rule";
