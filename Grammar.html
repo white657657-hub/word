@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="application-version" content="4.36">
-<title>Anson 英文文法冒險 V4.37</title>
-<!-- V4.37: fix stage-entry click path; guard navigation and empty question pools; schema v8. -->
+<title>Anson 英文文法冒險 V2.2</title>
 <style>
 :root{
   --bg:#081018;
@@ -144,7 +142,7 @@ main{margin-top:18px}
   text-align:center;font-size:29px;font-weight:800;line-height:1.5;
   padding:20px 12px
 }.filled-answer{font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
-.baseverb{text-align:center;color:var(--text);font-size:25px;font-weight:900;margin-top:-8px}.baseverb-speaker{vertical-align:middle;margin-left:8px}
+.baseverb{text-align:center;color:var(--muted);font-size:15px;margin-top:-8px}
 .choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
 .choice{
   min-width:0;
@@ -161,7 +159,7 @@ main{margin-top:18px}
 }
 .stage.locked{opacity:.48;cursor:not-allowed}
 .stage .num{font-size:12px;color:#8ea2b2}
-.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px;position:relative;z-index:2}.stage-enter{position:relative;z-index:3;pointer-events:auto;font-size:16px;padding:9px 14px;min-height:40px;cursor:pointer}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
+.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px}.stage-enter{font-size:16px;padding:9px 14px;min-height:40px}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
 .badge{position:absolute;right:12px;top:12px;font-size:12px;color:#c8d4dd}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .stat b{display:block;font-size:25px;margin-top:5px}.stat span{color:var(--muted);font-size:13px}
@@ -265,14 +263,21 @@ main{margin-top:18px}
 .y-rule-focus{margin:18px auto 0;font-size:19px;color:#cfe0ec}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
-.version-tag{display:inline-block;margin-left:8px;padding:3px 7px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-weight:700;color:var(--muted);vertical-align:middle}
-@media(max-width:760px){.map{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:460px){.map{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
 <header class="topbar">
+  <div class="profile">
+    <div class="avatar">🧒</div>
+    <div>
+      <b>Anson</b><br><small id="levelText">Lv. 1</small>
+    </div>
+    <div class="xpwrap">
+      <small id="xpText">0 / 100 EXP</small>
+      <div class="xpbar"><div class="xpfill" id="xpFill"></div></div>
+    </div>
+  </div>
   <div class="top-actions">
     <button class="iconbtn" onclick="showScreen('settings')">⚙️</button>
   </div>
@@ -282,7 +287,7 @@ main{margin-top:18px}
 <section id="home" class="screen active">
   <div class="hero">
     <div>
-      <div class="muted">English Grammar Adventure <span class="version-tag">V4.37</span></div>
+      <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
       <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
@@ -354,10 +359,10 @@ main{margin-top:18px}
 
 <section id="logs" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>📊 學習紀錄（最多 1,000 筆）</h2><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small primary" onclick="exportLogsTXTAndClear()">匯出 TXT 並清除</button><button class="btn small" onclick="exportLogsCSV()">匯出 CSV（不清除）</button><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
+  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
   <div class="stats" id="stats"></div>
   <div class="section-title"><h2>最近紀錄</h2></div>
-  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間（毫秒）</th><th>作答耗時（ms）</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
+  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
 </section>
 
 
@@ -665,91 +670,7 @@ const VERB_EXAMPLE_OBJECTS = {
   echo:"through the hall", veto:"the plan", embargo:"the goods", redo:"the task", undo:"the change", outdo:"his record", overdo:"the exercise", undergo:"training",
   rely:"on his team", deny:"the claim", identify:"the insect", satisfy:"the need", modify:"the plan", simplify:"the problem",
   say:"hello", pay:"the bill", pray:"quietly", relay:"the message", display:"the picture", survey:"the area", convey:"the idea", destroy:"the box", deploy:"the robot", betray:"the secret", spray:"the plant", repay:"the money"
- };
-// Curated question-bank expansion: each core skill has enough unique items for 20-question sessions.
-// Generated items use common, age-appropriate verbs and deterministic grammar forms.
-(function expandQuestionBanks(){
-  const pokeIds=[25,4,7,1,26,27,35,54,39,52,10,16,133,5,8,2];
-  const uniqueWords=(arr)=>[...new Set(arr)];
-  const addRule=(bank,words,rule,prefix,answer)=>{
-    const seen=new Set(bank.map(q=>q.verb));
-    uniqueWords(words).forEach(v=>{
-      if(bank.length>=100 || seen.has(v)) return;
-      bank.push({id:`${prefix}${String(bank.length+1).padStart(3,"0")}`,verb:v,answer:answer||"ES",poke:pokeIds[bank.length%pokeIds.length],rule});seen.add(v);
-    });
-  };
-  const normalS=`ask bake believe belong borrow breathe change charge chase climb close compare complete continue count cover create decide deliver depend discover divide earn encourage explain explore fill fold gather happen imagine improve include invite join kick knock land laugh lift listen manage measure mention notice offer order own pack pick plan point practice prefer prepare protect provide pull recycle remember repair return save share show smile start stay suggest support taste travel trust visit wait welcome whisper work`.split(/\s+/);
-  addRule(QUESTION_BANK.ruleS,normalS,"S","s","S");
-  // Guard the S-only bank against verbs that require ES or IES.
-  const badSimpleS=v=>/(ch|sh|ss|x|s|o)$/i.test(v) || /[^aeiou]y$/i.test(v);
-  QUESTION_BANK.ruleS=QUESTION_BANK.ruleS.filter((q,i)=>i<40 || !badSimpleS(q.verb));
-  const sRefill=`act agree allow appear arrive avoid balance behave blink boil bounce brush burn bury calculate camp care carry celebrate check cheer collect color connect control dance describe design develop discover enjoy enter escape exercise exist face fail fear file follow force form free fry glow grab greet guide hang happen hike hope hug hurry imagine introduce joke label last learn lift limit link list load lock mail mark matter melt miss?`.replace(" miss?","").split(/\s+/);
-  const sSeen=new Set(QUESTION_BANK.ruleS.map(q=>q.verb));
-  sRefill.forEach(v=>{if(QUESTION_BANK.ruleS.length<100&&!sSeen.has(v)&&!badSimpleS(v)){const id=`sFix${String(QUESTION_BANK.ruleS.length+1).padStart(3,"0")}`;QUESTION_BANK.ruleS.push({id,verb:v,answer:"S",poke:pokeIds[QUESTION_BANK.ruleS.length%pokeIds.length],rule:"S"});sSeen.add(v);}});
-  const ch=`teach watch reach touch catch match switch fetch punch munch search march scratch stretch launch branch scratch approach attach coach preach bleach stitch sketch patch ditch hatch pitch pinch snatch dispatch enrich research`.split(/\s+/);
-  addRule(QUESTION_BANK.ruleCH,ch,"CH","ch");
-  const sh=`wash push finish brush rush wish flash crash polish splash punish publish fish crush smash vanish relish hush dash flush nourish flourish demolish establish replenish astonish cherish furnish`.split(/\s+/);
-  addRule(QUESTION_BANK.ruleSH,sh,"SH","sh");
-  const ss=`miss kiss pass dress guess cross press bless discuss express address impress stress confess possess obsess toss boss floss focus?`.replace(" focus?","").split(/\s+/);
-  addRule(QUESTION_BANK.ruleSS,ss,"SS","ss");
-  const xs=`fix mix box tax relax fax wax index flex vex prefix suffix unbox annex outfox affix coax detox hex transfix remix perplex multiplex`.split(/\s+/);
-  addRule(QUESTION_BANK.ruleX,xs,"X","x");
-  const os=`go do echo veto embargo zero solo lasso torpedo video redo undo outdo overdo forgo undergo piano?`.replace(" piano?","").split(/\s+/);
-  addRule(QUESTION_BANK.ruleO,os,"O","o");
-  // Y-ending verbs are split by the preceding letter; only real verbs are included.
-  const consonantY=`try study cry carry worry hurry copy fly reply dry marry tidy empty deny identify satisfy modify simplify verify rely apply supply multiply qualify clarify classify occupy notify terrify magnify justify certify beautify glorify intensify diversify testify comply imply defy fry spy pry vary bury scurry ferry tarry rally bully envy curry parry quarry codify crucify demystify exemplify fortify gratify horrify liquefy pacify purify quantify ratify solidify specify unify vilify amplify rectify purify`.split(/\s+/);
-  const vowelY=`play enjoy buy stay obey delay pray betray spray relay display survey convey destroy deploy repay say pay lay may employ annoy toy alloy disobey underpay overpay portray decay slay sway weigh?`.replace(" weigh?","").split(/\s+/);
-  const ySeen=new Set(QUESTION_BANK.ruleIES.map(q=>q.verb));
-  const addY=(words,rule,answer)=>uniqueWords(words).forEach(v=>{
-    if(QUESTION_BANK.ruleIES.length>=100 || ySeen.has(v)) return;
-    QUESTION_BANK.ruleIES.push({id:`y${String(QUESTION_BANK.ruleIES.length+1).padStart(3,"0")}`,verb:v,answer,poke:pokeIds[QUESTION_BANK.ruleIES.length%pokeIds.length],rule});ySeen.add(v);
-  });
-  addY(consonantY,"consonant+y","IES"); addY(vowelY,"vowel+y","S");
-  // Add valid example objects for all new rule verbs so feedback never falls back to awkward text.
-  [...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO,...QUESTION_BANK.ruleIES].forEach(q=>{
-    if(!VERB_EXAMPLE_OBJECTS[q.verb]) VERB_EXAMPLE_OBJECTS[q.verb]="the task";
-  });
-  // Unit 7 diagnostic bank: only straightforward CVC-doubling verbs plus simple regular -ing contrasts.
-  // Remove spelling exceptions from this unit's pool (e.g. row, fix, try, die, dye, cue).
-  const auditVerbs=`ban bat beg bet bid bob can cap cut dam dig dim dip dot dub fan fit gag get hop hug hum jam jog lap let log lop map mug nab net nip nod pad pan peg pen pet pin pop put rag rap rib rip rob rot rub run set sit tap win stop mop nap wag tag tug pat wet zip sip zap bar jar mar drink eat jump draw sleep wait play read cook walk clean help shop shut plan grab clap skip drop swim slam trim brag drag grin spin step slip flip trot scrub plug`.split(/\s+/);
-  const doubleVerbs=new Set(`ban bat beg bet bid bob can cap cut dam dig dim dip dot dub fan fit gag get hop hug hum jam jog lap let log lop map mug nab net nip nod pad pan peg pen pet pin pop put rag rap rib rip rob rot rub run set sit tap win stop mop nap wag tag tug pat wet zip sip zap bar jar mar shop shut plan grab clap skip drop swim slam trim brag drag grin spin step slip flip trot scrub plug`.split(/\s+/));
-  const auditContexts=[
-    v=>`I am _____ now.`,v=>`We are _____ today.`,v=>`The children are _____ outside.`,
-    v=>`Dad is _____ at home.`,v=>`They are _____ in the park.`,v=>`She is _____ after school.`,
-    v=>`The boys are _____ together.`,v=>`I am _____ with my friend.`,
-    v=>`The dog is _____ nearby.`,v=>`Anson is _____ carefully.`
-  ];
-  const ingFormForAudit=(v)=>{
-    if(v==="die") return "dying";
-    if(v==="dye") return "dyeing";
-    if(v==="cue") return "cueing";
-    if(/([a-z])\1$/.test(v)) return v+"ing"; // add/ebb/err already end in a doubled consonant.
-    if(doubleVerbs.has(v)) return v+v.slice(-1)+"ing";
-    return v+"ing";
-  };
-  const makeAuditChoices=(v,form,isDouble)=>{
-    const doubled=v+v.slice(-1)+"ing";
-    const plain=v+"ing";
-    const past=v+"ed";
-    const candidates=isDouble?[v,form,plain,past]:[v,form,doubled,past];
-    const out=[...new Set(candidates)];
-    if(out.length<4) out.push(v+"s");
-    return [...new Set(out)].slice(0,4);
-  };
-  const auditBank=uniqueAuditVerbs.map((v,i)=>{
-    const isDouble=doubleVerbs.has(v);
-    const form=ingFormForAudit(v);
-    return {id:`cvc-audit-${String(i+1).padStart(3,"0")}`,sentence:auditContexts[i%auditContexts.length](v),choices:makeAuditChoices(v,form,isDouble),answer:form,verb:v,rule:isDouble?"CVC":"+ing",auditSource:"parent-verb-list"};
-  });
-  // Keep the supplied list intact in the cumulative bank, while Unit 7 uses this 100-item diagnostic pool.
-  QUESTION_BANK.ing.push(...auditBank);
-  QUESTION_BANK.ingCVC=auditBank.filter(q=>q.rule==="CVC");
-  QUESTION_BANK.ingRegular=auditBank.filter(q=>q.rule==="+ing");
-  // Refresh aliases after expansion so ES stages see every added special-ending verb.
-  QUESTION_BANK.ruleES=[...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO];
-  QUESTION_BANK.mixed=[...QUESTION_BANK.ruleS.slice(0,20),...QUESTION_BANK.ruleES.slice(0,40),...QUESTION_BANK.ruleIES.slice(0,40)].map(q=>({...q,id:`mix-${q.id}`}));
-  // Unit 7 aliases were set to the 100-item diagnostic bank above; do not rebuild from cumulative bank.
-})();
+};
 function thirdPersonVerb(verb, rule){
   if(rule==="consonant+y") return verb.slice(0,-1)+"ies";
   if(rule==="vowel+y") return verb+"s";
@@ -803,7 +724,6 @@ QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
 // Unit 7 contrast pool: regular -ing forms are included as deliberate confusion items.
 // They test whether Anson knows when NOT to double the final consonant.
 QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule==="+ing");
-
 
 
 const HINTS = {
@@ -865,8 +785,8 @@ const HINTS = {
 };
 
 const STORAGE_KEY = "ansonGrammarAdventureV2";
-const SCHEMA_VERSION = 8;
-var state = loadState();
+const SCHEMA_VERSION = 7;
+const state = loadState();
 let currentSession = null;
 let currentQuestion = null;
 let hintLevel = 0;
@@ -876,7 +796,7 @@ function defaultState(){
   return {
     level:1,xp:0,
     settings:{autoSpeak:true},
-    unlocked:STAGES.map(stage=>stage.id),
+    unlocked:["unit1"],
     stageStats:{},
     logs:[],
     collection:{25:{level:1,xp:0,evolutionProgress:0},4:{level:1,xp:0,evolutionProgress:0},7:{level:1,xp:0,evolutionProgress:0}},
@@ -893,8 +813,7 @@ function loadState(){
     // Migrate older data without destroying learning progress.
     if(!s.learning) s.learning={mastery:{},learningTime:{activeMs:0,restRequired:false}};
     if(!s.learning.learningTime) s.learning.learningTime={activeMs:0,restRequired:false};
-    if(!Array.isArray(s.logs)) s.logs=[];
-    s.logs=s.logs.slice(0,1000);
+    if(!s.logs) s.logs=[];
     if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
     if(!s.collection || typeof s.collection !== "object") s.collection={};
     if(!s.learning.mastery) s.learning.mastery={};
@@ -917,8 +836,8 @@ function loadState(){
     if(oldUnlocked.has("unit4") || oldUnlocked.has("ing") || oldUnlocked.has("sentence") || oldUnlocked.has("error")) highest=Math.max(highest,6);
     // Preserve already-created current IDs if present.
     oldUnlocked.forEach(id=>{const m=id.match(/^unit([1-9])$/); if(m) highest=Math.max(highest,Number(m[1])-1);});
-    // This edition is a free-practice map: all stages are available from the start.
-    s.unlocked=STAGES.map(x=>x.id);
+    s.unlocked=STAGES.slice(0,highest+1).map(x=>x.id);
+    if(!s.unlocked.length) s.unlocked=["unit1"];
     if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
     if(!s.settings || typeof s.settings !== "object") s.settings={autoSpeak:true};
     if(typeof s.settings.autoSpeak !== "boolean") s.settings.autoSpeak=true;
@@ -933,9 +852,7 @@ function ensureLearningTime(){
   if(typeof state.learning.learningTime.activeMs!=="number") state.learning.learningTime.activeMs=0;
   state.learning.learningTime.restRequired=!!state.learning.learningTime.restRequired;
 }
-function fmtTime(ts){const d=new Date(ts);return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}.${String(d.getMilliseconds()).padStart(3,"0")}`}
-function fmtDateTimeMs(ts){const d=new Date(ts);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${fmtTime(ts)}`}
-function retainRecentLogs(){if(!Array.isArray(state.logs))state.logs=[];state.logs=state.logs.slice(0,1000)}
+function fmtTime(ts){return new Date(ts).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
 const PRONUNCIATION_TERMS = ["consonant", "vowel", "singular", "plural", "subject", "verb", "ending", "silent e"];
@@ -947,23 +864,15 @@ function hintTextWithPronunciation(text){
 }
 
 function showScreen(id){
-  const nextScreen=document.getElementById(id);
-  if(!nextScreen){ console.error("showScreen: unknown screen id",id); return false; }
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
-  nextScreen.classList.add("active");
+  document.getElementById(id).classList.add("active");
   if(id==="map"){
     try{ renderMap(); }catch(e){
       console.error("Map render failed",e);
       const mapEl=document.getElementById("stageMap");
-      if(mapEl) {
-        // Fail open: preserve navigation to all known stages if the rich map renderer fails.
-        const detail=String(e && e.message ? e.message : e);
-        console.error("Map render failed:", detail, e && e.stack);
-        mapEl.innerHTML = `<div class="card" style="grid-column:1/-1"><b>🗺️ 關卡地圖載入遇到問題</b><p class="muted">已切換為基本關卡清單，仍可繼續練習。</p><p class="small-note">診斷資訊：${typeof escapeHtml === "function" ? escapeHtml(detail) : "請開啟開發者工具查看 Console"}</p><div class="stage-fallback-list">${(typeof STAGES !== "undefined" ? STAGES : []).map((s,i)=>`<button class="btn primary" type="button" style="margin:6px" data-fallback-stage="${s.id}">第 ${i+1} 關：${typeof escapeHtml === "function" ? escapeHtml(s.title) : s.title}</button>`).join("")}</div><button class="btn small" type="button" onclick="location.reload()">重新載入</button></div>`;
-        mapEl.onclick = event => { const target=event.target instanceof Element ? event.target : event.target?.parentElement; const b=target?.closest("[data-fallback-stage]"); if(b && mapEl.contains(b)) startStage(b.dataset.fallbackStage); };
-      }
+      if(mapEl) mapEl.innerHTML=`<div class="card" style="grid-column:1/-1">🗺️ 關卡資料正在修復，請重新整理頁面。</div>`;
       const rec=document.getElementById("recommendation");
-      if(rec) rec.innerHTML=`<p class="muted">推薦關卡暫時無法載入；仍可從基本關卡清單進入練習。</p>`;
+      if(rec) rec.innerHTML=`<p class="muted">目前無法載入推薦關卡，請重新整理頁面。</p>`;
     }
   }
   if(id==="myPokemon")renderMyPokemon();
@@ -976,7 +885,9 @@ function showScreen(id){
 
 function updateHeader(){
   const need=100 + (state.level-1)*50;
-  // EXP and level remain in saved state; this focused practice UI no longer displays the profile badge.
+  document.getElementById("levelText").textContent=`Lv. ${state.level}`;
+  document.getElementById("xpText").textContent=`${state.xp} / ${need} EXP`;
+  document.getElementById("xpFill").style.width=Math.min(100,state.xp/need*100)+"%";
 }
 function saveSettings(){
   state.settings.autoSpeak=document.getElementById("autoSpeak").checked;
@@ -997,7 +908,7 @@ function renderMap(){
   el.innerHTML=STAGES.map((s,i)=>{
     try{
       const st=state.stageStats[s.id]||{best:0,plays:0};
-      const locked=false;
+      const locked=!state.unlocked.includes(s.id);
       const mastery=stageMastery(s);
       const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
       const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview));
@@ -1006,7 +917,7 @@ function renderMap(){
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
         ${locked
           ? `<div class="small-note" style="margin-top:12px">🔒 尚未解鎖</div>`
-          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" onclick="event.stopPropagation();startStage('${s.id}')" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
+          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
              ${(st.best||0)>=70 ? `<label class="map-challenge"><input type="checkbox" ${isStageChallengeEnabled(s.id)?"checked":""} data-challenge-stage="${s.id}"><span>想挑戰看看？ 加強難度</span></label>` : ""}`}
       </div>`;
     }catch(e){
@@ -1018,64 +929,46 @@ function renderMap(){
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
   el.onclick=(event)=>{
-    const target=event.target instanceof Element ? event.target : event.target?.parentElement;
-    if(!target) return;
-    const challenge=target.closest('[data-challenge-stage]');
+    const challenge=event.target.closest('[data-challenge-stage]');
     if(challenge && el.contains(challenge)){
       event.stopPropagation();
       setStageChallenge(challenge.dataset.challengeStage, challenge.checked);
       return;
     }
-    const button=target.closest('.stage-enter[data-enter-stage]');
+    const button=event.target.closest('.stage-enter[data-enter-stage]');
     if(button && el.contains(button)){
       event.stopPropagation();
       startStage(button.dataset.enterStage);
       return;
     }
-    const card=target.closest('.stage[data-stage]');
+    const card=event.target.closest('.stage[data-stage]');
     if(!card || !el.contains(card)) return;
     startStage(card.dataset.stage);
   };
   el.onkeydown=(event)=>{
     if(event.key!=="Enter" && event.key!==" ") return;
-    const target=event.target instanceof Element ? event.target : event.target?.parentElement;
-    if(!target) return;
-    // Do not hijack keyboard input on checkboxes or buttons inside a stage card.
-    if(target.closest('button,input,select,textarea,a')) return;
-    const card=target.closest('.stage[data-stage]');
+    const card=event.target.closest('.stage[data-stage]');
     if(!card || !el.contains(card)) return;
     event.preventDefault();
     startStage(card.dataset.stage);
   };
-  // Recommendation and boss status are independent of map rendering: a failure here
-  // must not replace the whole map with an error message.
+  const candidates=STAGES.filter(s=>Array.isArray(state.unlocked) && state.unlocked.includes(s.id));
+  const safeMastery=(s)=>{ try{return stageMastery(s)}catch(e){console.warn("stageMastery warning",s?.id,e);return 0;} };
+  const reviewStage=candidates.find(s=>safeMastery(s)>=70 && safeMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview)));
+  const weak=candidates.find(s=>safeMastery(s)<85);
+  const r=reviewStage||weak||candidates[0]||STAGES[0];
   const recommendation=document.getElementById("recommendation");
-  try{
-    const candidates=STAGES.filter(s=>Array.isArray(state.unlocked) && state.unlocked.includes(s.id));
-    const safeMastery=(s)=>{ try{return stageMastery(s)}catch(e){console.warn("stageMastery warning",s?.id,e);return 0;} };
-    const reviewStage=candidates.find(s=>safeMastery(s)>=70 && safeMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview)));
-    const weak=candidates.find(s=>safeMastery(s)<85);
-    const r=reviewStage||weak||candidates[0]||STAGES[0];
-    if(recommendation && r){
-      const rm=safeMastery(r);
-      recommendation.innerHTML=`<b>⭐ 系統建議：${escapeHtml(r.title)}</b><p class="muted">${rm>=90?"已熟練，可以自由回訪。":rm>=70?"可以再練習一次，也可以自由回訪其他已解鎖關卡。":"目前正在建立這項技能。"}</p><button class="btn primary small" data-recommend-stage="${escapeHtml(r.id)}">去冒險</button>`;
-      recommendation.onclick=(event)=>{
-        const target=event.target instanceof Element ? event.target : event.target?.parentElement;
-        const btn=target?.closest("[data-recommend-stage]");
-        if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
-      };
-    }else if(recommendation){
-      recommendation.innerHTML='<p class="muted">目前沒有可推薦的關卡，請直接從地圖選擇。</p>';
-    }
-  }catch(e){
-    console.error("Recommendation render failed",e);
-    if(recommendation) recommendation.innerHTML='<p class="muted">推薦關卡暫時無法載入；仍可直接從上方地圖選擇關卡。</p>';
+  if(recommendation){
+    const rm=safeMastery(r);
+    recommendation.innerHTML=
+      `<b>⭐ 系統建議：${escapeHtml(r.title)}</b><p class="muted">${rm>=90?"已熟練，可以自由回訪。":rm>=70?"可以再練習一次，也可以自由回訪其他已解鎖關卡。":"目前正在建立這項技能。"}</p>
+       <button class="btn primary small" data-recommend-stage="${escapeHtml(r.id)}">去冒險</button>`;
+    recommendation.onclick=(event)=>{
+      const btn=event.target.closest("[data-recommend-stage]");
+      if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
+    };
   }
-  try{renderSuperBossStatus()}catch(e){
-    console.error("Super boss status render failed",e);
-    const status=document.getElementById("superBossStatus");
-    if(status) status.textContent="超級魔王狀態暫時無法載入";
-  }
+  renderSuperBossStatus();
 }
 
 function renderSuperBossStatus(){
@@ -1133,7 +1026,7 @@ function stageQuestions(stageId,count=5){
   // Unit 7 deliberately mixes the new CVC rule with regular -ing contrast
   // questions. This prevents Anson from learning "always double" as a shortcut.
   // Prefer questions that were not used recently; fall back only when necessary.
-  // Formal practice is fixed at 12 CVC + 8 contrast items, with three-letter distractor verbs represented.
+  // Formal practice is fixed at 6 CVC + 4 contrast items.
   if(stageId==="unit7"){
     const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
     const recent=new Set(state.learning?.recentQuestionIds||[]);
@@ -1143,11 +1036,8 @@ function stageQuestions(stageId,count=5){
       const old=all.filter(q=>recent.has(q.id));
       return [...fresh,...old].slice(0,count);
     };
-    const picked=[...pickGroup("CVC",12),...pickGroup("+ing",8)];
-    const result=shuffle(picked).map(q=>({...q}));
-    state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,40);
-    saveState();
-    return result;
+    const picked=[...pickGroup("CVC",6),...pickGroup("+ing",4)];
+    return shuffle(picked);
   }
   const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
   const recent=new Set(state.learning?.recentQuestionIds||[]);
@@ -1207,25 +1097,28 @@ function mixedTestQuestions(count=10){
 }
 
 function missionQuestionCount(stageId){
-  // Every formal mission uses the same predictable 20-question length.
-  return 20;
+  // Unit 7 is a focused skill check: give Anson 10 questions so CVC doubling
+  // is practiced enough, while keeping several non-CVC contrast questions.
+  if(stageId==="unit7") return 10;
+  const stage=STAGES.find(x=>x.id===stageId);
+  if(!stage) return 4;
+  const skills=new Set();
+  (stage.types||[]).forEach(t=>(QUESTION_BANK[t]||[]).forEach(q=>skills.add(masterySkill(q))));
+  const vals=[...skills].map(k=>state.learning?.mastery?.[k]?.mastery||0);
+  const max=Math.max(0,...vals);
+  const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+  if(max===0 && avg===0) return 4;
+  if(avg<70) return 5;
+  return 6;
 }
 
 function startStage(stageId){
   const stage=STAGES.find(x=>x.id===stageId);
-  if(!stage) return;
+  if(!stage || !state.unlocked.includes(stageId)) return;
   const missionCount=missionQuestionCount(stageId);
-  let questions;
-  try { questions=stageQuestions(stageId,missionCount); }
-  catch(error){ console.error("startStage: failed to build questions",stageId,error); alert("這個關卡的題目載入失敗，請回到地圖後重新載入。詳情請查看 Console。"); return; }
-  if(!Array.isArray(questions) || questions.length===0){
-    console.error("startStage: no questions available",stageId);
-    alert("這個關卡目前沒有可用題目，請重新載入頁面。");
-    return;
-  }
   currentSession={
     stageId,qa:false,
-    questions,
+    questions:stageQuestions(stageId,missionCount),
     index:0,
     correct:0,
     independent:0,
@@ -1388,8 +1281,9 @@ function renderWarmupQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(q.sentence)}</div>
-      <div class="baseverb">${escapeHtml(q.verb||"")} <button class="speaker baseverb-speaker" aria-label="Hear base verb" style="width:38px;height:38px;font-size:17px" onclick="event.stopPropagation();speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>
+      ${highlightBlank(q.sentence)}</div>
+      <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
       <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
@@ -1401,7 +1295,7 @@ function renderWarmupQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && questionType(currentQuestion)==="rule") setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak) setTimeout(()=>speak(getSpeakText()),250);
 }
 
 function handleWarmupAnswer(correct,answer,extra){
@@ -1441,8 +1335,10 @@ function handleWarmupAnswer(correct,answer,extra){
     if(q.sentence){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
+        const speaker=sentenceEl.querySelector(".speaker");
+        const speakerHtml=speaker?speaker.outerHTML:"";
         const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
-        sentenceEl.innerHTML=filled;
+        sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
@@ -1537,7 +1433,7 @@ function runQuestionBankHealthCheck(){
     if(ids.has(q.id)) problems.push(`${t}: duplicate ID ${q.id}`); ids.add(q.id);
     if(words.has(q.verb)) problems.push(`${t}: duplicate verb ${q.verb}`); words.add(q.verb);
     if(!q.verb || !q.poke || !q.answer) problems.push(`${t}: incomplete ${q.id}`);
-    if(t==="ruleS" && (q.rule!=="S" || q.answer!=="S")) problems.push(`${q.id}: S bank item must have rule=S and answer=S`);
+    if(t==="ruleS" && q.answer!=="S") problems.push(`${q.id}: S answer mismatch`);
     if(t==="ruleIES" && !["S","IES"].includes(q.answer)) problems.push(`${q.id}: Y Rule answer must be S or IES`);
     if(q.rule==="consonant+y" && (!/[^aeiou]y$/i.test(q.verb) || q.answer!=="IES")) problems.push(`${q.id}: consonant+y must be IES`);
     if(q.rule==="vowel+y" && (!/[aeiou]y$/i.test(q.verb) || q.answer!=="S")) problems.push(`${q.id}: vowel+y must be S`);
@@ -1675,8 +1571,9 @@ function renderQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(currentQuestion.sentence)}</div>
-      <div class="baseverb">${escapeHtml(currentQuestion.verb||"")} <button class="speaker baseverb-speaker" aria-label="Hear base verb" style="width:38px;height:38px;font-size:17px" onclick="event.stopPropagation();speak('${escapeHtml(currentQuestion.verb||"")}')">🔊</button></div>
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(currentQuestion.sentence)}')">🔊</button>
+      ${highlightBlank(currentQuestion.sentence)}</div>
+      <div class="baseverb">(${currentQuestion.verb}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${currentQuestion.verb}')">🔊</button></div>
       <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
@@ -1687,7 +1584,7 @@ function renderQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && !currentSession.qa && type==="rule") setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
 }
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
@@ -1908,7 +1805,7 @@ function logLearningHelp(action){
     correct:false, hintLevel, exp:0, errorType:null, responseTime:Date.now()-(currentSession.questionStartedAt||Date.now()),
     learningIntegrity:"help", helpAction:action
   };
-  state.logs.unshift(entry); retainRecentLogs(); saveState();
+  state.logs.unshift(entry); saveState();
 }
 function showHelpOptions(){
   if(answerLocked) return;
@@ -2035,7 +1932,7 @@ function handleAnswer(correct,answer,extra){
     responseTime,
     learningIntegrity:integrity
   };
-  if(!currentSession.qa){ state.logs.unshift(logEntry); retainRecentLogs(); }
+  if(!currentSession.qa) state.logs.unshift(logEntry);
   saveState();
   renderFeedback(correct,answer,errorType,exp);
 }
@@ -2168,8 +2065,10 @@ function renderFeedback(correct,answer,errorType,exp){
     if(!q.poke && q.sentence){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
+        const speaker=sentenceEl.querySelector(".speaker");
+        const speakerHtml=speaker?speaker.outerHTML:"";
         const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
-        sentenceEl.innerHTML=filled;
+        sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
     // Put the grammar transformation inside the correct Pokémon card so the child
@@ -2473,56 +2372,21 @@ function renderLogs(){
     <div class="card stat"><span>整體正確率</span><b>${acc}%</b></div>
     <div class="card stat"><span>獨立答對</span><b>${independent}</b></div>
     <div class="card stat"><span>Hint 後答對</span><b>${hintCorrect}</b></div>`;
-  const all=[...state.logs].sort((a,b)=>b.ts-a.ts).slice(0,1000);
+  const all=[...state.logs].sort((a,b)=>b.ts-a.ts).slice(0,120);
   const groups={};
   all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
   const rows=[];
   Object.keys(groups).forEach(date=>{
-    rows.push(`<tr class="date-row"><td colspan="9"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
+    rows.push(`<tr class="date-row"><td colspan="8"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
     groups[date].forEach(l=>{
       const isHelp=l.mode==="LEARNING_HELP";
       const status=isHelp?(l.helpAction==="revealed"?"👀 看答案":"⏭️ 跳過"):(l.correct?"✓":"✗");
       const statusClass=isHelp?"":(l.correct?"ok":"bad");
       const modeLabel=l.mode==="SUPER_BOSS"?"魔王":isHelp?"求助":"學習";
-      rows.push(`<tr><td>${fmtDateTimeMs(l.ts)}</td><td>${Number.isFinite(l.responseTime)?l.responseTime:"—"}</td><td>${modeLabel}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${statusClass}">${status}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`);
+      rows.push(`<tr><td>${fmtTime(l.ts)}</td><td>${modeLabel}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${statusClass}">${status}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`);
     });
   });
-  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="9" class="muted">目前還沒有紀錄。</td></tr>`;
-}
-function exportLogsCSV(){
-  const headers=["timestamp","mode","stage","type","questionId","question","selectedAnswer","correctAnswer","correct","attemptNumber","hintLevel","responseTimeMs","errorType","exp","learningIntegrity"];
-  const cell=v=>`"${String(v??"").replace(/"/g,'""')}"`;
-  const lines=[headers.map(cell).join(","),...state.logs.slice(0,1000).map(l=>[
-    fmtDateTimeMs(l.ts),l.mode,l.stage,l.type,l.questionId,l.question,l.selectedAnswer||l.answer,l.correctAnswer,l.correct,l.attemptNumber,l.hintLevel,l.responseTime,l.errorType,l.exp,l.learningIntegrity
-  ].map(cell).join(","))];
-  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`Anson_Grammar_Logs_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-}
-function exportLogsTXTAndClear(){
-  retainRecentLogs();
-  const snapshot=state.logs.slice(0,1000);
-  if(!snapshot.length){alert("目前沒有可匯出的學習紀錄。");return;}
-  const fields=[
-    ["時間",l=>fmtDateTimeMs(l.ts)], ["模式",l=>l.mode], ["單元",l=>l.stage],
-    ["題型",l=>l.type], ["題目 ID",l=>l.questionId], ["題目",l=>l.question],
-    ["孩子選擇",l=>l.selectedAnswer||l.answer], ["正確答案",l=>l.correctAnswer],
-    ["是否答對",l=>l.correct], ["作答次數",l=>l.attemptNumber], ["提示等級",l=>l.hintLevel],
-    ["作答耗時 ms",l=>l.responseTime], ["錯誤類型",l=>l.errorType], ["EXP",l=>l.exp],
-    ["學習完整性",l=>l.learningIntegrity], ["求助動作",l=>l.helpAction]
-  ];
-  const lines=[`Anson English Grammar Adventure — 學習紀錄`,`匯出時間：${fmtDateTimeMs(Date.now())}`,`紀錄筆數：${snapshot.length}`,"=".repeat(60)];
-  snapshot.forEach((l,i)=>{
-    lines.push(`\n【紀錄 ${i+1}】`);
-    fields.forEach(([label,get])=>{const value=get(l);if(value!==undefined&&value!==null&&value!=="") lines.push(`${label}：${String(value)}`);});
-    if(l.answers && Array.isArray(l.answers)) lines.push(`作答歷程：${JSON.stringify(l.answers)}`);
-  });
-  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/plain;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`Anson_Grammar_Logs_${new Date().toISOString().slice(0,10)}.txt`;document.body.appendChild(a);a.click();a.remove();
-  // Clear only after the TXT download has been triggered; do not clear EXP, mastery, unlocks, or collection.
-  setTimeout(()=>{
-    URL.revokeObjectURL(url);
-    state.logs=[];saveState();renderLogs();
-  },1200);
+  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="8" class="muted">目前還沒有紀錄。</td></tr>`;
 }
 function clearLogs(){
   if(!confirm("確定清除學習紀錄？Mastery、EXP、關卡進度與寶可夢不會被清除。")) return;
