@@ -1841,7 +1841,17 @@ function cvcSentenceWithBlank(q){
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
 function isIngPractice(q){ return !!q && (q.rule==="CVC" || q.rule==="NO_DOUBLE" || (currentSession?.stageId==="unit7" && ["+ing","drop-e"].includes(q.rule))); }
-function ingContrastOptions(q){ const v=String(q?.verb||""), d=v+v.slice(-1)+"ing", r=v+"ing"; return q?.rule==="NO_DOUBLE"?[r,d]:[d,r]; }
+function ingContrastOptions(q){
+  const v=String(q?.verb||"");
+  const doubled=v+v.slice(-1)+"ing";
+  const regular=v+"ing";
+  // Never put the correct answer in a fixed position. Derive the two options,
+  // then shuffle them for each rendered question; correctness is still checked
+  // against currentQuestion.answer, not the button position.
+  const options=q?.rule==="NO_DOUBLE"?[regular,doubled]:[doubled,regular];
+  if(Math.random()<0.5) options.reverse();
+  return options;
+}
 function questionType(q){
   if(q.type) return q.type;
   if(q.poke) return "rule";
