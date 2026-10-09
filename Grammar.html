@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V2.2</title>
+<meta name="application-version" content="4.36">
+<title>Anson 英文文法冒險 V4.36</title>
 <style>
 :root{
   --bg:#081018;
@@ -159,7 +160,7 @@ main{margin-top:18px}
 }
 .stage.locked{opacity:.48;cursor:not-allowed}
 .stage .num{font-size:12px;color:#8ea2b2}
-.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px}.stage-enter{font-size:16px;padding:9px 14px;min-height:40px}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
+.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px;position:relative;z-index:2}.stage-enter{position:relative;z-index:3;pointer-events:auto;font-size:16px;padding:9px 14px;min-height:40px;cursor:pointer}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
 .badge{position:absolute;right:12px;top:12px;font-size:12px;color:#c8d4dd}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .stat b{display:block;font-size:25px;margin-top:5px}.stat span{color:var(--muted);font-size:13px}
@@ -263,6 +264,9 @@ main{margin-top:18px}
 .y-rule-focus{margin:18px auto 0;font-size:19px;color:#cfe0ec}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
+.version-tag{display:inline-block;margin-left:8px;padding:3px 7px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-weight:700;color:var(--muted);vertical-align:middle}
+@media(max-width:760px){.map{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:460px){.map{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -277,7 +281,7 @@ main{margin-top:18px}
 <section id="home" class="screen active">
   <div class="hero">
     <div>
-      <div class="muted">English Grammar Adventure</div>
+      <div class="muted">English Grammar Adventure <span class="version-tag">V4.36</span></div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
       <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
@@ -1031,6 +1035,10 @@ function renderMap(){
   };
   el.onkeydown=(event)=>{
     if(event.key!=="Enter" && event.key!==" ") return;
+    const target=event.target instanceof Element ? event.target : event.target?.parentElement;
+    if(!target) return;
+    // Do not hijack keyboard input on checkboxes or buttons inside a stage card.
+    if(target.closest('button,input,select,textarea,a')) return;
     const card=target.closest('.stage[data-stage]');
     if(!card || !el.contains(card)) return;
     event.preventDefault();
