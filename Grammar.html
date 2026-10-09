@@ -264,6 +264,17 @@ main{margin-top:18px}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
 .cvc-baseword{font-size:38px!important;font-weight:950!important;color:#9dc4e5!important;margin:0 0 16px!important;text-align:center;line-height:1.2}.cvc-baseword .speaker{vertical-align:middle}
+.sentence[data-can-speak="1"]{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(157,196,229,.45);text-underline-offset:5px}.sentence[data-can-speak="1"]:hover{filter:brightness(1.12)}.sentence[data-can-speak="0"]{cursor:default}
+
+/* V4.44 UI polish: keep the sentence and feedback visually clear and touch-friendly. */
+.sentence{font-size:clamp(25px,3.2vw,34px);line-height:1.55;padding:22px 14px;border-radius:16px;transition:background .15s,border-color .15s}
+.sentence[data-can-speak="1"]{cursor:pointer;background:rgba(114,201,149,.08);border:1px solid rgba(114,201,149,.30)}
+.sentence[data-can-speak="1"]:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
+.feedback .big{font-size:28px}
+.cvc-two-options .choice{min-height:76px;font-size:clamp(20px,2.4vw,27px);touch-action:manipulation}
+.baseverb.cvc-baseword span{font-size:38px;font-weight:950;letter-spacing:.02em}
+@media(max-width:620px){.sentence{font-size:25px;padding:18px 8px}.cvc-two-options .choice{min-height:68px;font-size:21px}}
+
 </style>
 </head>
 <body>
@@ -449,7 +460,7 @@ const STAGES = [
  {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
  {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
  {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
- {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"CVC words double the final consonant; some questions are mixed to check when NOT to double",types:["ingCVC"],newTypes:["ingCVC"],unlock:6},
+ {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"Mix words that double and do not double the final consonant",types:["ingCVC","ingRegular"],newTypes:["ingCVC","ingRegular"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
@@ -1132,63 +1143,62 @@ function weightedStagePool(stage){
   return pool;
 }
 function stageQuestions(stageId,count=5){
-  const s=STAGES.find(x=>x.id===stageId);
-  if(!s) return [];
-  const pool=weightedStagePool(s);
+  const stage=STAGES.find(x=>x.id===stageId);
+  if(!stage) return [];
+  const pool=weightedStagePool(stage);
   if(!pool.length) return [];
-
-  // Unit 7 deliberately mixes the new CVC rule with regular -ing contrast
-  // questions. This prevents Anson from learning "always double" as a shortcut.
-  // Prefer questions that were not used recently; fall back only when necessary.
-  // Formal practice is fixed at 6 CVC + 4 contrast items.
+  const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
+  const recent=new Set(state.learning?.recentQuestionIds||[]);
   if(stageId==="unit7"){
-    const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
-    const recent=new Set(state.learning?.recentQuestionIds||[]);
-    const pickGroup=(rule,count)=>{
-      const all=shuffle(unique.filter(q=>q.rule===rule));
-      const fresh=all.filter(q=>!recent.has(q.id));
-      const old=all.filter(q=>recent.has(q.id));
-      return [...fresh,...old].slice(0,count);
+    // Within one test, never repeat the same base verb, even when the bank
+    // contains generated variants of that verb. Prefer questions not seen in
+    // recent sessions, then use other distinct verbs only if necessary.
+    const pickGroup=(rule,n)=>{
+      const byVerb=new Map();
+      shuffle(unique.filter(q=>q.rule===rule)).forEach(q=>{
+        const key=String(q.verb||q.id).toLowerCase();
+        if(!byVerb.has(key)) byVerb.set(key,q);
+      });
+      const items=[...byVerb.values()];
+      const fresh=shuffle(items.filter(q=>!recent.has(q.id)));
+      const old=shuffle(items.filter(q=>recent.has(q.id)));
+      return [...fresh,...old].slice(0,n);
     };
-    const doubled=pickGroup("CVC",5);
-    const notDoubled=pickGroup("+ing",5);
-    // Interleave double / do-not-double items so the child cannot answer by pattern alone.
+    const doubled=pickGroup("CVC",Math.ceil(count/2));
+    const notDoubled=pickGroup("NO_DOUBLE",Math.floor(count/2));
     const picked=[];
     for(let i=0;i<Math.max(doubled.length,notDoubled.length);i++){
       if(i<doubled.length) picked.push(doubled[i]);
       if(i<notDoubled.length) picked.push(notDoubled[i]);
     }
-    return picked;
+    if(picked.length<count){
+      const usedVerbs=new Set(picked.map(q=>String(q.verb||q.id).toLowerCase()));
+      const fallback=shuffle(unique.filter(q=>!usedVerbs.has(String(q.verb||q.id).toLowerCase())&&["CVC","NO_DOUBLE"].includes(q.rule)));
+      const fallbackVerbs=new Set();
+      picked.push(...fallback.filter(q=>{const v=String(q.verb||q.id).toLowerCase();if(fallbackVerbs.has(v))return false;fallbackVerbs.add(v);return true;}).slice(0,count-picked.length));
+    }
+    const result=picked.slice(0,count).map(q=>{const {_sourceType,...clean}=q;return {...clean,type:"ing"};});
+    state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,24);
+    saveState();
+    return result;
   }
-  const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
-  const recent=new Set(state.learning?.recentQuestionIds||[]);
   const fresh=shuffle(unique.filter(q=>!recent.has(q.id)));
   const old=shuffle(unique.filter(q=>recent.has(q.id)));
   const picked=[];
-  const newTypes=new Set(s.newTypes||[]);
+  const newTypes=new Set(stage.newTypes||[]);
   const newPool=shuffle(unique.filter(q=>newTypes.has(q._sourceType)));
   const oldPool=shuffle(unique.filter(q=>!newTypes.has(q._sourceType)));
   const newTarget=Math.min(Math.max(1,Math.round(count*0.6)),newPool.length);
   picked.push(...newPool.slice(0,newTarget));
   const remaining=count-picked.length;
-  const reviewPool=shuffle([...oldPool,...fresh,...old]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
+  const reviewPool=shuffle([...oldPool,...fresh,...old]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i&&!picked.some(x=>x.id===q.id));
   picked.push(...reviewPool.slice(0,remaining));
-  const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
+  const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i&&!picked.some(x=>x.id===q.id));
   picked.push(...fallback.slice(0,Math.max(0,count-picked.length)));
-
-  // Difficulty policy:
-  // - Normal missions are intentionally easy/medium only.
-  // - Hard questions appear only after the child opts into 加強難度.
-  // - Challenge mode uses meaningful rule contrasts, not harder vocabulary.
-  const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q; return clean;});
+  const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q;return clean;});
   const challenge=isStageChallengeEnabled(stageId);
-  const hardIndex=challenge ? chooseHardQuestionIndex(result) : -1;
-  result.forEach((q,i)=>{
-    q.difficulty = challenge
-      ? (i===hardIndex ? "hard" : (Math.random()<0.65 ? "medium" : "easy"))
-      : (Math.random()<0.25 ? "medium" : "easy");
-  });
-
+  const hardIndex=challenge?chooseHardQuestionIndex(result):-1;
+  result.forEach((q,i)=>{q.difficulty=challenge?(i===hardIndex?"hard":(Math.random()<0.65?"medium":"easy")):(Math.random()<0.25?"medium":"easy");});
   state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,24);
   saveState();
   return result;
@@ -1326,10 +1336,23 @@ function buildWarmupQuestions(stageId){
       pool.push({...q,_sourceType:t});
     });
   });
-  // Warm-up is intentionally easy and short. Prefer the new rule, then review.
-  const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
-  const source=easy.length>=2?easy:pool;
-  return shuffle(source).slice(0,Math.min(2,source.length)).map(q=>{
+  // Warm-up for Unit 7 always has one doubling and one non-doubling item.
+  let source;
+  if(stageId==="unit7"){
+    const onePerVerb=(items)=>{
+      const seenVerbs=new Set();
+      return shuffle(items).filter(q=>{const v=String(q.verb||q.id).toLowerCase();if(seenVerbs.has(v))return false;seenVerbs.add(v);return true;});
+    };
+    const doubled=onePerVerb(pool.filter(q=>q.rule==="CVC"));
+    const notDoubled=onePerVerb(pool.filter(q=>q.rule==="NO_DOUBLE"));
+    source=[];
+    if(doubled.length) source.push(doubled[0]);
+    if(notDoubled.length) source.push(notDoubled[0]);
+  }else{
+    const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
+    source=shuffle(easy.length>=2?easy:pool).slice(0,2);
+  }
+  return source.slice(0,Math.min(2,source.length)).map(q=>{
     const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
     const {_sourceType,...clean}=q;
     return {...clean,type};
@@ -1404,7 +1427,7 @@ function renderWarmupQuestion(){
     const isCvc=isIngPractice(q);
     const cvcOptions=isCvc?ingContrastOptions(q):null;
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(isCvc?cvcSentenceWithBlank(q):q.sentence)}</div>
+      <div class="sentence" data-can-speak="0" role="button" tabindex="0" aria-label="答對後點擊朗讀整句" onclick="speakSentenceOnDemand(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();speakSentenceOnDemand(this)}">${highlightBlank(isCvc?cvcSentenceWithBlank(q):q.sentence)}</div>
       <div class="baseverb ${isCvc?"cvc-baseword":""}"><span>${escapeHtml(q.verb||"")}</span> <button type="button" class="speaker" aria-label="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
       <div class="choice-row ${isCvc?"cvc-two-options":""}">${(isCvc ? cvcOptions : (q.choices||[])).map(c=>`<button type="button" class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
@@ -1462,13 +1485,12 @@ function handleWarmupAnswer(correct,answer,extra){
         const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
         const filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
+        enableSentenceSpeech(sentenceEl);
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
-    speak("Correct");
-    if(type==="ing" || q.rule==="CVC") speak(answer);
-    else if(q.sentence) speak(q.sentence.replace("_____",answer));
+    f.innerHTML=`<div class="big" style="color:#8ed19e" role="status">✓ Correct!</div><div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
+    speak("Correct!");
     return;
   }
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>`;
@@ -1697,7 +1719,7 @@ function renderQuestion(){
     const isCvc=isIngPractice(currentQuestion);
     const cvcOptions=isCvc?ingContrastOptions(currentQuestion):null;
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(isCvc?cvcSentenceWithBlank(currentQuestion):currentQuestion.sentence)}</div>
+      <div class="sentence" data-can-speak="0" role="button" tabindex="0" aria-label="答對後點擊朗讀整句" onclick="speakSentenceOnDemand(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();speakSentenceOnDemand(this)}">${highlightBlank(isCvc?cvcSentenceWithBlank(currentQuestion):currentQuestion.sentence)}</div>
       <div class="baseverb ${isCvc?"cvc-baseword":""}"><span>${escapeHtml(currentQuestion.verb||"")}</span> <button type="button" class="speaker" aria-label="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(currentQuestion.verb||"")}')">🔊</button></div>
       <div class="choice-row ${isCvc?"cvc-two-options":""}">${(isCvc ? cvcOptions : currentQuestion.choices).map(c=>`<button type="button" class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
@@ -1746,6 +1768,51 @@ function getSpeakText(){
   }
   return currentQuestion.sentence.replace("_____","blank");
 }
+
+// V4.43 audited Unit 7 contrast bank. Explicit rule labels prevent non-doubling verbs
+// from being normalized into CVC by the earlier legacy expansion logic.
+(function buildBalancedUnit7Bank(){
+  const doubledVerbs=["admit","ban","bar","bat","beg","begin","bet","bid","bob","can","cap","commit","cut","dam","dig","dim","dip","dot","drop","dub","fan","fit","gag","get","hem","hit","hop","hug","hum","jam","jar","jog","lap","let","log","lop","map","mar","mug","nab","net","nip","nod","occur","pad","pan","peg","pen","permit","pet","pin","plan","pop","prefer","put","rag","ram","rap","refer","rib","rid","rip","rob","rot","rub","run","set","shop","sit","stop","swim","tap","win","grab","clap","skip"];
+  const noDoubleVerbs=["visit","open","listen","enter","edit","limit","develop","target","market","orbit","credit","inherit","whisper","gather","answer","cover","suffer","profit","level","reckon","fasten","harden","soften","frighten","lengthen","strengthen","lighten","brighten","widen","deepen","shorten","weaken","thicken","quicken","sharpen","happen","open","visit","listen","enter","edit","limit","answer","offer","cover","suffer","profit","focus","target","market","orbit","credit","inherit","whisper","gather","develop","benefit","harden","soften","lighten","brighten","widen","deepen","shorten","weaken","thicken","quicken","sharpen","reckon","fasten","frighten","lengthen","strengthen","label","cancel","model","signal","level"];
+  const obj={admit:"the mistake",ban:"the game",bar:"the door",bat:"the ball",beg:"for help",begin:"the task",bet:"ten points",bid:"for the prize",bob:"his head",can:"the food",cap:"the pen",commit:"to the plan",cut:"the paper",dam:"the river",dig:"a hole",dim:"the light",dip:"the brush",dot:"the page",drop:"the bag",dub:"the video",fan:"the team",fit:"the pieces",gag:"at the joke",get:"the books",hem:"the pants",hit:"the target",hop:"over the line",hug:"his friend",hum:"a tune",jam:"the door",jar:"the lid",jog:"around the park",lap:"the pool",let:"the dog out",log:"the results",lop:"the branch",map:"the route",mar:"the paper",mug:"the suspect",nab:"the thief",net:"the ball",nip:"the bud",nod:"his head",occur:"to him",pad:"the box",pan:"the camera",peg:"the picture",pen:"the note",permit:"entry",pet:"the dog",pin:"the badge",plan:"the trip",pop:"the balloon",prefer:"the blue one",put:"the crayons away",rag:"the cloth",ram:"the door",rap:"on the desk",refer:"to the chart",rib:"his brother",rid:"the weeds",rip:"the paper",rob:"the bank",rot:"the fruit",rub:"the table",run:"to school",set:"the table",shop:"for food",sit:"on the chair",stop:"the car",swim:"in the pool",tap:"the screen",win:"the game",grab:"the bag",clap:"for the team",skip:"over the puddle"};
+  const subjects=["I am","We are","They are","The kids are","My friends are","The players are","The students are","The children are"];
+  const make=(verb,rule,i)=>{
+    // NO_DOUBLE words use standard -ing without adding a new final consonant.
+    const answer=rule==="CVC" ? verb+verb.slice(-1)+"ing" : verb+"ing";
+    const sentence=`${subjects[i%subjects.length]} _____ ${obj[verb]||"the task"}.`;
+    return {id:`unit7-${rule.toLowerCase()}-${verb}-${i}`,sentence,choices:[answer,rule==="CVC"?verb+"ing":verb+verb.slice(-1)+"ing"],answer,verb,rule,difficulty:"easy",type:"ing"};
+  };
+  const d=[...new Set(doubledVerbs)].map((v,i)=>make(v,"CVC",i));
+  const n=[...new Set(noDoubleVerbs)].map((v,i)=>make(v,"NO_DOUBLE",i+17));
+  // Generate 80 unique prompts per group, varying sentence context while preserving spelling rule.
+  const contexts=["the task","the box","the paper","the game","the list","the picture","the plan","the room","the file","the door","the report","the answer","the result","the map","the book","the bag"];
+  const expand=(seed,rule,prefix)=>{
+    const out=seed.slice(); let k=0;
+    while(out.length<80 && seed.length){
+      const q=seed[k%seed.length], subject=subjects[Math.floor(k/seed.length)%subjects.length], answer=q.answer;
+      out.push({...q,id:`${prefix}-extra-${k+1}`,sentence:`${subject} _____ ${contexts[k%contexts.length]}.`,choices:[answer,rule==="CVC"?q.verb+"ing":q.verb+q.verb.slice(-1)+"ing"]}); k++;
+    }
+    return out.slice(0,80);
+  };
+  QUESTION_BANK.ingCVC=expand(d,"CVC","unit7-double");
+  QUESTION_BANK.ingRegular=expand(n,"NO_DOUBLE","unit7-no-double");
+  QUESTION_BANK.ing= [...QUESTION_BANK.ingCVC,...QUESTION_BANK.ingRegular];
+})();
+
+
+function speakSentenceOnDemand(el){
+  if(!el || el.dataset.canSpeak!=="1") return;
+  const text=stripHtml(el.innerHTML).replace(/\s+/g," ").trim();
+  if(text) speak(text);
+}
+function enableSentenceSpeech(sentenceEl){
+  if(!sentenceEl) return;
+  sentenceEl.dataset.canSpeak="1";
+  sentenceEl.style.cursor="pointer";
+  sentenceEl.title="點擊聽整句發音";
+  sentenceEl.setAttribute("aria-label","點擊朗讀完整句子");
+}
+
 function cvcSentenceWithBlank(q){
   let sentence=String(q?.sentence||"");
   if(sentence.includes("_____")) return sentence;
@@ -1758,12 +1825,12 @@ function cvcSentenceWithBlank(q){
   return sentence;
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
-function isIngPractice(q){ return !!q && (q.rule==="CVC" || (currentSession?.stageId==="unit7" && ["+ing","drop-e"].includes(q.rule))); }
-function ingContrastOptions(q){ const v=String(q?.verb||""), d=v+v.slice(-1)+"ing", r=v+"ing"; return d===r?[r,r+"e"]:[d,r]; }
+function isIngPractice(q){ return !!q && (q.rule==="CVC" || q.rule==="NO_DOUBLE" || (currentSession?.stageId==="unit7" && ["+ing","drop-e"].includes(q.rule))); }
+function ingContrastOptions(q){ const v=String(q?.verb||""), d=v+v.slice(-1)+"ing", r=v+"ing"; return q?.rule==="NO_DOUBLE"?[r,d]:[d,r]; }
 function questionType(q){
   if(q.type) return q.type;
   if(q.poke) return "rule";
-  if(q.rule==="CVC"||q.rule==="+ing") return "ing";
+  if(q.rule==="CVC"||q.rule==="NO_DOUBLE"||q.rule==="+ing") return "ing";
   if(q.error) return "error";
   return "sentence";
 }
@@ -2209,6 +2276,7 @@ function renderFeedback(correct,answer,errorType,exp){
         const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
         const filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
+        enableSentenceSpeech(sentenceEl);
       }
     }
     // Put the grammar transformation inside the correct Pokémon card so the child
@@ -2232,19 +2300,18 @@ function renderFeedback(correct,answer,errorType,exp){
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
-      f.innerHTML=`${example}
+      f.innerHTML=`<div class="big" style="color:#8ed19e" role="status">✓ Correct!</div>${example}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
         </div>`;
     }else{
-      f.innerHTML=`${example}
+      f.innerHTML=`<div class="big" style="color:#8ed19e" role="status">✓ Correct!</div>${example}
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
         </div>`;
     }
-    if(type==="ing" || q.rule==="CVC") speak(answer);
-    else speakSequence(ex ? ["Correct",ex.sentence] : ["Correct"]);
+    speak("Correct!");
     return;
   }
   // Wrong answer NEVER advances the session. Keep the exact same question
