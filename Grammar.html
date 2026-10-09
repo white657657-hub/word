@@ -674,7 +674,7 @@ const VERB_EXAMPLE_OBJECTS = {
     });
   };
   const normalS=`ask bake believe belong borrow breathe change charge chase climb close compare complete continue count cover create decide deliver depend discover divide earn encourage explain explore fill fold gather happen imagine improve include invite join kick knock land laugh lift listen manage measure mention notice offer order own pack pick plan point practice prefer prepare protect provide pull recycle remember repair return save share show smile start stay suggest support taste travel trust visit wait welcome whisper work`.split(/\s+/);
-  addRule(QUESTION_BANK.ruleS,normalS,"S","s");
+  addRule(QUESTION_BANK.ruleS,normalS,"S","s","S");
   // Guard the S-only bank against verbs that require ES or IES.
   const badSimpleS=v=>/(ch|sh|ss|x|s|o)$/i.test(v) || /[^aeiou]y$/i.test(v);
   QUESTION_BANK.ruleS=QUESTION_BANK.ruleS.filter((q,i)=>i<40 || !badSimpleS(q.verb));
@@ -861,7 +861,7 @@ const HINTS = {
 
 const STORAGE_KEY = "ansonGrammarAdventureV2";
 const SCHEMA_VERSION = 7;
-const state = loadState();
+var state = loadState();
 let currentSession = null;
 let currentQuestion = null;
 let hintLevel = 0;
@@ -1011,25 +1011,27 @@ function renderMap(){
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
   el.onclick=(event)=>{
-    const challenge=event.target.closest('[data-challenge-stage]');
+    const target=event.target instanceof Element ? event.target : event.target?.parentElement;
+    if(!target) return;
+    const challenge=target.closest('[data-challenge-stage]');
     if(challenge && el.contains(challenge)){
       event.stopPropagation();
       setStageChallenge(challenge.dataset.challengeStage, challenge.checked);
       return;
     }
-    const button=event.target.closest('.stage-enter[data-enter-stage]');
+    const button=target.closest('.stage-enter[data-enter-stage]');
     if(button && el.contains(button)){
       event.stopPropagation();
       startStage(button.dataset.enterStage);
       return;
     }
-    const card=event.target.closest('.stage[data-stage]');
+    const card=target.closest('.stage[data-stage]');
     if(!card || !el.contains(card)) return;
     startStage(card.dataset.stage);
   };
   el.onkeydown=(event)=>{
     if(event.key!=="Enter" && event.key!==" ") return;
-    const card=event.target.closest('.stage[data-stage]');
+    const card=target.closest('.stage[data-stage]');
     if(!card || !el.contains(card)) return;
     event.preventDefault();
     startStage(card.dataset.stage);
@@ -1515,7 +1517,7 @@ function runQuestionBankHealthCheck(){
     if(ids.has(q.id)) problems.push(`${t}: duplicate ID ${q.id}`); ids.add(q.id);
     if(words.has(q.verb)) problems.push(`${t}: duplicate verb ${q.verb}`); words.add(q.verb);
     if(!q.verb || !q.poke || !q.answer) problems.push(`${t}: incomplete ${q.id}`);
-    if(t==="ruleS" && q.answer!=="S") problems.push(`${q.id}: S answer mismatch`);
+    if(t==="ruleS" && (q.rule!=="S" || q.answer!=="S")) problems.push(`${q.id}: S bank item must have rule=S and answer=S`);
     if(t==="ruleIES" && !["S","IES"].includes(q.answer)) problems.push(`${q.id}: Y Rule answer must be S or IES`);
     if(q.rule==="consonant+y" && (!/[^aeiou]y$/i.test(q.verb) || q.answer!=="IES")) problems.push(`${q.id}: consonant+y must be IES`);
     if(q.rule==="vowel+y" && (!/[aeiou]y$/i.test(q.verb) || q.answer!=="S")) problems.push(`${q.id}: vowel+y must be S`);
