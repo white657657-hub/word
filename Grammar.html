@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V2.2</title>
+<title>Anson 英文文法冒險 V4.37</title>
 <style>
 :root{
   --bg:#081018;
@@ -142,7 +142,7 @@ main{margin-top:18px}
   text-align:center;font-size:29px;font-weight:800;line-height:1.5;
   padding:20px 12px
 }.filled-answer{font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
-.baseverb{text-align:center;color:var(--muted);font-size:15px;margin-top:-8px}
+.baseverb{text-align:center;color:#f1f5f9;font-size:30px;font-weight:900;margin:8px 0 12px;line-height:1.25}.baseverb.cvc-baseword{font-size:32px;color:#fff;margin:10px 0 14px}.baseverb .speaker{width:32px;height:32px;font-size:14px;vertical-align:middle}.choice-row.cvc-two-options{grid-template-columns:repeat(2,minmax(0,1fr));max-width:620px;margin:16px auto 0}.choice-row.cvc-two-options .choice{font-size:28px;min-height:84px}
 .choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
 .choice{
   min-width:0;
@@ -263,7 +263,7 @@ main{margin-top:18px}
 .y-rule-focus{margin:18px auto 0;font-size:19px;color:#cfe0ec}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
-.cvc-baseword{font-size:34px!important;font-weight:950!important;color:#9dc4e5!important;margin:0 0 16px!important;text-align:center}.cvc-baseword .speaker{vertical-align:middle}
+.cvc-baseword{font-size:38px!important;font-weight:950!important;color:#9dc4e5!important;margin:0 0 16px!important;text-align:center;line-height:1.2}.cvc-baseword .speaker{vertical-align:middle}
 </style>
 </head>
 <body>
@@ -1104,8 +1104,15 @@ function stageQuestions(stageId,count=5){
       const old=all.filter(q=>recent.has(q.id));
       return [...fresh,...old].slice(0,count);
     };
-    const picked=[...pickGroup("CVC",6),...pickGroup("+ing",4)];
-    return shuffle(picked);
+    const doubled=pickGroup("CVC",5);
+    const notDoubled=pickGroup("+ing",5);
+    // Interleave double / do-not-double items so the child cannot answer by pattern alone.
+    const picked=[];
+    for(let i=0;i<Math.max(doubled.length,notDoubled.length);i++){
+      if(i<doubled.length) picked.push(doubled[i]);
+      if(i<notDoubled.length) picked.push(notDoubled[i]);
+    }
+    return picked;
   }
   const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
   const recent=new Set(state.learning?.recentQuestionIds||[]);
@@ -1348,10 +1355,13 @@ function renderWarmupQuestion(){
       }).join("")}</div>`;
   }else{
     const isError=type==="error";
+    const isCvc=q.rule==="CVC";
+    const cvcWrong=q.answer===(q.verb+q.verb.slice(-1)+"ing") ? q.verb+"ing" : q.verb+q.verb.slice(-1)+"ing";
+    const cvcOptions=isCvc?[q.answer,cvcWrong]:null;
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(q.sentence)}</div>
-      <div class="baseverb ${type==="ing"?"cvc-baseword":""}"><span>${escapeHtml(q.verb||"")}</span> <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
-      <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+      <div class="sentence">${highlightBlank(isCvc?cvcSentenceWithBlank(q):q.sentence)}</div>
+      <div class="baseverb ${isCvc?"cvc-baseword":""}"><span>${escapeHtml(q.verb||"")}</span>${isCvc?"":` <button class="speaker" aria-label="播放單字發音" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button>`}</div>
+      <div class="choice-row ${isCvc?"cvc-two-options":""}">${(isCvc ? cvcOptions : (q.choices||[])).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
     <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
@@ -1362,7 +1372,7 @@ function renderWarmupQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && type!=="ing") setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && type!=="ing" && !isCvc) setTimeout(()=>speak(getSpeakText()),250);
 }
 
 function handleWarmupAnswer(correct,answer,extra){
@@ -1399,7 +1409,7 @@ function handleWarmupAnswer(correct,answer,extra){
     }
 
     // Sentence-fill warm-up follows the formal sentence-fill behavior.
-    if(q.sentence){
+    if(q.sentence && q.rule!=="CVC"){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
@@ -1411,7 +1421,8 @@ function handleWarmupAnswer(correct,answer,extra){
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
     f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
     speak("Correct");
-    if(q.sentence) speak(q.sentence.replace("_____",answer));
+    if(q.rule==="CVC") speak(answer);
+    else if(q.sentence) speak(q.sentence.replace("_____",answer));
     return;
   }
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>`;
@@ -1637,10 +1648,13 @@ function renderQuestion(){
       }).join("")}</div>`;
   }else{
     const isError=type==="error";
+    const isCvc=currentQuestion.rule==="CVC";
+    const cvcWrong=currentQuestion.answer===(currentQuestion.verb+currentQuestion.verb.slice(-1)+"ing") ? currentQuestion.verb+"ing" : currentQuestion.verb+currentQuestion.verb.slice(-1)+"ing";
+    const cvcOptions=isCvc?[currentQuestion.answer,cvcWrong]:null;
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(currentQuestion.sentence)}</div>
-      <div class="baseverb ${type==="ing"?"cvc-baseword":""}"><span>${escapeHtml(currentQuestion.verb||"")}</span> <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(currentQuestion.verb||"")}')">🔊</button></div>
-      <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
+      <div class="sentence">${highlightBlank(isCvc?cvcSentenceWithBlank(currentQuestion):currentQuestion.sentence)}</div>
+      <div class="baseverb ${isCvc?"cvc-baseword":""}"><span>${escapeHtml(currentQuestion.verb||"")}</span>${isCvc?"":` <button class="speaker" aria-label="播放單字發音" onclick="speak('${escapeHtml(currentQuestion.verb||"")}')">🔊</button>`}</div>
+      <div class="choice-row ${isCvc?"cvc-two-options":""}">${(isCvc ? cvcOptions : currentQuestion.choices).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
     <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
@@ -1650,7 +1664,7 @@ function renderQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && !currentSession.qa && type!=="ing") setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && !currentSession.qa && type!=="ing" && !isCvc) setTimeout(()=>speak(getSpeakText()),250);
 }
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
@@ -1686,6 +1700,17 @@ function getSpeakText(){
     return stripHtml(ruleQuestionPrompt(currentQuestion));
   }
   return currentQuestion.sentence.replace("_____","blank");
+}
+function cvcSentenceWithBlank(q){
+  let sentence=String(q?.sentence||"");
+  if(sentence.includes("_____")) return sentence;
+  const candidates=[q?.answer, q?.verb ? q.verb+"ing" : ""].filter(Boolean).sort((a,b)=>b.length-a.length);
+  for(const word of candidates){
+    const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    const re=new RegExp("\\b"+escaped+"\\b","i");
+    if(re.test(sentence)){sentence=sentence.replace(re,"_____");break;}
+  }
+  return sentence;
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
 function questionType(q){
@@ -1871,7 +1896,7 @@ function logLearningHelp(action){
     correct:false, hintLevel, exp:0, errorType:null, responseTime:Date.now()-(currentSession.questionStartedAt||Date.now()),
     learningIntegrity:"help", helpAction:action
   };
-  state.logs.unshift(entry); saveState();
+  state.logs.unshift(entry); state.logs=state.logs.slice(0,300); saveState();
 }
 function showHelpOptions(){
   if(answerLocked) return;
@@ -1907,7 +1932,8 @@ function revealAnswer(){
       <div class="feedback-note">這題不算答對，也不扣任何進度。看完答案後繼續就好。</div>
       <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
   }
-  if(q?.sentence) speak(q.sentence.replace(/_____/g,q.answer||""));
+  if(q?.rule==="CVC") speak(q.verb||"");
+  else if(q?.sentence) speak(q.sentence.replace(/_____/g,q.answer||""));
   else if(q?.poke) speak(thirdPersonVerb(q.verb,q.rule));
 }
 function skipQuestion(){
@@ -1998,7 +2024,7 @@ function handleAnswer(correct,answer,extra){
     responseTime,
     learningIntegrity:integrity
   };
-  if(!currentSession.qa) state.logs.unshift(logEntry);
+  if(!currentSession.qa){ state.logs.unshift(logEntry); state.logs=state.logs.slice(0,300); }
   saveState();
   renderFeedback(correct,answer,errorType,exp);
 }
@@ -2128,7 +2154,7 @@ function renderFeedback(correct,answer,errorType,exp){
       choiceRow.querySelectorAll("button").forEach(btn=>{ btn.disabled=true; btn.classList.add("disabled"); });
     }
     // For sentence-fill questions, put the selected correct form directly into the blank.
-    if(!q.poke && q.sentence){
+    if(!q.poke && q.sentence && q.rule!=="CVC"){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
@@ -2169,7 +2195,8 @@ function renderFeedback(correct,answer,errorType,exp){
           <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
         </div>`;
     }
-    speakSequence(ex ? ["Correct",ex.sentence] : ["Correct"]);
+    if(type==="ing" || q.rule==="CVC") speak(answer);
+    else speakSequence(ex ? ["Correct",ex.sentence] : ["Correct"]);
     return;
   }
   // Wrong answer NEVER advances the session. Keep the exact same question
@@ -2438,7 +2465,7 @@ function renderLogs(){
     <div class="card stat"><span>整體正確率</span><b>${acc}%</b></div>
     <div class="card stat"><span>獨立答對</span><b>${independent}</b></div>
     <div class="card stat"><span>Hint 後答對</span><b>${hintCorrect}</b></div>`;
-  const all=[...state.logs].sort((a,b)=>b.ts-a.ts).slice(0,120);
+  const all=[...state.logs].sort((a,b)=>b.ts-a.ts).slice(0,300);
   const groups={};
   all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
   const rows=[];
