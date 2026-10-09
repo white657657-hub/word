@@ -1028,23 +1028,34 @@ function renderMap(){
     event.preventDefault();
     startStage(card.dataset.stage);
   };
-  const candidates=STAGES.filter(s=>Array.isArray(state.unlocked) && state.unlocked.includes(s.id));
-  const safeMastery=(s)=>{ try{return stageMastery(s)}catch(e){console.warn("stageMastery warning",s?.id,e);return 0;} };
-  const reviewStage=candidates.find(s=>safeMastery(s)>=70 && safeMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview)));
-  const weak=candidates.find(s=>safeMastery(s)<85);
-  const r=reviewStage||weak||candidates[0]||STAGES[0];
+  // Recommendation and boss status are independent of map rendering: a failure here
+  // must not replace the whole map with an error message.
   const recommendation=document.getElementById("recommendation");
-  if(recommendation){
-    const rm=safeMastery(r);
-    recommendation.innerHTML=
-      `<b>⭐ 系統建議：${escapeHtml(r.title)}</b><p class="muted">${rm>=90?"已熟練，可以自由回訪。":rm>=70?"可以再練習一次，也可以自由回訪其他已解鎖關卡。":"目前正在建立這項技能。"}</p>
-       <button class="btn primary small" data-recommend-stage="${escapeHtml(r.id)}">去冒險</button>`;
-    recommendation.onclick=(event)=>{
-      const btn=event.target.closest("[data-recommend-stage]");
-      if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
-    };
+  try{
+    const candidates=STAGES.filter(s=>Array.isArray(state.unlocked) && state.unlocked.includes(s.id));
+    const safeMastery=(s)=>{ try{return stageMastery(s)}catch(e){console.warn("stageMastery warning",s?.id,e);return 0;} };
+    const reviewStage=candidates.find(s=>safeMastery(s)>=70 && safeMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview)));
+    const weak=candidates.find(s=>safeMastery(s)<85);
+    const r=reviewStage||weak||candidates[0]||STAGES[0];
+    if(recommendation && r){
+      const rm=safeMastery(r);
+      recommendation.innerHTML=`<b>⭐ 系統建議：${escapeHtml(r.title)}</b><p class="muted">${rm>=90?"已熟練，可以自由回訪。":rm>=70?"可以再練習一次，也可以自由回訪其他已解鎖關卡。":"目前正在建立這項技能。"}</p><button class="btn primary small" data-recommend-stage="${escapeHtml(r.id)}">去冒險</button>`;
+      recommendation.onclick=(event)=>{
+        const btn=event.target.closest("[data-recommend-stage]");
+        if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
+      };
+    }else if(recommendation){
+      recommendation.innerHTML='<p class="muted">目前沒有可推薦的關卡，請直接從地圖選擇。</p>';
+    }
+  }catch(e){
+    console.error("Recommendation render failed",e);
+    if(recommendation) recommendation.innerHTML='<p class="muted">推薦關卡暫時無法載入；仍可直接從上方地圖選擇關卡。</p>';
   }
-  renderSuperBossStatus();
+  try{renderSuperBossStatus()}catch(e){
+    console.error("Super boss status render failed",e);
+    const status=document.getElementById("superBossStatus");
+    if(status) status.textContent="超級魔王狀態暫時無法載入";
+  }
 }
 
 function renderSuperBossStatus(){
