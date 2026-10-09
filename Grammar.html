@@ -263,6 +263,7 @@ main{margin-top:18px}
 .y-rule-focus{margin:18px auto 0;font-size:19px;color:#cfe0ec}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
+.cvc-baseword{font-size:34px!important;font-weight:950!important;color:#9dc4e5!important;margin:0 0 16px!important;text-align:center}.cvc-baseword .speaker{vertical-align:middle}
 </style>
 </head>
 <body>
@@ -359,7 +360,7 @@ main{margin-top:18px}
 
 <section id="logs" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
+  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small primary" onclick="exportLogsTxt()">匯出 TXT</button> <button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
   <div class="stats" id="stats"></div>
   <div class="section-title"><h2>最近紀錄</h2></div>
   <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
@@ -726,6 +727,73 @@ QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
 QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule==="+ing");
 
 
+// Expanded practice pool: CVC targets and contrast items that do not end in h/w/x/y.
+// Each added item is a complete sentence question, and all generated IDs are unique.
+(function expandQuestionBanksToEighty(){
+  const targetWords = [
+    "admit","ban","bar","bat","beg","begin","bet","bid","bob","can","cap","commit","control","cut","dam","dig","dim","dip","dot","drop","dub","fan","fit","gag","get","hem","hit","hop","hug","hum","jam","jar","jog","lap","let","log","lop","map","mar","mug","nab","net","nip","nod","occur","pad","pan","peg","pen","permit","pet","pin","plan","pop","prefer","put","rag","ram","rap","refer","rib","rid","rip","rob","rot","rub","run","set","shop","sit","stop","swim","tap","win"
+  ];
+  const cvcRule = w => {
+    if (["admit","begin","commit","control","occur","permit","prefer","refer"].includes(w)) return "+ing";
+    if (["shop","stop","swim","plan","drop"].includes(w)) return "CVC"; // final consonant doubles in these standard forms
+    return /^[^aeiou]*[aeiou][^aeiou]$/.test(w) ? "CVC" : "+ing";
+  };
+  const objects = {
+    admit:"the mistake",ban:"the game",bar:"the door",bat:"the ball",beg:"for help",begin:"the task",bet:"ten points",bid:"for the prize",bob:"his head",can:"the food",cap:"the pen",commit:"to the plan",control:"the robot",cut:"the paper",dam:"the river",dig:"a hole",dim:"the light",dip:"the brush",dot:"the page",drop:"the bag",dub:"the video",fan:"the team",fit:"the pieces",gag:"at the joke",get:"the books",hem:"the pants",hit:"the target",hop:"over the line",hug:"his friend",hum:"a tune",jam:"the door",jar:"the lid",jog:"around the park",lap:"the pool",let:"the dog out",log:"the results",lop:"the branch",map:"the route",mar:"the paper",mug:"the suspect",nab:"the thief",net:"the ball",nip:"the bud",nod:"his head",occur:"to him",pad:"the box",pan:"the camera",peg:"the picture",pen:"the note",permit:"entry",pet:"the dog",pin:"the badge",plan:"the trip",pop:"the balloon",prefer:"the blue one",put:"the crayons away",rag:"the cloth",ram:"the door",rap:"on the desk",refer:"to the chart",rib:"his brother",rid:"the weeds",rip:"the paper",rob:"the bank",rot:"the fruit",rub:"the table",run:"to school",set:"the table",shop:"for food",sit:"on the chair",stop:"the car",swim:"in the pool",tap:"the screen",win:"the game"
+  };
+  const subjects=["I am","We are","They are","The kids are","My friends are","The players are","The students are","The children are"];
+  const existing=new Set((QUESTION_BANK.ing||[]).map(q=>q.verb));
+  targetWords.forEach((verb,i)=>{
+    if(existing.has(verb)) return;
+    const rule=cvcRule(verb), answer=rule==="CVC"?verb.slice(0,-1)+verb.slice(-1)+verb.slice(-1)+"ing":verb+"ing";
+    const subject=subjects[i%subjects.length];
+    const obj=objects[verb]||"the task";
+    const sentence=`${subject} ${answer} ${obj}.`;
+    const wrong1=verb+"ing", wrong2=verb.slice(0,-1)+"ing", wrong3=verb+"ed";
+    const choices=[...new Set([answer,wrong1,wrong2,wrong3])];
+    while(choices.length<4) choices.push(verb+"s");
+    QUESTION_BANK.ing.push({id:`ing-added-${verb}`,sentence,choices:choices.slice(0,4),answer,verb,rule});
+  });
+  // Ensure each independently practiced skill has a pool of 80. Added variants change
+  // context while preserving the same tested spelling rule; no question IDs collide.
+  const contextSentences=[
+    ["I am","the note"],["We are","the box"],["They are","the paper"],["The students are","the plan"],
+    ["My friends are","the game"],["The children are","the bag"],["The players are","the target"],["The kids are","the door"],
+    ["We are","the map"],["They are","the list"],["I am","the picture"],["The students are","the task"]
+  ];
+  const expandTo80=(name)=>{
+    const bank=QUESTION_BANK[name]; if(!Array.isArray(bank)||!bank.length)return;
+    const original=[...bank]; let i=0;
+    while(bank.length<80){
+      const q=original[i%original.length], ctx=contextSentences[Math.floor(i/original.length)%contextSentences.length];
+      const copy={...q,id:`${name}-extra-${bank.length+1}`};
+      if(q.sentence && q.verb && q.answer){
+        if(name==="ing" || name==="ingCVC" || name==="ingRegular"){
+          const rule=q.rule||"+ing", answer=rule==="CVC"?q.verb+q.verb.slice(-1)+"ing":rule==="drop-e"?q.verb.slice(0,-1)+"ing":q.verb+"ing";
+          copy.answer=answer;copy.sentence=`${ctx[0]} ${answer} ${ctx[1]}.`;copy.choices=[answer,q.verb+"ing",q.verb+q.verb.slice(-1)+"ing",q.verb+"ed"].filter((v,j,a)=>a.indexOf(v)===j);
+          while(copy.choices.length<4)copy.choices.push(q.verb+"s");copy.choices=copy.choices.slice(0,4);
+        }else{
+          copy.sentence= q.sentence.replace(/^[^.]*?_____/, (m)=>m);
+          copy.sentence=copy.sentence.replace(/^.*?_____/, `${["He","She","Tom","Amy","The teacher","My brother"][i%6]} _____`);
+        }
+      }
+      bank.push(copy);i++;
+    }
+  };
+  ["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES","sentenceSubject","sentenceFill","ing","error"].forEach(expandTo80);
+  QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
+  const cvcSeed=[...QUESTION_BANK.ingCVC];
+  let cvcN=0;
+  while(QUESTION_BANK.ingCVC.length<80 && cvcSeed.length){
+    const q=cvcSeed[cvcN%cvcSeed.length], contexts=[["We are","the crayons away"],["They are","the ball"],["The kids are","in the park"],["I am","the paper"],["The students are","the plan"],["My friends are","the game"]];
+    const ctx=contexts[cvcN%contexts.length],answer=q.verb.slice(0,-1)+q.verb.slice(-1)+q.verb.slice(-1)+"ing";
+    const choices=[...new Set([answer,q.verb+"ing",q.verb.slice(0,-1)+"ing",q.verb+"ed"])];while(choices.length<4)choices.push(q.verb+"s");
+    QUESTION_BANK.ingCVC.push({...q,id:`ing-cvc-extra-${++cvcN}`,sentence:`${ctx[0]} ${answer} ${ctx[1]}.`,answer,choices:choices.slice(0,4),rule:"CVC"});
+  }
+  QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule!=="CVC");
+})();
+
+
 const HINTS = {
  S:[
   ["Look at the verb.","Which ending does this verb need?"],
@@ -852,7 +920,7 @@ function ensureLearningTime(){
   if(typeof state.learning.learningTime.activeMs!=="number") state.learning.learningTime.activeMs=0;
   state.learning.learningTime.restRequired=!!state.learning.learningTime.restRequired;
 }
-function fmtTime(ts){return new Date(ts).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}
+function fmtTime(ts){const d=new Date(ts);return d.toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})+"."+String(d.getMilliseconds()).padStart(3,"0")}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
 const PRONUNCIATION_TERMS = ["consonant", "vowel", "singular", "plural", "subject", "verb", "ending", "silent e"];
@@ -1281,9 +1349,8 @@ function renderWarmupQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>
-      ${highlightBlank(q.sentence)}</div>
-      <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
+      <div class="sentence">${highlightBlank(q.sentence)}</div>
+      <div class="baseverb ${type==="ing"?"cvc-baseword":""}"><span>${escapeHtml(q.verb||"")}</span> <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
       <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
@@ -1295,7 +1362,7 @@ function renderWarmupQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && type!=="ing") setTimeout(()=>speak(getSpeakText()),250);
 }
 
 function handleWarmupAnswer(correct,answer,extra){
@@ -1571,9 +1638,8 @@ function renderQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(currentQuestion.sentence)}')">🔊</button>
-      ${highlightBlank(currentQuestion.sentence)}</div>
-      <div class="baseverb">(${currentQuestion.verb}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${currentQuestion.verb}')">🔊</button></div>
+      <div class="sentence">${highlightBlank(currentQuestion.sentence)}</div>
+      <div class="baseverb ${type==="ing"?"cvc-baseword":""}"><span>${escapeHtml(currentQuestion.verb||"")}</span> <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(currentQuestion.verb||"")}')">🔊</button></div>
       <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
@@ -1584,7 +1650,7 @@ function renderQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=document.getElementById("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && !currentSession.qa) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && !currentSession.qa && type!=="ing") setTimeout(()=>speak(getSpeakText()),250);
 }
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
@@ -2388,6 +2454,18 @@ function renderLogs(){
   });
   document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="8" class="muted">目前還沒有紀錄。</td></tr>`;
 }
+function exportLogsTxt(){
+  const logs=[...state.logs].sort((a,b)=>a.ts-b.ts);
+  const lines=["Anson 英文文法冒險｜學習紀錄","匯出時間："+fmtDateTime(Date.now()),"紀錄筆數："+logs.length,"", "時間\t模式\t關卡\t題型\t題目\t作答\t正確答案\t結果\t提示層級\tEXP\t作答耗時(ms)"];
+  logs.forEach(l=>lines.push([
+    fmtDateTime(l.ts),l.mode||"",l.stage||"",l.type||"",l.question||"",l.selectedAnswer||l.answer||"",l.correctAnswer||"",l.correct?"正確":"錯誤",l.hintLevel||0,l.exp||0,l.responseTime??""
+  ].map(v=>String(v).replace(/[\t\r\n]+/g," ")).join("\t")));
+  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=`Anson_學習紀錄_${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+function fmtDateTime(ts){const d=new Date(ts);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${fmtTime(ts)}`}
 function clearLogs(){
   if(!confirm("確定清除學習紀錄？Mastery、EXP、關卡進度與寶可夢不會被清除。")) return;
   state.logs=[];
