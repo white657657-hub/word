@@ -280,8 +280,10 @@ main{margin-top:18px}
 .boss-blank-group{border:1px solid var(--line,#334155);border-radius:14px;padding:14px;background:rgba(255,255,255,.035)}
 .boss-blank-group h3{margin:0 0 10px;font-size:18px;text-align:center}
 .boss-blank-group .choice{display:block;width:100%;margin:8px 0;min-height:72px;font-size:22px}
-.boss-two-sentence{max-width:1100px;margin:0 auto 18px;padding:20px 18px;line-height:1.55;overflow-wrap:anywhere}
-.boss-two-sentence .boss-blank{display:inline-block;min-width:112px;padding:0 8px;margin:0 4px;text-align:center;border-bottom:3px solid #8aa7b8;color:#fff}
+.boss-two-sentence{max-width:1100px;margin:0 auto 18px;padding:20px 18px;line-height:1.55;overflow-wrap:anywhere;text-decoration:none!important}
+.boss-two-sentence *{text-decoration:none!important}
+.boss-two-sentence .boss-blank{display:inline-block;min-width:112px;padding:0 8px;margin:0 4px;text-align:center;border-bottom:3px solid #8aa7b8;color:#fff;text-decoration:none!important;box-shadow:none!important}
+.boss-two-sentence .filled-answer{text-decoration:none!important;text-decoration-line:none!important;border-bottom:3px solid #8aa7b8;box-shadow:none!important}
 .boss-split-choices{align-items:stretch}
 .boss-blank-group{min-width:0}
 .boss-selection-status{text-align:center;margin:14px auto;color:var(--muted);font-size:16px}
@@ -1408,7 +1410,12 @@ function beginFormalPractice(){
   renderQuestion();
 }
 
-function isTwoBlankBoss(q){ return !!(currentSession?.superBoss && q?.sentence && (q.sentence.match(/_____/g)||[]).length===2 && Array.isArray(q.choices)); }
+function bossSentenceTemplate(q){
+  // Keep answer pairs out of the sentence itself. Some older question records may
+  // accidentally contain "verb / verb" where the first blank should be.
+  return String(q?.sentence||"").replace(/\b[A-Za-z]+\s*\/\s*[A-Za-z]+\b/g, "_____");
+}
+function isTwoBlankBoss(q){ return !!(currentSession?.superBoss && q?.sentence && (bossSentenceTemplate(q).match(/_____/g)||[]).length===2 && Array.isArray(q.choices)); }
 function renderTwoBlankBoss(q){
   bossBlankAnswers=["",""];
   // Each choice is a pair: "first-blank answer / second-blank answer".
@@ -1416,7 +1423,7 @@ function renderTwoBlankBoss(q){
   const pairs=[...new Set((q.choices||[]).map(x=>String(x).split(/\s*\/\s*/).map(v=>v.trim()).join(" / "))) ]
     .map(x=>x.split(/\s*\/\s*/)).filter(x=>x.length===2);
   const first=[...new Set(pairs.map(x=>x[0]))], second=[...new Set(pairs.map(x=>x[1]))];
-  const parts=q.sentence.split("_____");
+  const parts=bossSentenceTemplate(q).split("_____");
   const sentence=`${escapeHtml(parts[0])}<span class="boss-blank" data-blank-display="0">_____</span>${escapeHtml(parts[1])}<span class="boss-blank" data-blank-display="1">_____</span>${escapeHtml(parts[2]||"")}`;
   return `<span class="rule-chip">句子填空｜兩格分開作答</span><div class="sentence boss-two-sentence">${sentence}</div><div class="boss-split-choices">${[[first,0,"第一格"],[second,1,"第二格"]].map(([opts,idx,label])=>`<section class="boss-blank-group"><h3>${label}</h3>${opts.map(opt=>`<button type="button" class="choice" data-boss-blank="${idx}" data-answer="${escapeHtml(opt)}" onclick="answerBossBlank(${idx},'${escapeHtml(opt)}')">${escapeHtml(opt)}</button>`).join("")}</section>`).join("")}</div><div class="boss-selection-status" id="bossSelectionStatus">先選第一格，再選第二格；每格獨立判斷。</div>`;
 }
@@ -1426,7 +1433,7 @@ function answerBossBlank(index,value){
   document.querySelectorAll(`.choice[data-boss-blank="${index}"]`).forEach(b=>{b.classList.toggle("boss-blank-selected",b.dataset.answer===value);});
   const q=currentQuestion;
   const sentence=document.querySelector(".boss-two-sentence");
-  if(sentence){ let parts=q.sentence.split("_____"); sentence.innerHTML=`${escapeHtml(parts[0])}<span class="boss-blank filled-answer ${bossBlankAnswers[0]?'red':''}">${escapeHtml(bossBlankAnswers[0]||"_____")}</span>${escapeHtml(parts[1])}<span class="boss-blank filled-answer ${bossBlankAnswers[1]?'red':''}">${escapeHtml(bossBlankAnswers[1]||"_____")}</span>${escapeHtml(parts[2]||"")}`; }
+  if(sentence){ let parts=bossSentenceTemplate(q).split("_____"); sentence.innerHTML=`${escapeHtml(parts[0])}<span class="boss-blank filled-answer ${bossBlankAnswers[0]?'red':''}">${escapeHtml(bossBlankAnswers[0]||"_____")}</span>${escapeHtml(parts[1])}<span class="boss-blank filled-answer ${bossBlankAnswers[1]?'red':''}">${escapeHtml(bossBlankAnswers[1]||"_____")}</span>${escapeHtml(parts[2]||"")}`; }
   const status=document.getElementById("bossSelectionStatus");
   if(!bossBlankAnswers[index]) return;
   if(!bossBlankAnswers[0] || !bossBlankAnswers[1]){ if(status) status.textContent="已選一格，請再選另一格。"; return; }
@@ -1528,7 +1535,7 @@ function handleWarmupAnswer(correct,answer,extra){
         const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
         let filled;
         if(isTwoBlankBoss(q)){
-          const parts=baseSentence.split("_____");
+          const parts=bossSentenceTemplate(q).split("_____");
           filled=`${escapeHtml(parts[0])}<span class="filled-answer red">${escapeHtml(bossBlankAnswers[0])}</span>${escapeHtml(parts[1])}<span class="filled-answer red">${escapeHtml(bossBlankAnswers[1])}</span>${escapeHtml(parts[2]||"")}`;
         }else{
           filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
