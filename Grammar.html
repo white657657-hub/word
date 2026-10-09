@@ -279,7 +279,13 @@ main{margin-top:18px}
 .boss-split-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
 .boss-blank-group{border:1px solid var(--line,#334155);border-radius:14px;padding:14px;background:rgba(255,255,255,.035)}
 .boss-blank-group h3{margin:0 0 10px;font-size:18px;text-align:center}
-.boss-blank-group .choice{display:block;width:100%;margin:8px 0}
+.boss-blank-group .choice{display:block;width:100%;margin:8px 0;min-height:72px;font-size:22px}
+.boss-two-sentence{max-width:1100px;margin:0 auto 18px;padding:20px 18px;line-height:1.55;overflow-wrap:anywhere}
+.boss-two-sentence .boss-blank{display:inline-block;min-width:112px;padding:0 8px;margin:0 4px;text-align:center;border-bottom:3px solid #8aa7b8;color:#fff}
+.boss-split-choices{align-items:stretch}
+.boss-blank-group{min-width:0}
+.boss-selection-status{text-align:center;margin:14px auto;color:var(--muted);font-size:16px}
+@media(max-width:620px){.boss-two-sentence{font-size:23px;padding:16px 10px}.boss-two-sentence .boss-blank{min-width:82px}.boss-blank-group .choice{min-height:60px;font-size:20px}}
 .boss-blank-selected{outline:3px solid #75b9f2!important;border-color:#75b9f2!important}
 @media(max-width:620px){.boss-split-choices{grid-template-columns:1fr;gap:10px}}
 </style>
@@ -1405,11 +1411,14 @@ function beginFormalPractice(){
 function isTwoBlankBoss(q){ return !!(currentSession?.superBoss && q?.sentence && (q.sentence.match(/_____/g)||[]).length===2 && Array.isArray(q.choices)); }
 function renderTwoBlankBoss(q){
   bossBlankAnswers=["",""];
-  const pairs=(q.choices||[]).map(x=>String(x).split(/\s*\/\s*/)).filter(x=>x.length===2);
+  // Each choice is a pair: "first-blank answer / second-blank answer".
+  // Build the options independently so the child must answer each blank separately.
+  const pairs=[...new Set((q.choices||[]).map(x=>String(x).split(/\s*\/\s*/).map(v=>v.trim()).join(" / "))) ]
+    .map(x=>x.split(/\s*\/\s*/)).filter(x=>x.length===2);
   const first=[...new Set(pairs.map(x=>x[0]))], second=[...new Set(pairs.map(x=>x[1]))];
   const parts=q.sentence.split("_____");
-  const sentence=`${escapeHtml(parts[0])}<span class="filled-answer">_____</span>${escapeHtml(parts[1])}<span class="filled-answer">_____</span>${escapeHtml(parts[2]||"")}`;
-  return `<span class="rule-chip">句子填空</span><div class="sentence boss-two-sentence">${sentence}</div><div class="boss-split-choices">${[[first,0,"第一格"],[second,1,"第二格"]].map(([opts,idx,label])=>`<section class="boss-blank-group"><h3>${label}</h3>${opts.map(opt=>`<button type="button" class="choice" data-boss-blank="${idx}" data-answer="${escapeHtml(opt)}" onclick="answerBossBlank(${idx},'${escapeHtml(opt)}')">${escapeHtml(opt)}</button>`).join("")}</section>`).join("")}</div><div class="boss-selection-status" id="bossSelectionStatus">請分別選擇兩個空格的答案。</div>`;
+  const sentence=`${escapeHtml(parts[0])}<span class="boss-blank" data-blank-display="0">_____</span>${escapeHtml(parts[1])}<span class="boss-blank" data-blank-display="1">_____</span>${escapeHtml(parts[2]||"")}`;
+  return `<span class="rule-chip">句子填空｜兩格分開作答</span><div class="sentence boss-two-sentence">${sentence}</div><div class="boss-split-choices">${[[first,0,"第一格"],[second,1,"第二格"]].map(([opts,idx,label])=>`<section class="boss-blank-group"><h3>${label}</h3>${opts.map(opt=>`<button type="button" class="choice" data-boss-blank="${idx}" data-answer="${escapeHtml(opt)}" onclick="answerBossBlank(${idx},'${escapeHtml(opt)}')">${escapeHtml(opt)}</button>`).join("")}</section>`).join("")}</div><div class="boss-selection-status" id="bossSelectionStatus">先選第一格，再選第二格；每格獨立判斷。</div>`;
 }
 function answerBossBlank(index,value){
   if(answerLocked || !currentSession?.superBoss) return;
@@ -1417,7 +1426,7 @@ function answerBossBlank(index,value){
   document.querySelectorAll(`.choice[data-boss-blank="${index}"]`).forEach(b=>{b.classList.toggle("boss-blank-selected",b.dataset.answer===value);});
   const q=currentQuestion;
   const sentence=document.querySelector(".boss-two-sentence");
-  if(sentence){ let parts=q.sentence.split("_____"); sentence.innerHTML=`${escapeHtml(parts[0])}<span class="filled-answer ${bossBlankAnswers[0]?'red':''}">${escapeHtml(bossBlankAnswers[0]||"_____")}</span>${escapeHtml(parts[1])}<span class="filled-answer ${bossBlankAnswers[1]?'red':''}">${escapeHtml(bossBlankAnswers[1]||"_____")}</span>${escapeHtml(parts[2]||"")}`; }
+  if(sentence){ let parts=q.sentence.split("_____"); sentence.innerHTML=`${escapeHtml(parts[0])}<span class="boss-blank filled-answer ${bossBlankAnswers[0]?'red':''}">${escapeHtml(bossBlankAnswers[0]||"_____")}</span>${escapeHtml(parts[1])}<span class="boss-blank filled-answer ${bossBlankAnswers[1]?'red':''}">${escapeHtml(bossBlankAnswers[1]||"_____")}</span>${escapeHtml(parts[2]||"")}`; }
   const status=document.getElementById("bossSelectionStatus");
   if(!bossBlankAnswers[index]) return;
   if(!bossBlankAnswers[0] || !bossBlankAnswers[1]){ if(status) status.textContent="已選一格，請再選另一格。"; return; }
