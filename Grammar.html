@@ -275,6 +275,13 @@ main{margin-top:18px}
 .baseverb.cvc-baseword span{font-size:38px;font-weight:950;letter-spacing:.02em}
 @media(max-width:620px){.sentence{font-size:25px;padding:18px 8px}.cvc-two-options .choice{min-height:68px;font-size:21px}}
 
+
+.boss-split-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.boss-blank-group{border:1px solid var(--line,#334155);border-radius:14px;padding:14px;background:rgba(255,255,255,.035)}
+.boss-blank-group h3{margin:0 0 10px;font-size:18px;text-align:center}
+.boss-blank-group .choice{display:block;width:100%;margin:8px 0}
+.boss-blank-selected{outline:3px solid #75b9f2!important;border-color:#75b9f2!important}
+@media(max-width:620px){.boss-split-choices{grid-template-columns:1fr;gap:10px}}
 </style>
 </head>
 <body>
@@ -916,6 +923,7 @@ let currentSession = null;
 let currentQuestion = null;
 let hintLevel = 0;
 let answerLocked = false;
+let bossBlankAnswers = ["", ""];
 
 function defaultState(){
   return {
@@ -1394,7 +1402,31 @@ function beginFormalPractice(){
   renderQuestion();
 }
 
+function isTwoBlankBoss(q){ return !!(currentSession?.superBoss && q?.sentence && (q.sentence.match(/_____/g)||[]).length===2 && Array.isArray(q.choices)); }
+function renderTwoBlankBoss(q){
+  bossBlankAnswers=["",""];
+  const pairs=(q.choices||[]).map(x=>String(x).split(/\s*\/\s*/)).filter(x=>x.length===2);
+  const first=[...new Set(pairs.map(x=>x[0]))], second=[...new Set(pairs.map(x=>x[1]))];
+  const parts=q.sentence.split("_____");
+  const sentence=`${escapeHtml(parts[0])}<span class="filled-answer">_____</span>${escapeHtml(parts[1])}<span class="filled-answer">_____</span>${escapeHtml(parts[2]||"")}`;
+  return `<span class="rule-chip">句子填空</span><div class="sentence boss-two-sentence">${sentence}</div><div class="boss-split-choices">${[[first,0,"第一格"],[second,1,"第二格"]].map(([opts,idx,label])=>`<section class="boss-blank-group"><h3>${label}</h3>${opts.map(opt=>`<button type="button" class="choice" data-boss-blank="${idx}" data-answer="${escapeHtml(opt)}" onclick="answerBossBlank(${idx},'${escapeHtml(opt)}')">${escapeHtml(opt)}</button>`).join("")}</section>`).join("")}</div><div class="boss-selection-status" id="bossSelectionStatus">請分別選擇兩個空格的答案。</div>`;
+}
+function answerBossBlank(index,value){
+  if(answerLocked || !currentSession?.superBoss) return;
+  bossBlankAnswers[index]=value;
+  document.querySelectorAll(`.choice[data-boss-blank="${index}"]`).forEach(b=>{b.classList.toggle("boss-blank-selected",b.dataset.answer===value);});
+  const q=currentQuestion;
+  const sentence=document.querySelector(".boss-two-sentence");
+  if(sentence){ let parts=q.sentence.split("_____"); sentence.innerHTML=`${escapeHtml(parts[0])}<span class="filled-answer ${bossBlankAnswers[0]?'red':''}">${escapeHtml(bossBlankAnswers[0]||"_____")}</span>${escapeHtml(parts[1])}<span class="filled-answer ${bossBlankAnswers[1]?'red':''}">${escapeHtml(bossBlankAnswers[1]||"_____")}</span>${escapeHtml(parts[2]||"")}`; }
+  const status=document.getElementById("bossSelectionStatus");
+  if(!bossBlankAnswers[index]) return;
+  if(!bossBlankAnswers[0] || !bossBlankAnswers[1]){ if(status) status.textContent="已選一格，請再選另一格。"; return; }
+  const answer=`${bossBlankAnswers[0]} / ${bossBlankAnswers[1]}`;
+  handleAnswer(answer===q.answer,answer,{});
+}
+
 function renderWarmupQuestion(){
+  bossBlankAnswers=["",""];
   // Warm-up uses the EXACT same question UI as formal practice.
   // The only intentional visual difference is the subtle warm-up background.
   answerLocked=false; hintLevel=0;
@@ -1422,6 +1454,8 @@ function renderWarmupQuestion(){
           <span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span>
         </button>`;
       }).join("")}</div>`;
+  }else if(isTwoBlankBoss(q)){
+    html=renderTwoBlankBoss(q);
   }else{
     const isError=type==="error";
     const isCvc=isIngPractice(q);
@@ -1483,7 +1517,13 @@ function handleWarmupAnswer(correct,answer,extra){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
         const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
-        const filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        let filled;
+        if(isTwoBlankBoss(q)){
+          const parts=baseSentence.split("_____");
+          filled=`${escapeHtml(parts[0])}<span class="filled-answer red">${escapeHtml(bossBlankAnswers[0])}</span>${escapeHtml(parts[1])}<span class="filled-answer red">${escapeHtml(bossBlankAnswers[1])}</span>${escapeHtml(parts[2]||"")}`;
+        }else{
+          filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        }
         sentenceEl.innerHTML=speakerHtml+filled;
         enableSentenceSpeech(sentenceEl);
       }
@@ -1544,7 +1584,7 @@ function superBossQuestions(recordHistory=true){
     {id:"boss16",sentence:"The fox _____ quickly, but the rabbits _____ slowly.",choices:["run / move","runs / move","runs / moves","run / moves"],answer:"runs / move",verb:"run + move",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"},
     {id:"boss17",sentence:"The class _____ the answer, and I _____ it in my notebook.",choices:["know / write","knows / write","knows / writes","know / writes"],answer:"knows / write",verb:"know + write",rule:"third-person S / I + base verb",difficulty:"hard",type:"sentence"},
     {id:"boss18",sentence:"The dish _____ hot, but the cups _____ cool.",choices:["stay / stay","stays / stay","stays / stays","stay / stays"],answer:"stays / stay",verb:"stay + stay",rule:"vowel + Y / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss19",sentence:"Sam _____ his hands, then he _____ the room.",choices:["wash / go","washes / goes","washes / go","wash / goes"],answer:"washes / goes",verb:"wash + go",rule:"SH + ES / GO + ES",difficulty:"hard",type:"sentence"},
+    {id:"boss19",sentence:"Sam _____ his hands, then he _____ into the room.",choices:["wash / go","washes / goes","washes / go","wash / goes"],answer:"washes / goes",verb:"wash + go",rule:"SH + ES / GO + ES",difficulty:"hard",type:"sentence"},
     {id:"boss20",sentence:"The bird _____ in the tree, while the squirrels _____ on the ground.",choices:["sit / play","sits / play","sits / plays","sit / plays"],answer:"sits / play",verb:"sit + play",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"}
   ];
   // Remove accidental duplicate options from any candidate and shuffle answer positions.
@@ -1706,6 +1746,7 @@ function validateQuestionBank(){
 validateQuestionBank();
 
 function renderQuestion(){
+  bossBlankAnswers=["",""];
   answerLocked=false;hintLevel=0;
   document.getElementById("questionCard")?.classList.remove("warmup-mode");
   const learn=document.getElementById("learn");
@@ -1729,6 +1770,8 @@ function renderQuestion(){
           <span class="word-speaker" onclick="event.stopPropagation();speak('${o.verb}')">🔊</span>
         </button>`
       }).join("")}</div>`;
+  }else if(isTwoBlankBoss(currentQuestion)){
+    html=renderTwoBlankBoss(currentQuestion);
   }else{
     const isError=type==="error";
     const isCvc=isIngPractice(currentQuestion);
