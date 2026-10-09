@@ -449,7 +449,7 @@ const STAGES = [
  {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
  {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
  {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
- {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"CVC words double the final consonant; some questions are mixed to check when NOT to double",types:["ingCVC","ingRegular"],newTypes:["ingCVC"],unlock:6},
+ {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"CVC words double the final consonant; some questions are mixed to check when NOT to double",types:["ingCVC"],newTypes:["ingCVC"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
@@ -786,11 +786,57 @@ QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule==="+ing");
   let cvcN=0;
   while(QUESTION_BANK.ingCVC.length<80 && cvcSeed.length){
     const q=cvcSeed[cvcN%cvcSeed.length], contexts=[["We are","the crayons away"],["They are","the ball"],["The kids are","in the park"],["I am","the paper"],["The students are","the plan"],["My friends are","the game"]];
-    const ctx=contexts[cvcN%contexts.length],answer=q.verb.slice(0,-1)+q.verb.slice(-1)+q.verb.slice(-1)+"ing";
+    const ctx=contexts[cvcN%contexts.length],answer=q.verb+q.verb.slice(-1)+"ing";
     const choices=[...new Set([answer,q.verb+"ing",q.verb.slice(0,-1)+"ing",q.verb+"ed"])];while(choices.length<4)choices.push(q.verb+"s");
     QUESTION_BANK.ingCVC.push({...q,id:`ing-cvc-extra-${++cvcN}`,sentence:`${ctx[0]} ${answer} ${ctx[1]}.`,answer,choices:choices.slice(0,4),rule:"CVC"});
   }
   QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule!=="CVC");
+})();
+
+// Normalize the doubling bank after all generated questions are added.
+// These verbs double the final consonant in the intended present participle,
+// including stressed final syllables such as begin -> beginning.
+(function normalizeIngDoublingBank(){
+  const doublingVerbs = new Set([
+    "admit","ban","bar","bat","beg","begin","bet","bid","bob","can","cap","commit","cut","dam","dig","dim","dip","dot","drop","fan","fit","gag","get","hem","hit","hop","hug","hum","jam","jog","lap","let","log","lop","map","mar","mug","nab","net","nip","nod","occur","pad","pan","peg","pen","permit","pet","pin","plan","pop","prefer","put","rag","ram","rap","refer","rib","rid","rip","rob","rot","rub","run","set","shop","sit","stop","swim","tap","win","grab","clap","skip"
+  ]);
+  for(const q of (QUESTION_BANK.ing||[])){
+    if(!q || !q.verb) continue;
+    if(doublingVerbs.has(q.verb)){
+      q.rule="CVC";
+      q.answer=q.verb+q.verb.slice(-1)+"ing";
+      q.choices=[q.answer,q.verb+"ing"];
+      if(q.sentence){
+        const corrected=q.sentence.replace(/\b[a-z]+ing\b/i,q.answer);
+        q.sentence=corrected;
+      }
+    }
+  }
+  // Non-doubling contrast items with endings other than h/w/x/y.
+  // They stay in the same two-choice lesson to test whether doubling is needed.
+  const nonDoubling = [
+    ["visit","the museum","The children are"],
+    ["open","the box","We are"],
+    ["listen","to the teacher","The students are"],
+    ["enter","the room","The players are"],
+    ["edit","the file","I am"],
+    ["limit","the choices","They are"]
+  ];
+  for(const [verb,obj,subject] of nonDoubling){
+    const answer=verb+"ing";
+    QUESTION_BANK.ing.push({id:`ing-contrast-${verb}`,sentence:`${subject} ${answer} ${obj}.`,choices:[verb+verb.slice(-1)+"ing",answer],answer,verb,rule:"CVC",difficulty:"easy"});
+  }
+  QUESTION_BANK.ingCVC=(QUESTION_BANK.ing||[]).filter(q=>q.rule==="CVC");
+  QUESTION_BANK.ingRegular=(QUESTION_BANK.ing||[]).filter(q=>q.rule!=="CVC");
+  // Keep the dedicated CVC pool at 80 distinct prompts without malformed spellings.
+  const seed=[...QUESTION_BANK.ingCVC];
+  let n=0;
+  const contexts=[["We are","the crayons away"],["They are","the ball"],["The kids are","in the park"],["I am","the paper"],["The students are","the plan"],["My friends are","the game"]];
+  while(QUESTION_BANK.ingCVC.length<80 && seed.length){
+    const q=seed[n%seed.length], ctx=contexts[n%contexts.length], answer=q.verb+q.verb.slice(-1)+"ing";
+    QUESTION_BANK.ingCVC.push({...q,id:`ing-cvc-normalized-${n+1}`,answer,sentence:`${ctx[0]} ${answer} ${ctx[1]}.`,choices:[answer,q.verb+"ing"],rule:"CVC"});
+    n++;
+  }
 })();
 
 
@@ -1165,7 +1211,7 @@ function mixedTestQuestions(count=10){
   }));
   const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}|${q._sourceType}`),q])).values()];
   return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
-    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
+    const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
     const { _sourceType, ...clean }=q;
     return {...clean,type};
   });
@@ -1284,7 +1330,7 @@ function buildWarmupQuestions(stageId){
   const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
   const source=easy.length>=2?easy:pool;
   return shuffle(source).slice(0,Math.min(2,source.length)).map(q=>{
-    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
+    const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
     const {_sourceType,...clean}=q;
     return {...clean,type};
   });
@@ -1408,12 +1454,13 @@ function handleWarmupAnswer(correct,answer,extra){
     }
 
     // Sentence-fill warm-up follows the formal sentence-fill behavior.
-    if(q.sentence && q.rule!=="CVC"){
+    if(q.sentence){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
+        const filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
@@ -1448,7 +1495,7 @@ function buildTestQuestions(source,count){
   }
   const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
   return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
-    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
+    const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
     const {_sourceType,...clean}=q;
     return {...clean,type};
   });
@@ -1711,8 +1758,8 @@ function cvcSentenceWithBlank(q){
   return sentence;
 }
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
-function isIngPractice(q){ return !!q && q.rule==="CVC"; }
-function ingContrastOptions(q){ const v=String(q?.verb||""), a=String(q?.answer||""), d=v+v.slice(-1)+"ing", r=v+"ing"; return [...new Set(a===d?[d,r]:[r,d])]; }
+function isIngPractice(q){ return !!q && (q.rule==="CVC" || (currentSession?.stageId==="unit7" && ["+ing","drop-e"].includes(q.rule))); }
+function ingContrastOptions(q){ const v=String(q?.verb||""), d=v+v.slice(-1)+"ing", r=v+"ing"; return d===r?[r,r+"e"]:[d,r]; }
 function questionType(q){
   if(q.type) return q.type;
   if(q.poke) return "rule";
@@ -2154,12 +2201,13 @@ function renderFeedback(correct,answer,errorType,exp){
       choiceRow.querySelectorAll("button").forEach(btn=>{ btn.disabled=true; btn.classList.add("disabled"); });
     }
     // For sentence-fill questions, put the selected correct form directly into the blank.
-    if(!q.poke && q.sentence && q.rule!=="CVC"){
+    if(!q.poke && q.sentence){
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
+        const filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
