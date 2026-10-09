@@ -704,11 +704,10 @@ const VERB_EXAMPLE_OBJECTS = {
   [...QUESTION_BANK.ruleS,...QUESTION_BANK.ruleCH,...QUESTION_BANK.ruleSH,...QUESTION_BANK.ruleSS,...QUESTION_BANK.ruleX,...QUESTION_BANK.ruleO,...QUESTION_BANK.ruleIES].forEach(q=>{
     if(!VERB_EXAMPLE_OBJECTS[q.verb]) VERB_EXAMPLE_OBJECTS[q.verb]="the task";
   });
-  // Unit 7 diagnostic bank: use the parent's supplied short-verb list plus 10 additional CVC verbs.
-  // Every item tests whether the final consonant doubles before -ing; contrast verbs must not double.
-  const auditVerbs=`act add aid aim arm ask ban bar bat beg bet bid bob bow box buy can cap cry cue cut dam die dig dim dip dot dry dub dye eat ebb end err fan fit fix fly gag get hem hit hop hug hum jam jar jog lap lay let log lop map mar mix mow mug nab net nip nod pad pan pay peg pen pet pin pop put rag ram rap rib rid rip rob rot row rub run say see set sit tap win stop try cry mop nap wag tag tug pat wet zip sip zap`.split(/\s+/);
-  const doubleVerbs=new Set(`ban bat beg bet bid bob can cap cut dam dig dim dip dot dub fan fit gag get hem hit hop hug hum jam jog lap let log lop map mug nab net nip nod pad pan peg pen pet pin pop put rag rap rib rid rip rob rot rub run set sit tap win stop mop nap wag tag tug pat wet zip sip zap bar jar mar`.split(/\s+/));
-  const uniqueAuditVerbs=[...new Set(auditVerbs.map(v=>v.toLowerCase()))];
+  // Unit 7 diagnostic bank: only straightforward CVC-doubling verbs plus simple regular -ing contrasts.
+  // Remove spelling exceptions from this unit's pool (e.g. row, fix, try, die, dye, cue).
+  const auditVerbs=`ban bat beg bet bid bob can cap cut dam dig dim dip dot dub fan fit gag get hop hug hum jam jog lap let log lop map mug nab net nip nod pad pan peg pen pet pin pop put rag rap rib rip rob rot rub run set sit tap win stop mop nap wag tag tug pat wet zip sip zap bar jar mar drink eat jump draw sleep wait play read cook walk clean help shop shut plan grab clap skip drop swim slam trim brag drag grin spin step slip flip trot scrub plug`.split(/\s+/);
+  const doubleVerbs=new Set(`ban bat beg bet bid bob can cap cut dam dig dim dip dot dub fan fit gag get hop hug hum jam jog lap let log lop map mug nab net nip nod pad pan peg pen pet pin pop put rag rap rib rip rob rot rub run set sit tap win stop mop nap wag tag tug pat wet zip sip zap bar jar mar shop shut plan grab clap skip drop swim slam trim brag drag grin spin step slip flip trot scrub plug`.split(/\s+/));
   const auditContexts=[
     v=>`I am _____ now.`,v=>`We are _____ today.`,v=>`The children are _____ outside.`,
     v=>`Dad is _____ at home.`,v=>`They are _____ in the park.`,v=>`She is _____ after school.`,
