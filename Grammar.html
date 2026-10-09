@@ -1845,12 +1845,10 @@ function ingContrastOptions(q){
   const v=String(q?.verb||"");
   const doubled=v+v.slice(-1)+"ing";
   const regular=v+"ing";
-  // Never put the correct answer in a fixed position. Derive the two options,
-  // then shuffle them for each rendered question; correctness is still checked
-  // against currentQuestion.answer, not the button position.
-  const options=q?.rule==="NO_DOUBLE"?[regular,doubled]:[doubled,regular];
-  if(Math.random()<0.5) options.reverse();
-  return options;
+  // Beginner-safe deterministic layout: regular -ing (single final consonant)
+  // is always on the left; doubled final consonant is always on the right.
+  // NO_DOUBLE answers are regular; CVC answers are doubled.
+  return [regular,doubled];
 }
 function questionType(q){
   if(q.type) return q.type;
