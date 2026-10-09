@@ -948,9 +948,15 @@ function showScreen(id){
     try{ renderMap(); }catch(e){
       console.error("Map render failed",e);
       const mapEl=document.getElementById("stageMap");
-      if(mapEl) mapEl.innerHTML=`<div class="card" style="grid-column:1/-1">🗺️ 關卡資料正在修復，請重新整理頁面。</div>`;
+      if(mapEl) {
+        // Fail open: preserve navigation to all known stages if the rich map renderer fails.
+        const detail=String(e && e.message ? e.message : e);
+        console.error("Map render failed:", detail, e && e.stack);
+        mapEl.innerHTML = `<div class="card" style="grid-column:1/-1"><b>🗺️ 關卡地圖載入遇到問題</b><p class="muted">已切換為基本關卡清單，仍可繼續練習。</p><p class="small-note">診斷資訊：${typeof escapeHtml === "function" ? escapeHtml(detail) : "請開啟開發者工具查看 Console"}</p><div class="stage-fallback-list">${(typeof STAGES !== "undefined" ? STAGES : []).map((s,i)=>`<button class="btn primary" type="button" style="margin:6px" data-fallback-stage="${s.id}">第 ${i+1} 關：${typeof escapeHtml === "function" ? escapeHtml(s.title) : s.title}</button>`).join("")}</div><button class="btn small" type="button" onclick="location.reload()">重新載入</button></div>`;
+        mapEl.onclick = event => { const b=event.target.closest("[data-fallback-stage]"); if(b) startStage(b.dataset.fallbackStage); };
+      }
       const rec=document.getElementById("recommendation");
-      if(rec) rec.innerHTML=`<p class="muted">目前無法載入推薦關卡，請重新整理頁面。</p>`;
+      if(rec) rec.innerHTML=`<p class="muted">推薦關卡暫時無法載入；仍可從基本關卡清單進入練習。</p>`;
     }
   }
   if(id==="myPokemon")renderMyPokemon();
