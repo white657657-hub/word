@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="application-version" content="4.36">
-<title>Anson 英文文法冒險 V4.36</title>
+<title>Anson 英文文法冒險 V4.37</title>
+<!-- V4.37: fix stage-entry click path; guard navigation and empty question pools; schema v8. -->
 <style>
 :root{
   --bg:#081018;
@@ -281,7 +282,7 @@ main{margin-top:18px}
 <section id="home" class="screen active">
   <div class="hero">
     <div>
-      <div class="muted">English Grammar Adventure <span class="version-tag">V4.36</span></div>
+      <div class="muted">English Grammar Adventure <span class="version-tag">V4.37</span></div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
       <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
@@ -864,7 +865,7 @@ const HINTS = {
 };
 
 const STORAGE_KEY = "ansonGrammarAdventureV2";
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 8;
 var state = loadState();
 let currentSession = null;
 let currentQuestion = null;
@@ -946,8 +947,10 @@ function hintTextWithPronunciation(text){
 }
 
 function showScreen(id){
+  const nextScreen=document.getElementById(id);
+  if(!nextScreen){ console.error("showScreen: unknown screen id",id); return false; }
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  nextScreen.classList.add("active");
   if(id==="map"){
     try{ renderMap(); }catch(e){
       console.error("Map render failed",e);
@@ -957,7 +960,7 @@ function showScreen(id){
         const detail=String(e && e.message ? e.message : e);
         console.error("Map render failed:", detail, e && e.stack);
         mapEl.innerHTML = `<div class="card" style="grid-column:1/-1"><b>🗺️ 關卡地圖載入遇到問題</b><p class="muted">已切換為基本關卡清單，仍可繼續練習。</p><p class="small-note">診斷資訊：${typeof escapeHtml === "function" ? escapeHtml(detail) : "請開啟開發者工具查看 Console"}</p><div class="stage-fallback-list">${(typeof STAGES !== "undefined" ? STAGES : []).map((s,i)=>`<button class="btn primary" type="button" style="margin:6px" data-fallback-stage="${s.id}">第 ${i+1} 關：${typeof escapeHtml === "function" ? escapeHtml(s.title) : s.title}</button>`).join("")}</div><button class="btn small" type="button" onclick="location.reload()">重新載入</button></div>`;
-        mapEl.onclick = event => { const b=event.target.closest("[data-fallback-stage]"); if(b) startStage(b.dataset.fallbackStage); };
+        mapEl.onclick = event => { const target=event.target instanceof Element ? event.target : event.target?.parentElement; const b=target?.closest("[data-fallback-stage]"); if(b && mapEl.contains(b)) startStage(b.dataset.fallbackStage); };
       }
       const rec=document.getElementById("recommendation");
       if(rec) rec.innerHTML=`<p class="muted">推薦關卡暫時無法載入；仍可從基本關卡清單進入練習。</p>`;
@@ -1003,7 +1006,7 @@ function renderMap(){
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
         ${locked
           ? `<div class="small-note" style="margin-top:12px">🔒 尚未解鎖</div>`
-          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
+          : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" onclick="event.stopPropagation();startStage('${s.id}')" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
              ${(st.best||0)>=70 ? `<label class="map-challenge"><input type="checkbox" ${isStageChallengeEnabled(s.id)?"checked":""} data-challenge-stage="${s.id}"><span>想挑戰看看？ 加強難度</span></label>` : ""}`}
       </div>`;
     }catch(e){
@@ -1057,7 +1060,8 @@ function renderMap(){
       const rm=safeMastery(r);
       recommendation.innerHTML=`<b>⭐ 系統建議：${escapeHtml(r.title)}</b><p class="muted">${rm>=90?"已熟練，可以自由回訪。":rm>=70?"可以再練習一次，也可以自由回訪其他已解鎖關卡。":"目前正在建立這項技能。"}</p><button class="btn primary small" data-recommend-stage="${escapeHtml(r.id)}">去冒險</button>`;
       recommendation.onclick=(event)=>{
-        const btn=event.target.closest("[data-recommend-stage]");
+        const target=event.target instanceof Element ? event.target : event.target?.parentElement;
+        const btn=target?.closest("[data-recommend-stage]");
         if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
       };
     }else if(recommendation){
@@ -1211,9 +1215,17 @@ function startStage(stageId){
   const stage=STAGES.find(x=>x.id===stageId);
   if(!stage) return;
   const missionCount=missionQuestionCount(stageId);
+  let questions;
+  try { questions=stageQuestions(stageId,missionCount); }
+  catch(error){ console.error("startStage: failed to build questions",stageId,error); alert("這個關卡的題目載入失敗，請回到地圖後重新載入。詳情請查看 Console。"); return; }
+  if(!Array.isArray(questions) || questions.length===0){
+    console.error("startStage: no questions available",stageId);
+    alert("這個關卡目前沒有可用題目，請重新載入頁面。");
+    return;
+  }
   currentSession={
     stageId,qa:false,
-    questions:stageQuestions(stageId,missionCount),
+    questions,
     index:0,
     correct:0,
     independent:0,
