@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.37</title>
+<title>Anson 英文文法冒險 V4.43</title>
 <style>
 :root{
   --bg:#081018;
@@ -142,14 +142,14 @@ main{margin-top:18px}
   text-align:center;font-size:29px;font-weight:800;line-height:1.5;
   padding:20px 12px
 }.filled-answer{font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px}
-.baseverb{text-align:center;color:#f1f5f9;font-size:30px;font-weight:900;margin:8px 0 12px;line-height:1.25}.baseverb.cvc-baseword{font-size:32px;color:#fff;margin:10px 0 14px}.baseverb .speaker{width:32px;height:32px;font-size:14px;vertical-align:middle}.choice-row.cvc-two-options{grid-template-columns:repeat(2,minmax(0,1fr));max-width:620px;margin:16px auto 0}.choice-row.cvc-two-options .choice{font-size:28px;min-height:84px}
+.baseverb{text-align:center;color:var(--muted);font-size:15px;margin-top:-8px}
 .choice-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
 .choice{
   min-width:0;
   padding:18px 10px;border-radius:15px;border:1px solid var(--border);
   background:#172532;color:var(--text);font-size:20px;font-weight:800
 }
-.choice:hover{border-color:#6599c0}.choice:disabled{cursor:default;opacity:1}.choice{position:relative;z-index:2;touch-action:manipulation;pointer-events:auto}.baseverb .speaker{position:relative;z-index:3;touch-action:manipulation}
+.choice:hover{border-color:#6599c0}.choice:disabled{cursor:default;opacity:1}
 .choice.correct{background:#193a2b;border-color:#69ad86}
 .choice.wrong{background:#3a2227;border-color:#a85b64}
 .backrow{margin-bottom:12px}
@@ -170,7 +170,7 @@ main{margin-top:18px}
 .poke img{width:90px;height:90px}.poke .name{font-weight:800}.poke .no{color:#7f93a3;font-size:11px}.poke .lv{color:#bfcbd5;font-size:12px;margin-top:3px}
 .poke .tag{display:inline-block;margin-top:6px;font-size:11px;padding:3px 7px;border-radius:999px;background:#233a4b;color:#a9cbe5}
 .poke.unknown img{filter:brightness(0);opacity:.55}.poke.unknown{color:#6c7b87}
-.pokemon-transform{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:900;margin-top:6px}.pokemon-correct{font-size:16px;font-weight:800;color:#8ed19e;margin-top:7px}.pokemon-correct .thumb{font-size:16px;margin-right:4px}.pokemon-transform .arrow{color:var(--muted);font-size:18px}.pokemon-transform b{color:#8ed19e}.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.qa-diagnostic{margin:10px auto;padding:8px 10px;border:1px dashed var(--border);border-radius:8px;color:#d7c98b;font-size:12px}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
+.pokemon-transform{display:flex;justify-content:center;align-items:center;gap:8px;font-size:22px;font-weight:900;margin-top:6px}.pokemon-correct{font-size:16px;font-weight:800;color:#8ed19e;margin-top:7px}.pokemon-correct .thumb{font-size:16px;margin-right:4px}.pokemon-transform .arrow{color:var(--muted);font-size:18px}.pokemon-transform b{color:#8ed19e}.feedback-transform{display:flex;justify-content:center;align-items:center;gap:14px;font-size:28px;font-weight:900;margin:10px 0}.feedback-transform .arrow{color:var(--muted);font-size:22px}.feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0;font-size:18px;line-height:1.5}.hidden-example{display:none}.feedback-note{color:var(--muted);font-size:13px;text-align:center}.log-table{width:100%;border-collapse:collapse}.log-table th,.log-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}.log-table th{color:#9eb0be}.ok{color:#84cb9b}.bad{color:#e7838b}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
 .toggle{accent-color:#79aeda}
@@ -263,36 +263,18 @@ main{margin-top:18px}
 .y-rule-focus{margin:18px auto 0;font-size:19px;color:#cfe0ec}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
-.cvc-baseword{font-size:38px!important;font-weight:950!important;color:#9dc4e5!important;margin:0 0 16px!important;text-align:center;line-height:1.2}.cvc-baseword .speaker{vertical-align:middle}
-.sentence[data-can-speak="1"]{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(157,196,229,.45);text-underline-offset:5px}.sentence[data-can-speak="1"]:hover{filter:brightness(1.12)}.sentence[data-can-speak="0"]{cursor:default}
 
-/* V4.44 UI polish: keep the sentence and feedback visually clear and touch-friendly. */
-.sentence{font-size:clamp(25px,3.2vw,34px);line-height:1.55;padding:22px 14px;border-radius:16px;transition:background .15s,border-color .15s}
-.sentence[data-can-speak="1"]{cursor:pointer;background:rgba(114,201,149,.08);border:1px solid rgba(114,201,149,.30)}
-.sentence[data-can-speak="1"]:focus-visible{outline:3px solid rgba(157,196,229,.85);outline-offset:3px}
-.feedback .big{font-size:28px}
-.cvc-two-options .choice{min-height:76px;font-size:clamp(20px,2.4vw,27px);touch-action:manipulation}
-.baseverb.cvc-baseword span{font-size:38px;font-weight:950;letter-spacing:.02em}
-@media(max-width:620px){.sentence{font-size:25px;padding:18px 8px}.cvc-two-options .choice{min-height:68px;font-size:21px}}
-
-
-.boss-split-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
-.boss-blank-group{border:1px solid var(--line,#334155);border-radius:14px;padding:14px;background:rgba(255,255,255,.035)}
-.boss-blank-group h3{margin:0 0 10px;font-size:18px;text-align:center}
-.boss-blank-group .choice{display:block;width:100%;margin:8px 0;min-height:72px;font-size:22px}
-.boss-two-sentence{max-width:1100px;margin:0 auto 18px;padding:20px 18px;line-height:1.55;overflow-wrap:anywhere;text-decoration:none!important}
-.boss-two-sentence *{text-decoration:none!important}
-.boss-two-sentence .boss-blank{display:inline-block;min-width:112px;padding:0 8px;margin:0 4px;text-align:center;border-bottom:3px solid #8aa7b8;color:#fff;text-decoration:none!important;box-shadow:none!important}
-.boss-two-sentence .filled-answer{text-decoration:none!important;text-decoration-line:none!important;border-bottom:3px solid #8aa7b8;box-shadow:none!important}
-.boss-split-choices{align-items:stretch}
-.boss-blank-group{min-width:0}
-.boss-selection-status{text-align:center;margin:14px auto;color:var(--muted);font-size:16px}
-@media(max-width:620px){.boss-two-sentence{font-size:23px;padding:16px 10px}.boss-two-sentence .boss-blank{min-width:82px}.boss-blank-group .choice{min-height:60px;font-size:20px}}
-.boss-blank-selected{outline:3px solid #75b9f2!important;border-color:#75b9f2!important}
-@media(max-width:620px){.boss-split-choices{grid-template-columns:1fr;gap:10px}}
+/* V4.43 usability + troubleshooting */
+.toast-message{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:9999;max-width:min(620px,calc(100% - 28px));padding:12px 16px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:#1c3040;color:#f1f5f9;box-shadow:0 8px 30px rgba(0,0,0,.35);font-size:14px;line-height:1.55}
+.toast-message.error{border-color:#b96870;background:#45262b}
+.troubleshoot-list{line-height:1.75;padding-left:22px}
+.settings-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+#backupFile{max-width:100%;font-size:13px}
+@media(max-width:620px){.toast-message{bottom:95px}.settings-actions .btn{flex:1 1 100%}}
 </style>
 </head>
 <body>
+<div id="appToast" class="toast-message hidden" role="status" aria-live="polite"></div>
 <div class="app">
 <header class="topbar">
   <div class="profile">
@@ -339,22 +321,10 @@ main{margin-top:18px}
 
 <section id="map" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">可以自由回到已解鎖的關卡</span></div>
+  <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">所有關卡皆已開放，可自由選擇</span></div>
   <div class="map" id="stageMap"></div>
   <div class="section-title"><h2>⭐ 下一步建議</h2></div>
   <div class="card" id="recommendation"></div>
-  <div class="section-title" style="margin-top:18px"><h2>🔥 超級魔王關</h2></div>
-  <div class="card" id="superBossCard">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="font-size:42px">👑</div>
-      <div style="flex:1">
-        <b>3 題超級挑戰</b><br>
-        <span class="muted">全部都是難題，會混合已學過的規則。</span>
-      </div>
-      <button class="btn gold small" id="superBossBtn" onclick="startSuperBoss()">挑戰</button>
-    </div>
-    <div id="superBossStatus" class="small-note" style="margin-top:10px"></div>
-  </div>
 </section>
 
 <section id="learn" class="screen">
@@ -386,42 +356,13 @@ main{margin-top:18px}
 
 <section id="logs" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small primary" onclick="exportLogsTxt()">匯出 TXT</button> <button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
+  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
   <div class="stats" id="stats"></div>
-  <div class="section-title"><h2>最近紀錄</h2></div>
-  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th></tr></thead><tbody id="logBody"></tbody></table></div>
+  <div class="section-title"><h2>學習紀錄（最多保留 1,000 筆，可逐筆刪除）</h2></div><p class="small-note">正確率以每一次作答計算；同一題重答會分別計入，不等於首次作答正確率。刪除紀錄只會移除紀錄列，不會回收已取得的 EXP 或進度。</p>
+  <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th><th>操作</th></tr></thead><tbody id="logBody"></tbody></table></div>
 </section>
 
 
-<section id="qa" class="screen">
-  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>🧪 QA 測試</h2><span class="muted">僅供媽媽／開發測試，不計入孩子學習</span></div>
-  <div class="card">
-    <div class="setting-row"><span>測試單元</span>
-      <select id="qaUnit" style="background:#172532;color:#fff;border:1px solid var(--border);padding:8px;border-radius:8px">
-        <option value="mixed">Mixed：S / ES / IES</option>
-        <option value="ruleS">S</option><option value="ruleCH">CH → ES</option><option value="ruleSH">SH → ES</option>
-        <option value="ruleSS">SS → ES</option><option value="ruleX">X → ES</option><option value="ruleO">O → ES</option>
-        <option value="ruleIES">Y Rule：S / IES</option><option value="sentenceSubject">Subject</option>
-        <option value="sentenceFill">Sentence</option><option value="ing">V-ing</option><option value="error">Error Detective</option>
-      </select>
-    </div>
-    <div class="setting-row"><span>題數</span>
-      <select id="qaCount" style="background:#172532;color:#fff;border:1px solid var(--border);padding:8px;border-radius:8px">
-        <option>5</option><option selected>10</option><option>20</option><option>30</option>
-      </select>
-    </div>
-    <div class="actions">
-      <button class="btn gold" onclick="startQATest()">開始 QA</button>
-      <button class="btn" onclick="runQuestionBankHealthCheck()">題庫健康檢查</button>
-    </div>
-    <div id="qaHealth" class="small-note" style="margin-top:12px"></div>
-  </div>
-  <div class="card">
-    <b>QA 原則</b>
-    <p class="small-note">QA 可以逐題檢查題目、選項、正確答案、提示、語音、Pokémon 圖片、例句與流程。Y Rule 會同時驗證「母音 + Y → S」與「子音 + Y → IES」。QA 檢查與孩子的學習紀錄完全分開，也不影響 EXP、Mastery、進度、休息計時或獎勵。</p>
-  </div>
-</section>
 
 <section id="settings" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
@@ -430,15 +371,34 @@ main{margin-top:18px}
     <div class="card">
       <div class="setting-row"><span>🔊 題目自動播放</span><input class="toggle" id="autoSpeak" type="checkbox" checked onchange="saveSettings()"></div>
           </div>
-    <div class="card">
-      <h3>家長／開發工具</h3>
-      <p class="small-note">QA 檢查不會進入孩子的學習紀錄，也不影響 EXP、Mastery 或關卡。</p>
-      <button class="btn gold small" onclick="showScreen('qa')">🧪 開啟 QA 檢查</button>
-    </div>
+
     <div class="card">
       <h3>學習原則</h3>
-      <p class="small-note">沒有每日任務、連續登入、倒數、生命或等待機制。可以自由回訪已解鎖關卡；進步會被記錄，但不要求每天完成。</p>
+      <p class="small-note">沒有每日任務、連續登入、倒數、生命或等待機制。可以自由回訪所有關卡；進步會被記錄，但不要求每天完成。</p>
       <p class="small-note">休息提醒目前暫時停用，之後可重新開啟。</p>
+    </div>
+    <div class="card">
+      <h3>🧰 備份與資料還原</h3>
+      <p class="small-note">學習資料存在目前瀏覽器的本機儲存空間。建議定期下載備份；在另一台裝置使用時，請手動匯入備份檔，資料不會自動同步。</p>
+      <div class="settings-actions">
+        <button class="btn primary" onclick="exportBackup()">下載完整備份（JSON）</button>
+        <button class="btn" onclick="exportLogsCSV()">下載學習紀錄（CSV）</button>
+      </div>
+      <div style="margin-top:14px"><label for="backupFile">從備份檔還原（會覆蓋目前遊戲資料）</label><br><input id="backupFile" type="file" accept=".json,application/json" onchange="importBackupFile(event)"></div>
+      <p class="small-note">還原前請先下載目前資料備份。請只匯入這個遊戲匯出的 JSON 檔。</p>
+    </div>
+    <div class="card">
+      <h3>🔧 問題排除</h3>
+      <p class="small-note">遇到卡住、資料沒有保存或按鈕沒反應時，先依序嘗試以下方法：</p>
+      <ol class="troubleshoot-list">
+        <li><b>按鈕沒有反應：</b>重新整理頁面，再從首頁重新進入關卡。</li>
+        <li><b>進度或紀錄不見：</b>確認使用同一個瀏覽器、同一個裝置與同一個檔案位置；無痕模式或清除瀏覽資料可能讓本機資料消失。</li>
+        <li><b>換裝置後資料不同：</b>下載完整備份，在另一台裝置開啟遊戲後，於此頁匯入 JSON 備份。</li>
+        <li><b>語音沒有播放：</b>確認裝置音量，點擊單字旁的喇叭；若瀏覽器不支援語音，仍可照文字作答。</li>
+        <li><b>仍有問題：</b>先下載完整備份，再重新整理。不要先清除瀏覽器資料。</li>
+      </ol>
+      <div class="settings-actions"><button class="btn" onclick="checkStorageHealth()">檢查資料儲存狀態</button><button class="btn" onclick="showScreen('logs')">查看學習紀錄</button></div>
+      <p id="storageHealthResult" class="small-note" aria-live="polite">尚未檢查。</p>
     </div>
   </div>
 </section>
@@ -475,7 +435,7 @@ const STAGES = [
  {id:"unit4",title:"4. S + ES",rule:"S + ES",desc:"Now mix S and ES",types:["ruleS","ruleES"],newTypes:["ruleS","ruleES"],unlock:3},
  {id:"unit5",title:"5. S + ES + Y",rule:"S + ES + Y",desc:"Mix the three learned patterns",types:["ruleS","ruleES","ruleIES"],newTypes:["ruleIES"],unlock:4},
  {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
- {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"Mix words that double and do not double the final consonant",types:["ingCVC","ingRegular"],newTypes:["ingCVC","ingRegular"],unlock:6},
+ {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"CVC words double the final consonant; some questions are mixed to check when NOT to double",types:["ingCVC","ingRegular"],newTypes:["ingCVC"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
  {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
 ];
@@ -753,119 +713,6 @@ QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
 QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule==="+ing");
 
 
-// Expanded practice pool: CVC targets and contrast items that do not end in h/w/x/y.
-// Each added item is a complete sentence question, and all generated IDs are unique.
-(function expandQuestionBanksToEighty(){
-  const targetWords = [
-    "admit","ban","bar","bat","beg","begin","bet","bid","bob","can","cap","commit","control","cut","dam","dig","dim","dip","dot","drop","dub","fan","fit","gag","get","hem","hit","hop","hug","hum","jam","jar","jog","lap","let","log","lop","map","mar","mug","nab","net","nip","nod","occur","pad","pan","peg","pen","permit","pet","pin","plan","pop","prefer","put","rag","ram","rap","refer","rib","rid","rip","rob","rot","rub","run","set","shop","sit","stop","swim","tap","win"
-  ];
-  const cvcRule = w => {
-    if (["admit","begin","commit","control","occur","permit","prefer","refer"].includes(w)) return "+ing";
-    if (["shop","stop","swim","plan","drop"].includes(w)) return "CVC"; // final consonant doubles in these standard forms
-    return /^[^aeiou]*[aeiou][^aeiou]$/.test(w) ? "CVC" : "+ing";
-  };
-  const objects = {
-    admit:"the mistake",ban:"the game",bar:"the door",bat:"the ball",beg:"for help",begin:"the task",bet:"ten points",bid:"for the prize",bob:"his head",can:"the food",cap:"the pen",commit:"to the plan",control:"the robot",cut:"the paper",dam:"the river",dig:"a hole",dim:"the light",dip:"the brush",dot:"the page",drop:"the bag",dub:"the video",fan:"the team",fit:"the pieces",gag:"at the joke",get:"the books",hem:"the pants",hit:"the target",hop:"over the line",hug:"his friend",hum:"a tune",jam:"the door",jar:"the lid",jog:"around the park",lap:"the pool",let:"the dog out",log:"the results",lop:"the branch",map:"the route",mar:"the paper",mug:"the suspect",nab:"the thief",net:"the ball",nip:"the bud",nod:"his head",occur:"to him",pad:"the box",pan:"the camera",peg:"the picture",pen:"the note",permit:"entry",pet:"the dog",pin:"the badge",plan:"the trip",pop:"the balloon",prefer:"the blue one",put:"the crayons away",rag:"the cloth",ram:"the door",rap:"on the desk",refer:"to the chart",rib:"his brother",rid:"the weeds",rip:"the paper",rob:"the bank",rot:"the fruit",rub:"the table",run:"to school",set:"the table",shop:"for food",sit:"on the chair",stop:"the car",swim:"in the pool",tap:"the screen",win:"the game"
-  };
-  const subjects=["I am","We are","They are","The kids are","My friends are","The players are","The students are","The children are"];
-  const existing=new Set((QUESTION_BANK.ing||[]).map(q=>q.verb));
-  targetWords.forEach((verb,i)=>{
-    if(existing.has(verb)) return;
-    const rule=cvcRule(verb), answer=rule==="CVC"?verb.slice(0,-1)+verb.slice(-1)+verb.slice(-1)+"ing":verb+"ing";
-    const subject=subjects[i%subjects.length];
-    const obj=objects[verb]||"the task";
-    const sentence=`${subject} ${answer} ${obj}.`;
-    const wrong1=verb+"ing", wrong2=verb.slice(0,-1)+"ing", wrong3=verb+"ed";
-    const choices=[...new Set([answer,wrong1,wrong2,wrong3])];
-    while(choices.length<4) choices.push(verb+"s");
-    QUESTION_BANK.ing.push({id:`ing-added-${verb}`,sentence,choices:choices.slice(0,4),answer,verb,rule});
-  });
-  // Ensure each independently practiced skill has a pool of 80. Added variants change
-  // context while preserving the same tested spelling rule; no question IDs collide.
-  const contextSentences=[
-    ["I am","the note"],["We are","the box"],["They are","the paper"],["The students are","the plan"],
-    ["My friends are","the game"],["The children are","the bag"],["The players are","the target"],["The kids are","the door"],
-    ["We are","the map"],["They are","the list"],["I am","the picture"],["The students are","the task"]
-  ];
-  const expandTo80=(name)=>{
-    const bank=QUESTION_BANK[name]; if(!Array.isArray(bank)||!bank.length)return;
-    const original=[...bank]; let i=0;
-    while(bank.length<80){
-      const q=original[i%original.length], ctx=contextSentences[Math.floor(i/original.length)%contextSentences.length];
-      const copy={...q,id:`${name}-extra-${bank.length+1}`};
-      if(q.sentence && q.verb && q.answer){
-        if(name==="ing" || name==="ingCVC" || name==="ingRegular"){
-          const rule=q.rule||"+ing", answer=rule==="CVC"?q.verb+q.verb.slice(-1)+"ing":rule==="drop-e"?q.verb.slice(0,-1)+"ing":q.verb+"ing";
-          copy.answer=answer;copy.sentence=`${ctx[0]} ${answer} ${ctx[1]}.`;copy.choices=[answer,q.verb+"ing",q.verb+q.verb.slice(-1)+"ing",q.verb+"ed"].filter((v,j,a)=>a.indexOf(v)===j);
-          while(copy.choices.length<4)copy.choices.push(q.verb+"s");copy.choices=copy.choices.slice(0,4);
-        }else{
-          copy.sentence= q.sentence.replace(/^[^.]*?_____/, (m)=>m);
-          copy.sentence=copy.sentence.replace(/^.*?_____/, `${["He","She","Tom","Amy","The teacher","My brother"][i%6]} _____`);
-        }
-      }
-      bank.push(copy);i++;
-    }
-  };
-  ["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES","sentenceSubject","sentenceFill","ing","error"].forEach(expandTo80);
-  QUESTION_BANK.ingCVC=QUESTION_BANK.ing.filter(q=>q.rule==="CVC");
-  const cvcSeed=[...QUESTION_BANK.ingCVC];
-  let cvcN=0;
-  while(QUESTION_BANK.ingCVC.length<80 && cvcSeed.length){
-    const q=cvcSeed[cvcN%cvcSeed.length], contexts=[["We are","the crayons away"],["They are","the ball"],["The kids are","in the park"],["I am","the paper"],["The students are","the plan"],["My friends are","the game"]];
-    const ctx=contexts[cvcN%contexts.length],answer=q.verb+q.verb.slice(-1)+"ing";
-    const choices=[...new Set([answer,q.verb+"ing",q.verb.slice(0,-1)+"ing",q.verb+"ed"])];while(choices.length<4)choices.push(q.verb+"s");
-    QUESTION_BANK.ingCVC.push({...q,id:`ing-cvc-extra-${++cvcN}`,sentence:`${ctx[0]} ${answer} ${ctx[1]}.`,answer,choices:choices.slice(0,4),rule:"CVC"});
-  }
-  QUESTION_BANK.ingRegular=QUESTION_BANK.ing.filter(q=>q.rule!=="CVC");
-})();
-
-// Normalize the doubling bank after all generated questions are added.
-// These verbs double the final consonant in the intended present participle,
-// including stressed final syllables such as begin -> beginning.
-(function normalizeIngDoublingBank(){
-  const doublingVerbs = new Set([
-    "admit","ban","bar","bat","beg","begin","bet","bid","bob","can","cap","commit","cut","dam","dig","dim","dip","dot","drop","fan","fit","gag","get","hem","hit","hop","hug","hum","jam","jog","lap","let","log","lop","map","mar","mug","nab","net","nip","nod","occur","pad","pan","peg","pen","permit","pet","pin","plan","pop","prefer","put","rag","ram","rap","refer","rib","rid","rip","rob","rot","rub","run","set","shop","sit","stop","swim","tap","win","grab","clap","skip"
-  ]);
-  for(const q of (QUESTION_BANK.ing||[])){
-    if(!q || !q.verb) continue;
-    if(doublingVerbs.has(q.verb)){
-      q.rule="CVC";
-      q.answer=q.verb+q.verb.slice(-1)+"ing";
-      q.choices=[q.answer,q.verb+"ing"];
-      if(q.sentence){
-        const corrected=q.sentence.replace(/\b[a-z]+ing\b/i,q.answer);
-        q.sentence=corrected;
-      }
-    }
-  }
-  // Non-doubling contrast items with endings other than h/w/x/y.
-  // They stay in the same two-choice lesson to test whether doubling is needed.
-  const nonDoubling = [
-    ["visit","the museum","The children are"],
-    ["open","the box","We are"],
-    ["listen","to the teacher","The students are"],
-    ["enter","the room","The players are"],
-    ["edit","the file","I am"],
-    ["limit","the choices","They are"]
-  ];
-  for(const [verb,obj,subject] of nonDoubling){
-    const answer=verb+"ing";
-    QUESTION_BANK.ing.push({id:`ing-contrast-${verb}`,sentence:`${subject} ${answer} ${obj}.`,choices:[verb+verb.slice(-1)+"ing",answer],answer,verb,rule:"CVC",difficulty:"easy"});
-  }
-  QUESTION_BANK.ingCVC=(QUESTION_BANK.ing||[]).filter(q=>q.rule==="CVC");
-  QUESTION_BANK.ingRegular=(QUESTION_BANK.ing||[]).filter(q=>q.rule!=="CVC");
-  // Keep the dedicated CVC pool at 80 distinct prompts without malformed spellings.
-  const seed=[...QUESTION_BANK.ingCVC];
-  let n=0;
-  const contexts=[["We are","the crayons away"],["They are","the ball"],["The kids are","in the park"],["I am","the paper"],["The students are","the plan"],["My friends are","the game"]];
-  while(QUESTION_BANK.ingCVC.length<80 && seed.length){
-    const q=seed[n%seed.length], ctx=contexts[n%contexts.length], answer=q.verb+q.verb.slice(-1)+"ing";
-    QUESTION_BANK.ingCVC.push({...q,id:`ing-cvc-normalized-${n+1}`,answer,sentence:`${ctx[0]} ${answer} ${ctx[1]}.`,choices:[answer,q.verb+"ing"],rule:"CVC"});
-    n++;
-  }
-})();
-
-
 const HINTS = {
  S:[
   ["Look at the verb.","Which ending does this verb need?"],
@@ -931,13 +778,12 @@ let currentSession = null;
 let currentQuestion = null;
 let hintLevel = 0;
 let answerLocked = false;
-let bossBlankAnswers = ["", ""];
 
 function defaultState(){
   return {
     level:1,xp:0,
     settings:{autoSpeak:true},
-    unlocked:["unit1"],
+    unlocked:STAGES.map(x=>x.id),
     stageStats:{},
     logs:[],
     collection:{25:{level:1,xp:0,evolutionProgress:0},4:{level:1,xp:0,evolutionProgress:0},7:{level:1,xp:0,evolutionProgress:0}},
@@ -954,7 +800,8 @@ function loadState(){
     // Migrate older data without destroying learning progress.
     if(!s.learning) s.learning={mastery:{},learningTime:{activeMs:0,restRequired:false}};
     if(!s.learning.learningTime) s.learning.learningTime={activeMs:0,restRequired:false};
-    if(!s.logs) s.logs=[];
+    if(!Array.isArray(s.logs)) s.logs=[];
+    s.logs=s.logs.slice(0,1000);
     if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
     if(!s.collection || typeof s.collection !== "object") s.collection={};
     if(!s.learning.mastery) s.learning.mastery={};
@@ -977,23 +824,106 @@ function loadState(){
     if(oldUnlocked.has("unit4") || oldUnlocked.has("ing") || oldUnlocked.has("sentence") || oldUnlocked.has("error")) highest=Math.max(highest,6);
     // Preserve already-created current IDs if present.
     oldUnlocked.forEach(id=>{const m=id.match(/^unit([1-9])$/); if(m) highest=Math.max(highest,Number(m[1])-1);});
-    s.unlocked=STAGES.slice(0,highest+1).map(x=>x.id);
-    if(!s.unlocked.length) s.unlocked=["unit1"];
+    // All stages are available immediately; progress is tracked separately from access.
+    s.unlocked=STAGES.map(x=>x.id);
     if(!s.stageStats || typeof s.stageStats !== "object") s.stageStats={};
     if(!s.settings || typeof s.settings !== "object") s.settings={autoSpeak:true};
     if(typeof s.settings.autoSpeak !== "boolean") s.settings.autoSpeak=true;
-    // Do not silently unlock future stages during migration. Existing progress is preserved.
+    // All stages remain available on every load; progress is preserved separately.
     return s;
   }catch(e){return defaultState()}
 }
-function saveState(){state.schemaVersion=SCHEMA_VERSION;localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function saveState(){
+  state.schemaVersion=SCHEMA_VERSION;
+  try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); }
+  catch(err) {
+    console.error("無法保存學習資料：", err);
+    const msg="⚠️ 這次的學習資料可能沒有保存成功。請先下載完整備份；不要清除瀏覽器資料。可到「設定 → 檢查資料儲存狀態」查看原因。";
+    if(typeof showToast==="function") showToast(msg,true); else console.warn(msg);
+  }
+}
+let toastTimer=null;
+function showToast(message, isError=false){
+  const el=document.getElementById("appToast");
+  if(!el){console.warn(message);return}
+  el.textContent=String(message);
+  el.classList.remove("hidden","error");
+  if(isError)el.classList.add("error");
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.add("hidden"),5500);
+}
+function downloadBlob(blob, filename){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportBackup(){
+  try{
+    const payload={app:"Anson English Grammar Adventure",version:"V4.43",exportedAt:new Date().toISOString(),data:state};
+    downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`Anson_Grammar_Backup_${new Date().toISOString().slice(0,10)}.json`);
+    showToast("完整備份已開始下載。請將檔案保存在安全的位置。");
+  }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
+}
+function exportLogsCSV(){
+  try{
+    const cols=["時間","模式","題目","選擇答案","正確答案","是否答對","提示等級","EXP","第幾次作答"];
+    const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+    const rows=state.logs.map(l=>[new Date(l.ts||Date.now()).toLocaleString("zh-TW"),l.mode||"",l.question||"",l.selectedAnswer||l.answer||"",l.correctAnswer||"",l.correct?"是":"否",l.hintLevel||0,l.exp||0,l.attemptNumber||""]);
+    const csv="\uFEFF"+[cols,...rows].map(r=>r.map(q).join(",")).join("\r\n");
+    downloadBlob(new Blob([csv],{type:"text/csv;charset=utf-8"}),`Anson_Grammar_Logs_${new Date().toISOString().slice(0,10)}.csv`);
+    showToast("學習紀錄 CSV 已開始下載。");
+  }catch(e){console.error(e);showToast("匯出紀錄失敗，請重新整理後再試。",true)}
+}
+function importBackupFile(event){
+  const file=event?.target?.files?.[0];if(!file)return;
+  const input=event.target;
+  if(!confirm("匯入會覆蓋這個瀏覽器目前的遊戲資料。建議先下載目前資料備份。確定要繼續嗎？")){input.value="";return}
+  const reader=new FileReader();
+  reader.onerror=()=>{showToast("讀取檔案失敗。請重新選擇 JSON 備份檔。",true);input.value=""};
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(String(reader.result||""));
+      const candidate=parsed?.data||parsed;
+      if(!candidate || typeof candidate!=="object" || !Array.isArray(candidate.logs) || !candidate.learning || typeof candidate.learning!=="object" || typeof candidate.level!=="number" || typeof candidate.xp!=="number") throw new Error("不符合遊戲備份格式");
+      if(!confirm(`確認還原這份備份？內含 ${candidate.logs.length} 筆紀錄。此操作會取代目前遊戲資料。`)){input.value="";return}
+      const normalized={...defaultState(),...candidate};
+      normalized.logs=Array.isArray(candidate.logs)?candidate.logs.slice(-1000):[];
+      normalized.unlocked=STAGES.map(x=>x.id);
+      normalized.settings={...defaultState().settings,...(candidate.settings||{})};
+      normalized.learning={...defaultState().learning,...(candidate.learning||{})};
+      normalized.learning.mastery=normalized.learning.mastery||{};
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(normalized));
+      showToast("備份還原成功，正在重新載入遊戲。");
+      setTimeout(()=>location.reload(),700);
+    }catch(e){console.error("Backup import failed",e);showToast("還原失敗：檔案不是有效的遊戲備份，或瀏覽器無法寫入資料。原有資料未被刻意清除。",true)}
+    finally{input.value=""}
+  };
+  reader.readAsText(file);
+}
+function checkStorageHealth(){
+  const el=document.getElementById("storageHealthResult");
+  try{
+    const key="ansonGrammarStorageHealthCheck";
+    localStorage.setItem(key,"ok");
+    const ok=localStorage.getItem(key)==="ok";
+    localStorage.removeItem(key);
+    const saved=localStorage.getItem(STORAGE_KEY);
+    if(!ok)throw new Error("讀寫測試未通過");
+    if(!saved){if(el)el.textContent="⚠️ 可以讀寫，但尚未找到已保存的遊戲資料。請完成一題後再檢查。";showToast("儲存測試通過，但尚未找到遊戲資料。",true);return}
+    const parsed=JSON.parse(saved);
+    if(el)el.textContent=`✓ 儲存讀寫正常。找到遊戲資料；目前保存 ${Array.isArray(parsed.logs)?parsed.logs.length:0} 筆紀錄。建議定期下載完整備份。`;
+    showToast("資料儲存檢查通過。");
+  }catch(e){console.error("Storage health check failed",e);if(el)el.textContent="⚠️ 瀏覽器無法正常讀寫本機資料。請先嘗試下載備份；若無法下載，避免清除瀏覽器資料，並改用一般瀏覽模式開啟。";showToast("資料儲存檢查未通過。請查看問題排除說明。",true)}
+}
+
 function ensureLearningTime(){
   if(!state.learning) state.learning={mastery:{},recentQuestionIds:[],learningTime:{activeMs:0,restRequired:false}};
   if(!state.learning.learningTime) state.learning.learningTime={activeMs:0,restRequired:false};
   if(typeof state.learning.learningTime.activeMs!=="number") state.learning.learningTime.activeMs=0;
   state.learning.learningTime.restRequired=!!state.learning.learningTime.restRequired;
 }
-function fmtTime(ts){const d=new Date(ts);return d.toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})+"."+String(d.getMilliseconds()).padStart(3,"0")}
+function fmtTime(ts){return new Date(ts).toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"})}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
 const PRONUNCIATION_TERMS = ["consonant", "vowel", "singular", "plural", "subject", "verb", "ending", "silent e"];
@@ -1043,7 +973,7 @@ function renderMap(){
   if(!el) return;
   // Defensive normalization: old/local data must never prevent the map from rendering.
   if(!state.stageStats || typeof state.stageStats !== "object") state.stageStats={};
-  if(!Array.isArray(state.unlocked)) state.unlocked=["unit1"];
+  state.unlocked=STAGES.map(x=>x.id);
   if(!state.learning || typeof state.learning !== "object") state.learning={mastery:{},recentQuestionIds:[],learningTime:{activeMs:0,restRequired:false}};
   if(!state.learning.mastery || typeof state.learning.mastery !== "object") state.learning.mastery={};
   el.innerHTML=STAGES.map((s,i)=>{
@@ -1109,19 +1039,6 @@ function renderMap(){
       if(btn && recommendation.contains(btn)) startStage(btn.dataset.recommendStage);
     };
   }
-  renderSuperBossStatus();
-}
-
-function renderSuperBossStatus(){
-  const card=document.getElementById("superBossCard");
-  const btn=document.getElementById("superBossBtn");
-  const status=document.getElementById("superBossStatus");
-  if(!card||!btn||!status) return;
-  const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id)).length;
-  const ready=unlocked>=4;
-  btn.disabled=!ready;
-  btn.style.opacity=ready?"1":".45";
-  status.textContent=ready ? "✓ 已解鎖：3 題全部 Hard" : "🔒 完成前四個 Unit 後解鎖";
 }
 
 function isStageChallengeEnabled(stageId){
@@ -1159,62 +1076,56 @@ function weightedStagePool(stage){
   return pool;
 }
 function stageQuestions(stageId,count=5){
-  const stage=STAGES.find(x=>x.id===stageId);
-  if(!stage) return [];
-  const pool=weightedStagePool(stage);
+  const s=STAGES.find(x=>x.id===stageId);
+  if(!s) return [];
+  const pool=weightedStagePool(s);
   if(!pool.length) return [];
+
+  // Unit 7 deliberately mixes the new CVC rule with regular -ing contrast
+  // questions. This prevents Anson from learning "always double" as a shortcut.
+  // Prefer questions that were not used recently; fall back only when necessary.
+  // Formal practice is fixed at 6 CVC + 4 contrast items.
+  if(stageId==="unit7"){
+    const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
+    const recent=new Set(state.learning?.recentQuestionIds||[]);
+    const pickGroup=(rule,count)=>{
+      const all=shuffle(unique.filter(q=>q.rule===rule));
+      const fresh=all.filter(q=>!recent.has(q.id));
+      const old=all.filter(q=>recent.has(q.id));
+      return [...fresh,...old].slice(0,count);
+    };
+    const picked=[...pickGroup("CVC",6),...pickGroup("+ing",4)];
+    return shuffle(picked);
+  }
   const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
   const recent=new Set(state.learning?.recentQuestionIds||[]);
-  if(stageId==="unit7"){
-    // Within one test, never repeat the same base verb, even when the bank
-    // contains generated variants of that verb. Prefer questions not seen in
-    // recent sessions, then use other distinct verbs only if necessary.
-    const pickGroup=(rule,n)=>{
-      const byVerb=new Map();
-      shuffle(unique.filter(q=>q.rule===rule)).forEach(q=>{
-        const key=String(q.verb||q.id).toLowerCase();
-        if(!byVerb.has(key)) byVerb.set(key,q);
-      });
-      const items=[...byVerb.values()];
-      const fresh=shuffle(items.filter(q=>!recent.has(q.id)));
-      const old=shuffle(items.filter(q=>recent.has(q.id)));
-      return [...fresh,...old].slice(0,n);
-    };
-    const doubled=pickGroup("CVC",Math.ceil(count/2));
-    const notDoubled=pickGroup("NO_DOUBLE",Math.floor(count/2));
-    const picked=[];
-    for(let i=0;i<Math.max(doubled.length,notDoubled.length);i++){
-      if(i<doubled.length) picked.push(doubled[i]);
-      if(i<notDoubled.length) picked.push(notDoubled[i]);
-    }
-    if(picked.length<count){
-      const usedVerbs=new Set(picked.map(q=>String(q.verb||q.id).toLowerCase()));
-      const fallback=shuffle(unique.filter(q=>!usedVerbs.has(String(q.verb||q.id).toLowerCase())&&["CVC","NO_DOUBLE"].includes(q.rule)));
-      const fallbackVerbs=new Set();
-      picked.push(...fallback.filter(q=>{const v=String(q.verb||q.id).toLowerCase();if(fallbackVerbs.has(v))return false;fallbackVerbs.add(v);return true;}).slice(0,count-picked.length));
-    }
-    const result=picked.slice(0,count).map(q=>{const {_sourceType,...clean}=q;return {...clean,type:"ing"};});
-    state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,24);
-    saveState();
-    return result;
-  }
   const fresh=shuffle(unique.filter(q=>!recent.has(q.id)));
   const old=shuffle(unique.filter(q=>recent.has(q.id)));
   const picked=[];
-  const newTypes=new Set(stage.newTypes||[]);
+  const newTypes=new Set(s.newTypes||[]);
   const newPool=shuffle(unique.filter(q=>newTypes.has(q._sourceType)));
   const oldPool=shuffle(unique.filter(q=>!newTypes.has(q._sourceType)));
   const newTarget=Math.min(Math.max(1,Math.round(count*0.6)),newPool.length);
   picked.push(...newPool.slice(0,newTarget));
   const remaining=count-picked.length;
-  const reviewPool=shuffle([...oldPool,...fresh,...old]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i&&!picked.some(x=>x.id===q.id));
+  const reviewPool=shuffle([...oldPool,...fresh,...old]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
   picked.push(...reviewPool.slice(0,remaining));
-  const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i&&!picked.some(x=>x.id===q.id));
+  const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
   picked.push(...fallback.slice(0,Math.max(0,count-picked.length)));
-  const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q;return clean;});
+
+  // Difficulty policy:
+  // - Normal missions are intentionally easy/medium only.
+  // - Hard questions appear only after the child opts into 加強難度.
+  // - Challenge mode uses meaningful rule contrasts, not harder vocabulary.
+  const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q; return clean;});
   const challenge=isStageChallengeEnabled(stageId);
-  const hardIndex=challenge?chooseHardQuestionIndex(result):-1;
-  result.forEach((q,i)=>{q.difficulty=challenge?(i===hardIndex?"hard":(Math.random()<0.65?"medium":"easy")):(Math.random()<0.25?"medium":"easy");});
+  const hardIndex=challenge ? chooseHardQuestionIndex(result) : -1;
+  result.forEach((q,i)=>{
+    q.difficulty = challenge
+      ? (i===hardIndex ? "hard" : (Math.random()<0.65 ? "medium" : "easy"))
+      : (Math.random()<0.25 ? "medium" : "easy");
+  });
+
   state.learning.recentQuestionIds=[...result.map(q=>q.id),...(state.learning.recentQuestionIds||[])].slice(0,24);
   saveState();
   return result;
@@ -1237,7 +1148,7 @@ function mixedTestQuestions(count=10){
   }));
   const unique=[...new Map(pool.map(q=>[q.id||(`${q.sentence||q.verb}|${q.answer}|${q._sourceType}`),q])).values()];
   return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
-    const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
+    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
     const { _sourceType, ...clean }=q;
     return {...clean,type};
   });
@@ -1261,10 +1172,10 @@ function missionQuestionCount(stageId){
 
 function startStage(stageId){
   const stage=STAGES.find(x=>x.id===stageId);
-  if(!stage || !state.unlocked.includes(stageId)) return;
+  if(!stage) return;
   const missionCount=missionQuestionCount(stageId);
   currentSession={
-    stageId,qa:false,
+    stageId,
     questions:stageQuestions(stageId,missionCount),
     index:0,
     correct:0,
@@ -1352,24 +1263,11 @@ function buildWarmupQuestions(stageId){
       pool.push({...q,_sourceType:t});
     });
   });
-  // Warm-up for Unit 7 always has one doubling and one non-doubling item.
-  let source;
-  if(stageId==="unit7"){
-    const onePerVerb=(items)=>{
-      const seenVerbs=new Set();
-      return shuffle(items).filter(q=>{const v=String(q.verb||q.id).toLowerCase();if(seenVerbs.has(v))return false;seenVerbs.add(v);return true;});
-    };
-    const doubled=onePerVerb(pool.filter(q=>q.rule==="CVC"));
-    const notDoubled=onePerVerb(pool.filter(q=>q.rule==="NO_DOUBLE"));
-    source=[];
-    if(doubled.length) source.push(doubled[0]);
-    if(notDoubled.length) source.push(notDoubled[0]);
-  }else{
-    const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
-    source=shuffle(easy.length>=2?easy:pool).slice(0,2);
-  }
-  return source.slice(0,Math.min(2,source.length)).map(q=>{
-    const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
+  // Warm-up is intentionally easy and short. Prefer the new rule, then review.
+  const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
+  const source=easy.length>=2?easy:pool;
+  return shuffle(source).slice(0,Math.min(2,source.length)).map(q=>{
+    const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
     const {_sourceType,...clean}=q;
     return {...clean,type};
   });
@@ -1410,39 +1308,7 @@ function beginFormalPractice(){
   renderQuestion();
 }
 
-function bossSentenceTemplate(q){
-  // Keep answer pairs out of the sentence itself. Some older question records may
-  // accidentally contain "verb / verb" where the first blank should be.
-  return String(q?.sentence||"").replace(/\b[A-Za-z]+\s*\/\s*[A-Za-z]+\b/g, "_____");
-}
-function isTwoBlankBoss(q){ return !!(currentSession?.superBoss && q?.sentence && (bossSentenceTemplate(q).match(/_____/g)||[]).length===2 && Array.isArray(q.choices)); }
-function renderTwoBlankBoss(q){
-  bossBlankAnswers=["",""];
-  // Each choice is a pair: "first-blank answer / second-blank answer".
-  // Build the options independently so the child must answer each blank separately.
-  const pairs=[...new Set((q.choices||[]).map(x=>String(x).split(/\s*\/\s*/).map(v=>v.trim()).join(" / "))) ]
-    .map(x=>x.split(/\s*\/\s*/)).filter(x=>x.length===2);
-  const first=[...new Set(pairs.map(x=>x[0]))], second=[...new Set(pairs.map(x=>x[1]))];
-  const parts=bossSentenceTemplate(q).split("_____");
-  const sentence=`${escapeHtml(parts[0])}<span class="boss-blank" data-blank-display="0">_____</span>${escapeHtml(parts[1])}<span class="boss-blank" data-blank-display="1">_____</span>${escapeHtml(parts[2]||"")}`;
-  return `<span class="rule-chip">句子填空｜兩格分開作答</span><div class="sentence boss-two-sentence">${sentence}</div><div class="boss-split-choices">${[[first,0,"第一格"],[second,1,"第二格"]].map(([opts,idx,label])=>`<section class="boss-blank-group"><h3>${label}</h3>${opts.map(opt=>`<button type="button" class="choice" data-boss-blank="${idx}" data-answer="${escapeHtml(opt)}" onclick="answerBossBlank(${idx},'${escapeHtml(opt)}')">${escapeHtml(opt)}</button>`).join("")}</section>`).join("")}</div><div class="boss-selection-status" id="bossSelectionStatus">先選第一格，再選第二格；每格獨立判斷。</div>`;
-}
-function answerBossBlank(index,value){
-  if(answerLocked || !currentSession?.superBoss) return;
-  bossBlankAnswers[index]=value;
-  document.querySelectorAll(`.choice[data-boss-blank="${index}"]`).forEach(b=>{b.classList.toggle("boss-blank-selected",b.dataset.answer===value);});
-  const q=currentQuestion;
-  const sentence=document.querySelector(".boss-two-sentence");
-  if(sentence){ let parts=bossSentenceTemplate(q).split("_____"); sentence.innerHTML=`${escapeHtml(parts[0])}<span class="boss-blank filled-answer ${bossBlankAnswers[0]?'red':''}">${escapeHtml(bossBlankAnswers[0]||"_____")}</span>${escapeHtml(parts[1])}<span class="boss-blank filled-answer ${bossBlankAnswers[1]?'red':''}">${escapeHtml(bossBlankAnswers[1]||"_____")}</span>${escapeHtml(parts[2]||"")}`; }
-  const status=document.getElementById("bossSelectionStatus");
-  if(!bossBlankAnswers[index]) return;
-  if(!bossBlankAnswers[0] || !bossBlankAnswers[1]){ if(status) status.textContent="已選一格，請再選另一格。"; return; }
-  const answer=`${bossBlankAnswers[0]} / ${bossBlankAnswers[1]}`;
-  handleAnswer(answer===q.answer,answer,{});
-}
-
 function renderWarmupQuestion(){
-  bossBlankAnswers=["",""];
   // Warm-up uses the EXACT same question UI as formal practice.
   // The only intentional visual difference is the subtle warm-up background.
   answerLocked=false; hintLevel=0;
@@ -1470,37 +1336,34 @@ function renderWarmupQuestion(){
           <span class="word-speaker" onclick="event.stopPropagation();speak('${escapeHtml(o.verb)}')">🔊</span>
         </button>`;
       }).join("")}</div>`;
-  }else if(isTwoBlankBoss(q)){
-    html=renderTwoBlankBoss(q);
   }else{
     const isError=type==="error";
-    const isCvc=isIngPractice(q);
-    const cvcOptions=isCvc?ingContrastOptions(q):null;
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence" data-can-speak="0" role="button" tabindex="0" aria-label="答對後點擊朗讀整句" onclick="speakSentenceOnDemand(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();speakSentenceOnDemand(this)}">${highlightBlank(isCvc?cvcSentenceWithBlank(q):q.sentence)}</div>
-      <div class="baseverb ${isCvc?"cvc-baseword":""}"><span>${escapeHtml(q.verb||"")}</span> <button type="button" class="speaker" aria-label="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
-      <div class="choice-row ${isCvc?"cvc-two-options":""}">${(isCvc ? cvcOptions : (q.choices||[])).map(c=>`<button type="button" class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>
+      ${highlightBlank(q.sentence)}</div>
+      <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
+      <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
-  html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
-    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
+  html+=`<div id="warmupHintArea"></div><div id="warmupFeedback" class="feedback"></div>
+    <div class="actions" id="warmupHintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   card.innerHTML=html;
   const learn=document.getElementById("learn");
   if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
-  const freshFeedback=document.getElementById("feedback");
+  const freshFeedback=getActiveLearningElement("feedback");
   if(freshFeedback) freshFeedback.innerHTML="";
-  const freshHint=document.getElementById("hintTrigger");
+  const freshHint=getActiveLearningElement("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && type!=="ing" && !isCvc) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak) setTimeout(()=>speak(getSpeakText()),250);
 }
 
 function handleWarmupAnswer(correct,answer,extra){
   if(answerLocked||!currentSession?.warmup) return;
   answerLocked=true;
-  const f=document.getElementById("feedback");
+  const f=getActiveLearningElement("feedback");
   if(!f) return;
   if(correct){
     currentSession.warmupCorrect++;
-    document.getElementById("hintTrigger")?.style.setProperty("display","none");
+    getActiveLearningElement("hintTrigger")?.style.setProperty("display","none");
     document.querySelectorAll(".option,.choice").forEach(b=>b.disabled=true);
     const q=currentQuestion;
     const type=questionType(q);
@@ -1532,26 +1395,19 @@ function handleWarmupAnswer(correct,answer,extra){
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
-        let filled;
-        if(isTwoBlankBoss(q)){
-          const parts=bossSentenceTemplate(q).split("_____");
-          filled=`${escapeHtml(parts[0])}<span class="filled-answer red">${escapeHtml(bossBlankAnswers[0])}</span>${escapeHtml(parts[1])}<span class="filled-answer red">${escapeHtml(bossBlankAnswers[1])}</span>${escapeHtml(parts[2]||"")}`;
-        }else{
-          filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
-        }
+        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
-        enableSentenceSpeech(sentenceEl);
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    f.innerHTML=`<div class="big" style="color:#8ed19e" role="status">✓ Correct!</div><div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
-    speak("Correct!");
+    f.innerHTML=`<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
+    speak("Correct");
+    if(q.sentence) speak(q.sentence.replace("_____",answer));
     return;
   }
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>`;
   speak("Not quite. Try the same question again.");
-  answerLocked=false;
+  setTimeout(()=>{answerLocked=false;},700);
 }
 
 function nextWarmupQuestion(){
@@ -1560,160 +1416,6 @@ function nextWarmupQuestion(){
   currentSession.warmupIndex++;
   if(currentSession.warmupIndex>=currentSession.warmupQuestions.length){beginFormalPractice();return;}
   renderWarmupQuestion();
-}
-
-function buildTestQuestions(source,count){
-  let pool=[];
-  if(source==="mixed"){
-    // QA Mixed means ONLY third-person singular S / ES / IES.
-    const allowed=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"];
-    allowed.forEach(t=>(QUESTION_BANK[t]||[]).forEach(q=>pool.push({...q,_sourceType:t})));
-  }else{
-    (QUESTION_BANK[source]||[]).forEach(q=>pool.push({...q,_sourceType:source}));
-  }
-  const unique=[...new Map(pool.map(q=>[q.id,q])).values()];
-  return shuffle(unique).slice(0,Math.min(count,unique.length)).map(q=>{
-    const type=(q.rule==="CVC" || q.rule==="+ing" || q.rule==="drop-e")?"ing":q._sourceType==="error"?"error":q.poke?"rule":"sentence";
-    const {_sourceType,...clean}=q;
-    return {...clean,type};
-  });
-}
-function superBossQuestions(recordHistory=true){
-  // 20 hard, mixed-rule candidates. Each attempt draws 10 unique questions.
-  // Keep the previous attempt's IDs out of the next attempt whenever possible.
-  const bank = [
-    {id:"boss01",sentence:"Mia _____ her homework, and her brothers _____ the dishes.",choices:["finish / wash","finishes / wash","finishes / wash","finishes / washes"],answer:"finishes / wash",verb:"finish + wash",rule:"S / base verb",difficulty:"hard",type:"sentence"},
-    {id:"boss02",sentence:"The baby _____ when the dog _____ loudly.",choices:["cry / bark","cries / barks","cries / bark","cry / barks"],answer:"cries / barks",verb:"cry + bark",rule:"IES / S",difficulty:"hard",type:"sentence"},
-    {id:"boss03",sentence:"Our teacher _____ the lesson, but the students _____ questions.",choices:["teach / ask","teaches / ask","teaches / asks","teach / asks"],answer:"teaches / ask",verb:"teach + ask",rule:"CH + ES / base verb",difficulty:"hard",type:"sentence"},
-    {id:"boss04",sentence:"Ben _____ the box, and his sister _____ it on the shelf.",choices:["fix / carry","fixes / carries","fixes / carry","fix / carries"],answer:"fixes / carries",verb:"fix + carry",rule:"X + ES / consonant + Y",difficulty:"hard",type:"sentence"},
-    {id:"boss05",sentence:"The bus _____ at this stop, but the trains _____ here too.",choices:["stop / stop","stops / stop","stops / stops","stop / stops"],answer:"stops / stop",verb:"stop + stop",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss06",sentence:"Ella _____ the dishes while her friends _____ the table.",choices:["wash / set","washes / set","washes / sets","wash / sets"],answer:"washes / set",verb:"wash + set",rule:"SH + ES / base verb",difficulty:"hard",type:"sentence"},
-    {id:"boss07",sentence:"Dad _____ the car, and I _____ my bike.",choices:["fixes / ride","fix / rides","fixes / rides","fix / ride"],answer:"fixes / ride",verb:"fix + ride",rule:"X + ES / I + base verb",difficulty:"hard",type:"sentence"},
-    {id:"boss08",sentence:"The puppy _____ its tail when the children _____ home.",choices:["wag / come","wags / come","wags / comes","wag / comes"],answer:"wags / come",verb:"wag + come",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss09",sentence:"Lily _____ the story, and her friends _____ carefully.",choices:["study / listen","studies / listen","studies / listens","study / listens"],answer:"studies / listen",verb:"study + listen",rule:"consonant + Y / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss10",sentence:"The shop _____ at nine, and the workers _____ at eight.",choices:["open / start","opens / start","opens / starts","open / starts"],answer:"opens / start",verb:"open + start",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss11",sentence:"Max _____ the ball, but his teammates _____ for the goal.",choices:["pass / try","passes / try","passes / tries","pass / tries"],answer:"passes / try",verb:"pass + try",rule:"SS + ES / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss12",sentence:"The girl _____ her lunch, and the boys _____ theirs.",choices:["carry / eat","carries / eat","carries / eats","carry / eats"],answer:"carries / eat",verb:"carry + eat",rule:"consonant + Y / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss13",sentence:"My uncle _____ to work, while my cousins _____ the bus.",choices:["go / take","goes / take","goes / takes","go / takes"],answer:"goes / take",verb:"go + take",rule:"GO + ES / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss14",sentence:"The cat _____ the mouse, but the dogs _____ the birds.",choices:["chase / chase","chases / chase","chases / chases","chase / chases"],answer:"chases / chase",verb:"chase + chase",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss15",sentence:"Amy _____ her room, and her brother _____ his desk.",choices:["tidy / clean","tidies / clean","tidies / cleans","tidy / cleans"],answer:"tidies / cleans",verb:"tidy + clean",rule:"consonant + Y / third-person S",difficulty:"hard",type:"sentence"},
-    {id:"boss16",sentence:"The fox _____ quickly, but the rabbits _____ slowly.",choices:["run / move","runs / move","runs / moves","run / moves"],answer:"runs / move",verb:"run + move",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss17",sentence:"The class _____ the answer, and I _____ it in my notebook.",choices:["know / write","knows / write","knows / writes","know / writes"],answer:"knows / write",verb:"know + write",rule:"third-person S / I + base verb",difficulty:"hard",type:"sentence"},
-    {id:"boss18",sentence:"The dish _____ hot, but the cups _____ cool.",choices:["stay / stay","stays / stay","stays / stays","stay / stays"],answer:"stays / stay",verb:"stay + stay",rule:"vowel + Y / plural subject",difficulty:"hard",type:"sentence"},
-    {id:"boss19",sentence:"Sam _____ his hands, then he _____ into the room.",choices:["wash / go","washes / goes","washes / go","wash / goes"],answer:"washes / goes",verb:"wash + go",rule:"SH + ES / GO + ES",difficulty:"hard",type:"sentence"},
-    {id:"boss20",sentence:"The bird _____ in the tree, while the squirrels _____ on the ground.",choices:["sit / play","sits / play","sits / plays","sit / plays"],answer:"sits / play",verb:"sit + play",rule:"third-person S / plural subject",difficulty:"hard",type:"sentence"}
-  ];
-  // Remove accidental duplicate options from any candidate and shuffle answer positions.
-  const previous = (()=>{ try{return JSON.parse(localStorage.getItem("ansonSuperBossLastIds")||"[]")}catch(e){return []} })();
-  let pool = bank.filter(q=>!previous.includes(q.id));
-  if(pool.length < 10) pool = bank;
-  const selected = shuffle(pool).slice(0,10).map(q=>({...q,choices:[...new Set(q.choices)]}));
-  if(recordHistory){ try { localStorage.setItem("ansonSuperBossLastIds", JSON.stringify(selected.map(q=>q.id))); } catch(e) {} }
-  return selected;
-}
-
-function startSuperBoss(){
-  const unlocked=STAGES.filter(s=>state.unlocked.includes(s.id)).length;
-  if(unlocked<4){
-    alert("完成前四個 Unit 後，就可以挑戰超級魔王關！");
-    return;
-  }
-  currentSession={
-    stageId:"super-boss",qa:false,superBoss:true,
-    questions:superBossQuestions(),index:0,correct:0,independent:0,hintCorrect:0,wrong:0,
-    started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,
-    suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0,
-    learningSegmentStartedAt:Date.now()
-  };
-  document.getElementById("stageTitle").textContent="🔥 超級魔王關";
-  showScreen("learn");
-  renderQuestion();
-}
-
-function startQATest(){
-  const source=document.getElementById("qaUnit")?.value||"mixed";
-  const count=Number(document.getElementById("qaCount")?.value||10);
-  const questions=buildTestQuestions(source,count);
-  if(!questions.length){alert("這個單元目前沒有可測試的題目。");return;}
-  currentSession={stageId:"qa-"+source,qa:true,qaSource:source,questions,index:0,correct:0,independent:0,hintCorrect:0,wrong:0,started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0};
-  document.getElementById("stageTitle").textContent=`QA · ${source==="mixed"?"Mixed":source}`;
-  showScreen("learn");
-  renderQuestion();
-}
-function runQuestionBankHealthCheck(){
-  const problems=[];
-  const ruleTypes=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"];
-  const all=[];
-  ruleTypes.forEach(t=>(QUESTION_BANK[t]||[]).forEach(q=>all.push({q,t})));
-  const ids=new Set(), words=new Set();
-  all.forEach(({q,t})=>{
-    if(ids.has(q.id)) problems.push(`${t}: duplicate ID ${q.id}`); ids.add(q.id);
-    if(words.has(q.verb)) problems.push(`${t}: duplicate verb ${q.verb}`); words.add(q.verb);
-    if(!q.verb || !q.poke || !q.answer) problems.push(`${t}: incomplete ${q.id}`);
-    if(t==="ruleS" && q.answer!=="S") problems.push(`${q.id}: S answer mismatch`);
-    if(t==="ruleIES" && !["S","IES"].includes(q.answer)) problems.push(`${q.id}: Y Rule answer must be S or IES`);
-    if(q.rule==="consonant+y" && (!/[^aeiou]y$/i.test(q.verb) || q.answer!=="IES")) problems.push(`${q.id}: consonant+y must be IES`);
-    if(q.rule==="vowel+y" && (!/[aeiou]y$/i.test(q.verb) || q.answer!=="S")) problems.push(`${q.id}: vowel+y must be S`);
-    if(t==="ruleS" && /[^aeiou]y$/i.test(q.verb)) problems.push(`${q.id}: consonant+y incorrectly placed in S bank`);
-    if(q.poke && !POKEMON[q.poke]) problems.push(`${q.id}: missing Pokémon ${q.poke}`);
-    if(q.poke){
-      const ex=verbExample(q);
-      if(!ex.form || !ex.sentence) problems.push(`${q.id}: missing example`);
-    }
-  });
-  ["sentenceSubject","sentenceFill","ing","error"].forEach(type=>{
-    (QUESTION_BANK[type]||[]).forEach(q=>{
-      if(!q.id) problems.push(`${type}: missing ID`);
-      if(Array.isArray(q.choices)){
-        if(q.choices.filter(c=>c===q.answer).length!==1) problems.push(`${q.id}: answer-choice mismatch`);
-      }
-    });
-  });
-  const mixed=QUESTION_BANK.mixed||[];
-  const mixedBad=mixed.some(q=>!["S","ES","IES"].includes(q.answer) || !["S","CH","SH","SS","X","O","consonant+y","vowel+y"].includes(q.rule));
-  if(mixedBad) problems.push("mixed: contains a non S/ES/IES rule item");
-  const yBank=QUESTION_BANK.ruleIES||[];
-  const hasConsonantY=yBank.some(q=>q.rule==="consonant+y");
-  const hasVowelY=yBank.some(q=>q.rule==="vowel+y");
-  if(!hasConsonantY || !hasVowelY) problems.push("Y Rule must contain both consonant+y and vowel+y examples");
-
-  // Difficulty / answer-quality checks.
-  const allLearningBanks=["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES","sentenceSubject","sentenceFill","ing","error"];
-  allLearningBanks.forEach(type=>{
-    (QUESTION_BANK[type]||[]).forEach(q=>{
-      if(Array.isArray(q.choices) && q.choices.filter(c=>c===q.answer).length!==1){
-        problems.push(`${q.id}: must have exactly one correct choice`);
-      }
-    });
-  });
-  const yHardPool=yBank.filter(q=>q.rule==="consonant+y" || q.rule==="vowel+y");
-  if(!yHardPool.length) problems.push("Y Rule has no hard-question candidates");
-  if((QUESTION_BANK.sentenceFill||[]).length<3) problems.push("Sentence Fill needs at least 3 challenge candidates");
-
-  // Hard-question quality: Hard must test a meaningful contrast, not just a harder word.
-  const hardRuleCandidates=(QUESTION_BANK.ruleS||[]).concat(QUESTION_BANK.ruleCH||[],QUESTION_BANK.ruleSH||[],QUESTION_BANK.ruleSS||[],QUESTION_BANK.ruleX||[],QUESTION_BANK.ruleO||[],QUESTION_BANK.ruleIES||[]);
-  ["ruleS","ruleCH","ruleSH","ruleSS","ruleX","ruleO","ruleIES"].forEach(type=>{
-    const bank=QUESTION_BANK[type]||[];
-    if(!bank.length) return;
-    const sample=bank[0];
-    const alt=hardRuleCandidates.some(x=>x.answer!==sample.answer && x.verb!==sample.verb);
-    if(!alt) problems.push(`${type}: no valid hard distractor candidate`);
-  });
-  const boss=superBossQuestions(false);
-  if(boss.length!==10) problems.push("Super Boss must contain exactly 10 questions");
-  boss.forEach(q=>{
-    if(q.difficulty!=="hard") problems.push(`${q.id}: Super Boss question must be hard`);
-    if(q.choices && q.choices.filter(c=>c===q.answer).length!==1) problems.push(`${q.id}: Super Boss answer is not unique`);
-  });
-
-  const health=document.getElementById("qaHealth");
-  if(health){
-    health.innerHTML=problems.length
-      ? `<b style="color:#e7838b">發現 ${problems.length} 個問題</b><br>${problems.slice(0,30).map(escapeHtml).join("<br>")}`
-      : `<b style="color:#84cb9b">✓ 題庫健康檢查通過</b><br>Rule Hunt、選項、Pokémon、例句、S/ES/IES（含母音+Y／子音+Y）規則目前沒有發現結構性問題。`;
-  }
-  console.log("Question Bank Health Check",problems);
-  return problems;
 }
 
 function validateQuestionBank(){
@@ -1761,8 +1463,15 @@ function validateQuestionBank(){
 }
 validateQuestionBank();
 
+
+function getActiveLearningElement(id){
+  const direct=document.getElementById(id);
+  if(direct) return direct;
+  const warmupMap={hintArea:"warmupHintArea",feedback:"warmupFeedback",hintTrigger:"warmupHintTrigger"};
+  return warmupMap[id] ? document.getElementById(warmupMap[id]) : null;
+}
+
 function renderQuestion(){
-  bossBlankAnswers=["",""];
   answerLocked=false;hintLevel=0;
   document.getElementById("questionCard")?.classList.remove("warmup-mode");
   const learn=document.getElementById("learn");
@@ -1786,26 +1495,23 @@ function renderQuestion(){
           <span class="word-speaker" onclick="event.stopPropagation();speak('${o.verb}')">🔊</span>
         </button>`
       }).join("")}</div>`;
-  }else if(isTwoBlankBoss(currentQuestion)){
-    html=renderTwoBlankBoss(currentQuestion);
   }else{
     const isError=type==="error";
-    const isCvc=isIngPractice(currentQuestion);
-    const cvcOptions=isCvc?ingContrastOptions(currentQuestion):null;
     html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence" data-can-speak="0" role="button" tabindex="0" aria-label="答對後點擊朗讀整句" onclick="speakSentenceOnDemand(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();speakSentenceOnDemand(this)}">${highlightBlank(isCvc?cvcSentenceWithBlank(currentQuestion):currentQuestion.sentence)}</div>
-      <div class="baseverb ${isCvc?"cvc-baseword":""}"><span>${escapeHtml(currentQuestion.verb||"")}</span> <button type="button" class="speaker" aria-label="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(currentQuestion.verb||"")}')">🔊</button></div>
-      <div class="choice-row ${isCvc?"cvc-two-options":""}">${(isCvc ? cvcOptions : currentQuestion.choices).map(c=>`<button type="button" class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(currentQuestion.sentence)}')">🔊</button>
+      ${highlightBlank(currentQuestion.sentence)}</div>
+      <div class="baseverb">(${currentQuestion.verb}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${currentQuestion.verb}')">🔊</button></div>
+      <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
   }
   html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
     <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
   document.getElementById("questionCard").innerHTML=html;
   // A new question must start with no feedback/Next state from the previous question.
-  const freshFeedback=document.getElementById("feedback");
+  const freshFeedback=getActiveLearningElement("feedback");
   if(freshFeedback) freshFeedback.innerHTML="";
-  const freshHint=document.getElementById("hintTrigger");
+  const freshHint=getActiveLearningElement("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && !currentSession.qa && type!=="ing" && !isCvc) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && true) setTimeout(()=>speak(getSpeakText()),250);
 }
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
@@ -1842,77 +1548,11 @@ function getSpeakText(){
   }
   return currentQuestion.sentence.replace("_____","blank");
 }
-
-// V4.49 Unit 7 beginner-safe bank: remove vowel-team/r-controlled examples and multisyllabic/stress-based doubling exceptions.
-// Non-doubling contrast words use familiar spellings without vowel-team exceptions.
-(function buildBalancedUnit7Bank(){
-  const doubledVerbs=["ban","bat","beg","bet","bid","bob","can","cap","cut","dam","dig","dim","dip","dot","drop","dub","fan","fit","gag","get","hem","hit","hop","hug","hum","jam","jog","lap","let","log","lop","map","mug","nab","net","nip","nod","pad","pan","peg","pen","pet","pin","plan","pop","put","rag","ram","rap","rib","rid","rip","rob","rot","rub","run","set","shop","sit","stop","swim","tap","win","grab","clap","skip"];
-  const noDoubleVerbs=["help","jump","ask","work","wash","look","cook","talk","walk","push","pull","start","print","drink","stand","plant","count","lift","park","march","turn","burn","fold","hold","build","send","bend","kick","lock","pick","pack","wish","brush","crash","cross","climb","stamp","smell","spell","spend","trust","check"];
-  const obj={admit:"the mistake",ban:"the game",bar:"the door",bat:"the ball",beg:"for help",begin:"the task",bet:"ten points",bid:"for the prize",bob:"his head",can:"the food",cap:"the pen",commit:"to the plan",cut:"the paper",dam:"the river",dig:"a hole",dim:"the light",dip:"the brush",dot:"the page",drop:"the bag",dub:"the video",fan:"the team",fit:"the pieces",gag:"at the joke",get:"the books",hem:"the pants",hit:"the target",hop:"over the line",hug:"his friend",hum:"a tune",jam:"the door",jar:"the lid",jog:"around the park",lap:"the pool",let:"the dog out",log:"the results",lop:"the branch",map:"the route",mar:"the paper",mug:"the suspect",nab:"the thief",net:"the ball",nip:"the bud",nod:"his head",occur:"to him",pad:"the box",pan:"the camera",peg:"the picture",pen:"the note",permit:"entry",pet:"the dog",pin:"the badge",plan:"the trip",pop:"the balloon",prefer:"the blue one",put:"the crayons away",rag:"the cloth",ram:"the door",rap:"on the desk",refer:"to the chart",rib:"his brother",rid:"the weeds",rip:"the paper",rob:"the bank",rot:"the fruit",rub:"the table",run:"to school",set:"the table",shop:"for food",sit:"on the chair",stop:"the car",swim:"in the pool",tap:"the screen",win:"the game",grab:"the bag",clap:"for the team",skip:"over the puddle"};
-  const subjects=["I am","We are","They are","The kids are","My friends are","The players are","The students are","The children are"];
-  const make=(verb,rule,i)=>{
-    // NO_DOUBLE words use standard -ing without adding a new final consonant.
-    const answer=rule==="CVC" ? verb+verb.slice(-1)+"ing" : verb+"ing";
-    const sentence=`${subjects[i%subjects.length]} _____ ${obj[verb]||"the task"}.`;
-    return {id:`unit7-${rule.toLowerCase()}-${verb}-${i}`,sentence,choices:[answer,rule==="CVC"?verb+"ing":verb+verb.slice(-1)+"ing"],answer,verb,rule,difficulty:"easy",type:"ing"};
-  };
-  const d=[...new Set(doubledVerbs)].map((v,i)=>make(v,"CVC",i));
-  const n=[...new Set(noDoubleVerbs)].map((v,i)=>make(v,"NO_DOUBLE",i+17));
-  // Generate 80 unique prompts per group, varying sentence context while preserving spelling rule.
-  const contexts=["the task","the box","the paper","the game","the list","the picture","the plan","the room","the file","the door","the report","the answer","the result","the map","the book","the bag"];
-  const expand=(seed,rule,prefix)=>{
-    const out=seed.slice(); let k=0;
-    while(out.length<80 && seed.length){
-      const q=seed[k%seed.length], subject=subjects[Math.floor(k/seed.length)%subjects.length], answer=q.answer;
-      out.push({...q,id:`${prefix}-extra-${k+1}`,sentence:`${subject} _____ ${contexts[k%contexts.length]}.`,choices:[answer,rule==="CVC"?q.verb+"ing":q.verb+q.verb.slice(-1)+"ing"]}); k++;
-    }
-    return out.slice(0,80);
-  };
-  QUESTION_BANK.ingCVC=expand(d,"CVC","unit7-double");
-  QUESTION_BANK.ingRegular=expand(n,"NO_DOUBLE","unit7-no-double");
-  QUESTION_BANK.ing= [...QUESTION_BANK.ingCVC,...QUESTION_BANK.ingRegular];
-})();
-
-
-function speakSentenceOnDemand(el){
-  if(!el || el.dataset.canSpeak!=="1") return;
-  const text=stripHtml(el.innerHTML).replace(/\s+/g," ").trim();
-  if(text) speak(text);
-}
-function enableSentenceSpeech(sentenceEl){
-  if(!sentenceEl) return;
-  sentenceEl.dataset.canSpeak="1";
-  sentenceEl.style.cursor="pointer";
-  sentenceEl.title="點擊聽整句發音";
-  sentenceEl.setAttribute("aria-label","點擊朗讀完整句子");
-}
-
-function cvcSentenceWithBlank(q){
-  let sentence=String(q?.sentence||"");
-  if(sentence.includes("_____")) return sentence;
-  const candidates=[q?.answer, q?.verb ? q.verb+"ing" : ""].filter(Boolean).sort((a,b)=>b.length-a.length);
-  for(const word of candidates){
-    const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-    const re=new RegExp("\\b"+escaped+"\\b","i");
-    if(re.test(sentence)){sentence=sentence.replace(re,"_____");break;}
-  }
-  return sentence;
-}
 function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
-function isIngPractice(q){ return !!q && (q.rule==="CVC" || q.rule==="NO_DOUBLE" || (currentSession?.stageId==="unit7" && ["+ing","drop-e"].includes(q.rule))); }
-function ingContrastOptions(q){
-  const v=String(q?.verb||"");
-  const doubled=v+v.slice(-1)+"ing";
-  const regular=v+"ing";
-  // Beginner-safe deterministic layout: regular -ing (single final consonant)
-  // is always on the left; doubled final consonant is always on the right.
-  // NO_DOUBLE answers are regular; CVC answers are doubled.
-  return [regular,doubled];
-}
 function questionType(q){
   if(q.type) return q.type;
   if(q.poke) return "rule";
-  if(q.rule==="CVC"||q.rule==="NO_DOUBLE"||q.rule==="+ing") return "ing";
+  if(q.rule==="CVC"||q.rule==="+ing") return "ing";
   if(q.error) return "error";
   return "sentence";
 }
@@ -2061,9 +1701,9 @@ function showHint(){
       visual=idx>=0?`<div style="font-size:27px;font-weight:900;margin:8px 0">${escapeHtml(v.slice(0,idx))}<span class="red">${escapeHtml(v[idx])}</span>${escapeHtml(v.slice(idx+1))}</div>`:"";
     }
   }
-  const trigger=document.getElementById("hintTrigger");
+  const trigger=getActiveLearningElement("hintTrigger");
   if(trigger) trigger.style.display="none";
-  document.getElementById("hintArea").innerHTML=`<div class="hintbox">
+  getActiveLearningElement("hintArea").innerHTML=`<div class="hintbox">
     <div class="hint-head"><span class="hint-title">💡 Hint ${hintLevel} / 3</span><span class="muted">${hintLevel===3?"":"→"}</span></div>
     <div class="hint-en"><button class="speaker" style="width:34px;height:34px;font-size:14px" onclick="speak('${escapeHtml(h[0]+" "+h[1])}')">🔊</button>${hintTextWithPronunciation(h[0])}</div>
     ${visual}
@@ -2081,7 +1721,7 @@ function helpQuestionText(){
   return q.answer||"";
 }
 function logLearningHelp(action){
-  if(!currentSession || currentSession.qa || currentSession.warmup) return;
+  if(!currentSession || false || currentSession.warmup) return;
   const q=currentQuestion;
   const entry={
     ts:Date.now(), mode:"LEARNING_HELP", stage:currentSession.stageId, type:questionType(q),
@@ -2092,28 +1732,28 @@ function logLearningHelp(action){
     correct:false, hintLevel, exp:0, errorType:null, responseTime:Date.now()-(currentSession.questionStartedAt||Date.now()),
     learningIntegrity:"help", helpAction:action
   };
-  state.logs.unshift(entry); state.logs=state.logs.slice(0,300); saveState();
+  state.logs.unshift(entry); state.logs=state.logs.slice(0,1000); saveState();
 }
 function showHelpOptions(){
   if(answerLocked) return;
   if(hintLevel<3){ showHint(); return; }
-  const area=document.getElementById("hintArea");
+  const area=getActiveLearningElement("hintArea");
   if(!area) return;
   if(document.getElementById("helpActions")) return;
   area.insertAdjacentHTML("beforeend",`<div class="actions" id="helpActions" style="margin-top:12px">
     <button class="btn gold small" onclick="revealAnswer()">👀 看答案</button>
     <button class="btn small" onclick="skipQuestion()">⏭️ 先跳過</button>
   </div>`);
-  const trigger=document.getElementById("hintTrigger");
+  const trigger=getActiveLearningElement("hintTrigger");
   if(trigger) trigger.style.display="none";
 }
 function revealAnswer(){
-  if(answerLocked || !currentSession || currentSession.qa) return;
+  if(answerLocked || !currentSession || false) return;
   if(currentSession.warmup){
     answerLocked=true;
     const q=currentQuestion;
     const answer=helpQuestionText();
-    const f=document.getElementById("feedback");
+    const f=getActiveLearningElement("feedback");
     if(f) f.innerHTML=`<div class="big" style="color:#e7ca73">👀 Answer</div><div class="feedback-transform"><b>${escapeHtml(answer)}</b></div><div class="actions"><button class="btn primary small" onclick="nextWarmupQuestion()">繼續</button></div>`;
     return;
   }
@@ -2121,19 +1761,18 @@ function revealAnswer(){
   logLearningHelp("revealed");
   const q=currentQuestion;
   const answer=helpQuestionText();
-  const f=document.getElementById("feedback");
+  const f=getActiveLearningElement("feedback");
   if(f){
     f.innerHTML=`<div class="big" style="color:#e7ca73">👀 Answer</div>
       <div class="feedback-transform"><b>${escapeHtml(answer)}</b></div>
       <div class="feedback-note">這題不算答對，也不扣任何進度。看完答案後繼續就好。</div>
       <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
   }
-  if(q?.rule==="CVC") speak(q.verb||"");
-  else if(q?.sentence) speak(q.sentence.replace(/_____/g,q.answer||""));
+  if(q?.sentence) speak(q.sentence.replace(/_____/g,q.answer||""));
   else if(q?.poke) speak(thirdPersonVerb(q.verb,q.rule));
 }
 function skipQuestion(){
-  if(answerLocked || !currentSession || currentSession.qa) return;
+  if(answerLocked || !currentSession || false) return;
   if(currentSession.warmup){ nextWarmupQuestion(); return; }
   logLearningHelp("skipped");
   nextQuestion();
@@ -2176,7 +1815,7 @@ function handleAnswer(correct,answer,extra){
   }
   if(correct && qd.wrong>0) currentSession.improvementCount++;
 
-  const exp=(currentSession.qa || currentSession.superBoss) ? 0 : (firstCompletion ? (qd.hintUsed?15:25):0);
+  const exp=firstCompletion ? (qd.hintUsed?15:25) : 0;
 
   if(correct){
     if(firstCompletion){
@@ -2185,23 +1824,21 @@ function handleAnswer(correct,answer,extra){
       currentSession.correct++;
       if(qd.hintUsed) currentSession.hintCorrect++;
       else currentSession.independent++;
-      if(!currentSession.qa) addExp(exp);
-      if(!currentSession.qa) updateMastery(currentQuestion,true,qd.hintUsed,qd);
+      addExp(exp);
+      updateMastery(currentQuestion,true,qd.hintUsed,qd);
     }
   }else{
     if(qd.wrong===1) currentSession.wrong++;
-    if(!currentSession.qa && !currentSession.superBoss) markMasteryReview(currentQuestion);
+    if(true) markMasteryReview(currentQuestion);
   }
 
   const type=questionType(currentQuestion);
   const errorType=correct?null:detectError(currentQuestion,answer);
-  const integrity=currentSession.qa
-    ?"excluded"
-    :(currentSession.suspiciousAttempts>0?"suspicious":"normal");
+  const integrity="LEARNING";
 
   const logEntry={
     ts:Date.now(),
-    mode:currentSession.qa?"QA":(currentSession.superBoss?"SUPER_BOSS":"LEARNING"),
+    mode:"LEARNING",
     stage:currentSession.stageId,
     type,
     question:type==="rule"?`Which one has a verb that needs ${currentQuestion.answer}?`:currentQuestion.sentence,
@@ -2220,7 +1857,7 @@ function handleAnswer(correct,answer,extra){
     responseTime,
     learningIntegrity:integrity
   };
-  if(!currentSession.qa){ state.logs.unshift(logEntry); state.logs=state.logs.slice(0,300); }
+  state.logs.unshift(logEntry); state.logs=state.logs.slice(0,1000);
   saveState();
   renderFeedback(correct,answer,errorType,exp);
 }
@@ -2328,22 +1965,13 @@ function ruleTeachingMarkup(q,ex){
 }
 
 function renderFeedback(correct,answer,errorType,exp){
-  const f=document.getElementById("feedback");
+  const f=getActiveLearningElement("feedback");
   if(!f)return;
   if(correct){
     const q=currentQuestion;
-    if(currentSession.qa){
-      const diagnostic = q.poke
-        ? `<div class="qa-diagnostic"><b>QA</b> · Rule: ${escapeHtml(q.rule)} · Expected: ${escapeHtml(q.verb)} → ${escapeHtml(thirdPersonVerb(q.verb,q.rule))}</div>`
-        : `<div class="qa-diagnostic"><b>QA</b> · Answer: ${escapeHtml(q.answer||"—")}</div>`;
-      f.innerHTML=`<div class="big" style="color:#8ed19e">✓ Correct</div>${diagnostic}
-        <div class="actions"><button class="btn primary small" onclick="nextQuestion()">下一題</button></div>`;
-      speak("Correct");
-      return;
-    }
     const ex=q.poke ? verbExample(q) : null;
     // Lock the answered UI: the child may review the result, then press Next.
-    const hintTrigger=document.getElementById("hintTrigger");
+    const hintTrigger=getActiveLearningElement("hintTrigger");
     if(hintTrigger) hintTrigger.style.display="none";
     const choiceRow=document.querySelector(".choice-row");
     if(choiceRow){
@@ -2355,10 +1983,8 @@ function renderFeedback(correct,answer,errorType,exp){
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const baseSentence=isIngPractice(q)?cvcSentenceWithBlank(q):q.sentence;
-        const filled=escapeHtml(baseSentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
-        enableSentenceSpeech(sentenceEl);
       }
     }
     // Put the grammar transformation inside the correct Pokémon card so the child
@@ -2382,18 +2008,18 @@ function renderFeedback(correct,answer,errorType,exp){
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
-      f.innerHTML=`<div class="big" style="color:#8ed19e" role="status">✓ Correct!</div>${example}
+      f.innerHTML=`${example}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
         </div>`;
     }else{
-      f.innerHTML=`<div class="big" style="color:#8ed19e" role="status">✓ Correct!</div>${example}
+      f.innerHTML=`${example}
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
         </div>`;
     }
-    speak("Correct!");
+    speakSequence(ex ? ["Correct",ex.sentence] : ["Correct"]);
     return;
   }
   // Wrong answer NEVER advances the session. Keep the exact same question
@@ -2404,8 +2030,13 @@ function renderFeedback(correct,answer,errorType,exp){
   f.innerHTML=`<div class="big" style="color:#e98b91">Not quite.</div>
     <div class="sub">Try the same question again.</div>${wrongTeach}`;
   speak("Not quite. Try the same question again.");
-  // Keep the same question and choices; allow an immediate retry on touch screens.
-  answerLocked=false;
+  setTimeout(()=>{
+    if(!currentSession)return;
+    // Keep the exact same question and the same visible choices.
+    // Do NOT re-render: re-rendering can reshuffle Pokémon/options and make
+    // the child think the question changed. Unlock the current question only.
+    answerLocked=false;
+  },700);
 }
 
 function retryQuestion(keepHint=false){
@@ -2426,52 +2057,13 @@ function finishSession(){
   const cleanIndependent=Object.values(s.questionAttemptData||{}).filter(q=>q.completed && !q.hintUsed).length;
   const pct=Math.round(cleanIndependent/Math.max(1,total)*100);
 
-  if(s.superBoss){
-    const cleared = s.correct===3;
-    const title = cleared ? "👑 超級魔王擊破！" : "🔥 魔王還在等你！";
-    const note = cleared ? "三題全部獨立答對，太強了！" : `答對 ${s.correct} / 3 題。這次不扣分，練熟後再來挑戰。`;
-    showModal(`<div class="reward-title">${title}</div>
-      <p>${note}</p>
-      <p class="muted">超級魔王關不會降低 Mastery，也不會扣 EXP 或關卡進度。</p>
-      <div class="actions">
-        <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
-      </div>`);
-    currentSession=null;
-    return;
-  }
-
-  if(s.qa){
-    showModal(`<div class="reward-title">🧪 QA 檢查完成</div>
-      <p>共 ${total} 題 · ${s.correct} 題首次完成正確</p>
-      <p class="muted">這次 QA 完全獨立於孩子的學習資料，不影響 EXP、Mastery、關卡、休息計時、Pokémon 或獎勵。</p>
-      <div class="actions">
-        <button class="btn primary" onclick="closeModal();showScreen('qa')">回 QA</button>
-      </div>`);
-    currentSession=null;
-    return;
-  }
-
-  if(!s.qa){
+  if(!false){
     const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
     old.best=Math.max(old.best,pct); old.plays++; old.totalCorrect+=s.correct; old.totalQuestions+=total;
     state.stageStats[s.stageId]=old;
-    let unlockedText="";
-    let unlockedNextId=null;
-    const idx=STAGES.findIndex(x=>x.id===s.stageId);
-    if(s.stageId==="unit4" && pct>=70){
-      // Passing Unit 4 completes the foundation path. From then on,
-      // Units 5–9 are all open; mastery can guide practice, but never blocks access.
+      // All stages are available from the beginning; completion never gates access.
       state.unlocked=STAGES.map(x=>x.id);
-      unlockedText=`<p style="color:#9ec8e7">🔓 前四關完成！第 5～9 關全部開放，可以自由選擇。</p>`;
-      unlockedNextId=STAGES[4]?.id||null;
-    }else if(pct>=70 && idx<STAGES.length-1){
-      const next=STAGES[idx+1].id;
-      if(!state.unlocked.includes(next)){
-        state.unlocked.push(next);
-        unlockedNextId=next;
-        unlockedText=`<p style="color:#9ec8e7">🔓 已解鎖：${STAGES[idx+1].title}</p>`;
-      }
-    }
+      const unlockedNextId=null;
     s.reward=maybeReward(s,pct);
     saveState();
     let shouldRest=false;
@@ -2490,9 +2082,9 @@ function finishSession(){
       <div class="reward-title">🌟 Mission Complete!</div>
       <p>本次練習共 ${total} 題。</p>
       <p class="muted">完成 ${s.uniqueCompleted} / ${total} 題 · 獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
-      ${unlockedText}${levelHtml}${rewardHtml}
+      ${levelHtml}${rewardHtml}
       ${((state.stageStats[s.stageId]?.best||0)>=70) ? `<p class="small-note">💡 想挑戰看看？通關後可以隨時開啟「加強難度」，也可以隨時取消。</p>` : ""}
-      ${pct>=70 ? `<p class="muted">✓ 本關達成通關標準。</p>` : `<p style="color:#e5c86f">再練一次就好。達到 70% 即可解鎖下一關。</p>`}
+      ${pct>=70 ? `<p class="muted">✓ 本關練習已完成。</p>` : `<p style="color:#e5c86f">可以再練習一次，也可以直接選擇其他關卡。</p>`}
       <div class="actions">
         ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入第 5 關</button>`:""}
         <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
@@ -2654,39 +2246,32 @@ function renderLogs(){
   const acc=learning.length?Math.round(correct/learning.length*100):0;
   document.getElementById("stats").innerHTML=`
     <div class="card stat"><span>學習答題</span><b>${learning.length}</b></div>
-    <div class="card stat"><span>整體正確率</span><b>${acc}%</b></div>
+    <div class="card stat"><span>每次作答正確率</span><b>${acc}%</b></div>
     <div class="card stat"><span>獨立答對</span><b>${independent}</b></div>
     <div class="card stat"><span>Hint 後答對</span><b>${hintCorrect}</b></div>`;
-  const all=[...state.logs].sort((a,b)=>b.ts-a.ts).slice(0,300);
+  const all=state.logs.map((l,index)=>({...l,_logIndex:index})).sort((a,b)=>b.ts-a.ts).slice(0,1000);
   const groups={};
   all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
   const rows=[];
   Object.keys(groups).forEach(date=>{
-    rows.push(`<tr class="date-row"><td colspan="8"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
+    rows.push(`<tr class="date-row"><td colspan="9"><b>📅 ${date}</b><span class="muted" style="margin-left:8px">${groups[date].length} 筆</span></td></tr>`);
     groups[date].forEach(l=>{
       const isHelp=l.mode==="LEARNING_HELP";
       const status=isHelp?(l.helpAction==="revealed"?"👀 看答案":"⏭️ 跳過"):(l.correct?"✓":"✗");
       const statusClass=isHelp?"":(l.correct?"ok":"bad");
-      const modeLabel=l.mode==="SUPER_BOSS"?"魔王":isHelp?"求助":"學習";
-      rows.push(`<tr><td>${fmtTime(l.ts)}</td><td>${modeLabel}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${statusClass}">${status}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td></tr>`);
+      const modeLabel=isHelp?"求助":"學習";
+      rows.push(`<tr><td>${fmtTime(l.ts)}</td><td>${modeLabel}</td><td>${escapeHtml(l.question)}</td><td><b>${escapeHtml(l.selectedAnswer||l.answer||"—")}</b>${l.attemptNumber?`<div class="muted">第 ${l.attemptNumber} 次</div>`:""}</td><td>${escapeHtml(l.correctAnswer||"—")}</td><td class="${statusClass}">${status}</td><td>${l.hintLevel?`H${l.hintLevel}`:"—"}</td><td>+${l.exp||0}</td><td><button class="btn small red" onclick="deleteLog(${l._logIndex})">刪除</button></td></tr>`);
     });
   });
-  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="8" class="muted">目前還沒有紀錄。</td></tr>`;
+  document.getElementById("logBody").innerHTML=rows.join("") || `<tr><td colspan="9" class="muted">目前還沒有紀錄。</td></tr>`;
 }
-function exportLogsTxt(){
-  const logs=[...state.logs].sort((a,b)=>a.ts-b.ts);
-  const lines=["Anson 英文文法冒險｜學習紀錄","匯出時間："+fmtDateTime(Date.now()),"紀錄筆數："+logs.length,"", "時間\t模式\t關卡\t題型\t題目\t作答\t正確答案\t結果\t提示層級\tEXP\t作答耗時(ms)"];
-  logs.forEach(l=>lines.push([
-    fmtDateTime(l.ts),l.mode||"",l.stage||"",l.type||"",l.question||"",l.selectedAnswer||l.answer||"",l.correctAnswer||"",l.correct?"正確":"錯誤",l.hintLevel||0,l.exp||0,l.responseTime??""
-  ].map(v=>String(v).replace(/[\t\r\n]+/g," ")).join("\t")));
-  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/plain;charset=utf-8"});
-  const url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download=`Anson_學習紀錄_${new Date().toISOString().slice(0,10)}.txt`;
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+function deleteLog(index){
+  if(!Number.isInteger(index) || index<0 || index>=state.logs.length) return;
+  state.logs.splice(index,1);
+  saveState(); renderLogs();
 }
-function fmtDateTime(ts){const d=new Date(ts);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${fmtTime(ts)}`}
 function clearLogs(){
-  if(!confirm("確定清除學習紀錄？Mastery、EXP、關卡進度與寶可夢不會被清除。")) return;
+  if(!confirm("確定清除全部學習紀錄？Mastery、EXP、關卡進度與寶可夢不會被清除。")) return;
   state.logs=[];
   saveState(); renderLogs();
 }
@@ -2726,7 +2311,7 @@ function learningTime(){
   return state.learning.learningTime;
 }
 function accumulateLearningTime(suppressReminder=false){
-  if(!currentSession || currentSession.qa || !currentSession.learningSegmentStartedAt) return;
+  if(!currentSession || false || !currentSession.learningSegmentStartedAt) return;
   const now=Date.now();
   const t=learningTime();
   t.activeMs += Math.max(0,now-currentSession.learningSegmentStartedAt);
@@ -2742,7 +2327,7 @@ function accumulateLearningTime(suppressReminder=false){
 }
 /* REST REMINDER TEMPORARILY DISABLED — re-enable later.
 function showRestReminder(){
-  if(currentSession && currentSession.qa) return;
+  if(currentSession && false) return;
   if(currentSession) currentSession.restPaused=true;
   showModal(`<div style="font-size:48px">🌿</div><div class="reward-title" style="font-size:30px">Time to rest</div><p>你已經學習約 30 分鐘了。</p><p class="muted">建議休息 10 分鐘，讓眼睛和大腦休息一下。</p><p class="small-note">這是健康提醒，不是遊戲懲罰。你可以現在休息，也可以稍後再休息。</p><div class="actions"><button class="btn primary" onclick="dismissRestReminder()">知道了</button></div>`);
 }
@@ -2759,7 +2344,7 @@ function dismissRestReminder(){
 function startLearningTicker(){
   if(learningTicker) clearInterval(learningTicker);
   learningTicker=setInterval(()=>{
-    if(currentSession && !currentSession.qa && !currentSession.restPaused && document.getElementById("learn")?.classList.contains("active")){
+    if(currentSession && true && !currentSession.restPaused && document.getElementById("learn")?.classList.contains("active")){
       const t=learningTime();
       if(currentSession.learningSegmentStartedAt && Date.now()-currentSession.learningSegmentStartedAt>=10000){
         accumulateLearningTime();
