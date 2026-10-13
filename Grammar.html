@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.58｜Y 規則配對底色與測驗結果檢查</title>
+<title>Anson 英文文法冒險 V4.61｜完整程式檢查與測驗回饋</title>
 <style>
 :root{
   --bg:#081018;
@@ -390,7 +390,7 @@ button:disabled{cursor:default;opacity:.8;}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.57｜Y 規則四種變化、字母配對底色、清楚的答題結果。</p>
+      <p class="small-note">V4.61｜精簡規則說明，完成後顯示逐題結果。</p>
       <p>短時間練習、單字發音、句型應用與學習夥伴。</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
@@ -407,7 +407,7 @@ button:disabled{cursor:default;opacity:.8;}
 <section id="map" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
   <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">所有關卡皆已開放，可自由選擇</span></div>
-  <div class="card small-note" style="margin-bottom:12px"><b>使用方式：</b>前 9 關是原有文法單元；第 10–15 關是新增的「一般過去式專區」，可直接選擇任一關練習。</div>
+  <div class="card small-note" style="margin-bottom:12px"><b>使用方式：</b>前 9 關是原有文法單元；第 10–16 關是「一般過去式專區」，Y 字尾與 CVC 雙寫分開練習，可直接選擇任一關練習。</div>
   <div class="map" id="stageMap"></div>
   <div class="section-title"><h2>⭐ 下一步建議</h2></div>
   <div class="card" id="recommendation"></div>
@@ -415,7 +415,7 @@ button:disabled{cursor:default;opacity:.8;}
 
 <section id="learn" class="screen">
   <div class="learning-header">
-    <button class="btn small" onclick="endSession()">← 離開</button>
+    <button class="btn small" onclick="endSession()">← 回關卡地圖</button>
     <div style="flex:1;display:flex;justify-content:center;gap:10px;align-items:center">
       <b id="stageTitle">ES 森林</b>
       <span class="muted" id="questionCounter">1 / 10</span>
@@ -529,9 +529,10 @@ const STAGES = [
  {id:"past1",title:"10. Past Tense：was / were",rule:"was / were",desc:"依主詞選 was 或 were，先練習 be 動詞過去式",types:["pastWasWere"],newTypes:["pastWasWere"],unlock:9},
  {id:"past2",title:"11. Past Tense：had",rule:"had",desc:"認識 have / has 的過去式 had，練習不同主詞",types:["pastHad"],newTypes:["pastHad"],unlock:10},
  {id:"past3",title:"12. Past Tense：-ed / -d",rule:"regular past",desc:"規則動詞加 -ed；以 e 結尾的動詞加 -d",types:["pastRegular"],newTypes:["pastRegular"],unlock:11},
- {id:"past4",title:"13. Past Tense：-ied / 雙寫",rule:"-ied / doubling",desc:"子音 + y → ied；部分 CVC 動詞雙寫尾字母再加 -ed",types:["pastSpelling"],newTypes:["pastSpelling"],unlock:12},
- {id:"past5",title:"14. Past Tense：Irregular Verbs",rule:"irregular verbs",desc:"練習常見不規則過去式，例如 went、saw、ate、came",types:["pastIrregular"],newTypes:["pastIrregular"],unlock:13},
- {id:"past6",title:"15. Past Tense：Mixed Review",rule:"past tense review",desc:"混合練習 was / were、had、規則與不規則動詞",types:["pastWasWere","pastHad","pastRegular","pastSpelling","pastIrregular"],newTypes:[],unlock:14}
+ {id:"past4",title:"13. Past Tense：Y 規則",rule:"Y → -ied / -ed",desc:"專心練習 Y：子音 + y → ied；母音 + y 保留 y 再加 -ed",types:["pastY"],newTypes:["pastY"],unlock:12},
+ {id:"past4b",title:"14. Past Tense：CVC 雙寫",rule:"CVC doubling",desc:"專心練習短母音 CVC 動詞：雙寫最後的子音，再加 -ed",types:["pastDouble"],newTypes:["pastDouble"],unlock:13},
+ {id:"past5",title:"15. Past Tense：Irregular Verbs",rule:"irregular verbs",desc:"練習常見不規則過去式，例如 went、saw、ate、came",types:["pastIrregular"],newTypes:["pastIrregular"],unlock:14},
+ {id:"past6",title:"16. Past Tense：Mixed Review",rule:"past tense review",desc:"混合練習 was / were、had、-ed / -d、Y → -ied、CVC 雙寫與不規則動詞",types:["pastWasWere","pastHad","pastRegular","pastY","pastDouble","pastIrregular"],newTypes:[],unlock:15}
 ];
 
 // 9-unit progression: each unit has a short warm-up, then formal practice.
@@ -782,6 +783,16 @@ const QUESTION_BANK = {
 };
 
 
+// V4.61: concise one-rule feedback and map navigation; keep Y → -ied and CVC doubling separate so Stage 13
+// cannot randomly begin with a non-Y item such as hop → hopped.
+const pastSpellingSource = QUESTION_BANK.pastSpelling || [];
+QUESTION_BANK.pastY = pastSpellingSource.filter(q => q.rule === "past-ied").concat([
+  {id:"py01",sentence:"We _____ soccer after school yesterday.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
+  {id:"py02",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stay","stayed"],answer:"stayed",rule:"past-ed"}
+]);
+QUESTION_BANK.pastDouble = pastSpellingSource.filter(q => q.rule === "past-double");
+delete QUESTION_BANK.pastSpelling;
+
 // Rule Hunt examples: every vocabulary item is a VERB. Examples are contextual,
 // not noun-plural examples. They appear after a correct answer, before the next question.
 const VERB_EXAMPLE_OBJECTS = {
@@ -970,7 +981,7 @@ function downloadBlob(blob, filename){
 }
 function exportBackup(){
   try{
-    const payload={app:"Anson English Grammar Adventure",version:"V4.58",exportedAt:new Date().toISOString(),data:state};
+    const payload={app:"Anson English Grammar Adventure",version:"V4.61",exportedAt:new Date().toISOString(),data:state};
     downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`Anson_Grammar_Backup_${new Date().toISOString().slice(0,10)}.json`);
     showToast("完整備份已開始下載。請將檔案保存在安全的位置。");
   }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
@@ -1172,7 +1183,11 @@ function weightedStagePool(stage){
 function stageQuestions(stageId,count=5){
   const s=STAGES.find(x=>x.id===stageId);
   if(!s) return [];
-  const pool=weightedStagePool(s);
+  let pool=weightedStagePool(s);
+  // Hard isolation: Stage 13 is only Y-spelling past tense; Stage 14 is only CVC doubling.
+  // This protects the stage even if future edits accidentally add another bank item.
+  if(stageId==="past4") pool=pool.filter(q=>q.rule==="past-ied" || (q.rule==="past-ed" && /[aeiou]y$/i.test(q.verb||"")));
+  if(stageId==="past4b") pool=pool.filter(q=>q.rule==="past-double");
   if(!pool.length) return [];
 
   // Unit 7 deliberately mixes the new CVC rule with regular -ing contrast
@@ -1277,7 +1292,7 @@ function startStage(stageId){
   };
   document.getElementById("stageTitle").textContent=stage.title;
   showScreen("learn");
-  if(stageId==="unit3"){
+  if(stageId==="unit3" || stageId==="past4"){
     showYRuleIntro();
   }else{
     startWarmup();
@@ -1343,6 +1358,16 @@ function buildWarmupQuestions(stageId){
       pool.push({...q,_sourceType:t});
     });
   });
+  // Keep the warm-up aligned with the selected stage as strictly as formal practice.
+  if(stageId==="past4") {
+    for(let i=pool.length-1;i>=0;i--) {
+      const q=pool[i];
+      if(!(q.rule==="past-ied" || (q.rule==="past-ed" && /[aeiou]y$/i.test(q.verb||"")))) pool.splice(i,1);
+    }
+  }
+  if(stageId==="past4b") {
+    for(let i=pool.length-1;i>=0;i--) if(pool[i].rule!=="past-double") pool.splice(i,1);
+  }
   // Warm-up is intentionally easy and short. Prefer the new rule, then review.
   const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
   const source=easy.length>=2?easy:pool;
@@ -1457,9 +1482,10 @@ function handleWarmupAnswer(correct,answer,extra){
         if(speaker) speaker.style.display="none";
         selected.classList.add("correct-choice");
       }
-      const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}`;
+      const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>`;
+      const applicableExplanation=correctRuleExplanation(q) || (type==="rule" ? ruleTeachingMarkup(q,ex) : "");
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>`;
+      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}${applicableExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>`;
       speak("Correct");
       speak(ex.sentence);
       return;
@@ -1478,10 +1504,12 @@ function handleWarmupAnswer(correct,answer,extra){
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-    const pastExplanation=String(q.rule||"").startsWith("past-") ? correctRuleExplanation(q) : "";
-    f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${pastExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
-    if(!pastExplanation) speak("Correct");
-    if(q.sentence && !String(q.rule||"").startsWith("past-")) speak(q.sentence.replace("_____",answer));
+    const isPastWarmup=String(q.rule||"").startsWith("past-");
+    const pastExplanation=isPastWarmup ? correctRuleExplanation(q) : "";
+    const pastSentenceAudio=isPastWarmup ? pastSentenceAudioMarkup(q) : "";
+    f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${pastExplanation}${pastSentenceAudio}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
+    if(!isPastWarmup) speak("Correct");
+    if(q.sentence && !isPastWarmup) speak(q.sentence.replace("_____",answer));
     return;
   }
   const pastWrong=String(currentQuestion?.rule||"").startsWith("past-");
@@ -1496,7 +1524,7 @@ function handleWarmupAnswer(correct,answer,extra){
     : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(currentQuestion.answer));
   if(rightChoice) rightChoice.classList.add("correct");
   const wrongDetail=`<div class="result-detail">你選的是：<b>${escapeHtml(selectedLabel)}</b><br>正確答案：<b style="color:#7fc79a">${escapeHtml(correctLabel)}</b></div>`;
-  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}<div class="result-detail">先看一下正確答案和規則，再重新選擇。</div>${pastWrong?correctRuleExplanation(currentQuestion):((currentQuestion?.poke)?ruleTeachingMarkup(currentQuestion,verbExample(currentQuestion)):"")}`;
+  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}${pastWrong?correctRuleExplanation(currentQuestion):((currentQuestion?.poke)?ruleTeachingMarkup(currentQuestion,verbExample(currentQuestion)):"")}`;
   if(currentQuestion?.sentence && pastWrong){
     const sentenceMarkup=pastSentenceAudioMarkup(currentQuestion);
     if(sentenceMarkup) f.insertAdjacentHTML("beforeend",sentenceMarkup);
@@ -1554,7 +1582,7 @@ function validateQuestionBank(){
   const uniquePokes=new Set(all.map(q=>q.poke));
   if(uniquePokes.size<4) problems.push("Rule questions need at least 4 distinct Pokémon.");
   // Validate every past-tense question as well as the original present-tense banks.
-  const pastTypes=["pastWasWere","pastHad","pastRegular","pastSpelling","pastIrregular"];
+  const pastTypes=["pastWasWere","pastHad","pastRegular","pastY","pastDouble","pastIrregular"];
   const pastIds=new Set();
   pastTypes.forEach(type=>{
     (QUESTION_BANK[type]||[]).forEach(q=>{
@@ -1562,8 +1590,11 @@ function validateQuestionBank(){
       pastIds.add(q.id);
       if(!Array.isArray(q.choices) || q.choices.filter(c=>c===q.answer).length!==1) problems.push(`${type}: answer/choices mismatch ${q.id}`);
       if(!q.sentence || !q.sentence.includes("_____")) problems.push(`${type}: missing sentence blank ${q.id}`);
-      if(type==="pastSpelling" && q.rule==="past-ied" && !/[^aeiou]y$/i.test(q.verb)) problems.push(`${type}: invalid -ied base ${q.id}`);
-      if(type==="pastSpelling" && q.rule==="past-double" && !/(?:^|[^aeiou])[aeiou][^aeiou]$/i.test(q.verb)) problems.push(`${type}: check CVC pattern ${q.id}`);
+      if(type==="pastY" && q.rule==="past-ied" && !/[^aeiou]y$/i.test(q.verb)) problems.push(`${type}: invalid -ied base ${q.id}`);
+      if(type==="pastY" && q.rule==="past-ed" && !/[aeiou]y$/i.test(q.verb)) problems.push(`${type}: vowel+y -ed item has invalid base ${q.id}`);
+      if(type==="pastY" && !["past-ied","past-ed"].includes(q.rule)) problems.push(`${type}: unrelated rule ${q.id}`);
+      if(type==="pastDouble" && q.rule!=="past-double") problems.push(`${type}: unrelated rule ${q.id}`);
+      if(type==="pastDouble" && !/(?:^|[^aeiou])[aeiou][^aeiou]$/i.test(q.verb)) problems.push(`${type}: check CVC pattern ${q.id}`);
       if(type==="pastRegular" && q.rule==="past-d" && !/e$/i.test(q.verb)) problems.push(`${type}: -d rule requires final e ${q.id}`);
     });
   });
@@ -1964,13 +1995,13 @@ function correctRuleExplanation(q){
   if(r==="past-d") return `<div class="rule-teach"><div class="past-rule-copy">動詞字尾已有 <span class="past-vowel">e</span>，直接加上 <span class="past-ending">-d</span>。</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-1))}<span class="past-ending">d</span></div></div>`;
   if(r==="past-double") {
     const doubled = v && v.length>=3 ? v.slice(-1) : "";
-    return `<div class="rule-teach"><div class="past-rule-copy">這個動詞是短母音的 CVC 結構，要先把字尾子音再寫一次，再加上 <span class="past-ending">-ed</span>。</div><div class="past-rule-copy">${safe(v)} → ${safe(v.slice(0,-1))}<span class="past-consonant">${safe(doubled+doubled)}</span><span class="past-ending">ed</span></div><div class="past-rule-copy">C＝子音　V＝母音　C＝子音</div></div>`;
+    return `<div class="rule-teach"><div class="past-rule-copy">短母音 CVC，字尾子音重複加 <span class="past-ending">-ed</span>。</div><div class="past-rule-copy">${safe(v)} → ${safe(v.slice(0,-1))}<span class="past-consonant">${safe(doubled+doubled)}</span><span class="past-ending">ed</span></div><div class="past-rule-copy">C＝子音　V＝母音　C＝子音</div></div>`;
   }
   if(r==="past-was-were") return `<div class="rule-teach"><div class="past-rule-copy"><span class="past-ending">was</span> 用於 I、he、she、it；<span class="past-were">were</span> 用於 you、we、<span class="past-they">they</span>。</div></div>`;
   if(r==="past-had") return `<div class="rule-teach"><div class="past-rule-copy">表示過去的「有」，<span class="past-ending">have</span> 和 <span class="past-ending">has</span> 都要改成 <span class="past-ending">had</span>。</div></div>`;
   if(r==="past-irregular"){
     if(v==="catch") return `<div class="rule-teach"><div class="past-rule-copy"><span class="past-ending">catch</span> 的過去式是不規則變化，要記住是 <span class="past-ending">caught</span>，不是 catched。</div><div class="past-rule-copy">catch → <span class="past-ending">caught</span></div></div>`;
-    return `<div class="rule-teach"><div class="past-rule-copy">這是<strong>不規則動詞</strong>，過去式不按照一般加字尾的規則變化，需要記住它的變化。</div><div class="past-rule-copy"><span class="past-ending">${safe(v)} → ${safe(a)}</span></div></div>`;
+    return `<div class="rule-teach"><div class="past-rule-copy"><span class="past-ending">${safe(v)} → ${safe(a)}</span></div></div>`;
   }
   // Keep the existing present-tense Verb explanations unchanged.
   if(["consonant+y","vowel+y"].includes(r)){
@@ -2050,8 +2081,8 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
       }
     }
     const type=questionType(q);
-    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}` : "";
-    const ruleExplanation=correctRuleExplanation(q);
+    const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
+    const ruleExplanation=correctRuleExplanation(q) || (type==="rule" && ex ? ruleTeachingMarkup(q,ex) : "");
     const pastSentenceAudio=pastSentenceAudioMarkup(q);
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
@@ -2099,7 +2130,7 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
     : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(currentQuestion.answer));
   if(rightChoice) rightChoice.classList.add("correct");
   const wrongDetail=`<div class="result-detail">你選的是：<b>${escapeHtml(selectedLabel)}</b><br>正確答案：<b style="color:#7fc79a">${escapeHtml(correctLabel)}</b></div>`;
-  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}<div class="result-detail">先看一下正確答案和規則，再重新選擇。</div>${isPastTenseQuestion?pastWrongExplanation:wrongTeach}${pastSentenceAudio}`;
+  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}${isPastTenseQuestion?pastWrongExplanation:wrongTeach}${pastSentenceAudio}`;
   if(!isPastTenseQuestion) speak("答錯了，再試一次");
   setTimeout(()=>{
     if(!currentSession)return;
@@ -2166,7 +2197,7 @@ function finishSession(){
     const finalRate=finalCompletionPct;
     showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
       <div class="reward-title">🌟 本關完成！</div>
-      <p>本次共 ${total} 題，以下會逐題告訴你第一次是否答對，以及最後有沒有修正成功。</p>
+      <p role="status">本次共 ${total} 題。每一題都會標示第一次是否答對、最後是否修正成功，以及正確答案。</p>
       <div class="test-result-score"><div><span>第一次答對</span><b>${s.firstTryCorrect} / ${total}</b><strong>${firstTryRate}%</strong></div><div><span>最後完成答對</span><b>${finalCorrectCount} / ${total}</b><strong>${finalRate}%</strong></div><div><span>修正次數</span><b>${s.improvementCount}</b><strong>次</strong></div></div>
       ${buildSessionReviewMarkup(s)}
       ${levelHtml}${rewardHtml}
@@ -2273,10 +2304,10 @@ function tinyConfetti(){
 function showModal(content){document.getElementById("modalBox").innerHTML=content;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 function endSession(){
-  if(!currentSession){showScreen("home");return}
-  accumulateLearningTime();
+  if(currentSession) accumulateLearningTime();
   currentSession=null;
-  showScreen("home");
+  closeModal();
+  showScreen("map");
 }
 function detectError(q,answer){
   if(q.rule==="consonant+y") return "consonant_y_rule";
