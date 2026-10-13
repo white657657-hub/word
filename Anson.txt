@@ -100,8 +100,8 @@ flag,國旗
 "mix up","混合起來"
 "trade","交易"
 "recess","課間休息"
-
-"English","英文"
+[W10]
+"English","中文"
 "bored","無聊的"
 "feelings","情懷"
 "hungry","飢餓的"
