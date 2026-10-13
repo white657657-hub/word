@@ -40,7 +40,7 @@ lizard,蜥蜴
 [W5]
 castle,城堡
 gold,黃金
-gloden,金色的
+golden,金色的
 today,今天
 American,美國的
 Australia,澳洲
@@ -66,8 +66,8 @@ July,七月
 [W7]
 English,中文
 June,六月
-March,行進
-May,可能
+March,三月
+May,五月
 December,十二月
 November,十一月
 October,十月
