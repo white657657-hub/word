@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.43</title>
+<title>Anson 英文文法冒險 V4.46｜過去式專區</title>
 <style>
 :root{
   --bg:#081018;
@@ -298,6 +298,7 @@ main{margin-top:18px}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
+      <p class="small-note">V4.46｜新增一般過去式 6 個單元；原有現在式文法與學習紀錄功能保留。</p>
       <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
@@ -322,6 +323,7 @@ main{margin-top:18px}
 <section id="map" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
   <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">所有關卡皆已開放，可自由選擇</span></div>
+  <div class="card small-note" style="margin-bottom:12px"><b>使用方式：</b>前 9 關是原有文法單元；第 10–15 關是新增的「一般過去式專區」，可直接選擇任一關練習。</div>
   <div class="map" id="stageMap"></div>
   <div class="section-title"><h2>⭐ 下一步建議</h2></div>
   <div class="card" id="recommendation"></div>
@@ -356,9 +358,11 @@ main{margin-top:18px}
 
 <section id="logs" class="screen">
   <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>📊 學習紀錄</h2><div><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
+  <div class="section-title"><h2>📊 學習紀錄與分析</h2><div class="settings-actions"><button class="btn primary small" onclick="exportLogsCSV()">⬇ 下載 Log CSV</button><button class="btn small" onclick="exportAnalysisCSV()">⬇ 下載分析報表</button><button class="btn small red" onclick="clearLogs()">🗑 清除紀錄</button></div></div>
   <div class="stats" id="stats"></div>
-  <div class="section-title"><h2>學習紀錄（最多保留 1,000 筆，可逐筆刪除）</h2></div><p class="small-note">正確率以每一次作答計算；同一題重答會分別計入，不等於首次作答正確率。刪除紀錄只會移除紀錄列，不會回收已取得的 EXP 或進度。</p>
+  <div class="card" style="margin-bottom:14px"><h3>📈 單元與規則分析</h3><p class="small-note">只統計正式學習作答，不包含求助操作。正確率＝答對次數 ÷ 作答次數；同一題重答會逐次計入。樣本少時，百分比僅供參考。</p><div id="analysisSummary"></div></div>
+  <div class="card" style="margin-bottom:14px"><h3>🔎 常錯字／常見錯誤</h3><p class="small-note">依錯誤作答次數排序。可用來找出常錯的動詞、選項與文法規則；答錯紀錄不足時會明確標示。</p><div id="commonErrors"></div></div>
+  <div class="section-title"><h2>詳細學習紀錄（最多保留 1,000 筆，可逐筆刪除）</h2></div><p class="small-note">刪除紀錄只會移除紀錄列，不會回收已取得的 EXP 或進度。建議定期下載 CSV 或完整 JSON 備份。</p>
   <div class="card" style="overflow:auto"><table class="log-table"><thead><tr><th>時間</th><th>模式</th><th>題目</th><th>孩子選擇</th><th>正確答案</th><th>結果</th><th>Hint</th><th>EXP</th><th>操作</th></tr></thead><tbody id="logBody"></tbody></table></div>
 </section>
 
@@ -437,7 +441,13 @@ const STAGES = [
  {id:"unit6",title:"6. All S / ES / Y",rule:"All S / ES / Y",desc:"Build speed and confidence",types:["ruleS","ruleES","ruleIES"],newTypes:[],unlock:5},
  {id:"unit7",title:"7. V-ing：CVC Doubling",rule:"V-ing + CVC",desc:"CVC words double the final consonant; some questions are mixed to check when NOT to double",types:["ingCVC","ingRegular"],newTypes:["ingCVC"],unlock:6},
  {id:"unit8",title:"8. Cumulative Review",rule:"Cumulative Review",desc:"Review all learned rules",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:7},
- {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8}
+ {id:"unit9",title:"9. Final Review",rule:"Final Review",desc:"Final review of the full learning scope",types:["ruleS","ruleES","ruleIES","ing"],newTypes:[],unlock:8},
+ {id:"past1",title:"10. Past Tense：was / were",rule:"was / were",desc:"依主詞選 was 或 were，先練習 be 動詞過去式",types:["pastWasWere"],newTypes:["pastWasWere"],unlock:9},
+ {id:"past2",title:"11. Past Tense：had",rule:"had",desc:"認識 have / has 的過去式 had，練習不同主詞",types:["pastHad"],newTypes:["pastHad"],unlock:10},
+ {id:"past3",title:"12. Past Tense：-ed / -d",rule:"regular past",desc:"規則動詞加 -ed；以 e 結尾的動詞加 -d",types:["pastRegular"],newTypes:["pastRegular"],unlock:11},
+ {id:"past4",title:"13. Past Tense：-ied / 雙寫",rule:"-ied / doubling",desc:"子音 + y → ied；部分 CVC 動詞雙寫尾字母再加 -ed",types:["pastSpelling"],newTypes:["pastSpelling"],unlock:12},
+ {id:"past5",title:"14. Past Tense：Irregular Verbs",rule:"irregular verbs",desc:"練習常見不規則過去式，例如 went、saw、ate、came",types:["pastIrregular"],newTypes:["pastIrregular"],unlock:13},
+ {id:"past6",title:"15. Past Tense：Mixed Review",rule:"past tense review",desc:"混合練習 was / were、had、規則與不規則動詞",types:["pastWasWere","pastHad","pastRegular","pastSpelling","pastIrregular"],newTypes:[],unlock:14}
 ];
 
 // 9-unit progression: each unit has a short warm-up, then formal practice.
@@ -610,7 +620,62 @@ const QUESTION_BANK = {
     {id:"err11",sentence:"Tom try to open the box.",choices:["try","trys","tries","tryes"],answer:"tries",verb:"try",rule:"subject"},{id:"err12",sentence:"The teacher mix the colors.",choices:["mix","mixes","mixs","mixies"],answer:"mixes",verb:"mix",rule:"subject"},
     {id:"err13",sentence:"He push the door.",choices:["push","pushes","pushs","pushies"],answer:"pushes",verb:"push",rule:"subject"},{id:"err14",sentence:"My sister study English.",choices:["study","studys","studies","studyes"],answer:"studies",verb:"study",rule:"subject"},
     {id:"err15",sentence:"The boy carry the bag.",choices:["carry","carrys","carries","carryes"],answer:"carries",verb:"carry",rule:"subject"},{id:"err16",sentence:"Dad fix the bike.",choices:["fix","fixes","fixs","fixies"],answer:"fixes",verb:"fix",rule:"subject"}
-]
+],
+  pastWasWere:[
+    {id:"pw01",sentence:"I _____ at the park yesterday.",verb:"I",choices:["was","were"],answer:"was",rule:"past-was-were"},
+    {id:"pw02",sentence:"They _____ happy after the game.",verb:"they",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw03",sentence:"She _____ at home last night.",verb:"she",choices:["was","were"],answer:"was",rule:"past-was-were"},
+    {id:"pw04",sentence:"We _____ late for school yesterday.",verb:"we",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw05",sentence:"The cat _____ under the table.",verb:"the cat",choices:["was","were"],answer:"was",rule:"past-was-were"},
+    {id:"pw06",sentence:"You _____ very kind yesterday.",verb:"you",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw07",sentence:"My friends _____ in the library.",verb:"my friends",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw08",sentence:"It _____ cold this morning.",verb:"it",choices:["was","were"],answer:"was",rule:"past-was-were"}
+  ],
+  pastHad:[
+    {id:"ph01",sentence:"I _____ a red pencil yesterday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph02",sentence:"He _____ a big lunch at noon.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
+    {id:"ph03",sentence:"They _____ a great time at the zoo.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph04",sentence:"We _____ two classes yesterday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph05",sentence:"The dog _____ some water after the walk.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
+    {id:"ph06",sentence:"She _____ a cold last week.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
+    {id:"ph07",sentence:"Anson and I _____ fun at the museum.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph08",sentence:"My brother _____ a new book yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"}
+  ],
+  pastRegular:[
+    {id:"pr01",sentence:"Yesterday, I _____ to school with Dad.",verb:"walk",choices:["walk","walked"],answer:"walked",rule:"past-ed"},
+    {id:"pr02",sentence:"She _____ a picture last night.",verb:"paint",choices:["paint","painted"],answer:"painted",rule:"past-ed"},
+    {id:"pr03",sentence:"We _____ soccer after school.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
+    {id:"pr04",sentence:"He _____ his room yesterday.",verb:"clean",choices:["clean","cleaned"],answer:"cleaned",rule:"past-ed"},
+    {id:"pr05",sentence:"I _____ the door carefully.",verb:"close",choices:["close","closed"],answer:"closed",rule:"past-d"},
+    {id:"pr06",sentence:"They _____ their grandparents last Sunday.",verb:"visit",choices:["visit","visited"],answer:"visited",rule:"past-ed"},
+    {id:"pr07",sentence:"Mia _____ the cake after dinner.",verb:"like",choices:["like","liked"],answer:"liked",rule:"past-d"},
+    {id:"pr08",sentence:"We _____ a movie last night.",verb:"watch",choices:["watch","watched"],answer:"watched",rule:"past-ed"},
+    {id:"pr09",sentence:"The class _____ about insects yesterday.",verb:"learn",choices:["learn","learned"],answer:"learned",rule:"past-ed"},
+    {id:"pr10",sentence:"He _____ his bike in the park.",verb:"use",choices:["use","used"],answer:"used",rule:"past-d"}
+  ],
+  pastSpelling:[
+    {id:"ps01",sentence:"The girl _____ hard for the test.",verb:"study",choices:["studyed","studied"],answer:"studied",rule:"past-ied"},
+    {id:"ps02",sentence:"Dad _____ the box to the car.",verb:"carry",choices:["carryed","carried"],answer:"carried",rule:"past-ied"},
+    {id:"ps03",sentence:"The rabbit _____ over the log.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"},
+    {id:"ps04",sentence:"We _____ the game after lunch.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
+    {id:"ps05",sentence:"The bus _____ near the school.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
+    {id:"ps06",sentence:"She _____ the baby carefully.",verb:"plan",choices:["planed","planned"],answer:"planned",rule:"past-double"},
+    {id:"ps07",sentence:"He _____ the heavy bag yesterday.",verb:"carry",choices:["carryed","carried"],answer:"carried",rule:"past-ied"},
+    {id:"ps08",sentence:"The frog _____ into the pond.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"}
+  ],
+  pastIrregular:[
+    {id:"pi01",sentence:"Yesterday, we _____ to the science museum.",verb:"go",choices:["goed","went"],answer:"went",rule:"past-irregular"},
+    {id:"pi02",sentence:"I _____ a colorful bird in the tree.",verb:"see",choices:["seed","saw"],answer:"saw",rule:"past-irregular"},
+    {id:"pi03",sentence:"She _____ an apple after lunch.",verb:"eat",choices:["eated","ate"],answer:"ate",rule:"past-irregular"},
+    {id:"pi04",sentence:"My uncle _____ to our house last night.",verb:"come",choices:["comed","came"],answer:"came",rule:"past-irregular"},
+    {id:"pi05",sentence:"He _____ a photo of the butterfly.",verb:"take",choices:["taked","took"],answer:"took",rule:"past-irregular"},
+    {id:"pi06",sentence:"I _____ a letter to my friend.",verb:"write",choices:["writed","wrote"],answer:"wrote",rule:"past-irregular"},
+    {id:"pi07",sentence:"The boy _____ very fast in the race.",verb:"run",choices:["runned","ran"],answer:"ran",rule:"past-irregular"},
+    {id:"pi08",sentence:"We _____ water after playing outside.",verb:"drink",choices:["drinked","drank"],answer:"drank",rule:"past-irregular"},
+    {id:"pi09",sentence:"Dad _____ a paper airplane for me.",verb:"make",choices:["maked","made"],answer:"made",rule:"past-irregular"},
+    {id:"pi10",sentence:"She _____ a gift from her aunt.",verb:"get",choices:["getted","got"],answer:"got",rule:"past-irregular"}
+  ],
+
 };
 
 
@@ -860,16 +925,16 @@ function downloadBlob(blob, filename){
 }
 function exportBackup(){
   try{
-    const payload={app:"Anson English Grammar Adventure",version:"V4.43",exportedAt:new Date().toISOString(),data:state};
+    const payload={app:"Anson English Grammar Adventure",version:"V4.46",exportedAt:new Date().toISOString(),data:state};
     downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`Anson_Grammar_Backup_${new Date().toISOString().slice(0,10)}.json`);
     showToast("完整備份已開始下載。請將檔案保存在安全的位置。");
   }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
 }
 function exportLogsCSV(){
   try{
-    const cols=["時間","模式","題目","選擇答案","正確答案","是否答對","提示等級","EXP","第幾次作答"];
+    const cols=["時間","模式","單元ID","規則","動詞","題目","選擇答案","正確答案","是否答對","錯誤類型","提示等級","作答秒數","EXP","第幾次作答"];
     const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
-    const rows=state.logs.map(l=>[new Date(l.ts||Date.now()).toLocaleString("zh-TW"),l.mode||"",l.question||"",l.selectedAnswer||l.answer||"",l.correctAnswer||"",l.correct?"是":"否",l.hintLevel||0,l.exp||0,l.attemptNumber||""]);
+    const rows=state.logs.map(l=>[new Date(l.ts||Date.now()).toLocaleString("zh-TW"),l.mode||"",l.stage||"",getLogQuestionMeta(l).rule,l.verb||getLogQuestionMeta(l).verb,l.question||"",l.selectedAnswer||l.answer||"",l.correctAnswer||"",l.correct?"是":"否",l.errorType||"",l.hintLevel||0,Math.round((l.responseTime||0)/1000),l.exp||0,l.attemptNumber||""]);
     const csv="\uFEFF"+[cols,...rows].map(r=>r.map(q).join(",")).join("\r\n");
     downloadBlob(new Blob([csv],{type:"text/csv;charset=utf-8"}),`Anson_Grammar_Logs_${new Date().toISOString().slice(0,10)}.csv`);
     showToast("學習紀錄 CSV 已開始下載。");
@@ -989,7 +1054,7 @@ function renderMap(){
         ${locked
           ? `<div class="small-note" style="margin-top:12px">🔒 尚未解鎖</div>`
           : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
-             ${(st.best||0)>=70 ? `<label class="map-challenge"><input type="checkbox" ${isStageChallengeEnabled(s.id)?"checked":""} data-challenge-stage="${s.id}"><span>想挑戰看看？ 加強難度</span></label>` : ""}`}
+`}
       </div>`;
     }catch(e){
       console.warn("stage card render fallback",s?.id,e);
@@ -1000,12 +1065,6 @@ function renderMap(){
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
   el.onclick=(event)=>{
-    const challenge=event.target.closest('[data-challenge-stage]');
-    if(challenge && el.contains(challenge)){
-      event.stopPropagation();
-      setStageChallenge(challenge.dataset.challengeStage, challenge.checked);
-      return;
-    }
     const button=event.target.closest('.stage-enter[data-enter-stage]');
     if(button && el.contains(button)){
       event.stopPropagation();
@@ -1052,15 +1111,7 @@ function setStageChallenge(stageId, enabled){
   renderMap();
   if(currentSession && currentSession.stageId===stageId) renderChallengeControl(stageId);
 }
-function renderChallengeControl(stageId){
-  const el=document.getElementById("challengeControl");
-  if(!el) return;
-  const st=state.stageStats?.[stageId]||{};
-  const available=(st.best||0)>=70;
-  if(!available){ el.innerHTML=""; return; }
-  const checked=isStageChallengeEnabled(stageId);
-  el.innerHTML=`<label class="challenge-control"><input type="checkbox" ${checked?"checked":""} onchange="setStageChallenge('${stageId}',this.checked)"><span>想挑戰看看？ 加強難度</span></label>`;
-}
+function renderChallengeControl(stageId){ const el=document.getElementById("challengeControl"); if(el) el.innerHTML=""; }
 
 function weightedStagePool(stage){
   const weights={};
@@ -1338,7 +1389,7 @@ function renderWarmupQuestion(){
       }).join("")}</div>`;
   }else{
     const isError=type==="error";
-    html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+    html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
       <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>
       ${highlightBlank(q.sentence)}</div>
       <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
@@ -1497,7 +1548,7 @@ function renderQuestion(){
       }).join("")}</div>`;
   }else{
     const isError=type==="error";
-    html=`<span class="rule-chip">${isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+    html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
       <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(currentQuestion.sentence)}')">🔊</button>
       ${highlightBlank(currentQuestion.sentence)}</div>
       <div class="baseverb">(${currentQuestion.verb}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${currentQuestion.verb}')">🔊</button></div>
@@ -1848,6 +1899,8 @@ function handleAnswer(correct,answer,extra){
     selectedPokemon:type==="rule"?(extra?.poke||null):null,
     ruleAnswer:type==="rule"?currentQuestion.answer:null,
     questionId:currentQuestion.id||`${currentSession.stageId}-${currentSession.index}`,
+    rule:currentQuestion.rule||currentQuestion.type||"",
+    verb:currentQuestion.verb||"",
     difficulty:currentQuestion.difficulty||"medium",
     attemptNumber:qd.answers.length,
     correct,
@@ -2083,7 +2136,6 @@ function finishSession(){
       <p>本次練習共 ${total} 題。</p>
       <p class="muted">完成 ${s.uniqueCompleted} / ${total} 題 · 獨立答對 ${s.independent} 題 · Hint 後答對 ${s.hintCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
       ${levelHtml}${rewardHtml}
-      ${((state.stageStats[s.stageId]?.best||0)>=70) ? `<p class="small-note">💡 想挑戰看看？通關後可以隨時開啟「加強難度」，也可以隨時取消。</p>` : ""}
       ${pct>=70 ? `<p class="muted">✓ 本關練習已完成。</p>` : `<p style="color:#e5c86f">可以再練習一次，也可以直接選擇其他關卡。</p>`}
       <div class="actions">
         ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入第 5 關</button>`:""}
@@ -2238,7 +2290,98 @@ function renderDex(){
     return `<div class="poke ${v?"":"unknown"}"><img src="${p.img}" alt="${p.name}" onerror="this.style.visibility='hidden'"><div class="name">${v?p.name:"???"}</div><div class="no">#${p.no}</div><div class="lv">${v?"已捕捉":"尚未發現"}</div></div>`
   }).join("");
 }
+function getLogQuestionMeta(log){
+  let found=null;
+  if(log?.questionId){
+    for(const [bankName,bank] of Object.entries(QUESTION_BANK||{})){
+      if(!Array.isArray(bank)) continue;
+      found=bank.find(q=>q.id===log.questionId);
+      if(found) break;
+    }
+  }
+  return {
+    rule:log?.rule||found?.rule||"",
+    verb:log?.verb||found?.verb||"",
+    answer:log?.correctAnswer||found?.answer||"",
+    selected:log?.selectedAnswer||log?.answer||""
+  };
+}
+function friendlyRuleName(rule, stageId){
+  const names={
+    "past-ed":"一般加 -ed","past-d":"字尾 e 加 -d","past-ied":"子音 + y → -ied",
+    "past-double":"雙寫尾字母 + -ed","past-irregular":"不規則過去式",
+    "subject":"主詞搭配 was / were","pastWasWere":"was / were",
+    "pastHad":"have → had","pastReview":"過去式綜合複習",
+    "consonant+y":"子音 + y → ies","vowel+y":"母音 + y → s",
+    "CVC":"CVC 雙寫","drop-e":"去 e 加 -ing","+ing":"加 -ing"
+  };
+  if(names[rule]) return names[rule];
+  const st=(STAGES||[]).find(x=>x.id===stageId);
+  return st?.title||rule||"其他／舊版紀錄";
+}
+function renderLearningAnalysis(){
+  const learning=(state.logs||[]).filter(l=>l.mode==="LEARNING");
+  const summaryEl=document.getElementById("analysisSummary");
+  const errorsEl=document.getElementById("commonErrors");
+  if(!summaryEl||!errorsEl)return;
+  if(!learning.length){
+    summaryEl.innerHTML='<p class="muted">目前沒有正式作答紀錄。完成幾題後，這裡會顯示各單元與規則的正確率。</p>';
+    errorsEl.innerHTML='<p class="muted">目前沒有錯題資料。答錯後會自動整理常錯動詞與常見錯誤。</p>';
+    return;
+  }
+  const byStage=new Map(), byRule=new Map(), mistakes=new Map();
+  for(const l of learning){
+    const meta=getLogQuestionMeta(l);
+    const stageId=l.stage||"unknown";
+    const stageName=(STAGES.find(x=>x.id===stageId)?.title)||stageId;
+    if(!byStage.has(stageId))byStage.set(stageId,{name:stageName,total:0,correct:0});
+    const sg=byStage.get(stageId);sg.total++;if(l.correct)sg.correct++;
+    const ruleKey=meta.rule||stageId;
+    const ruleName=friendlyRuleName(ruleKey,stageId);
+    if(!byRule.has(ruleKey))byRule.set(ruleKey,{key:ruleKey,name:ruleName,total:0,correct:0});
+    const rg=byRule.get(ruleKey);rg.total++;if(l.correct)rg.correct++;
+    if(!l.correct){
+      const word=meta.verb||meta.answer||l.question||"未知題目";
+      const selected=meta.selected||"未記錄";
+      const mk=`${ruleKey}||${word}||${selected}||${meta.answer}`;
+      if(!mistakes.has(mk))mistakes.set(mk,{rule:ruleName,word,selected,answer:meta.answer||l.correctAnswer||"—",count:0});
+      mistakes.get(mk).count++;
+    }
+  }
+  const pct=g=>Math.round(g.correct/g.total*100);
+  const badgeClass=n=>n<50?"bad":n<80?"warn":"ok";
+  const stageRows=[...byStage.values()].sort((a,b)=>a.name.localeCompare(b.name,"zh-Hant",{numeric:true})).map(g=>`<tr><td>${escapeHtml(g.name)}</td><td>${g.correct}/${g.total}</td><td><b class="${badgeClass(pct(g))}">${pct(g)}%</b></td></tr>`).join("");
+  const ruleRows=[...byRule.values()].sort((a,b)=>pct(a)-pct(b)||b.total-a.total).map(g=>`<tr><td>${escapeHtml(g.name)}</td><td>${g.correct}/${g.total}</td><td><b class="${badgeClass(pct(g))}">${pct(g)}%</b></td></tr>`).join("");
+  summaryEl.innerHTML=`<h4>各單元</h4><div style="overflow:auto"><table class="log-table"><thead><tr><th>單元</th><th>答對／作答</th><th>正確率</th></tr></thead><tbody>${stageRows}</tbody></table></div><h4 style="margin-top:16px">各規則（例如 -ed、-d）</h4><div style="overflow:auto"><table class="log-table"><thead><tr><th>規則</th><th>答對／作答</th><th>正確率</th></tr></thead><tbody>${ruleRows}</tbody></table></div>`;
+  const top=[...mistakes.values()].sort((a,b)=>b.count-a.count||a.word.localeCompare(b.word)).slice(0,12);
+  errorsEl.innerHTML=top.length?`<div style="overflow:auto"><table class="log-table"><thead><tr><th>規則／單元</th><th>動詞／題目</th><th>錯選</th><th>正解</th><th>錯誤次數</th></tr></thead><tbody>${top.map(m=>`<tr><td>${escapeHtml(m.rule)}</td><td><b>${escapeHtml(m.word)}</b></td><td class="bad">${escapeHtml(m.selected)}</td><td class="ok">${escapeHtml(m.answer)}</td><td>${m.count}</td></tr>`).join("")}</tbody></table></div>`:'<p class="muted">目前沒有錯誤作答紀錄，或現有紀錄尚未保存所需欄位。</p>';
+}
+function exportAnalysisCSV(){
+  try{
+    const learning=(state.logs||[]).filter(l=>l.mode==="LEARNING");
+    const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+    const stageMap=new Map(),ruleMap=new Map(),mistakeMap=new Map();
+    for(const l of learning){
+      const meta=getLogQuestionMeta(l),sid=l.stage||"unknown";
+      const sname=STAGES.find(x=>x.id===sid)?.title||sid;
+      if(!stageMap.has(sid))stageMap.set(sid,{name:sname,total:0,correct:0});
+      const sg=stageMap.get(sid);sg.total++;if(l.correct)sg.correct++;
+      const rk=meta.rule||sid,rn=friendlyRuleName(rk,sid);
+      if(!ruleMap.has(rk))ruleMap.set(rk,{name:rn,total:0,correct:0});
+      const rg=ruleMap.get(rk);rg.total++;if(l.correct)rg.correct++;
+      if(!l.correct){const key=[rn,meta.verb||meta.answer||l.question,meta.selected||"未記錄",meta.answer||l.correctAnswer||"—"].join("||");mistakeMap.set(key,(mistakeMap.get(key)||0)+1);}
+    }
+    const rows=[["報表類型","名稱","答對","作答","正確率","錯誤動詞／題目","錯選","正解","錯誤次數"]];
+    for(const g of stageMap.values())rows.push(["單元",g.name,g.correct,g.total,String(Math.round(g.correct/g.total*100))+"%","","","",""]);
+    for(const g of ruleMap.values())rows.push(["規則",g.name,g.correct,g.total,String(Math.round(g.correct/g.total*100))+"%","","","",""]);
+    for(const [key,count] of mistakeMap){const [rule,word,selected,answer]=key.split("||");rows.push(["常錯",rule,"","", "",word,selected,answer,count]);}
+    const csv="\uFEFF"+rows.map(r=>r.map(q).join(",")).join("\r\n");
+    downloadBlob(new Blob([csv],{type:"text/csv;charset=utf-8"}),`Anson_Grammar_Analysis_${new Date().toISOString().slice(0,10)}.csv`);
+    showToast("分析報表 CSV 已開始下載。");
+  }catch(e){console.error(e);showToast("分析報表匯出失敗，請重新整理後再試。",true)}
+}
 function renderLogs(){
+  renderLearningAnalysis();
   const learning=state.logs.filter(l=>l.mode==="LEARNING");
   const correct=learning.filter(l=>l.correct).length;
   const independent=learning.filter(l=>l.correct&&l.hintLevel===0).length;
