@@ -918,6 +918,130 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
   .home-action { min-height:124px !important; }
 }
 
+
+/* DARK MODE: restore the requested dark background while keeping text readable */
+:root {
+  --bg:#080d18; --card:#111c2e; --accent:#8bc8f2;
+  --success:#78d6a6; --danger:#ff9299; --gold:#f4cd72; --exp:#f4cd72;
+  color-scheme:dark;
+}
+html,body { background:#080d18 !important; color:#edf3fb !important; }
+.container { background:#080d18 !important; }
+.view-section { color:#edf3fb !important; }
+.home-title { color:#dceafa !important; }
+.home-user, .home-adventure-title { color:#b8c8dc !important; }
+#home-user-trigger { background:#142238 !important; color:#f0f5fc !important; border:1px solid #405774 !important; }
+.home-user-chevron { color:#c3d4e8 !important; }
+#home-user-menu { background:#142238 !important; color:#edf3fb !important; border-color:#405774 !important; box-shadow:0 10px 28px rgba(0,0,0,.38) !important; }
+.home-user-option { color:#edf3fb !important; }
+.home-user-option:active,.home-user-option[aria-current="true"] { background:#263a55 !important; }
+.home-user-add { background:#20334c !important; color:#eaf3ff !important; border-color:#405774 !important; }
+.unit-card { background:#111c2e !important; border:1px solid #344962 !important; box-shadow:0 3px 12px rgba(0,0,0,.2) !important; }
+.unit-label { color:#d7e5f5 !important; }
+#unit-selector { background:#17253a !important; color:#f0f5fc !important; border:1px solid #4b6380 !important; }
+.home-action { background:#17243a !important; border:1px solid #405774 !important; color:#f0f5fc !important; box-shadow:0 4px 12px rgba(0,0,0,.22) !important; }
+.home-action:active { box-shadow:0 1px 4px rgba(0,0,0,.25) !important; }
+.home-action-icon { color:#e7f1ff !important; }
+.home-action small { color:#c5d3e4 !important; }
+.home-action.challenge { background:#352326 !important; border-color:#74464a !important; }
+.home-action.practice { background:#1c2e42 !important; border-color:#3b5f7c !important; }
+.home-action.sentence { background:#2b2540 !important; border-color:#65528b !important; }
+.home-action.star { background:#332e1d !important; border-color:#75683c !important; color:#fff4ce !important; }
+.home-action.error-review { background:#382a20 !important; border-color:#805b3c !important; }
+.home-action.report { background:#1d332c !important; border-color:#3f735e !important; }
+.error-bank-count { background:#101c2d !important; color:#edf3fb !important; border-color:#4a6079 !important; }
+.home-secondary-actions button,.more-toggle,.admin-btn { background:#17253a !important; color:#eaf2fc !important; border:1px solid #405774 !important; box-shadow:none !important; }
+.more-toggle:hover,.admin-btn:hover { background:#22344c !important; }
+.more-tools { background:#111c2e !important; border:1px solid #344962 !important; }
+button,input:not([type="checkbox"]):not([type="radio"]),select,textarea { color-scheme:dark; }
+input:not([type="checkbox"]):not([type="radio"]),select,textarea { background:#111c2e; color:#f0f5fc; border-color:#4b6380; }
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible { outline:3px solid #8bc8f2 !important; outline-offset:2px !important; }
+/* Dark surfaces for learning panels; keep explicit correct/wrong feedback colors intact */
+.view-section > div:not(.home-header):not(.unit-card):not(.home-main-actions), .panel, .modal-content { color:#edf3fb; }
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition-duration:.01ms !important; } }
+
+
+        /* FINAL UI FIX: true dark theme + combat layout collision prevention */
+        :root {
+          color-scheme: dark !important;
+          --bg:#07111f !important;
+          --card:#101d30 !important;
+          --accent:#7cc4f4 !important;
+          --success:#23845f !important;
+          --danger:#b84752 !important;
+          --gold:#d5a83f !important;
+          --exp:#d5a83f !important;
+        }
+        html, body {
+          background:#07111f !important;
+          color:#e8eef7 !important;
+        }
+        .container, .view-section {
+          background:#07111f !important;
+          color:#e8eef7 !important;
+        }
+        #view-game { gap:8px !important; }
+        .child-game-toolbar {
+          display:flex !important;
+          align-items:center !important;
+          justify-content:space-between !important;
+          gap:12px !important;
+          min-height:48px !important;
+          margin-bottom:2px !important;
+        }
+        .child-game-progress { color:#dce8f6 !important; }
+        .game-home-btn {
+          background:#172940 !important;
+          color:#eaf3ff !important;
+          border-color:#45617f !important;
+          min-height:44px !important;
+          padding:8px 16px !important;
+          flex:0 0 auto !important;
+        }
+        #combat-arena {
+          height:clamp(158px,24vh,184px) !important;
+          min-height:158px !important;
+          background-color:#10243a !important;
+          background-image:linear-gradient(180deg,#18314b,#0b1728) !important;
+          border:1px solid #35516e !important;
+          border-radius:16px !important;
+          position:relative !important;
+          overflow:hidden !important;
+          margin-top:2px !important;
+        }
+        #combat-arena .hp-container {
+          top:10px !important;
+          width:clamp(112px,15vw,150px) !important;
+          height:24px !important;
+          z-index:12 !important;
+        }
+        #player-hp-box { left:12px !important; }
+        #opp-hp-box { right:12px !important; }
+        #combat-arena .sprite {
+          width:76px !important;
+          height:76px !important;
+          bottom:24px !important;
+          object-fit:contain !important;
+          z-index:5 !important;
+        }
+        #player-sprite { left:12px !important; }
+        #opp-sprite { right:12px !important; }
+        #player-exp-box {
+          left:12px !important;
+          bottom:6px !important;
+          width:112px !important;
+          z-index:7 !important;
+        }
+        #combat-arena .hp-container,
+        #combat-arena .exp-container { pointer-events:none !important; }
+        @media (max-width:600px) {
+          .child-game-toolbar { gap:8px !important; }
+          .game-home-btn { min-height:42px !important; padding:7px 12px !important; }
+          #combat-arena { height:158px !important; min-height:158px !important; }
+          #combat-arena .sprite { width:72px !important; height:72px !important; bottom:24px !important; }
+          #combat-arena .hp-container { width:112px !important; }
+        }
+
 </style>
 </head>
 <body onload="initSystem()">
@@ -1063,7 +1187,6 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radi
 
     <div id="view-game" class="view-section">
         <div class="child-game-toolbar"><button class="mode-btn game-home-btn" style="width:auto;" onclick="confirmLeavePractice()">回首頁</button><div class="child-game-progress"><strong id="child-mode-label">單字練習</strong><span id="child-question-progress">準備開始</span></div></div>
-        <div style="display:flex; justify-content:space-between;"><button class="mode-btn game-home-btn" style="width:auto;" onclick="confirmLeavePractice()">回首頁</button></div>
         <div id="combat-arena">
             <div id="player-hp-box" class="hp-container"><div id="player-hp-bar" class="hp-bar"></div><div id="player-hp-label" class="hp-label">HP 5/5</div></div>
             <img id="player-sprite" class="sprite" src="">
@@ -4482,4 +4605,3 @@ const storyWordGloss = {
 </script>
 </body>
 </html>
->
