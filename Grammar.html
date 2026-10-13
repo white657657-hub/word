@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.53｜程式檢查修正版</title>
+<title>Anson 英文文法冒險 V4.58｜Y 規則配對底色與測驗結果檢查</title>
 <style>
 :root{
   --bg:#081018;
@@ -102,16 +102,21 @@ main{margin-top:18px}
 }
  .red{color:#e67b7f}
 .y-focus-letter{color:#62c9e8;font-weight:1000;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
-.y-focus-y{color:#e67b7f;font-weight:1000}
+.y-focus-y{color:#ff5b62;font-weight:1000;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.y-focus-ending{color:#f2c14e;font-weight:1000}
+.y-focus-vowel{color:#f2c14e;font-weight:1000}
 .rule-teach{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;font-size:18px;font-weight:900;color:#dfeaf2;line-height:1.35;flex-wrap:wrap}
 .rule-teach .focus{color:#62c9e8;font-weight:1000}
 .rule-teach .focus-y{color:#e67b7f;font-weight:1000}
 .rule-teach .rule-label{color:#62c9e8;font-weight:1000}
-/* Past-tense teaching colors only: Y = blue, target consonant = cyan,
+/* Past-tense teaching colors: Y = red, target consonant = cyan,
    vowel = yellow, and past-tense ending (-ed/-d/-ied) = orange. */
-.rule-teach .past-y{color:#6f8cff;font-weight:1000;text-decoration:underline;text-underline-offset:3px}
+.rule-teach .past-y{color:#ff5b62;font-weight:1000;text-decoration:underline;text-underline-offset:3px}
 .rule-teach .past-consonant{color:#62c9e8;font-weight:1000}
 .rule-teach .past-vowel{color:#f2c14e;font-weight:1000}
+/* Pair the letter before Y with the resulting suffix using matching soft backgrounds. */
+.rule-teach .past-consonant-mark{background:rgba(98,201,232,.20);border:1px solid rgba(98,201,232,.52);border-radius:5px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.rule-teach .past-vowel-mark{background:rgba(242,193,78,.18);border:1px solid rgba(242,193,78,.50);border-radius:5px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 .rule-teach .past-ending{color:#ff9f43;font-weight:1000}
 .rule-teach .past-ied{color:#ff9f43;font-weight:1000}
 .rule-teach .past-ch{color:#ff5b62;font-weight:1000}
@@ -185,7 +190,7 @@ main{margin-top:18px}
 .modal{
   position:fixed;inset:0;background:rgba(0,0,0,.74);display:grid;place-items:center;z-index:50;padding:20px
 }
-.modal-box{max-width:720px;width:100%;background:#111d27;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
+.modal-box{max-width:760px;width:100%;max-height:90vh;overflow:auto;background:#111d27;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);text-align:center}
 .reward-poke img{width:180px;height:180px}.reward-title{font-size:36px;font-weight:950;color:#f0d273}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
 .confetti i{position:absolute;width:8px;height:16px;top:-30px;animation:fall 1.9s linear forwards}
@@ -247,6 +252,10 @@ main{margin-top:18px}
 .pokemon-correct .thumb{margin-right:3px}
 .feedback-example{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px auto 0;max-width:820px;font-size:24px;line-height:1.35;font-weight:800;text-align:center}
 .feedback-example .speaker{flex:0 0 auto}
+.past-sentence-audio{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px auto 4px;padding:10px 12px;max-width:820px;border:1px solid rgba(98,201,232,.28);border-radius:12px;background:rgba(21,36,49,.72);font-size:17px;line-height:1.5}
+.past-sentence-audio .sentence-text{font-weight:750}
+.past-sentence-audio .speaker{width:auto;min-width:42px;min-height:40px;padding:0 12px;flex:0 0 auto}
+@media(max-width:620px){.past-sentence-audio{font-size:16px;gap:8px}.past-sentence-audio .sentence-text{width:100%}}
 .mission-complete-pulse{animation:completePulse .55s ease-out}
 @keyframes completePulse{0%{transform:scale(.96);opacity:.65}100%{transform:scale(1);opacity:1}}
 .micro-note{font-size:13px;color:var(--muted);margin-top:4px}
@@ -269,7 +278,59 @@ main{margin-top:18px}
 .y-rule-start{margin-top:22px}
 @media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{min-height:160px}.y-rule-title{font-size:28px}.y-rule-lead{font-size:20px}}
 
-/* V4.53 usability + troubleshooting */
+/* V4.57: Y lesson uses one consistent horizontal layout; no decorative curved arrows. */
+.y-rule-intro{max-width:1020px;margin:0 auto;padding:8px 4px 24px;text-align:center}
+.y-rule-title{font-size:clamp(26px,3.4vw,34px);font-weight:900;margin:6px 0 8px}
+.y-rule-lead{font-size:clamp(17px,2vw,21px);margin:0 0 18px;color:#dfeaf2;line-height:1.55}
+.y-rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.y-rule-box{min-width:0;border:1px solid rgba(120,177,215,.28);border-radius:18px;background:linear-gradient(145deg,#132b3e,#102131);padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.y-rule-label{font-size:clamp(17px,2vw,22px);font-weight:850;line-height:1.4}
+.y-rule-example{display:flex;align-items:center;justify-content:center;gap:clamp(3px,.7vw,8px);font-size:clamp(24px,3.5vw,36px);font-weight:900;line-height:1.5;white-space:nowrap;max-width:100%;font-variant-ligatures:none}
+.y-rule-example .y-word{white-space:nowrap;display:inline-block}
+.y-rule-example .pair-letter,.y-rule-example .pair-ending{display:inline-block;border-radius:7px;padding:0 .045em;background:rgba(98,201,232,.18);box-shadow:inset 0 0 0 1.5px rgba(98,201,232,.56);white-space:nowrap}
+.y-rule-example .pair-vowel{background:rgba(242,193,78,.18);box-shadow:inset 0 0 0 1.5px rgba(242,193,78,.56)}
+.y-rule-example .conversion{color:#78aaca;flex:0 0 auto;font-size:.8em}
+.y-rule-example .pair-letter,.y-rule-example .pair-ending,.y-rule-example .y-base{white-space:nowrap}
+.y-rule-example .y-word{white-space:nowrap;display:inline-block}
+.y-rule-example .y-base{color:#ff5b62}
+.y-rule-example .ending-s{color:#f2c14e}
+.y-rule-example .ending-ed{color:#ff9f43}
+.y-rule-explain{width:100%;text-align:left;background:rgba(26,55,77,.72);border:1px solid rgba(120,177,215,.24);border-radius:12px;padding:11px 12px;font-size:clamp(15px,1.8vw,17px);line-height:1.65;color:#edf6ff}
+.y-rule-explain strong{color:#c6eaff}
+.y-rule-box .speaker{margin:0;width:auto;min-width:40px;height:38px;padding:0 12px;border-radius:11px;font-size:15px}
+.y-rule-start{margin-top:20px}
+.result-summary{max-height:min(48vh,420px);overflow:auto;text-align:left;margin:14px 0;padding-right:4px}
+.result-row{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);border-radius:12px;padding:10px 12px;margin:8px 0;line-height:1.5}
+.result-row .result-status{font-weight:850}
+.result-row .result-status.first{color:#7fc79a}
+.test-result-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0;text-align:center}
+.test-result-score>div{min-width:0;padding:12px 8px;border:1px solid rgba(120,177,215,.26);border-radius:12px;background:rgba(20,48,69,.72)}
+.test-result-score span,.test-result-score b,.test-result-score strong{display:block}
+.test-result-score span{font-size:14px;color:#b9cbd9;line-height:1.4}
+.test-result-score b{font-size:22px;margin:4px 0;color:#f4f8ff}
+.test-result-score strong{font-size:18px;color:#8ed19e}
+.result-row .result-status.unresolved{color:#e98b91}
+.result-row .result-status.pending{color:#aab7c4}
+.result-row .result-answer{color:#8ed19e}
+.result-prompt{margin:4px 0 6px;overflow-wrap:anywhere}
+@media(max-width:520px){.test-result-score{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.test-result-score>div{padding:10px 4px}.test-result-score span{font-size:12px}.test-result-score b{font-size:18px}.test-result-score strong{font-size:15px}}
+.result-row .result-status.retry{color:#f2c14e}
+.feedback .result-banner{font-size:25px;font-weight:900;margin-bottom:6px}
+.feedback .result-detail{font-size:16px;line-height:1.6;color:#d7e4ee}
+.feedback .result-detail b{color:#f3f7fb}
+.feedback .feedback-rule{margin-top:10px}
+@media(max-width:700px){.y-rule-grid{grid-template-columns:1fr}.y-rule-box{padding:16px 12px}.y-rule-example{font-size:clamp(25px,7.5vw,34px)}.y-rule-explain{font-size:16px}.y-rule-start .btn{width:100%;min-height:48px}.result-summary{max-height:42vh}}
+@media(max-width:360px){.y-rule-example{font-size:23px;gap:3px}.y-rule-box{padding:14px 8px}.y-rule-explain{padding:9px;font-size:15px}}
+@media(max-width:620px){
+  .learning-header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center}
+  .learning-header>div:nth-child(2){min-width:0;justify-content:flex-end!important;gap:6px!important;flex-wrap:nowrap}
+  #stageTitle{font-size:14px;white-space:normal;line-height:1.25;text-align:right}
+  #questionCounter{font-size:13px;white-space:nowrap}
+  .learning-header .progress{grid-column:1/-1;width:100%;max-width:none}
+}
+
+
+/* V4.54 usability + troubleshooting */
 .toast-message{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:9999;max-width:min(620px,calc(100% - 28px));padding:12px 16px;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:#1c3040;color:#f1f5f9;box-shadow:0 8px 30px rgba(0,0,0,.35);font-size:14px;line-height:1.55}
 .toast-message.error{border-color:#b96870;background:#45262b}
 .troubleshoot-list{line-height:1.75;padding-left:22px}
@@ -292,7 +353,7 @@ body.learning-active #learn{padding-bottom:28px!important}
 </style>
 
 <style id="v451-stability-fixes">
-/* V4.53: child-friendly UI and safe responsive layout */
+/* V4.54: child-friendly UI and safe responsive layout */
 #learn{padding-bottom:max(150px,env(safe-area-inset-bottom))!important;scroll-padding-bottom:160px;}
 #questionCard{padding-bottom:32px!important;overflow:visible;}
 .choice-row,.options{position:relative;z-index:2;justify-content:center!important;align-items:stretch;}
@@ -329,7 +390,7 @@ button:disabled{cursor:default;opacity:.8;}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.53｜修正關卡點擊、過去式分析與介面問題；原有現在式文法與學習紀錄功能保留。</p>
+      <p class="small-note">V4.57｜Y 規則四種變化、字母配對底色、清楚的答題結果。</p>
       <p>短時間練習、單字發音、句型應用與學習夥伴。</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
@@ -909,7 +970,7 @@ function downloadBlob(blob, filename){
 }
 function exportBackup(){
   try{
-    const payload={app:"Anson English Grammar Adventure",version:"V4.53",exportedAt:new Date().toISOString(),data:state};
+    const payload={app:"Anson English Grammar Adventure",version:"V4.58",exportedAt:new Date().toISOString(),data:state};
     downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`Anson_Grammar_Backup_${new Date().toISOString().slice(0,10)}.json`);
     showToast("完整備份已開始下載。請將檔案保存在安全的位置。");
   }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
@@ -1037,7 +1098,7 @@ function renderMap(){
       const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview));
       const scoreMarkup=accuracy===null
         ? `<div class="stage-score no-score">成績：尚無作答紀錄</div>`
-        : `<div class="stage-score">成績：最後完成 <b>${Math.min(totalCorrect,totalQuestions)}</b> / ${totalQuestions} 題 <span class="rate">· ${accuracy}% 完成率</span></div>`;
+        : `<div class="stage-score">首次答對 <b>${Math.min(totalCorrect,totalQuestions)}</b> / ${totalQuestions} 題 <span class="rate">· ${accuracy}% 首次正確率</span></div>`;
       return `<div class="card stage ${locked?"locked":""}" ${locked?"":`data-stage="${s.id}" role="button" tabindex="0" aria-label="進入 ${escapeHtml(s.title)}"`}>
         <span class="num">STAGE ${i+1}</span><span class="badge">${badgeText}</span>
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
@@ -1226,41 +1287,42 @@ function startStage(stageId){
 function showYRuleIntro(){
   const card=document.getElementById("questionCard");
   if(!card) return;
+  const pair=(left,right,kind)=>`<div class="y-rule-example"><span class="y-word">${left}</span><span class="conversion">→</span><span class="y-word">${right}</span></div>`;
   card.innerHTML=`
     <div class="y-rule-intro">
-      <div class="y-rule-title">Y Rule</div>
-      <p class="y-rule-lead">Look at the letter before Y. <span class="y-focus-letter">Before Y</span> = vowel or consonant.</p>
-
+      <div class="y-rule-title">Y 字尾變化</div>
+      <p class="y-rule-lead">先找到紅色的 <span class="y-base">y</span>，再看它前面一個字母。<br>相同底色表示要一起觀察的字母與字尾。</p>
       <div class="y-rule-grid">
-        <div class="y-rule-box vowel-box">
-          <div class="y-rule-label">Vowel + Y → <span class="red">S</span></div>
-          <div class="y-rule-letters">A · E · I · O · U</div>
-          <div class="y-rule-example">play → play<span class="y-focus-y">s</span></div>
-          <div class="y-rule-example">enjoy → enjoy<span class="y-focus-y">s</span></div>
-          <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('vowel')">🔊 vowel</button>
-        </div>
-
-        <div class="y-rule-box consonant-box">
-          <div class="y-rule-label">Consonant + Y → <span class="red">IES</span></div>
-          <div class="y-rule-example">t<span class="y-focus-letter">r</span><span class="y-focus-y">y</span> → t<span class="y-focus-letter">r</span>i<span class="y-focus-y">es</span></div>
-          <div class="y-rule-example">stu<span class="y-focus-letter">d</span><span class="y-focus-y">y</span> → stu<span class="y-focus-letter">d</span>i<span class="y-focus-y">es</span></div>
-          <div class="y-rule-consonant-note">Consonants = other letters</div>
-          <button class="speaker y-rule-speak" onclick="event.stopPropagation();speak('consonant')">🔊 consonant</button>
-        </div>
+        <section class="y-rule-box">
+          <div class="y-rule-label">第三人稱單數｜子音 + Y</div>
+          ${pair('stu<span class="pair-letter">d</span><span class="y-base">y</span>','stu<span class="pair-letter">d</span><span class="pair-ending"><span class="y-base">i</span><span class="ending-s">es</span></span>')}
+          <button class="speaker" type="button" aria-label="播放 study 和 studies" onclick="event.stopPropagation();speakSequence(['study','studies'])">🔊 聽單字</button>
+          <div class="y-rule-explain">先找紅色的 <b class="y-base">y</b>。前面是子音 <b class="y-focus-letter">d</b>，所以把 <b class="y-base">y</b> 改成 <b class="y-base">i</b>，再加上 <b class="pair-ending ending-s">-es</b>。</div>
+        </section>
+        <section class="y-rule-box">
+          <div class="y-rule-label">過去式｜子音 + Y</div>
+          ${pair('stu<span class="pair-letter">d</span><span class="y-base">y</span>','stu<span class="pair-letter">d</span><span class="pair-ending"><span class="y-base">i</span><span class="ending-ed">ed</span></span>')}
+          <button class="speaker" type="button" aria-label="播放 study 和 studied" onclick="event.stopPropagation();speakSequence(['study','studied'])">🔊 聽單字</button>
+          <div class="y-rule-explain">先找紅色的 <b class="y-base">y</b>。前面是子音 <b class="y-focus-letter">d</b>，所以把 <b class="y-base">y</b> 改成 <b class="y-base">i</b>，再加上 <b class="ending-ed">-ed</b>，形成 <b class="ending-ed">-ied</b>。</div>
+        </section>
+        <section class="y-rule-box">
+          <div class="y-rule-label">第三人稱單數｜母音 + Y</div>
+          ${pair('pl<span class="pair-ending pair-vowel">a</span><span class="y-base">y</span>','pl<span class="pair-ending pair-vowel">a</span><span class="pair-ending pair-vowel"><span class="y-base">y</span><span class="ending-s">s</span></span>')}
+          <button class="speaker" type="button" aria-label="播放 play 和 plays" onclick="event.stopPropagation();speakSequence(['play','plays'])">🔊 聽單字</button>
+          <div class="y-rule-explain">先找紅色的 <b class="y-base">y</b>。前面是母音 <b style="color:#f2c14e">a</b>，所以保留 <b class="y-base">y</b>，再加上 <b class="pair-ending pair-vowel"><span class="ending-s">-s</span></b>。</div>
+        </section>
+        <section class="y-rule-box">
+          <div class="y-rule-label">過去式｜母音 + Y</div>
+          ${pair('pl<span class="pair-ending pair-vowel">a</span><span class="y-base">y</span>','pl<span class="pair-ending pair-vowel">a</span><span class="pair-ending pair-vowel"><span class="y-base">y</span><span class="ending-ed">ed</span></span>')}
+          <button class="speaker" type="button" aria-label="播放 play 和 played" onclick="event.stopPropagation();speakSequence(['play','played'])">🔊 聽單字</button>
+          <div class="y-rule-explain">先找紅色的 <b class="y-base">y</b>。前面是母音 <b style="color:#f2c14e">a</b>，所以保留 <b class="y-base">y</b>，直接加上 <b class="pair-ending pair-vowel"><span class="ending-ed">-ed</span></b>。</div>
+        </section>
       </div>
-
-      <div class="y-rule-focus">
-        <b>Remember:</b> look at the letter <span class="red">before Y</span>.
-      </div>
-
-      <div class="actions y-rule-start">
-        <button class="btn primary" onclick="startYRulePractice()">開始小練習</button>
-      </div>
+      <div class="actions y-rule-start"><button class="btn primary" type="button" onclick="startYRulePractice()">我知道了，開始練習</button></div>
     </div>`;
   const learn=document.getElementById("learn");
   if(learn){ learn.dataset.feedbackPhase="intro"; }
 }
-
 function startYRulePractice(){
   if(!currentSession) return;
   currentSession.yRuleIntroSeen=true;
@@ -1373,6 +1435,7 @@ function renderWarmupQuestion(){
 function handleWarmupAnswer(correct,answer,extra){
   if(answerLocked||!currentSession?.warmup) return;
   answerLocked=true;
+  document.querySelectorAll(".option,.choice").forEach(btn=>btn.classList.remove("wrong","correct"));
   const f=getActiveLearningElement("feedback");
   if(!f) return;
   if(correct){
@@ -1390,13 +1453,13 @@ function handleWarmupAnswer(correct,answer,extra){
       if(selected){
         const word=selected.querySelector('.word');
         const speaker=selected.querySelector('.word-speaker');
-        if(word) word.innerHTML=`<span class="pokemon-transform">${yTransformMarkup(q,ex)}</span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>${yFocusMarkup(q)}`;
+        if(word) word.innerHTML=`<span class="pokemon-transform">${yTransformMarkup(q,ex)}</span><div class="pokemon-correct"><span class="thumb">✓</span>答對了！</div>${yFocusMarkup(q)}`;
         if(speaker) speaker.style.display="none";
         selected.classList.add("correct-choice");
       }
       const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}`;
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'Next'}" title="${last?'開始正式練習':'Next'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'→ Next'}</button></div>`;
+      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>`;
       speak("Correct");
       speak(ex.sentence);
       return;
@@ -1404,6 +1467,8 @@ function handleWarmupAnswer(correct,answer,extra){
 
     // Sentence-fill warm-up follows the formal sentence-fill behavior.
     if(q.sentence){
+      const correctChoice=[...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(q.answer));
+      if(correctChoice) correctChoice.classList.add("correct");
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
@@ -1414,16 +1479,29 @@ function handleWarmupAnswer(correct,answer,extra){
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
     const pastExplanation=String(q.rule||"").startsWith("past-") ? correctRuleExplanation(q) : "";
-    f.innerHTML=`${pastExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
+    f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${pastExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
     if(!pastExplanation) speak("Correct");
     if(q.sentence && !String(q.rule||"").startsWith("past-")) speak(q.sentence.replace("_____",answer));
     return;
   }
   const pastWrong=String(currentQuestion?.rule||"").startsWith("past-");
-  f.innerHTML=pastWrong
-    ? `<div class="big" style="color:#e98b91">再試一次</div><div class="sub">先看清楚字母，再選一次。</div>${correctRuleExplanation(currentQuestion)}`
-    : `<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>`;
-  if(!pastWrong) speak("Not quite. Try the same question again.");
+  const selectedLabel=currentQuestion?.poke ? (extra?.selectedVerb||answer) : answer;
+  const correctLabel=currentQuestion?.poke ? currentQuestion.verb : currentQuestion?.answer;
+  const wrongChoice=currentQuestion?.poke
+    ? document.querySelector(`.option[data-poke="${Number(extra?.poke)}"]`)
+    : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(answer));
+  if(wrongChoice) wrongChoice.classList.add("wrong");
+  const rightChoice=currentQuestion?.poke
+    ? [...document.querySelectorAll(".option")].find(btn=>btn.querySelector(".word")?.textContent.trim()===String(currentQuestion.verb))
+    : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(currentQuestion.answer));
+  if(rightChoice) rightChoice.classList.add("correct");
+  const wrongDetail=`<div class="result-detail">你選的是：<b>${escapeHtml(selectedLabel)}</b><br>正確答案：<b style="color:#7fc79a">${escapeHtml(correctLabel)}</b></div>`;
+  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}<div class="result-detail">先看一下正確答案和規則，再重新選擇。</div>${pastWrong?correctRuleExplanation(currentQuestion):((currentQuestion?.poke)?ruleTeachingMarkup(currentQuestion,verbExample(currentQuestion)):"")}`;
+  if(currentQuestion?.sentence && pastWrong){
+    const sentenceMarkup=pastSentenceAudioMarkup(currentQuestion);
+    if(sentenceMarkup) f.insertAdjacentHTML("beforeend",sentenceMarkup);
+  }
+  if(!pastWrong) speak("答錯了，再試一次");
   setTimeout(()=>{answerLocked=false;},700);
 }
 
@@ -1707,6 +1785,7 @@ function answerSentence(answer){
 function handleAnswer(correct,answer,extra){
   if(answerLocked)return;
   answerLocked=true;
+  document.querySelectorAll(".option,.choice").forEach(btn=>btn.classList.remove("wrong","correct"));
   const responseTime=Date.now()-(currentSession.questionStartedAt||Date.now());
   const hintUsed=hintLevel>0;
 
@@ -1716,7 +1795,7 @@ function handleAnswer(correct,answer,extra){
   const key=currentSession.index;
   const qd=currentSession.questionAttemptData[key] || {answers:[],wrong:0,correct:false,completed:false,hintUsed:false};
   const wasCompleted=qd.completed;
-  qd.answers.push({answer,correct,responseTime,hintUsed});
+  qd.answers.push({answer,selectedAnswer:extra?.selectedVerb||answer,selectedPokemon:extra?.poke||null,correct,responseTime,hintUsed});
   qd.hintUsed = qd.hintUsed || hintUsed;
   if(!correct) qd.wrong++;
   if(correct) qd.correct=true;
@@ -1776,7 +1855,7 @@ function handleAnswer(correct,answer,extra){
   };
   state.logs.unshift(logEntry); state.logs=state.logs.slice(0,1000);
   saveState();
-  renderFeedback(correct,answer,errorType,exp);
+  renderFeedback(correct,answer,errorType,exp,extra);
 }
 function masterySkill(q){
   if(q.rule==="CH") return "ch";
@@ -1856,9 +1935,9 @@ function yTransformMarkup(q,ex){
   const form=ex.form;
   let resultMarked;
   if(q.rule==="vowel+y") {
-    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="y-focus-y">s</span>`;
+    resultMarked=escapeHtml(form.slice(0,-1)) + `<span class="y-focus-ending">s</span>`;
   } else {
-    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="y-focus-y">ies</span>`;
+    resultMarked=escapeHtml(form.slice(0,-3)) + `<span class="y-focus-ending">ies</span>`;
   }
   return `<span>${baseMarked}</span><span class="arrow">→</span><b>${resultMarked}</b>`;
 }
@@ -1871,11 +1950,15 @@ function correctRuleExplanation(q){
   const safe=escapeHtml;
   if(r==="past-ied"){
     const beforeY=v.slice(-2,-1);
-    return `<div class="rule-teach"><div class="past-rule-copy"><span class="past-y">y</span> 前面是子音 <span class="past-consonant">${safe(beforeY)}</span>，所以把 <span class="past-y">y</span> 改成 <span class="past-ending">i</span>，再加上 <span class="past-ending">-ed</span>。</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-3))}<span class="past-y">i</span><span class="past-ending">ed</span></div></div>`;
+    const markedBase=`${safe(v.slice(0,-2))}<span class="past-consonant past-consonant-mark">${safe(beforeY)}</span><span class="past-y">y</span>`;
+    const markedAnswer=`${safe(v.slice(0,-2))}<span class="past-consonant past-consonant-mark">${safe(beforeY)}</span><span class="past-consonant-mark"><span class="past-y">i</span><span class="past-ending">ed</span></span>`;
+    return `<div class="rule-teach"><div class="past-rule-copy">先找紅色的 <span class="past-y">y</span>，再看它前面的字母。</div><div class="past-rule-copy">前面是子音 <span class="past-consonant past-consonant-mark">${safe(beforeY)}</span>，所以把 <span class="past-y">y</span> 改成 <span class="past-y">i</span>，再加上 <span class="past-consonant-mark"><span class="past-ending">-ied</span></span>。</div><div class="past-rule-copy">原形：${markedBase}　→　過去式：${markedAnswer}</div></div>`;
   }
   if(r==="past-ed" && v.endsWith("y") && /[aeiou]y$/.test(v)) {
     const beforeY=v.slice(-2,-1);
-    return `<div class="rule-teach"><div class="past-rule-copy"><span class="past-y">y</span> 前面是母音 <span class="past-vowel">${safe(beforeY)}</span>，所以保留 <span class="past-y">y</span>，直接加上 <span class="past-ending">-ed</span>。</div><div class="past-rule-copy">${safe(v.slice(0,-2))}<span class="past-vowel">${safe(beforeY)}</span><span class="past-y">y</span> → ${safe(a.slice(0,-2))}<span class="past-ending">ed</span></div></div>`;
+    const markedBase=`${safe(v.slice(0,-2))}<span class="past-vowel past-vowel-mark">${safe(beforeY)}</span><span class="past-y">y</span>`;
+    const markedAnswer=`${safe(v.slice(0,-2))}<span class="past-vowel past-vowel-mark">${safe(beforeY)}</span><span class="past-vowel-mark"><span class="past-y">y</span><span class="past-ending">ed</span></span>`;
+    return `<div class="rule-teach"><div class="past-rule-copy">先找紅色的 <span class="past-y">y</span>，再看它前面的字母。</div><div class="past-rule-copy">前面是母音 <span class="past-vowel past-vowel-mark">${safe(beforeY)}</span>，所以保留 <span class="past-y">y</span>，直接加上 <span class="past-vowel-mark"><span class="past-ending">-ed</span></span>。</div><div class="past-rule-copy">原形：${markedBase}　→　過去式：${markedAnswer}</div></div>`;
   }
   if(r==="past-ed") return `<div class="rule-teach"><div class="past-rule-copy">大多數一般動詞的過去式，直接加上 <span class="past-ending">-ed</span>。</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-2))}<span class="past-ending">ed</span></div></div>`;
   if(r==="past-d") return `<div class="rule-teach"><div class="past-rule-copy">動詞字尾已有 <span class="past-vowel">e</span>，直接加上 <span class="past-ending">-d</span>。</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-1))}<span class="past-ending">d</span></div></div>`;
@@ -1924,7 +2007,14 @@ function ruleTeachingMarkup(q,ex){
   return "";
 }
 
-function renderFeedback(correct,answer,errorType,exp){
+function pastSentenceAudioMarkup(q){
+  if(!q || !String(q.rule||"").startsWith("past-") || !q.sentence) return "";
+  const fullSentence=String(q.sentence).replace(/_{3,}/, String(q.answer||""));
+  if(!fullSentence.trim()) return "";
+  return `<div class="past-sentence-audio" role="group" aria-label="完整句子發音"><span class="sentence-text">完整句子：${escapeHtml(fullSentence)}</span><button class="speaker" type="button" aria-label="播放完整句子發音" title="播放完整句子發音" onclick="event.stopPropagation();speak('${escapeHtml(fullSentence).replace(/'/g, "\\'")}')">🔊 聽整句</button></div>`;
+}
+
+function renderFeedback(correct,answer,errorType,exp,extra={}){
   const f=getActiveLearningElement("feedback");
   if(!f)return;
   if(correct){
@@ -1937,6 +2027,8 @@ function renderFeedback(correct,answer,errorType,exp){
     }
     // For sentence-fill questions, put the selected correct form directly into the blank.
     if(!q.poke && q.sentence){
+      const correctChoice=[...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(q.answer));
+      if(correctChoice) correctChoice.classList.add("correct");
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
@@ -1952,7 +2044,7 @@ function renderFeedback(correct,answer,errorType,exp){
       if(selected){
         const word=selected.querySelector('.word');
         const speaker=selected.querySelector('.word-speaker');
-        if(word) word.innerHTML=`<span class="pokemon-transform">${yTransformMarkup(q,ex)}</span><div class="pokemon-correct"><span class="thumb">👍</span>Correct!</div>${yFocusMarkup(q)}`;
+        if(word) word.innerHTML=`<span class="pokemon-transform">${yTransformMarkup(q,ex)}</span><div class="pokemon-correct"><span class="thumb">✓</span>答對了！</div>${yFocusMarkup(q)}`;
         if(speaker) speaker.style.display="none";
         selected.classList.add("correct-choice");
       }
@@ -1960,6 +2052,7 @@ function renderFeedback(correct,answer,errorType,exp){
     const type=questionType(q);
     const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}` : "";
     const ruleExplanation=correctRuleExplanation(q);
+    const pastSentenceAudio=pastSentenceAudioMarkup(q);
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
@@ -1967,14 +2060,14 @@ function renderFeedback(correct,answer,errorType,exp){
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
-      f.innerHTML=`${example}${ruleExplanation}
+      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
         </div>`;
     }else{
       const pastUnit=String(q.rule||"").startsWith("past-");
-      f.innerHTML=`${example}${ruleExplanation}
+      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="${pastUnit?"下一題":"Next"}" title="${pastUnit?"下一題":"Next"}" onclick="nextQuestion()">${pastUnit?"下一題":"→ Next"}</button>
         </div>`;
@@ -1994,15 +2087,23 @@ function renderFeedback(correct,answer,errorType,exp){
     : "";
   const isPastTenseQuestion=String(currentQuestion?.rule||"").startsWith("past-");
   const pastWrongExplanation=isPastTenseQuestion ? correctRuleExplanation(currentQuestion) : "";
-  f.innerHTML=isPastTenseQuestion
-    ? `<div class="big" style="color:#e98b91">再試一次</div><div class="sub">先看清楚字母，再選一次。</div>${pastWrongExplanation}`
-    : `<div class="big" style="color:#e98b91">Not quite.</div><div class="sub">Try the same question again.</div>${wrongTeach}`;
-  if(!isPastTenseQuestion) speak("Not quite. Try the same question again.");
+  const pastSentenceAudio=isPastTenseQuestion ? pastSentenceAudioMarkup(currentQuestion) : "";
+  const selectedLabel=currentQuestion?.poke ? (extra?.selectedVerb||answer) : answer;
+  const correctLabel=currentQuestion?.poke ? currentQuestion.verb : currentQuestion?.answer;
+  const wrongChoice=currentQuestion?.poke
+    ? document.querySelector(`.option[data-poke="${Number(extra?.poke)}"]`)
+    : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(answer));
+  if(wrongChoice) wrongChoice.classList.add("wrong");
+  const rightChoice=currentQuestion?.poke
+    ? [...document.querySelectorAll(".option")].find(btn=>btn.querySelector(".word")?.textContent.trim()===String(currentQuestion.verb))
+    : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(currentQuestion.answer));
+  if(rightChoice) rightChoice.classList.add("correct");
+  const wrongDetail=`<div class="result-detail">你選的是：<b>${escapeHtml(selectedLabel)}</b><br>正確答案：<b style="color:#7fc79a">${escapeHtml(correctLabel)}</b></div>`;
+  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}<div class="result-detail">先看一下正確答案和規則，再重新選擇。</div>${isPastTenseQuestion?pastWrongExplanation:wrongTeach}${pastSentenceAudio}`;
+  if(!isPastTenseQuestion) speak("答錯了，再試一次");
   setTimeout(()=>{
     if(!currentSession)return;
-    // Keep the exact same question and the same visible choices.
-    // Do NOT re-render: re-rendering can reshuffle Pokémon/options and make
-    // the child think the question changed. Unlock the current question only.
+    // Keep the same question and options; the child may retry after reviewing feedback.
     answerLocked=false;
   },700);
 }
@@ -2014,20 +2115,40 @@ function nextQuestion(){
   if(currentSession.index>=currentSession.questions.length){finishSession();return}
   renderQuestion();
 }
+function buildSessionReviewMarkup(session){
+  if(!session || !Array.isArray(session.questions)) return "";
+  const rows=session.questions.map((q,i)=>{
+    const data=session.questionAttemptData?.[i]||{answers:[],completed:false};
+    const attempts=Array.isArray(data.answers)?data.answers:[];
+    const first=attempts[0]||null;
+    const last=attempts[attempts.length-1]||null;
+    const firstCorrect=!!first?.correct;
+    const finallyCorrect=!!data.completed && !!last?.correct;
+    const selectedFirst=q.poke?(first?.selectedAnswer||first?.answer||"未作答"):(first?.answer||"未作答");
+    const selectedLast=q.poke?(last?.selectedAnswer||last?.answer||"未作答"):(last?.answer||"未作答");
+    const answerText=q.poke?(q.verb||""):(q.answer||"");
+    const prompt=q.poke?stripHtml(ruleQuestionPrompt(q)):(q.sentence||q.id||"題目");
+    const status=!attempts.length?"尚未作答":firstCorrect?"第一次答對":finallyCorrect?"第一次答錯，後來修正成功":"仍需複習";
+    const cls=!attempts.length?"pending":firstCorrect?"first":finallyCorrect?"retry":"unresolved";
+    return `<div class="result-row"><div class="result-status ${cls}">${i+1}. ${status}</div><div class="result-prompt">${escapeHtml(prompt)}</div><div>第一次選擇：<b>${escapeHtml(selectedFirst)}</b></div>${attempts.length>1?`<div>最後一次選擇：<b>${escapeHtml(selectedLast)}</b></div>`:""}<div>正確答案：<b class="result-answer">${escapeHtml(answerText)}</b></div></div>`;
+  }).join("");
+  return `<h3 style="text-align:left;margin:18px 0 6px">本次答題結果</h3><p class="muted" style="text-align:left;margin:0">綠色：第一次答對；黃色：第一次答錯、後來修正；紅色：仍需複習。</p><div class="result-summary">${rows}</div>`;
+}
 function finishSession(){
   const s=currentSession;
   const total=s.questions.length;
-  const cleanIndependent=Object.values(s.questionAttemptData||{}).filter(q=>q.completed && !q.hintUsed).length;
-  const pct=Math.round(cleanIndependent/Math.max(1,total)*100);
+  const firstTryPct=Math.round((Number(s.firstTryCorrect)||0)/Math.max(1,total)*100);
+  const finalCorrectCount=Object.values(s.questionAttemptData||{}).filter(q=>q.completed && (q.answers||[]).some(a=>a.correct)).length;
+  const finalCompletionPct=Math.round(finalCorrectCount/Math.max(1,total)*100);
 
   if(!false){
     const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
-    old.best=Math.max(old.best,pct); old.plays++; old.totalCorrect+=s.correct; old.totalQuestions+=total;
+    old.best=Math.max(old.best,firstTryPct); old.plays++; old.totalCorrect+=s.firstTryCorrect; old.totalQuestions+=total;
     state.stageStats[s.stageId]=old;
       // All stages are available from the beginning; completion never gates access.
       state.unlocked=STAGES.map(x=>x.id);
       const unlockedNextId=null;
-    s.reward=maybeReward(s,pct);
+    s.reward=maybeReward(s,firstTryPct);
     saveState();
     let shouldRest=false;
     if(s.learningSegmentStartedAt){
@@ -2041,12 +2162,15 @@ function finishSession(){
         ${s.reward.kind==="evolution"?`<div class="muted">${POKEMON[s.reward.from].name} → ${POKEMON[s.reward.to].name}</div>`:`<div class="muted">透過持續練習解鎖新的夥伴</div>`}
       </div>`:"";
     const levelHtml=s.levelUps?`<div class="card" style="margin-top:14px"><b style="color:#e7ca73;font-size:24px">🎆 LEVEL UP! Lv. ${state.level}</b></div>`:"";
+    const firstTryRate=firstTryPct;
+    const finalRate=finalCompletionPct;
     showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
-      <div class="reward-title">🌟 Mission Complete!</div>
-      <p>本次練習共 ${total} 題。</p>
-      <p class="muted">完成 ${s.uniqueCompleted} / ${total} 題 · 第一次就答對 ${s.firstTryCorrect} 題 · 曾修正 ${s.improvementCount} 次</p>
+      <div class="reward-title">🌟 本關完成！</div>
+      <p>本次共 ${total} 題，以下會逐題告訴你第一次是否答對，以及最後有沒有修正成功。</p>
+      <div class="test-result-score"><div><span>第一次答對</span><b>${s.firstTryCorrect} / ${total}</b><strong>${firstTryRate}%</strong></div><div><span>最後完成答對</span><b>${finalCorrectCount} / ${total}</b><strong>${finalRate}%</strong></div><div><span>修正次數</span><b>${s.improvementCount}</b><strong>次</strong></div></div>
+      ${buildSessionReviewMarkup(s)}
       ${levelHtml}${rewardHtml}
-      ${pct>=70 ? `<p class="muted">✓ 本關練習已完成。</p>` : `<p style="color:#e5c86f">可以再練習一次，也可以直接選擇其他關卡。</p>`}
+      ${firstTryPct>=70 ? `<p class="muted">✓ 首次作答正確率達到 70%。</p>` : `<p style="color:#e5c86f">這次可以再練習一次，試著讓更多題目第一次就答對。</p>`}
       <div class="actions">
         ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入第 5 關</button>`:""}
         <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
@@ -2059,8 +2183,8 @@ function finishSession(){
   }
 }
 
-function maybeReward(s,pct){
-  if(pct>=90 && s.independent>=Math.ceil(s.questions.length*.6)){
+function maybeReward(s,firstTryPct){
+  if(firstTryPct>=90 && s.firstTryCorrect>=Math.ceil(s.questions.length*.6)){
     const evolved=evolveActivePokemon();
     if(evolved) return {kind:"evolution",from:evolved.from,to:evolved.to};
   }
