@@ -101,7 +101,17 @@ flag,國旗
 "trade","交易"
 "recess","課間休息"
 
-
+"English","中文"
+"bored","無聊的"
+"feelings","情懷"
+"hungry","飢餓的"
+"senses","感官"
+"tired","疲勞的"
+"out loud","大聲說出來"
+"agree","同意"
+"land","土地"
+"porch","門廊"
+"covers","封面"
 
 
 # 可繼續增加：
