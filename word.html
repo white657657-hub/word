@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero V1541｜單字練習</title>
+    <title>Word Hero｜兒童友善 UI 版</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -766,6 +766,158 @@
         #practice-guide .practice-guide-wordline > .voice-status{display:none;flex:0 0 100%;width:100%;margin:2px 0 0;text-align:center;font-size:.78rem;color:#fbbf24}
         #practice-guide .practice-guide-wordline > .voice-status[style*="display: block"]{display:block!important}
 
+
+        /* Word Hero child-first UI refresh: clear hierarchy, touch targets, responsive layouts */
+        :root { --bg:#edf2f7; --card:#ffffff; --accent:#2576a8; --success:#247a50; --danger:#b42332; --gold:#b77912; }
+        html,body { background:#edf2f7; color:#243247; overflow:hidden; font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif; }
+        .container { background:#edf2f7; padding:clamp(8px,1.5vw,18px); gap:8px; }
+        .view-section { padding:clamp(8px,1.5vw,18px); gap:8px; color:#243247; }
+        #view-main { max-width:980px; width:100%; margin:0 auto; align-self:stretch; }
+        .home-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 6px; padding:8px 2px; text-align:left; }
+        .home-title { color:#244e70; font-size:clamp(1.6rem,3vw,2.2rem); letter-spacing:.04em; line-height:1.1; }
+        .home-user-control { margin:0; }
+        .home-user-icon { display:none; }
+        #home-user-trigger { background:#fff; color:#26364b; border:2px solid #c5d1df; min-height:48px; font-size:1rem; }
+        .home-user-add { width:42px; height:42px; border-radius:12px; background:#dce8f2; color:#244e70; border:1px solid #b8c9d9; font-size:1.5rem; }
+        .unit-card { background:#fff; border:1px solid #d1dbe6; border-radius:16px; padding:14px 16px; margin-bottom:4px; box-shadow:0 2px 8px rgba(31,52,75,.05); }
+        .unit-label { color:#344b63; font-size:1rem; margin-bottom:8px; }
+        #unit-selector { min-height:52px; padding:12px 14px; border-radius:12px; background:#f7f9fc; color:#244e70; border:2px solid #bdccdb; font-size:1.12rem; }
+        .home-main-actions { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+        .home-action { min-height:124px; padding:14px 10px; border:2px solid transparent; border-radius:18px; color:#26364b; box-shadow:0 3px 10px rgba(36,59,82,.07); font-size:1.18rem; gap:2px; }
+        .home-action:focus-visible,.home-secondary-actions button:focus-visible,.more-toggle:focus-visible { outline:3px solid #1769aa; outline-offset:3px; }
+        .home-action:active { transform:scale(.985); }
+        .home-action-icon { display:flex; align-items:center; justify-content:center; min-height:38px; min-width:52px; padding:2px 10px; margin-bottom:4px; border-radius:12px; background:rgba(255,255,255,.6); color:inherit; font-size:1.5rem; font-weight:900; }
+        .home-action small { font-size:.88rem; line-height:1.35; font-weight:650; opacity:1; text-align:center; }
+        .home-action.challenge { background:#dceaf8; border-color:#bdd4ec; color:#244b70; }
+        .home-action.practice { background:#d9edf2; border-color:#b6dbe3; color:#22545f; }
+        .home-action.sentence { background:#e9e2f6; border-color:#d2c4ec; color:#514071; }
+        .home-action.star { background:#f8edcf; border-color:#ebd99f; color:#624b17; }
+        .home-action.error-review { background:#f7e2df; border-color:#ebc4bf; color:#783c37; }
+        .home-action.report { background:#e1e9f4; border-color:#c5d4e7; color:#314d70; }
+        .error-bank-count { min-width:26px; height:26px; padding:0 8px; background:#fff; color:#783c37; border:1px solid #dfb2ac; }
+        .home-adventure-title { color:#42566d; font-size:1rem; text-align:left; margin:8px 0 0; }
+        .home-secondary-actions { gap:10px; }
+        .home-secondary-actions button { min-height:56px; background:#fff; color:#29465f; border:2px solid #d1dbe6; border-radius:14px; font-size:1rem; }
+        .more-toggle { min-height:48px; margin-top:2px; padding:12px; background:#e2e8ef; color:#344b63; border:1px solid #c8d3df; border-radius:12px; font-size:.95rem; }
+        .more-tools { background:#fff; border:1px solid #d1dbe6; border-radius:12px; padding:10px; }
+        .admin-btn { font-size:.9rem !important; }
+        #view-game { max-width:980px; width:100%; margin:0 auto; align-self:stretch; gap:10px; }
+        .child-game-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .game-home-btn { min-height:48px; padding:10px 16px !important; border:2px solid #c5d1df !important; border-radius:12px !important; background:#fff !important; color:#2d4862 !important; font-size:1rem !important; margin:0 !important; }
+        .child-game-progress { display:flex; flex-direction:column; align-items:flex-end; gap:2px; color:#42566d; }
+        #child-mode-label { font-size:1rem; }
+        #child-question-progress { font-size:.9rem; }
+        #combat-arena { height:clamp(120px,20vh,170px); border-radius:16px; border-color:#c3d2df; }
+        #display-cn { color:#9a680b; text-shadow:none; font-size:clamp(2rem,5vw,3.1rem); line-height:1.25; }
+        #star-icon { min-width:48px; display:inline-flex; justify-content:center; align-items:center; min-height:48px; border-radius:12px; background:#fff; border:1px solid #e3d5aa; }
+        #practice-guide { color:#176d94 !important; text-shadow:none !important; }
+        .box-input-container { gap:7px; margin:8px auto 10px; }
+        .letter-box { width:clamp(42px,5.3vw,58px); height:clamp(56px,8vh,70px); line-height:1; border:2px solid #4b9ab7 !important; border-radius:12px; background:#fff !important; color:#23364a !important; font-size:clamp(1.6rem,3vw,2rem); }
+        .letter-box:focus { outline:3px solid #f0c96b !important; outline-offset:2px; }
+        .letter-box.mismatch,.letter-box.wrong { border-color:#c4444d !important; background:#fff0f0 !important; color:#a51d2d !important; }
+        .letter-box.correct-place { border-color:#32845e !important; background:#eef9f1 !important; }
+        .word-separator { color:#42627b; font-weight:800; }
+        .child-answer-feedback { width:min(100%,720px); margin:0 auto; padding:12px 16px; border-radius:14px; font-size:1rem; font-weight:800; text-align:center; }
+        .child-answer-feedback[hidden] { display:none !important; }
+        .child-answer-feedback.good { color:#205d3d; background:#e2f4e8; border:1px solid #a8d8b8; }
+        .child-answer-feedback.try { color:#7a3a31; background:#fff0ed; border:1px solid #e9c0b8; }
+        .pass-btn-inline { min-height:48px !important; border-radius:12px !important; background:#e4eaf0 !important; border:1px solid #c5d1df !important; color:#344b63 !important; font-size:1rem !important; }
+        .practice-context-card { background:#fff !important; border:1px solid #d1dbe6 !important; border-radius:14px !important; color:#2b4055 !important; }
+        #view-victory { background:#fff; border:1px solid #d1dbe6; border-radius:20px; margin:auto; width:min(100%,720px); padding:clamp(18px,4vw,36px); }
+        .victory-mark { width:76px;height:76px;display:grid;place-items:center;border-radius:24px;background:#dceaf8;color:#244e70;font-size:1.25rem;font-weight:900;border:2px solid #bdd4ec; }
+        #view-victory h2 { color:#244e70 !important; font-size:clamp(1.6rem,4vw,2.2rem); }
+        #victory-message { color:#344b63; font-size:1.12rem; }
+        #view-victory .mode-btn { min-height:54px; border-radius:14px; font-size:1.05rem; }
+        @media (min-width:800px) { #view-main { justify-content:center; } .home-main-actions { grid-template-columns:repeat(3,minmax(0,1fr)); } .home-action { min-height:136px; } }
+        @media (max-width:600px) {
+          .container { padding:6px; gap:4px; }
+          .view-section { padding:8px; gap:8px; }
+          .home-header { align-items:flex-start; flex-direction:column; gap:8px; }
+          .home-user-control { justify-content:flex-start; }
+          .home-title { font-size:1.75rem; }
+          .home-main-actions { gap:9px; }
+          .home-action { min-height:112px; padding:10px 7px; font-size:1.02rem; border-radius:15px; }
+          .home-action small { font-size:.78rem; }
+          .home-action-icon { min-height:32px; min-width:44px; font-size:1.25rem; }
+          .home-secondary-actions button { min-height:52px; font-size:.92rem; }
+          #combat-arena { height:120px; }
+          #display-cn { font-size:2.25rem !important; }
+          .letter-box { width:min(9vw,38px); height:52px; font-size:1.45rem; border-radius:9px; }
+          .box-input-container { gap:4px; }
+          #practice-guide { font-size:1.75rem !important; }
+          .child-game-toolbar { align-items:flex-start; }
+        }
+        @media (max-height:650px) and (min-width:601px) { .home-header { margin:0; } .home-action { min-height:94px; } .home-action-icon { min-height:28px; } .home-adventure-title { margin-top:4px; } }
+        @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
+
+
+
+/* V2 CHILD-FRIENDLY UI — presentation-only overrides; application handlers preserved */
+:root {
+  --bg: #eef2f6;
+  --card: #ffffff;
+  --accent: #35516b;
+  --success: #24734f;
+  --danger: #a63d45;
+  --gold: #8a6500;
+  --exp: #8a6500;
+  color-scheme: light;
+}
+html, body { background:#eef2f6 !important; color:#253746 !important; }
+body { font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif !important; }
+.container { background:#eef2f6 !important; padding:12px !important; }
+.view-section { padding:8px !important; }
+#view-main { max-width:760px; width:100%; margin:0 auto; gap:8px; }
+.home-header { margin:5px 0 8px !important; }
+.home-title { color:#304c66 !important; font-size:clamp(1.6rem,4vw,2rem) !important; letter-spacing:.04em !important; }
+.home-user { color:#526575 !important; font-size:.9rem !important; }
+#home-user-trigger { background:#fff !important; color:#263c50 !important; border:1px solid #b8c7d4 !important; min-height:44px !important; }
+.home-user-chevron { color:#526575 !important; }
+#home-user-menu { background:#fff !important; border-color:#b8c7d4 !important; box-shadow:0 10px 28px rgba(34,54,73,.16) !important; }
+.home-user-option { color:#263c50 !important; }
+.home-user-option:active,.home-user-option[aria-current="true"] { background:#e5edf4 !important; }
+.home-user-add { background:#e5edf4 !important; color:#304c66 !important; border-color:#b8c7d4 !important; }
+.unit-card { background:#fff !important; border:1px solid #d2dce5 !important; border-radius:16px !important; padding:12px !important; box-shadow:0 2px 8px rgba(37,55,70,.04) !important; }
+.unit-label { color:#344b5e !important; font-size:.95rem !important; }
+#unit-selector { background:#f7f9fb !important; color:#263c50 !important; border:1px solid #b8c7d4 !important; min-height:48px !important; font-size:1rem !important; }
+.home-main-actions { gap:12px !important; }
+.home-action { min-height:116px !important; border:1px solid #d3dde6 !important; border-radius:18px !important; color:#263c50 !important; background:#fff !important; box-shadow:0 3px 10px rgba(37,55,70,.07) !important; padding:12px 8px !important; gap:2px !important; transition:transform .12s ease, box-shadow .12s ease !important; }
+.home-action:active { transform:scale(.985); box-shadow:0 1px 4px rgba(37,55,70,.08) !important; }
+.home-action:focus-visible,.home-secondary-actions button:focus-visible,.more-toggle:focus-visible { outline:3px solid #426b8d !important; outline-offset:2px !important; }
+.home-action-icon { font-size:1.35rem !important; line-height:1.1 !important; margin-bottom:4px !important; color:#304c66 !important; }
+.home-action > span:not(.home-action-icon) { font-size:1.08rem !important; font-weight:900 !important; }
+.home-action small { color:#526575 !important; opacity:1 !important; font-size:.78rem !important; line-height:1.35 !important; margin-top:5px !important; }
+.home-action.challenge { background:#f8e9e6 !important; border-color:#e8c7c1 !important; }
+.home-action.practice { background:#e6eff8 !important; border-color:#c6d8e9 !important; }
+.home-action.sentence { background:#eee9f8 !important; border-color:#d7cbed !important; }
+.home-action.star { background:#f7f0d9 !important; border-color:#e6d9a8 !important; color:#3c3521 !important; }
+.home-action.error-review { background:#f9eadb !important; border-color:#ebd0b3 !important; }
+.home-action.report { background:#e3f1e9 !important; border-color:#c3dfcf !important; }
+.error-bank-count { background:#fff !important; color:#344b5e !important; border:1px solid #d2dce5 !important; }
+.home-adventure-title { color:#526575 !important; font-size:.9rem !important; margin:14px 0 7px !important; }
+.home-secondary-actions button { background:#fff !important; color:#304c66 !important; border:1px solid #c6d3de !important; min-height:50px !important; box-shadow:0 2px 7px rgba(37,55,70,.04) !important; }
+.more-toggle { background:#e5ebf0 !important; border:1px solid #c6d3de !important; color:#344b5e !important; min-height:44px !important; }
+.more-tools { background:#f7f9fb !important; border:1px solid #d2dce5 !important; border-radius:12px !important; padding:8px !important; }
+.admin-btn { background:#e5ebf0 !important; color:#344b5e !important; border:1px solid #c6d3de !important; font-size:.9rem !important; }
+.admin-btn:hover { background:#d8e2ea !important; }
+/* Shared controls: readable light surfaces while leaving answer-state colors explicit */
+button, input, select, textarea { font-family:inherit; }
+button { touch-action:manipulation; }
+input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radius:10px; }
+@media (max-width:600px) {
+  .container { padding:8px !important; }
+  #view-main { padding:5px !important; }
+  .home-main-actions { gap:9px !important; }
+  .home-action { min-height:108px !important; padding:10px 6px !important; }
+  .home-action > span:not(.home-action-icon) { font-size:1rem !important; }
+  .home-action small { font-size:.72rem !important; }
+}
+@media (min-width:700px) {
+  #view-main { max-width:720px; }
+  .home-main-actions { gap:14px !important; }
+  .home-action { min-height:124px !important; }
+}
+
 </style>
 </head>
 <body onload="initSystem()">
@@ -785,7 +937,7 @@
         <div class="home-header">
             <div class="home-title">WORD HERO</div>
             <div class="home-user-control">
-                <span class="home-user-icon" aria-hidden="true">👤</span>
+                <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
                     <button type="button" id="home-user-trigger" aria-label="切換使用者" aria-haspopup="listbox" aria-expanded="false" onclick="toggleUserMenu()">
                         <span id="home-user-current">載入使用者…</span><span class="home-user-chevron" aria-hidden="true">▾</span>
@@ -797,47 +949,50 @@
         </div>
 
         <div class="unit-card">
-            <div class="unit-label">📚 今天學習</div>
+            <div class="unit-label">今天要學哪一課？</div>
             <select id="unit-selector"></select>
         </div>
 
         <div class="home-main-actions">
             <button class="home-action challenge" onclick="startSession('quiz')">
-                <span class="home-action-icon">🗡️</span><span>魔王挑戰</span><small>挑戰單字・收服寶可夢</small>
+                <span class="home-action-icon" aria-hidden="true">A</span><span>魔王挑戰</span><small>挑戰單字，收服夥伴</small>
             </button>
             <button class="home-action practice" onclick="startSession('practice')">
-                <span class="home-action-icon">🔤</span><span>單字練習</span><small>拼字・自然拼音・朗讀</small>
+                <span class="home-action-icon" aria-hidden="true">Aa</span><span>單字練習</span><small>拼字、聽發音</small>
             </button>
             <button class="home-action sentence" onclick="startSentenceSession()">
-                <span class="home-action-icon">✍️</span><span>單字造句</span><small>自己造句・文法提示</small>
+                <span class="home-action-icon" aria-hidden="true">句</span><span>單字造句</span><small>用單字寫英文句子</small>
             </button>
             <button class="home-action star" onclick="startPrioritySession()">
-                <span class="home-action-icon">⭐</span><span>星號複習</span><small>複習你標記的單字</small>
+                <span class="home-action-icon" aria-hidden="true">★</span><span>星號複習</span><small>複習自己標記的單字</small>
             </button>
             <button class="home-action error-review" onclick="startErrorReviewSession()">
-                <span class="home-action-icon">🎯</span><span>錯題複習 <b id="error-bank-count" class="error-bank-count">0</b></span><small>錯 5 次自動加入・連續答對 3 次自動移出</small>
+                <span class="home-action-icon" aria-hidden="true">再練</span><span>錯題複習 <b id="error-bank-count" class="error-bank-count">0</b></span><small>把還不熟的單字再練一次</small>
+            </button>
+            <button class="home-action report" onclick="openLearningReportInApp()">
+                <span class="home-action-icon" aria-hidden="true">報告</span><span>學習報告</span><small>和家長一起看看學習進度</small>
             </button>
         </div>
 
-        <div class="home-adventure-title">我的冒險</div>
+        <div class="home-adventure-title">我的寶可夢冒險</div>
         <div class="home-secondary-actions">
-            <button onclick="switchView('view-team')">🐲<span>我的夥伴</span></button>
-            <button onclick="switchView('view-pokedex')">📸<span>寶可夢圖鑑</span></button>
+            <button onclick="switchView('view-team')"><span>我的夥伴</span></button>
+            <button onclick="switchView('view-pokedex')"><span>寶可夢圖鑑</span></button>
         </div>
         
-        <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">⚙️ 更多功能 <span id="more-arrow">⌄</span></button>
+        <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">家長與設定 <span id="more-arrow">⌄</span></button>
         <div id="more-tools" class="more-tools" style="display:none;">
-            <button class="admin-btn" onclick="switchView('view-bank')">📚 題庫管理</button>
-            <button class="admin-btn" onclick="openLearningReportInApp()">📊 家長學習觀察報告｜頁面內查看全部 Log</button>
-            <div class="admin-btn" style="display:block;line-height:1.7;cursor:default"><b>📦 學習資料容量管理</b><div id="log-storage-status" style="font-size:13px;color:#64748b">正在計算目前使用量…</div><button class="admin-btn" onclick="refreshLogStorageStatus()">重新計算容量</button><button class="admin-btn" onclick="clearOldLearningLogs()">清除 90 天以前的學習紀錄</button><button class="admin-btn" onclick="clearLearningLogs()">🗑️ 清除所有學習 Log</button><small style="display:block;color:#64748b">只清除學習／錯題紀錄與待複習清單；不刪除題庫、單字星號或寶可夢進度。清除後無法復原。</small></div>
-            <button class="admin-btn" onclick="downloadChildProgress()">📦 進度下載</button>
-            <button class="admin-btn" onclick="switchUser()">👤 切換使用者</button>
+            <button class="admin-btn" onclick="switchView('view-bank')">題庫管理</button>
+            <button class="admin-btn" onclick="openLearningReportInApp()">家長學習觀察報告｜查看全部紀錄</button>
+            <div class="admin-btn" style="display:block;line-height:1.7;cursor:default"><b>學習資料容量管理</b><div id="log-storage-status" style="font-size:13px;color:#64748b">正在計算目前使用量…</div><button class="admin-btn" onclick="refreshLogStorageStatus()">重新計算容量</button><button class="admin-btn" onclick="clearOldLearningLogs()">清除 90 天以前的學習紀錄</button><button class="admin-btn" onclick="clearLearningLogs()">清除所有學習紀錄</button><small style="display:block;color:#64748b">只清除學習／錯題紀錄與待複習清單；不刪除題庫、單字星號或寶可夢進度。清除後無法復原。</small></div>
+            <button class="admin-btn" onclick="downloadChildProgress()">進度下載</button>
+            <button class="admin-btn" onclick="switchUser()">切換使用者</button>
         </div>
     </div>
 
     <div id="learning-report-overlay" class="learning-report-overlay" role="dialog" aria-modal="true" aria-label="家長學習觀察報告" style="display:none;" onclick="if(event.target===this)closeLearningReportInApp()">
         <div class="learning-report-shell">
-            <div class="learning-report-toolbar"><strong>📊 家長學習觀察報告</strong><button type="button" onclick="closeLearningReportInApp()" aria-label="關閉報告">✕ 關閉</button></div>
+            <div class="learning-report-toolbar"><strong>家長學習觀察報告</strong><button type="button" onclick="closeLearningReportInApp()" aria-label="關閉報告">✕ 關閉</button></div>
             <iframe id="learning-report-frame" title="家長學習觀察報告" loading="eager"></iframe>
         </div>
     </div>
@@ -907,7 +1062,8 @@
     </div>
 
     <div id="view-game" class="view-section">
-        <div style="display:flex; justify-content:space-between;"><button class="mode-btn" style="width:auto; padding:6px 12px; background:#334155; font-size:0.8rem;" onclick="switchView('view-main')">🏠 撤退</button></div>
+        <div class="child-game-toolbar"><button class="mode-btn game-home-btn" style="width:auto;" onclick="confirmLeavePractice()">回首頁</button><div class="child-game-progress"><strong id="child-mode-label">單字練習</strong><span id="child-question-progress">準備開始</span></div></div>
+        <div style="display:flex; justify-content:space-between;"><button class="mode-btn game-home-btn" style="width:auto;" onclick="confirmLeavePractice()">回首頁</button></div>
         <div id="combat-arena">
             <div id="player-hp-box" class="hp-container"><div id="player-hp-bar" class="hp-bar"></div><div id="player-hp-label" class="hp-label">HP 5/5</div></div>
             <img id="player-sprite" class="sprite" src="">
@@ -922,13 +1078,14 @@
         </div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:auto;"></div>
         <div id="letter-area" class="box-input-container"></div>
+        <div id="child-answer-feedback" class="child-answer-feedback" role="status" aria-live="polite" hidden></div>
         <section id="practice-context-card" class="practice-context-card" aria-label="單字情境例句">
             <div class="practice-context-label">📖 讀讀看這句話・點不懂的字</div>
             <div class="practice-context-line"><div id="practice-context-sentence" class="practice-context-sentence"></div><button type="button" class="sentence-speak-icon" onclick="playPracticeContextSentence()" aria-label="播放例句" title="播放例句">🔊</button></div>
             <div id="practice-context-translation" class="practice-context-translation"></div>
         </section>
         
-        <button id="btn-game-pass" type="button" class="pass-btn-inline game-pass-after-context" onclick="handlePass()">⏭ PASS｜先跳過</button>
+        <button id="btn-game-pass" type="button" class="pass-btn-inline game-pass-after-context" onclick="handlePass()">先跳過這題</button>
 
         <div style="display:flex; flex-direction:column; align-items:center;">
             <div id="sentence-inline" class="sentence-inline">
@@ -972,17 +1129,17 @@
     </div>
 
     <div id="view-victory" class="view-section" style="text-align:center;align-items:center;justify-content:center;gap:12px;">
-        <div style="font-size:3rem;">🏆✨</div><h2 style="color:var(--gold);margin:0;">單字全數答對！</h2>
+        <div class="victory-mark" aria-hidden="true">完成</div><h2 style="color:var(--gold);margin:0;">這一輪完成了！</h2>
         <div id="victory-message" style="line-height:1.8;"></div>
-        <div style="font-size:1.1rem;font-weight:800;">下一關：用今天的單字來造句吧！</div>
-        <button class="mode-btn" style="background:#16a34a;" onclick="startSentenceSession()">✍️ 前往造句練習</button>
-        <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">稍後再造句／回首頁</button>
+        <div style="font-size:1.1rem;font-weight:800;">下一步：用今天的單字來造句吧！</div>
+        <button class="mode-btn" style="background:#16a34a;" onclick="startSentenceSession()">前往造句練習</button>
+        <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">回首頁</button>
     </div>
 
     <div id="view-bank" class="view-section">
         <div class="bank-page-head">
             <div>
-                <div class="bank-page-title">📚 題庫管理</div>
+                <div class="bank-page-title">題庫管理</div>
                 <div class="bank-page-subtitle">一次輸入 20 個英文單字，中文會自動帶入</div>
             </div>
         </div>
@@ -1213,7 +1370,7 @@
         catch (err) { console.warn('動畫未執行，不影響學習流程。', err); }
     }
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, chosenOppId: 0, opponentPickMode: false, quizCompleted: 0, quizPassedCount: 0, sessionCorrect: 0, sessionIncorrect: 0, sessionSubmissions: 0, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
+    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, chosenOppId: 0, opponentPickMode: false, quizCompleted: 0, quizPassedCount: 0, quizTotalCount: 0, quizResultRows: [], sessionStats: { correct: 0, incorrect: 0, passes: 0 }, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
     let currentUserKey = '';
@@ -1437,7 +1594,7 @@
         if(!refs.length)return alert('錯題庫目前是空的。單字累計答錯 5 次會自動加入；連續答對 3 次會自動移出。');
         state.currentList=[];Object.values(state.banks||{}).forEach(bank=>(bank||[]).forEach(w=>{if(refs.includes(w.ref))state.currentList.push(w);}));
         if(!state.currentList.length)return alert('錯題庫中的單字目前不在已載入題庫，請重新載入題庫。');
-        state.currentList.sort(()=>Math.random()-.5);state.mode='error_review';state.index=0;state.tempPractice=false;
+        state.currentList.sort(()=>Math.random()-.5);state.mode='error_review';state.index=0;state.tempPractice=false;state.quizResultRows=[];state.sessionStats={correct:0,incorrect:0,passes:0};
         switchView('view-game');initArena();
     }
 
@@ -1486,8 +1643,7 @@
     function addLearningLog(item) {
         try {
             const rows = getLearningLog();
-            const eventNow = Date.now();
-            rows.push({ child: getChildName(), at: new Date(eventNow).toISOString(), atMs: eventNow, ...item });
+            rows.push({ child: getChildName(), at: new Date().toISOString(), ...item });
             setLocalJSON('hero_learning_log', rows.slice(-10000));
         } catch (e) { /* Log 寫入失敗不可阻斷孩子作答 */ }
     }
@@ -1575,10 +1731,20 @@
         const logs = getLearningLog(); const errors = getErrorLog();
         const all = [...logs.map((x,i)=>({...x,_group:'學習紀錄',_index:i+1})), ...errors.map((x,i)=>({...x,_group:'舊版錯題紀錄',_index:i+1}))];
         const esc = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-        const labelMap={at:'時間',type:'紀錄類型',child:'使用者',mode:'練習模式',unit:'單元',word:'英文單字',meaning:'中文意思',input:'孩子輸入',result:'結果',responseMs:'整題作答時間（毫秒）',inputElapsedMs:'輸入耗時（毫秒）',attemptElapsedMs:'距上次提交耗時（毫秒）',firstInputAt:'首次輸入時間',atMs:'事件時間戳（毫秒）',attempts:'本題提交次數',sentence:'造句內容',issueCount:'檢查問題數',feedback:'系統回饋',strategy:'觀察到的作答策略',hintUsed:'是否使用提示',changedAnswer:'是否修改答案',attemptIndex:'第幾次提交',previousInput:'前一次輸入',correct:'正確答案',typed:'孩子輸入'};
+        const labelMap={at:'時間',type:'紀錄類型',child:'使用者',mode:'練習模式',unit:'單元',word:'英文單字',meaning:'中文意思',input:'孩子輸入',result:'結果',responseMs:'作答時間（毫秒）',attempts:'本題提交次數',sentence:'造句內容',issueCount:'檢查問題數',feedback:'系統回饋',strategy:'觀察到的作答策略',hintUsed:'是否使用提示',changedAnswer:'是否修改答案',attemptIndex:'第幾次提交',previousInput:'前一次輸入',correct:'正確答案',typed:'孩子輸入'};
         const cards=all.map(item=>{const title=item.word||item.sentence||item.type||'紀錄';const date=item.at?new Date(item.at).toLocaleString():'時間未記錄';const day=item.at?(()=>{const d=new Date(item.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})():(item.date||'');const fields=Object.entries(item).filter(([k])=>!k.startsWith('_')).map(([k,v])=>`<div class="field"><b>${esc(labelMap[k]||k)}</b><div>${esc(typeof v==='object'&&v!==null?JSON.stringify(v,null,2):v===true?'是':v===false?'否':v??'（無資料）')}</div></div>`).join('');return `<article class="log" data-day="${esc(day)}" data-search="${esc([item._group,title,item.meaning,item.input,item.sentence,item.result,JSON.stringify(item)].join(' ').toLowerCase())}"><header><span class="tag">${esc(item._group)}</span><time>${esc(date)}</time></header><h2>${esc(title)}</h2><p class="sub">${esc(item.meaning||'')}　｜　${esc(item.result||'未標示')}　｜　${esc(item.mode||'')}</p><details><summary>查看家長觀察細節</summary><div class="fields">${fields}</div></details></article>`}).join('');
         const payload=JSON.stringify(all).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
-        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title><style>*{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0}h2{font-size:19px;margin:8px 0}h3{font-size:17px;margin:0 0 8px}.muted{color:#667085}.panel,.stat,.log{background:white;border:1px solid #dce2ee;border-radius:14px;padding:16px;margin:12px 0}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:16px 0}.stat strong{display:block;font-size:25px}.filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filters label{display:grid;gap:4px;font-weight:600}.filters input{font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:white}.filters button{padding:10px 14px;border:0;border-radius:8px;background:#244f91;color:white;font:inherit;cursor:pointer}.chart{width:100%;height:230px;display:block}.barrow{display:grid;grid-template-columns:minmax(90px,1fr) 3fr 42px;gap:8px;align-items:center;margin:8px 0}.track{height:12px;background:#e9edf5;border-radius:20px;overflow:hidden}.fill{height:100%;background:#6389c6;border-radius:20px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}.log header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#667085;font-size:14px}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.note{background:#fff8e7;border-left:4px solid #e2b24e;padding:12px;border-radius:8px}.empty{padding:18px;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}.barrow{grid-template-columns:85px 1fr 30px}}</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">孩子：${esc(getChildName())}　｜　報告產生：${esc(new Date().toLocaleString())}</div><section class="panel"><h3>日期篩選</h3><div class="filters"><label>開始日期<input type="date" id="from"></label><label>結束日期<input type="date" id="to"></label><button id="reset">顯示全部日期</button></div><p class="muted">選擇日期後，摘要、圖表、錯誤統計及下方紀錄會同步更新。</p></section><section class="panel note" id="no-data-note" hidden>目前尚無學習紀錄。完成第一輪練習後，這裡會顯示答題表現與學習觀察；不會將空白資料解讀為能力不足。</section><section class="stats"><div class="stat"><strong id="total">0</strong>作答／學習紀錄</div><div class="stat"><strong id="rate">—</strong>單字答對率</div><div class="stat"><strong id="first">0</strong>首次答對題次</div><div class="stat"><strong id="passes">0</strong>PASS 次數</div><div class="stat"><strong id="mins">—</strong>平均答對時間</div></section><section class="panel"><h3>每日學習與答題表現</h3><svg id="chart" class="chart" viewBox="0 0 900 230" role="img" aria-label="每日答題數與答對率圖表"></svg><div class="muted">柱狀高度代表每日單字作答數；折線代表當日答對率。資料不足的日期不計算答對率。</div></section><section class="panel"><h3>最常答錯的單字</h3><div id="words"></div><p class="muted">以下先按單字統計錯誤次數；同一單字的具體錯字會在「反覆出現的拼字錯誤」中拆開比較。</p></section><section class="panel"><h3>反覆出現的拼字錯誤</h3><p class="muted">比對孩子輸入與標準拼法。相同輸入會合併計數；不同拼法分開列出，方便看是否反覆卡在同一種錯法。</p><div id="spelling-patterns"></div></section><section class="panel"><h3>造句檢查常見提醒</h3><div id="grammar"></div><p class="note">解讀提醒：這裡只統計本機檢查實際偵測到的目標字、標點與空格提醒，不是完整文法診斷；目前不能據此判定時態、主詞動詞一致或語序能力。舊版紀錄未保存分類者會標示資料不足。</p></section><h2>逐筆學習紀錄</h2><label for="q">搜尋單字、句子、結果或回饋</label><input id="q" type="search" placeholder="輸入關鍵字…" style="width:100%;font:inherit;padding:12px;border:1px solid #9aa8bd;border-radius:9px"> <div id="count" class="muted"></div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const DATA=${payload};const cards=[...document.querySelectorAll('.log')],q=document.getElementById('q'),from=document.getElementById('from'),to=document.getElementById('to');const day=x=>{if(x.at){const d=new Date(x.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return x.date||''};function filtered(){return DATA.filter(x=>(!from.value||day(x)>=from.value)&&(!to.value||day(x)<=to.value))}function htmlText(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;')}function bars(el,entries){if(!entries.length){el.innerHTML='<div class="empty">目前沒有足夠資料。</div>';return}const max=Math.max(1,...entries.map(x=>x[1]));el.innerHTML=entries.map(([k,v])=>'<div class="barrow"><span>'+htmlText(k)+'</span><div class="track"><div class="fill" style="width:'+v/max*100+'%"></div></div><b>'+v+'</b></div>').join('')}function render(){const rows=filtered();document.getElementById('no-data-note').hidden=DATA.length>0;const w=rows.filter(x=>x.type==='word_answer'),ok=w.filter(x=>x.result==='correct'),bad=w.filter(x=>x.result==='incorrect'),pass=rows.filter(x=>x.type==='word_pass');document.getElementById('total').textContent=rows.length;document.getElementById('rate').textContent=w.length?Math.round(ok.length/w.length*100)+'%':'—';document.getElementById('first').textContent=ok.filter(x=>Number(x.attempts||x.attemptIndex||1)===1).length;document.getElementById('passes').textContent=pass.length;const t=ok.map(x=>Number(x.responseMs)).filter(x=>Number.isFinite(x)&&x>=0&&x<3600000);document.getElementById('mins').textContent=t.length?(t.reduce((a,b)=>a+b,0)/t.length/1000).toFixed(1)+' 秒':'—';const freq={};bad.forEach(x=>{const k=x.word||'未標示';freq[k]=(freq[k]||0)+1});bars(document.getElementById('words'),Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8));const variants={};bad.forEach(x=>{const word=String(x.word||'').trim(),typed=String(x.input||x.typed||'').trim();if(!word||!typed)return;const key=word.toLowerCase()+'\\u0000'+typed.toLowerCase();variants[key]||={word,typed,count:0,expected:word};variants[key].count++});const variantRows=Object.values(variants).sort((a,b)=>b.count-a.count).slice(0,12);document.getElementById('spelling-patterns').innerHTML=variantRows.length?variantRows.map(x=>'<div class="barrow"><span>'+htmlText(x.word)+'</span><div><b>'+htmlText(x.typed)+'</b><span class="muted"> → '+htmlText(x.expected)+'</span></div><b>×'+x.count+'</b></div>').join(''):'<div class="empty">目前沒有可比對的錯字輸入紀錄；舊紀錄若未保存孩子輸入內容，無法還原錯字。</div>';const gf={};const issueLabels={target_missing:'句子沒有使用目標單字',punctuation_missing:'句尾缺少標點',extra_spaces:'單字間有多餘空格',repeated_punctuation:'句尾標點重複',empty:'未輸入句子',other:'其他檢查提醒'};rows.filter(x=>x.type==='sentence').forEach(x=>{(Array.isArray(x.issueTypes)?x.issueTypes:[]).forEach(k=>{const label=issueLabels[k]||'其他檢查提醒';gf[label]=(gf[label]||0)+1});if(x.result==='local_basic_check_review'&&!Array.isArray(x.issueTypes))gf['舊版造句紀錄（缺少具體錯誤分類）']=(gf['舊版造句紀錄（缺少具體錯誤分類）']||0)+1});bars(document.getElementById('grammar'),Object.entries(gf).sort((a,b)=>b[1]-a[1]).slice(0,8));const daily={};w.forEach(x=>{const d=day(x);if(!d)return;(daily[d]||= {n:0,ok:0}).n++;if(x.result==='correct')daily[d].ok++});const ds=Object.entries(daily).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14),svg=document.getElementById('chart');if(!ds.length){svg.innerHTML='<text x="450" y="115" text-anchor="middle" fill="#667085">尚無可繪製的單字作答資料</text>'}else{const max=Math.max(1,...ds.map(x=>x[1].n)),step=840/ds.length;let s='';ds.forEach(([d,v],i)=>{const x=45+i*step+step*.25,h=145*v.n/max,y=180-h,rate=v.ok/v.n; s+='<rect x="'+x+'" y="'+y+'" width="'+step*.5+'" height="'+h+'" rx="4" fill="#8aa6d4"/><circle cx="'+(x+step*.25)+'" cy="'+(170-rate*125)+'" r="4" fill="#d17b39"/><text x="'+(x+step*.25)+'" y="202" font-size="11" text-anchor="middle" fill="#667085">'+d.slice(5)+'</text>'});svg.innerHTML='<line x1="35" y1="180" x2="885" y2="180" stroke="#9aa8bd"/>'+s+'<text x="42" y="18" fill="#5478ad" font-size="12">作答數（柱）</text><circle cx="165" cy="14" r="4" fill="#d17b39"/><text x="176" y="18" fill="#a45c27" font-size="12">答對率（點）</text>'}let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=(!from.value||c.dataset.day>=from.value)&&(!to.value||c.dataset.day<=to.value)&&c.dataset.search.includes(term);c.hidden=!show;if(show)n++});document.getElementById('count').textContent='目前顯示 '+n+' / '+cards.length+' 筆';}from.addEventListener('change',render);to.addEventListener('change',render);q.addEventListener('input',render);document.getElementById('reset').addEventListener('click',()=>{from.value='';to.value='';q.value='';render()});render();<\/script></body></html>`;
+        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title><style>*{box-sizing:border-box}body{margin:0;background:#f3f5fa;color:#1c2434;font:16px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0}h2{font-size:19px;margin:8px 0}h3{font-size:17px;margin:0 0 8px}.muted{color:#667085}.panel,.stat,.log{background:white;border:1px solid #dce2ee;border-radius:14px;padding:16px;margin:12px 0}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:16px 0}.stat strong{display:block;font-size:25px}.filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filters label{display:grid;gap:4px;font-weight:600}.filters input{font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:white}.filters button{padding:10px 14px;border:0;border-radius:8px;background:#244f91;color:white;font:inherit;cursor:pointer}.chart{width:100%;height:230px;display:block}.barrow{display:grid;grid-template-columns:minmax(90px,1fr) 3fr 42px;gap:8px;align-items:center;margin:8px 0}.track{height:12px;background:#e9edf5;border-radius:20px;overflow:hidden}.fill{height:100%;background:#6389c6;border-radius:20px}.tag{background:#e8efff;color:#264c9b;border-radius:20px;padding:2px 10px}.log header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#667085;font-size:14px}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:12px}.field{background:#f6f8fc;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#536078;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.note{background:#fff8e7;border-left:4px solid #e2b24e;padding:12px;border-radius:8px}.empty{padding:18px;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}.barrow{grid-template-columns:85px 1fr 30px}}
+/* V3 audit fix: keep the requested two-column home layout at every viewport. */
+.home-main-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+#victory-message { white-space: pre-line; overflow-wrap: anywhere; text-align: left; }
+#victory-message .result-heading { font-weight: 800; }
+@media (max-width: 360px) {
+  .home-main-actions { gap: 7px !important; }
+  .home-action { padding: 9px 5px !important; font-size: .96rem !important; }
+  .home-action small { font-size: .74rem !important; }
+}
+</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">孩子：${esc(getChildName())}　｜　報告產生：${esc(new Date().toLocaleString())}</div><section class="panel"><h3>日期篩選</h3><div class="filters"><label>開始日期<input type="date" id="from"></label><label>結束日期<input type="date" id="to"></label><button id="reset">顯示全部日期</button></div><p class="muted">選擇日期後，摘要、圖表、錯誤統計及下方紀錄會同步更新。</p></section><section class="panel note" id="no-data-note" hidden>目前尚無學習紀錄。完成第一輪練習後，這裡會顯示答題表現與學習觀察；不會將空白資料解讀為能力不足。</section><section class="stats"><div class="stat"><strong id="total">0</strong>作答／學習紀錄</div><div class="stat"><strong id="rate">—</strong>單字答對率</div><div class="stat"><strong id="first">0</strong>首次答對題次</div><div class="stat"><strong id="passes">0</strong>PASS 次數</div><div class="stat"><strong id="mins">—</strong>平均答對時間</div></section><section class="panel"><h3>每日學習與答題表現</h3><svg id="chart" class="chart" viewBox="0 0 900 230" role="img" aria-label="每日答題數與答對率圖表"></svg><div class="muted">柱狀高度代表每日單字作答數；折線代表當日答對率。資料不足的日期不計算答對率。</div></section><section class="panel"><h3>最常答錯的單字</h3><div id="words"></div><p class="muted">以下先按單字統計錯誤次數；同一單字的具體錯字會在「反覆出現的拼字錯誤」中拆開比較。</p></section><section class="panel"><h3>反覆出現的拼字錯誤</h3><p class="muted">比對孩子輸入與標準拼法。相同輸入會合併計數；不同拼法分開列出，方便看是否反覆卡在同一種錯法。</p><div id="spelling-patterns"></div></section><section class="panel"><h3>造句檢查常見提醒</h3><div id="grammar"></div><p class="note">解讀提醒：這裡只統計本機檢查實際偵測到的目標字、標點與空格提醒，不是完整文法診斷；目前不能據此判定時態、主詞動詞一致或語序能力。舊版紀錄未保存分類者會標示資料不足。</p></section><h2>逐筆學習紀錄</h2><label for="q">搜尋單字、句子、結果或回饋</label><input id="q" type="search" placeholder="輸入關鍵字…" style="width:100%;font:inherit;padding:12px;border:1px solid #9aa8bd;border-radius:9px"> <div id="count" class="muted"></div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const DATA=${payload};const cards=[...document.querySelectorAll('.log')],q=document.getElementById('q'),from=document.getElementById('from'),to=document.getElementById('to');const day=x=>{if(x.at){const d=new Date(x.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return x.date||''};function filtered(){return DATA.filter(x=>(!from.value||day(x)>=from.value)&&(!to.value||day(x)<=to.value))}function htmlText(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;')}function bars(el,entries){if(!entries.length){el.innerHTML='<div class="empty">目前沒有足夠資料。</div>';return}const max=Math.max(1,...entries.map(x=>x[1]));el.innerHTML=entries.map(([k,v])=>'<div class="barrow"><span>'+htmlText(k)+'</span><div class="track"><div class="fill" style="width:'+v/max*100+'%"></div></div><b>'+v+'</b></div>').join('')}function render(){const rows=filtered();document.getElementById('no-data-note').hidden=DATA.length>0;const w=rows.filter(x=>x.type==='word_answer'),ok=w.filter(x=>x.result==='correct'),bad=w.filter(x=>x.result==='incorrect'),pass=rows.filter(x=>x.type==='word_pass');document.getElementById('total').textContent=rows.length;document.getElementById('rate').textContent=w.length?Math.round(ok.length/w.length*100)+'%':'—';document.getElementById('first').textContent=ok.filter(x=>Number(x.attempts||x.attemptIndex||1)===1).length;document.getElementById('passes').textContent=pass.length;const t=ok.map(x=>Number(x.responseMs)).filter(x=>Number.isFinite(x)&&x>=0&&x<3600000);document.getElementById('mins').textContent=t.length?(t.reduce((a,b)=>a+b,0)/t.length/1000).toFixed(1)+' 秒':'—';const freq={};bad.forEach(x=>{const k=x.word||'未標示';freq[k]=(freq[k]||0)+1});bars(document.getElementById('words'),Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8));const variants={};bad.forEach(x=>{const word=String(x.word||'').trim(),typed=String(x.input||x.typed||'').trim();if(!word||!typed)return;const key=word.toLowerCase()+'\\u0000'+typed.toLowerCase();variants[key]||={word,typed,count:0,expected:word};variants[key].count++});const variantRows=Object.values(variants).sort((a,b)=>b.count-a.count).slice(0,12);document.getElementById('spelling-patterns').innerHTML=variantRows.length?variantRows.map(x=>'<div class="barrow"><span>'+htmlText(x.word)+'</span><div><b>'+htmlText(x.typed)+'</b><span class="muted"> → '+htmlText(x.expected)+'</span></div><b>×'+x.count+'</b></div>').join(''):'<div class="empty">目前沒有可比對的錯字輸入紀錄；舊紀錄若未保存孩子輸入內容，無法還原錯字。</div>';const gf={};const issueLabels={target_missing:'句子沒有使用目標單字',punctuation_missing:'句尾缺少標點',extra_spaces:'單字間有多餘空格',repeated_punctuation:'句尾標點重複',empty:'未輸入句子',other:'其他檢查提醒'};rows.filter(x=>x.type==='sentence').forEach(x=>{(Array.isArray(x.issueTypes)?x.issueTypes:[]).forEach(k=>{const label=issueLabels[k]||'其他檢查提醒';gf[label]=(gf[label]||0)+1});if(x.result==='local_basic_check_review'&&!Array.isArray(x.issueTypes))gf['舊版造句紀錄（缺少具體錯誤分類）']=(gf['舊版造句紀錄（缺少具體錯誤分類）']||0)+1});bars(document.getElementById('grammar'),Object.entries(gf).sort((a,b)=>b[1]-a[1]).slice(0,8));const daily={};w.forEach(x=>{const d=day(x);if(!d)return;(daily[d]||= {n:0,ok:0}).n++;if(x.result==='correct')daily[d].ok++});const ds=Object.entries(daily).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14),svg=document.getElementById('chart');if(!ds.length){svg.innerHTML='<text x="450" y="115" text-anchor="middle" fill="#667085">尚無可繪製的單字作答資料</text>'}else{const max=Math.max(1,...ds.map(x=>x[1].n)),step=840/ds.length;let s='';ds.forEach(([d,v],i)=>{const x=45+i*step+step*.25,h=145*v.n/max,y=180-h,rate=v.ok/v.n; s+='<rect x="'+x+'" y="'+y+'" width="'+step*.5+'" height="'+h+'" rx="4" fill="#8aa6d4"/><circle cx="'+(x+step*.25)+'" cy="'+(170-rate*125)+'" r="4" fill="#d17b39"/><text x="'+(x+step*.25)+'" y="202" font-size="11" text-anchor="middle" fill="#667085">'+d.slice(5)+'</text>'});svg.innerHTML='<line x1="35" y1="180" x2="885" y2="180" stroke="#9aa8bd"/>'+s+'<text x="42" y="18" fill="#5478ad" font-size="12">作答數（柱）</text><circle cx="165" cy="14" r="4" fill="#d17b39"/><text x="176" y="18" fill="#a45c27" font-size="12">答對率（點）</text>'}let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=(!from.value||c.dataset.day>=from.value)&&(!to.value||c.dataset.day<=to.value)&&c.dataset.search.includes(term);c.hidden=!show;if(show)n++});document.getElementById('count').textContent='目前顯示 '+n+' / '+cards.length+' 筆';}from.addEventListener('change',render);to.addEventListener('change',render);q.addEventListener('input',render);document.getElementById('reset').addEventListener('click',()=>{from.value='';to.value='';q.value='';render()});render();<\/script></body></html>`;
     }
     function openLearningReportInApp() {
         // 即使尚無紀錄，也開啟報告並呈現空資料說明，避免按鈕看似無反應。
@@ -1669,11 +1835,37 @@
         }
     }
 
+    function parseQuestionBankRow(line) {
+        // CSV 欄位解析：支援 "English","中文"、含逗號的引號欄位，以及一般 English,中文。
+        const source = String(line || '').trim();
+        if (!source) return [];
+        if (source.includes('\t') && !source.includes(',')) {
+            return source.split('\t').map(value => value.trim().replace(/^\uFEFF/, ''));
+        }
+        const fields = [];
+        let value = '';
+        let quoted = false;
+        for (let i = 0; i < source.length; i++) {
+            const ch = source[i];
+            if (ch === '"') {
+                if (quoted && source[i + 1] === '"') { value += '"'; i++; }
+                else quoted = !quoted;
+            } else if (ch === ',' && !quoted) {
+                fields.push(value.trim());
+                value = '';
+            } else {
+                value += ch;
+            }
+        }
+        fields.push(value.trim());
+        return fields.map(field => field.replace(/^\uFEFF/, '').trim());
+    }
+
     function parseAnsonTxt(text) {
         const banks = {};
         let currentUnit = '';
         let serial = 0;
-        const lines = String(text || '').split(/\r?\n/);
+        const lines = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/);
 
         lines.forEach(raw => {
             const line = raw.trim();
@@ -1686,11 +1878,11 @@
                 return;
             }
 
-            if (!currentUnit) currentUnit = 'W1';
-            const parts = line.includes('\t') ? line.split('\t') : line.split(/\s*,\s*/);
-            const en = (parts.shift() || '').trim();
+            const parts = parseQuestionBankRow(line);
+            const en = String(parts.shift() || '').trim();
             const cn = parts.join(',').trim();
-            if (!en) return;
+            if (!en || /^(english|英文|單字)$/i.test(en) && /^(chinese|中文|翻譯)$/i.test(cn)) return;
+            if (!currentUnit) currentUnit = 'W1';
             serial++;
             banks[currentUnit].push({
                 en,
@@ -2748,7 +2940,7 @@
         if (mainName) mainName.textContent = getChildName();
         const storageInfo = document.getElementById('bank-storage-info');
         if (storageInfo) {
-            storageInfo.innerHTML = `👤 ${escapeHtml(getChildName())}：使用者題庫讀取 <b>${escapeHtml(getUserBankUrl())}</b>；自行變更題庫則只保存在這位使用者的瀏覽器。`;
+            storageInfo.innerHTML = `${escapeHtml(getChildName())}：使用者題庫讀取 <b>${escapeHtml(getUserBankUrl())}</b>；自行變更題庫則只保存在這位使用者的瀏覽器。`;
         }
         await initQuestionBank();
         renderBankManager();
@@ -2761,16 +2953,24 @@
             return alert(`目前沒有可用的單字資料。\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認同目錄有 ${getUserBankFileStem()}.txt，格式為 [W1] 後接英文,中文。`);
         }
 
-        state.currentList = [...state.banks[state.unit]].sort(() => Math.random() - 0.5);
+        // 每次開新練習都建立獨立副本，避免練習流程意外修改題庫原始物件。
+        state.currentList = state.banks[state.unit]
+            .filter(item => item && String(item.en || '').trim())
+            .map(item => ({ ...item, en: String(item.en || '').trim(), cn: String(item.cn || '') }))
+            .sort(() => Math.random() - 0.5);
         state.mode = m;
         state.tempPractice = false;
         state.index = 0;
         state.sentenceEnabled = false;
         state.quizCompleted = 0;
         state.quizPassedCount = 0;
-        state.sessionCorrect = 0;
-        state.sessionIncorrect = 0;
-        state.sessionSubmissions = 0;
+        state.quizTotalCount = state.currentList.length;
+        state.quizResultRows = state.currentList.map(item => ({
+            ref: item.ref || String(item.en || '').trim().toLowerCase(),
+            en: String(item.en || ''), cn: String(item.cn || ''),
+            result: 'pending', wrongAttempts: 0
+        }));
+        state.sessionStats = { correct: 0, incorrect: 0, passes: 0 };
         state.playerHP = 0;
         state.oppHP = 0;
         state.playerMaxHP = 6;
@@ -2964,6 +3164,8 @@
               'picnic table':[['We eat at the picnic table.','我們在野餐桌旁吃東西。']], 'parking lot':[['The car is in the parking lot.','車子在停車場裡。']], 'capital city':[['Taipei is a capital city.','台北是一座首都城市。']], 'mix up':[['Do not mix up the words.','不要把單字搞混。']], 'united states of america':[['The United States of America is a country.','美利堅合眾國是一個國家。']],
               english:[['I learn English.','我學英文。'],['English is fun.','英文很有趣。']], mexico:[['Mexico is a country.','墨西哥是一個國家。']], american:[['He is American.','他是美國人。']], australian:[['She is Australian.','她是澳洲人。']], china:[['China is a country.','中國是一個國家。']], egypt:[['Egypt is a country.','埃及是一個國家。']], measurement:[['This is a measurement.','這是一個測量結果。']]
             };
+            const supplementalPools = {"dinosaur":["The dinosaur is near the lake.","恐龍在湖附近。"],"million":["A million is one thousand thousand.","一百萬是一千個一千。"],"street":["Our street is near the lake.","我們的街道在湖附近。"],"earth":["The Earth is our home.","地球是我們的家。"],"dance":["We dance at the camp.","我們在營地跳舞。"],"cloud":["A cloud is above the lake.","一朵雲在湖的上方。"],"lake":["The lizard is near the lake.","蜥蜴在湖附近。"],"near":["The camp is near the lake.","營地在湖附近。"],"valley":["The river is in the valley.","河流在山谷裡。"],"yesterday":["Yesterday, we saw a lizard near the lake.","昨天，我們看到一隻蜥蜴在湖附近。"],"camp":["We dance at camp today.","我們今天在營地跳舞。"],"map":["The map shows the lake and the valley.","地圖標出湖和山谷。"],"eighty":["Eighty stars are on the map.","地圖上有八十顆星星。"],"fifty":["Fifty lizards are near the lake.","五十隻蜥蜴在湖附近。"],"forty":["Forty stars are above the valley.","四十顆星星在山谷上方。"],"star":["A star is above the valley.","一顆星星在山谷上方。"],"seventy":["Seventy students go to camp.","七十位學生去營地。"],"sixty":["We count to sixty at camp.","我們在營地數到六十。"],"thirty":["We walk for thirty minutes.","我們走三十分鐘。"],"twenty":["Twenty stars are in the sky.","天空中有二十顆星星。"],"hundred":["One hundred stars are on the map.","地圖上有一百顆星星。"],"ninety":["Ninety is less than one hundred.","九十比一百少。"],"east":["The sun rises in the east.","太陽從東方升起。"],"north":["The map shows north and south.","地圖標出北方和南方。"],"south":["We go south to the lake.","我們往南方去湖邊。"],"west":["The sun sets in the west.","太陽從西方落下。"],"far":["The castle is far from the camp.","城堡離營地很遠。"],"picnic table":["The map is on the picnic table.","地圖在野餐桌上。"],"parking lot":["The parking lot is near the street.","停車場在街道附近。"],"lizard":["A lizard is on the rock near the lake.","一隻蜥蜴在湖邊的石頭上。"],"castle":["The castle is near the valley.","城堡在山谷附近。"],"gold":["The castle has gold.","城堡裡有黃金。"],"today":["Today, we go to the lake.","今天我們去湖邊。"],"american":["My American friend is near the lake.","我的美國朋友在湖附近。"],"australia":["Australia is a country.","澳洲是一個國家。"],"australian":["My Australian friend is at camp.","我的澳洲朋友在營地。"],"china":["China is a country.","中國是一個國家。"],"country":["China is a country, and Egypt is a country.","中國是一個國家，埃及也是一個國家。"],"egypt":["Egypt is a country.","埃及是一個國家。"],"flag":["The flag is near the castle.","旗子在城堡附近。"],"english":["The map has English words.","地圖上有英文單字。"],"mexico":["Mexico is a country.","墨西哥是一個國家。"],"united states of america":["The United States of America is in North America.","美利堅合眾國位於北美洲。"],"born":["The lizard was born in spring.","這隻蜥蜴在春天出生。"],"chinese":["My Chinese friend likes the nature adventure.","我的中國朋友喜歡自然探險。"],"continent":["Australia is a continent and a country.","澳洲是一個洲，也是一個國家。"],"april":["April is a month in spring.","四月是春天的一個月份。"],"august":["August is in summer.","八月在夏天。"],"february":["February comes before March.","二月在三月之前。"],"january":["January comes after December.","一月在十二月之後。"],"july":["July is in summer.","七月在夏天。"],"june":["June comes before July.","六月在七月之前。"],"march":["March comes after February.","三月在二月之後。"],"may":["May comes after April.","五月在四月之後。"],"december":["December comes before January.","十二月在一月之前。"],"november":["November comes before December.","十一月在十二月之前。"],"october":["October comes after September.","十月在九月之後。"],"september":["September comes before October.","九月在十月之前。"],"season":["Spring is a season.","春天是一個季節。"],"spring":["The lizard is near the lake in spring.","春天時，蜥蜴在湖附近。"],"summer":["We go to the lake in summer.","夏天我們去湖邊。"],"hurry":["Hurry! We may miss the bus.","快一點！我們可能會錯過公車。"],"cheer":["We cheer at the game.","我們在比賽時歡呼。"],"winter":["Some birds go south in winter.","有些鳥在冬天往南方去。"],"measurement":["The measurement is ten centimeters.","測量結果是十公分。"],"capital city":["The capital city is in that country.","首都在那個國家裡。"],"witch":["The witch is in the castle.","巫婆在城堡裡。"],"complain":["Please do not complain.","請不要抱怨。"],"except":["Everyone is here except Tom.","除了 Tom，大家都到了。"],"miss":["Do not miss the street near the lake.","不要錯過湖附近的那條街。"],"tape":["Use tape to fix the map.","用膠帶修補地圖。"],"beg":["The puppy may beg for food.","小狗可能會討食物。"],"promise":["I promise to come to camp today.","我答應今天來營地。"],"shocked":["I was shocked to see a lizard in the camp.","我在營地看到蜥蜴時很震驚。"],"gasp":["I gasp when I see the big dinosaur.","我看到大恐龍時倒抽一口氣。"],"scream":["We scream when the witch appears in the story.","故事裡的巫婆出現時，我們尖叫。"],"cubby":["My map is in the cubby.","我的地圖在小置物格裡。"],"floor":["The map is on the floor.","地圖在地板上。"],"mix up":["Do not mix up east and west.","不要把東方和西方搞混。"],"trade":["I trade my map for your flag.","我用我的地圖和你交換旗子。"],"recess":["We dance with friends at recess.","下課休息時，我們和朋友跳舞。"],"bored":["I am bored at home.","我在家覺得無聊。"],"feelings":["We talk about our feelings at camp.","我們在營地談談自己的感受。"],"hungry":["I am hungry after the nature adventure.","自然探險後，我餓了。"],"senses":["Our senses help us learn about the Earth.","我們的感官幫助我們認識地球。"],"tired":["I am tired after the long walk.","走了很久之後，我很累。"],"out loud":["Read the sentence out loud.","把這個句子大聲讀出來。"],"agree":["I agree that the lake is beautiful.","我同意湖很美。"],"land":["The bird will land near the lake.","鳥會降落在湖附近。"],"porch":["We sit on the porch and look at the cloud.","我們坐在門廊上看著雲。"],"covers":["The book covers show a dinosaur and a lizard.","書籍封面上有恐龍和蜥蜴。"],"golden":["The golden star is on the map.","金色的星星在地圖上。"]};
+            if (supplementalPools[clean]) easyPools[clean] = [...(easyPools[clean] || []), [supplementalPools[clean][0], supplementalPools[clean][1]]];
             const simple = easyPools[clean] || [];
             // 其他單字使用短句型變化；只用目標字與基礎功能字，避免長句洩漏造句答案。
             const fallbackVariants = {
@@ -2978,7 +3180,9 @@
               'measurement':[['We need a measurement.','我們需要測量。']]
             };
             const variants = fallbackVariants[clean] || [];
-            const pool = (simple.length ? simple : (variants.length ? variants : [pair])).map(([en,zh])=>({en,zh,bankMatched:[clean]}));
+            const sourcePool = [...simple, pair, ...variants];
+            const seenSentences = new Set();
+            const pool = sourcePool.filter(([en]) => { const key=String(en).trim().toLowerCase(); if(seenSentences.has(key)) return false; seenSentences.add(key); return true; }).map(([en,zh])=>({en,zh,bankMatched:[clean]}));
             return pool;
         }
         const bankWords = new Set();
@@ -3026,9 +3230,48 @@
         if (clean === 'valley') return [story('We walked through the green valley.', '我們走過綠意盎然的山谷。', ['valley'])];
         if (clean === 'million') return [story('I have a million dollars.', '我有一百萬元。', ['million'])];
         if (clean === 'dollar' || clean === 'dollars') return [story('I have ten dollars.', '我有十元美金。', ['dollar'])];
-        // 未建立語意例句的單字，使用明確的「談論單字」句型；
-        // 不把未知名詞硬塞進 found/use/help 等動詞後，避免產生不自然或文法錯誤的例句。
-        return [story(`The ${clean} is part of our nature adventure.`, `這個單字出現在我們的自然探險故事裡。`, [clean])];
+        // 未建立專屬例句的單字：提供多個簡單、自然的句型，避免每題都顯示同一句。
+        // 對語意不明或多字詞，使用「單字學習」句型；已知常見名詞另提供情境句。
+        const extraExamples = {
+          porch: [
+            story('We sit on the porch after dinner.', '晚餐後，我們坐在門廊上。', ['porch']),
+            story('A small bird is on the porch.', '一隻小鳥停在門廊上。', ['porch']),
+            story('I left my shoes by the porch.', '我把鞋子放在門廊旁。', ['porch']),
+            story('The porch is wet after the rain.', '下雨後，門廊濕了。', ['porch']),
+            story('Grandpa waters the plants on the porch.', '爺爺在門廊上替植物澆水。', ['porch'])
+          ],
+          floor: [
+            story('My pencil fell on the floor.', '我的鉛筆掉到地板上。', ['floor']),
+            story('Please keep your toys off the floor.', '請不要把玩具散落在地板上。', ['floor']),
+            story('The cat is sleeping on the floor.', '貓咪正在地板上睡覺。', ['floor'])
+          ],
+          covers: [
+            story('This book has a blue cover.', '這本書有藍色的封面。', ['covers']),
+            story('The book covers are bright and colorful.', '這些書的封面明亮又多彩。', ['covers'])
+          ],
+          feelings: [
+            story('We can talk about our feelings.', '我們可以聊聊自己的感受。', ['feelings']),
+            story('Drawing helps me share my feelings.', '畫畫能幫助我表達感受。', ['feelings'])
+          ],
+          land: [
+            story('The plane will land soon.', '飛機很快就會降落。', ['land']),
+            story('The frog jumped onto the land.', '青蛙跳到了陸地上。', ['land'])
+          ],
+          'out loud': [
+            story('Please read the story out loud.', '請把故事大聲讀出來。', ['out loud']),
+            story('We say the new word out loud.', '我們把新單字大聲說出來。', ['out loud'])
+          ]
+        };
+        if (extraExamples[clean]) return extraExamples[clean];
+
+        const safeTemplates = [
+          [`I learned the word “${clean}” today.`, `我今天學了「${clean}」這個單字。`],
+          [`Can you find “${clean}” in the word list?`, `你能在單字表裡找到「${clean}」嗎？`],
+          [`Let us practice the word “${clean}” together.`, `我們一起練習「${clean}」這個單字吧。`],
+          [`I wrote “${clean}” in my notebook.`, `我把「${clean}」寫在筆記本裡。`],
+          [`I can read the word “${clean}”.`, `我會讀「${clean}」這個單字。`]
+        ];
+        return safeTemplates.map(([en, zh]) => story(en, zh, [clean]));
     }
 
         const exampleSentenceGloss = {"about":"關於；大約","above":"在……上方","across":"穿過；橫越","active":"活躍的","after":"在……之後","again":"再一次","ago":"以前","airport":"機場","along":"沿著","america":"美國；美洲","american":"美國的；美國人","americas":"美洲","anson":"Anson（人名）","ants":"螞蟻（複數）","around":"在……周圍；大約","arrives":"到達（arrive 的第三人稱單數）","asia":"亞洲","attach":"黏貼；附上","back":"回去；背部","be":"是；成為","become":"變得；成為","beetle":"甲蟲","beetles":"甲蟲（複數）","before":"在……之前","behind":"在……後面","beside":"在……旁邊","between":"在……之間","beyond":"在……另一邊；超出","bikes":"腳踏車（複數）","birds":"鳥（複數）","black":"黑色的；黑色","blue":"藍色的","book":"書","box":"箱子","built":"建造（build 的過去式／過去分詞）","busy":"忙碌的","butterflies":"蝴蝶（複數）","camping":"露營","campsite":"露營地","can":"可以；能夠","cards":"卡片（複數）","carriage":"馬車","cat":"貓","challenge":"挑戰","change":"改變","children":"孩子們（child 的複數）","city":"城市","class":"班級；課堂","clock":"時鐘","club":"社團；俱樂部","cold":"冷的","compass":"指南針","correct":"正確的","counted":"數了（count 的過去式）","darted":"迅速衝過（dart 的過去式）","december":"十二月","did":"做（do 的過去式）","different":"不同的","difficult":"困難的","dinner":"晚餐","do":"做；助動詞","dragonflies":"蜻蜓（複數）","drew":"畫了（draw 的過去式）","drumbeat":"鼓聲；鼓點","drums":"鼓（複數）","during":"在……期間","early":"提早；早的","eggs":"蛋（複數）","every":"每一個；每個","excitement":"興奮","explorer":"探險家","explorers":"探險家（複數）","fall":"落下；秋天","fallen":"掉落的；落下（fall 的過去分詞）","family":"家人；家庭","footprint":"腳印","footprints":"腳印（複數）","fossil":"化石","fossils":"化石（複數）","found":"找到；發現（find 的過去式）","friends":"朋友（複數）","frogs":"青蛙（複數）","fruit":"水果","garden":"花園","glows":"發光；閃耀（glow 的第三人稱單數）","go":"去；圍棋（依語境）","goal":"目標","golden":"金色的","good":"好的","great":"很棒的；巨大的","guide":"指南；導覽員","hand":"手","hide":"躲藏","hike":"健行","hiking":"健行","hills":"山丘（複數）","his":"他的","hover":"盤旋；懸停","huge":"巨大的","insect":"昆蟲","insects":"昆蟲（複數）","into":"進入……裡面","islands":"島嶼（複數）","jaguar":"美洲豹","japan":"日本","kangaroo":"袋鼠","kids":"孩子們","koala":"無尾熊","labels":"標籤（複數）","largest":"最大的","lay":"產卵；放置（依語境）","learning":"正在學習","led":"帶領（lead 的過去式）","left":"離開；左邊（依語境）","lights":"燈光（複數）","log":"倒木；原木","logs":"倒木（複數）","look":"看起來；看","looked":"看起來；看了（過去式）","looks":"看起來（第三人稱單數）","lot":"很多；停車場（parking lot）","made":"做了；製作（make 的過去式）","many":"許多","march":"行進；三月（依語境）","marched":"行進了（過去式）","match":"比賽；相配","may":"可能；可以（依語境）","met":"遇見；會合（meet 的過去式）","minute":"分鐘","minutes":"分鐘（複數）","mix":"混合；搞混","model":"模型","month":"月份","move":"移動","mud":"泥巴；泥地","museum":"博物館","music":"音樂","national":"國家的","new":"新的","noisy":"吵鬧的","not":"不；沒有","notebook":"筆記本","old":"古老的；年老的","onto":"到……上面","other":"其他的","our":"我們的","panda":"熊貓","parking":"停車","parks":"公園（複數）","parts":"部分；地區","passed":"經過；流逝（pass 的過去式）","picture":"圖片；照片","piece":"一片；一塊","planted":"種下了（plant 的過去式）","pond":"池塘","ponds":"池塘（複數）","practice":"練習","practiced":"練習了（過去式）","problems":"題目；問題（複數）","protect":"保護","pumpkin":"南瓜","puppy":"小狗","put":"放；放置","puzzle":"謎題；益智題","puzzles":"謎題（複數）","pyramids":"金字塔（複數）","questions":"問題；題目（複數）","quiet":"安靜的","quiz":"小測驗；知識問答","reach":"到達","read":"閱讀；讀（過去式讀音依語境）","rested":"休息了（過去式）","rises":"升起（第三人稱單數）","rock":"岩石","rocks":"岩石（複數）","rode":"騎了（ride 的過去式）","route":"路線","sand":"沙子","saw":"看見（see 的過去式）","says":"說（say 的第三人稱單數）","school":"學校","screen":"螢幕","season":"季節","seeds":"種子（複數）","set":"設定；放置","sets":"設定；放置（第三人稱單數）","shapes":"形狀（複數）；塑形（依語境）","shooting":"流星的；射擊（依語境）","short":"短的","show":"展覽；表演；展示","showed":"展示了（show 的過去式）","signs":"標示；招牌（複數）","skim":"掠過水面","snacks":"點心（複數）","so":"所以；如此","solved":"解出了（solve 的過去式）","some":"一些","space":"太空；空間","spot":"發現；看見","spotted":"發現了；看見了（過去式）","spread":"攤開；散布","started":"開始了（過去式）","states":"州；美國（United States）","steps":"步伐；步驟","still":"仍然","stones":"石頭；棋子（複數）","stream":"小溪","student":"學生","suddenly":"突然","sun":"太陽","table":"桌子","team":"隊伍","teammate":"隊友","themselves":"他們自己；牠們自己","thousands":"數千","through":"穿過；透過","time":"時間","took":"拿；花費；進行（take 的過去式）","tour":"導覽；旅行","toward":"朝向","traced":"描繪；沿著描出（過去式）","training":"訓練","treasure":"寶藏","treat":"點心；款待","tried":"試了（try 的過去式）","trip":"旅行；行程","turn":"轉動；輪到","turned":"變成；轉動了","turtle":"烏龜","united":"聯合的","up":"向上；起來","us":"我們（受格）","use":"使用","used":"使用了（過去式）","visited":"參觀了（過去式）","wall":"牆","warm":"溫暖的","watched":"觀看了（過去式）","weather":"天氣","went":"去了（go 的過去式）","west":"西方","when":"當……時","white":"白色的；白色","whole":"整個的","wild":"野生的","wings":"翅膀（複數）","would":"會；將會（假設／過去習慣）","years":"年（複數）","yellow":"黃色的","zoo":"動物園","dragonfly":"蜻蜓","tiny":"小小的","nature":"自然；大自然","trail":"步道；小徑","map":"地圖","camp":"營地；露營","lake":"湖","valley":"山谷","street":"街道","dinosaur":"恐龍","million":"百萬","earth":"地球","dance":"跳舞","cloud":"雲","near":"附近；靠近","yesterday":"昨天","eighty":"八十","fifty":"五十","forty":"四十","star":"星星","seventy":"七十","sixty":"六十","thirty":"三十","hundred":"一百","ninety":"九十","east":"東方","north":"北方","south":"南方","far":"遠的","picnic":"野餐","lizard":"蜥蜴","castle":"城堡","gold":"黃金","today":"今天","australia":"澳洲","australian":"澳洲的；澳洲人","china":"中國","country":"國家","egypt":"埃及","flag":"國旗","english":"英文；英國的","mexico":"墨西哥","of":"……的","born":"出生","chinese":"中文；中國人／中國的","continent":"大陸；洲","april":"四月","august":"八月","february":"二月","january":"一月","july":"七月","june":"六月","november":"十一月","october":"十月","september":"九月","spring":"春天","summer":"夏天","hurry":"趕快；匆忙","cheer":"歡呼；喝采","winter":"冬天","measurement":"測量","capital":"首都；首都的","witch":"巫婆","complain":"抱怨","except":"除了","miss":"錯過","tape":"膠帶","beg":"央求；乞求","promise":"承諾","shocked":"震驚的","gasp":"倒抽一口氣","scream":"尖叫","cubby":"小置物格","floor":"地板；樓層","trade":"交換；交易","recess":"下課休息時間","gloden":"疑似拼字錯誤；正確拼法為 golden"};
@@ -3119,14 +3362,19 @@ const storyWordGloss = {
         const word = String(wordText || '').trim();
         const examples = buildSimpleSentenceExample(word);
         const base = normalizeStoryBase(word.toLowerCase());
-        const chosen = examples.find(item => {
+        const matching = examples.filter(item => {
             const tokens = String(item.en || '').toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g) || [];
-            return tokens.some(token => normalizeStoryBase(token) === base || token === word.toLowerCase());
-        }) || examples[0];
+            return tokens.some(token => normalizeStoryBase(token) === base || token === word.toLowerCase() || String(item.en || '').toLowerCase().includes(word.toLowerCase()));
+        });
+        const candidates = matching.length ? matching : examples;
+        const previous = sentence.dataset.previousExample || '';
+        const fresh = candidates.filter(item => item.en !== previous);
+        const chosen = (fresh.length ? fresh : candidates)[Math.floor(Math.random() * (fresh.length ? fresh : candidates).length)];
         const sentence = document.getElementById('practice-context-sentence');
         const translation = document.getElementById('practice-context-translation');
         if (!chosen || !sentence) return;
         sentence.innerHTML = renderStoryTokens(chosen.en);
+        sentence.dataset.previousExample = chosen.en;
         if (translation) translation.textContent = chosen.zh || '';
     }
 
@@ -3305,21 +3553,41 @@ const storyWordGloss = {
 
     async function loadWord() {
         wrongAttemptsThisQuestion = 0;
-        state.questionStartedAt = null;
-        state.questionStartedPerf = null;
-        state.firstInputPerf = null;
-        state.firstInputAt = null;
-        state.lastSubmitPerf = null;
+        state.questionStartedAt = Date.now();
         state.questionAttemptCount = 0;
         state.previousSubmittedInput = ''; 
         if(state.index >= state.currentList.length) { handleVictory(); return; }
-        const word = state.currentList[state.index], display = document.getElementById('display-cn');
+        let word = state.currentList[state.index];
+        // 題庫是標準答案來源。若練習中的物件被其他流程意外改寫，依 ref 從原始題庫還原。
+        const canonicalWord = (state.banks[state.unit] || []).find(item => item && item.ref === word.ref);
+        if (canonicalWord && String(word.en || '') !== String(canonicalWord.en || '')) {
+            console.warn('[WordHero] 練習單字與題庫不一致，已還原標準答案', {
+                ref: word.ref, practice: word.en, bank: canonicalWord.en
+            });
+            word = { ...canonicalWord };
+            state.currentList[state.index] = word;
+        }
+        // 保留除錯資訊，方便日後確認實際出題來源與字母格數。
+        window.__wordHeroLastQuestionDebug = {
+            unit: state.unit, ref: word.ref, answer: String(word.en || ''),
+            answerLength: Array.from(String(word.en || '')).filter(ch => !/[ \/-]/.test(ch)).length,
+            bankAnswer: canonicalWord ? String(canonicalWord.en || '') : null,
+            at: Date.now()
+        };
+        const display = document.getElementById('display-cn');
         let tip = localDict[word.en.toLowerCase()] || word.cn;
         if (!tip) { display.innerText = "載入中..."; tip = await fetchTranslation(word.en); }
         display.innerText = tip;
-        // 計時從題目內容已顯示、可開始作答時啟動，不計入翻譯載入等待。
-        state.questionStartedAt = Date.now();
-        state.questionStartedPerf = performance.now();
+        const modeLabel = document.getElementById('child-mode-label');
+        if (modeLabel) modeLabel.textContent = state.mode === 'quiz' ? '魔王挑戰' : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
+        const progressLabel = document.getElementById('child-question-progress');
+        if (progressLabel) {
+            const total = (state.currentList || []).length + (state.mode === 'quiz' ? (state.quizCompleted || 0) : 0);
+            const current = state.mode === 'quiz' ? (state.quizCompleted || 0) + 1 : (state.index || 0) + 1;
+            progressLabel.textContent = total ? `第 ${Math.min(current,total)} 題／共 ${total} 題` : '準備開始';
+        }
+        const childFeedback = document.getElementById('child-answer-feedback');
+        if (childFeedback) { childFeedback.hidden = true; childFeedback.textContent = ''; childFeedback.className = 'child-answer-feedback'; }
 
         const pRefs = JSON.parse(getHeroData('hero_priority') || '[]');
         const isS = pRefs.includes(word.ref);
@@ -3402,11 +3670,6 @@ const storyWordGloss = {
             };
 
             inp.oninput = (e) => {
-                // 首次有效字元輸入時間只記一次；整題計時仍從題目可作答時開始。
-                if (String(e.target.value || '').trim() && state.firstInputPerf == null) {
-                    state.firstInputPerf = performance.now();
-                    state.firstInputAt = Date.now();
-                }
                 // 一格只允許一個字母；輸入後自動跳到下一格
                 const chars = Array.from(String(e.target.value || ""));
                 e.target.value = chars.length ? chars[chars.length - 1] : "";
@@ -3489,34 +3752,50 @@ const storyWordGloss = {
         setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
 
+    function recordQuizWordResult(word, result) {
+        if (!word || state.mode !== 'quiz' || (state.tempPractice && result !== 'skipped')) return;
+        const key = word.ref || String(word.en || '').trim().toLowerCase();
+        let row = (state.quizResultRows || []).find(item => item.ref === key);
+        if (!row) {
+            row = { ref: key, en: String(word.en || ''), cn: String(word.cn || ''), result: 'pending', wrongAttempts: 0 };
+            (state.quizResultRows || (state.quizResultRows = [])).push(row);
+        }
+        row.result = result;
+        if (result === 'incorrect') row.wrongAttempts = (row.wrongAttempts || 0) + 1;
+    }
+
     function checkFinalAnswer() {
         const word = state.currentList[state.index];
         if (!word) return;
         state.questionAttemptCount = (state.questionAttemptCount || 0) + 1;
-        const submitPerf = performance.now();
-        const elapsedMs = Number.isFinite(state.questionStartedPerf) ? Math.max(0, Math.round(submitPerf - state.questionStartedPerf)) : null;
-        const inputElapsedMs = Number.isFinite(state.firstInputPerf) ? Math.max(0, Math.round(submitPerf - state.firstInputPerf)) : null;
-        const attemptElapsedMs = Number.isFinite(state.lastSubmitPerf) ? Math.max(0, Math.round(submitPerf - state.lastSubmitPerf)) : elapsedMs;
-        state.lastSubmitPerf = submitPerf;
-        state.sessionSubmissions = (state.sessionSubmissions || 0) + 1;
 
         const boxes = document.querySelectorAll('.letter-box');
         let ui = "";
         boxes.forEach(b => ui += b.value);
 
         const normalizedInput = ui.replace(/[\s\/-]/g, '').toLowerCase();
-        const normalizedAnswer = word.en.replace(/[\s\/-]/g, '').toLowerCase();
+        const normalizedAnswer = String(word.en || '').replace(/[\s\/-]/g, '').toLowerCase();
 
         if (normalizedInput === normalizedAnswer) {
-            state.sessionCorrect = (state.sessionCorrect || 0) + 1;
+            recordQuizWordResult(word, 'correct');
+            if (!state.tempPractice) state.sessionStats.correct++;
+            const childFeedback = document.getElementById('child-answer-feedback');
+            if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback good'; childFeedback.textContent = '答對了！做得好！'; }
             updateErrorBank(word, true);
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: elapsedMs, inputElapsedMs, attemptElapsedMs, firstInputAt: state.firstInputAt || null, attempts: state.questionAttemptCount || 1, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: state.questionStartedAt ? Date.now() - state.questionStartedAt : null, attempts: state.questionAttemptCount || 1, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
             recordWordReview(word, 'correct', state.mode || 'practice');
             const spellingFeedback = document.getElementById('spelling-feedback');
-            if (spellingFeedback) { spellingFeedback.style.display = 'block'; spellingFeedback.className = 'spelling-feedback'; spellingFeedback.style.background = 'rgba(20, 83, 45, .94)'; spellingFeedback.style.color = '#ffffff'; spellingFeedback.textContent = `答對了！${word.en}`; setTimeout(() => { if (spellingFeedback.textContent === `答對了！${word.en}`) { spellingFeedback.style.display = 'none'; spellingFeedback.style.background = ''; spellingFeedback.style.color = ''; } }, 850); }
+            if (spellingFeedback) { spellingFeedback.style.display = 'none'; spellingFeedback.innerHTML = ''; }
             boxes.forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
             safeConfetti({ particleCount: 30, spread: 50 });
+
+            // 暫時練習答對只代表完成練習，不直接算魔王挑戰通關；返回正式題目重新作答。
+            if (state.mode === 'quiz' && state.tempPractice) {
+                state.tempPractice = false;
+                setTimeout(loadWord, 600);
+                return;
+            }
 
             if (state.mode === 'quiz' && !state.tempPractice) {
                 state.oppHP--;
@@ -3595,9 +3874,12 @@ const storyWordGloss = {
                 setTimeout(loadWord, 600);
             }
         } else {
-            state.sessionIncorrect = (state.sessionIncorrect || 0) + 1;
+            recordQuizWordResult(word, 'incorrect');
+            if (!state.tempPractice) state.sessionStats.incorrect++;
+            const childFeedback = document.getElementById('child-answer-feedback');
+            if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback try'; childFeedback.textContent = '這次還不正確，看看紅色字母格，再試一次。'; }
             // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: elapsedMs, inputElapsedMs, attemptElapsedMs, firstInputAt: state.firstInputAt || null, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: state.questionStartedAt ? Date.now() - state.questionStartedAt : null, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
             addErrorLog(word, ui || '(空白)');
             updateErrorBank(word, false);
@@ -3619,7 +3901,7 @@ const storyWordGloss = {
             if (feedback) {
                 const wrongCount = boxes.length - answerChars.reduce((n, ch, i) => n + ((inputChars[i] || '') === ch ? 1 : 0), 0);
                 feedback.style.display = 'block';
-                feedback.innerHTML = `這次答案不正確。💡 有 <b>${wrongCount}</b> 個字母需要再看看！紅色框就是需要修正的位置。`;
+                feedback.innerHTML = `💡 有 <b>${wrongCount}</b> 個字母需要再看看！紅色框就是需要修正的位置。`;
             }
 
             if (state.mode === 'quiz' && !state.tempPractice) {
@@ -3644,7 +3926,9 @@ const storyWordGloss = {
     function handlePass() {
         if (state.index >= state.currentList.length) return;
         const skippedWord = state.currentList[state.index];
-        addLearningLog({ type:'word_pass', mode:state.mode||'', unit:state.unit||'', word:skippedWord.en||'', meaning:skippedWord.cn||'', attemptCount:state.questionAttemptCount||0, responseMs:Number.isFinite(state.questionStartedPerf)?Math.max(0,Math.round(performance.now()-state.questionStartedPerf)):null, firstInputAt:state.firstInputAt||null });
+        recordQuizWordResult(skippedWord, 'skipped');
+        if (state.sessionStats) state.sessionStats.passes++;
+        addLearningLog({ type:'word_pass', mode:state.mode||'', unit:state.unit||'', word:skippedWord.en||'', meaning:skippedWord.cn||'', attemptCount:state.questionAttemptCount||0, responseMs:state.questionStartedAt?Date.now()-state.questionStartedAt:null });
         recordWordReview(skippedWord, 'pass', state.mode);
 
         // PASS 不代表學會。魔王挑戰採「移出本輪、保留待複習」策略，
@@ -3701,7 +3985,7 @@ const storyWordGloss = {
         const pRefs = JSON.parse(getHeroData('hero_priority') || '[]');
         if(pRefs.length === 0) return alert("還沒有星號單字！");
         state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); }));
-        state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; switchView('view-game'); initArena();
+        state.currentList.sort(() => Math.random() - 0.5); state.mode = 'priority'; state.index = 0; state.tempPractice = false; state.quizResultRows = []; state.sessionStats = { correct: 0, incorrect: 0, passes: 0 }; switchView('view-game'); initArena();
     }
 
     function handleVictory() {
@@ -3714,17 +3998,37 @@ const storyWordGloss = {
 
             safeConfetti({ particleCount: 200, spread: 100 });
             const vm = document.getElementById('victory-message');
-            if (vm) { const passed = state.quizPassedCount || 0; vm.textContent = passed ? `本輪挑戰完成！答對 ${state.quizCompleted} 個單字，另有 ${passed} 個單字已跳過並列入待複習。跳過不算學會，之後可以再挑戰。` : `🎉 ${state.unit} 魔王挑戰完成！共 ${state.quizCompleted} 個單字全部答對！`; }
+            if (vm) {
+                const passed = state.quizPassedCount || 0;
+                const total = state.quizTotalCount || (state.quizCompleted + passed);
+                const correct = state.quizCompleted || 0;
+                const rate = total ? Math.round(correct / total * 100) : 0;
+                const wrongTries = (state.sessionStats && state.sessionStats.incorrect) || 0;
+                const rows = state.quizResultRows || [];
+                const details = rows.map(row => {
+                    if (row.result === 'correct') return `✓ ${row.en}${row.wrongAttempts ? `（答對，曾答錯 ${row.wrongAttempts} 次）` : '（答對）'}`;
+                    if (row.result === 'skipped') return `↻ ${row.en}（跳過待複習；正確答案：${row.en}）`;
+                    return `• ${row.en}（結果未記錄）`;
+                });
+                vm.textContent = `本輪挑戰完成！\n總題數：${total}\n答對並完成：${correct}\n跳過待複習：${passed}\n本輪正確完成率：${rate}%\n答錯嘗試：${wrongTries} 次\n\n【每題結果】\n${details.join('\n')}\n\n${passed ? '跳過的單字不算學會，之後可以再挑戰。' : '太棒了！本輪所有單字都已答對。'}`;
+            }
             switchView('view-victory');
             return;
         } else if (state.mode === 'practice') {
-            alert(`單字練習完成！\n本輪答對提交：${state.sessionCorrect || 0} 次\n答錯提交：${state.sessionIncorrect || 0} 次\n總提交：${state.sessionSubmissions || 0} 次\n提醒：答錯後重試會分別計次，不等同獨立單字數。`);
+            alert(`練習完成！\n答對提交：${state.sessionStats.correct} 次\n答錯提交：${state.sessionStats.incorrect} 次\n跳過：${state.sessionStats.passes} 題`);
         } else if (state.mode === 'priority') {
-            alert(`星號複習完成！\n答對提交：${state.sessionCorrect || 0} 次\n答錯提交：${state.sessionIncorrect || 0} 次\n總提交：${state.sessionSubmissions || 0} 次`);
+            alert(`星號練習完成！\n答對提交：${state.sessionStats.correct} 次\n答錯提交：${state.sessionStats.incorrect} 次\n跳過：${state.sessionStats.passes} 題`);
         } else if (state.mode === 'error_review') {
-            alert(`錯題複習完成！\n答對提交：${state.sessionCorrect || 0} 次\n答錯提交：${state.sessionIncorrect || 0} 次\n總提交：${state.sessionSubmissions || 0} 次\n連續答對 3 次的單字會自動移出錯題庫。`);
+            alert(`錯題複習完成！\n答對提交：${state.sessionStats.correct} 次\n答錯提交：${state.sessionStats.incorrect} 次\n跳過：${state.sessionStats.passes} 題\n連續答對 3 次的單字會自動移出錯題庫。`);
         }
 
+        switchView('view-main');
+    }
+
+    function confirmLeavePractice() {
+        if (state.currentList && state.currentList.length && document.getElementById('view-game')?.style.display !== 'none') {
+            if (!confirm('要先回首頁嗎？這一輪會先結束，已完成的學習紀錄會保留。')) return;
+        }
         switchView('view-main');
     }
 
