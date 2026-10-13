@@ -101,7 +101,7 @@ flag,國旗
 "trade","交易"
 "recess","課間休息"
 
-"English","中文"
+"English","英文"
 "bored","無聊的"
 "feelings","情懷"
 "hungry","飢餓的"
