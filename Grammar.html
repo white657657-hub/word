@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.61｜完整程式檢查與測驗回饋</title>
+<title>Anson 英文文法冒險 V4.64｜過去式橫式解說與程式碼檢查</title>
 <style>
 :root{
   --bg:#081018;
@@ -303,7 +303,7 @@ main{margin-top:18px}
 .result-row{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);border-radius:12px;padding:10px 12px;margin:8px 0;line-height:1.5}
 .result-row .result-status{font-weight:850}
 .result-row .result-status.first{color:#7fc79a}
-.test-result-score{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0;text-align:center}
+.test-result-score{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0;text-align:center}
 .test-result-score>div{min-width:0;padding:12px 8px;border:1px solid rgba(120,177,215,.26);border-radius:12px;background:rgba(20,48,69,.72)}
 .test-result-score span,.test-result-score b,.test-result-score strong{display:block}
 .test-result-score span{font-size:14px;color:#b9cbd9;line-height:1.4}
@@ -313,7 +313,7 @@ main{margin-top:18px}
 .result-row .result-status.pending{color:#aab7c4}
 .result-row .result-answer{color:#8ed19e}
 .result-prompt{margin:4px 0 6px;overflow-wrap:anywhere}
-@media(max-width:520px){.test-result-score{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.test-result-score>div{padding:10px 4px}.test-result-score span{font-size:12px}.test-result-score b{font-size:18px}.test-result-score strong{font-size:15px}}
+@media(max-width:520px){.test-result-score{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.test-result-score>div{padding:10px 4px}.test-result-score span{font-size:12px}.test-result-score b{font-size:18px}.test-result-score strong{font-size:15px}}
 .result-row .result-status.retry{color:#f2c14e}
 .feedback .result-banner{font-size:25px;font-weight:900;margin-bottom:6px}
 .feedback .result-detail{font-size:16px;line-height:1.6;color:#d7e4ee}
@@ -337,6 +337,34 @@ main{margin-top:18px}
 .settings-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
 #backupFile{max-width:100%;font-size:13px}
 @media(max-width:620px){.toast-message{bottom:95px}.settings-actions .btn{flex:1 1 100%}}
+
+/* V4.64: audit/fix past-tense answer card colors, preserve horizontal layout on narrow screens, and keep completion feedback consistent. */
+.answer-teaching-card{margin:14px auto 0;padding:16px;border:2px solid #174d70;border-radius:20px;background:linear-gradient(145deg,rgba(7,36,58,.96),rgba(8,29,47,.98));text-align:center;max-width:100%;box-shadow:inset 0 0 0 1px rgba(97,178,225,.04)}
+.answer-transform{display:grid!important;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr)!important;grid-template-rows:auto;gap:10px;align-items:center;width:100%;min-width:0;} .answer-word-side{grid-row:1;}.answer-transform-arrow{grid-row:1;grid-column:2;}
+.answer-word-side{min-width:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.answer-word-label{display:inline-flex;align-items:center;justify-content:center;min-width:94px;padding:5px 14px;border-radius:999px;background:#75d0f5;color:#06233a;font-size:15px;font-weight:900}
+.answer-word{display:block;max-width:100%;font-size:clamp(27px,4vw,44px);font-weight:950;line-height:1.3;white-space:nowrap;letter-spacing:.1px}
+.answer-word .mark-consonant{color:#62c9e8;background:rgba(98,201,232,.20);border:1px solid rgba(98,201,232,.52);border-radius:6px;padding:0 .025em}
+.answer-word .mark-vowel{color:#f2c14e;background:rgba(242,193,78,.18);border:1px solid rgba(242,193,78,.50);border-radius:6px;padding:0 .025em}
+.answer-word .mark-y{color:#ff5b62}
+.answer-word .mark-ending{color:#f2c14e}.answer-word .mark-d{color:#62c9e8;background:rgba(98,201,232,.18);border-radius:5px;padding:0 .025em}.answer-word .mark-ed{color:#f2c14e;background:rgba(242,193,78,.16);border-radius:5px;padding:0 .025em}.answer-word .mark-ied{color:#35c99a;background:rgba(53,201,154,.18);border-radius:5px;padding:0 .025em}.answer-word .mark-double{color:#c084fc;background:rgba(192,132,252,.18);border-radius:5px;padding:0 .025em}
+.answer-word .mark-irregular{color:#ff5b62;background:rgba(255,91,98,.14);border-radius:5px;padding:0 .025em}
+.answer-transform-arrow{font-size:clamp(27px,4vw,42px);font-weight:900;color:#5488b2}
+.answer-word-audio{display:inline-grid;place-items:center;width:38px;height:38px;min-height:38px;margin:0;border:0;border-radius:50%;background:#0868b3;color:#fff;font-size:18px}
+.answer-rule-box{margin-top:12px;padding:12px 14px;border:1px solid #174d70;border-radius:16px;background:rgba(16,53,78,.62);text-align:left}
+.answer-rule-title{display:inline-flex;padding:5px 14px;border-radius:999px;background:#75d0f5;color:#06233a;font-size:16px;font-weight:900;margin-bottom:6px}
+.answer-rule-copy{font-size:clamp(16px,2vw,21px);font-weight:750;line-height:1.55;color:#eef6fc;overflow-wrap:anywhere}
+.answer-rule-copy+.answer-rule-copy{margin-top:2px}
+.answer-rule-copy .mark-y{color:#ff5b62;font-weight:1000}.answer-rule-copy .mark-consonant{color:#62c9e8;font-weight:1000}.answer-rule-copy .mark-vowel{color:#f2c14e;font-weight:1000}.answer-rule-copy .mark-ending{color:#f2c14e;font-weight:1000}.answer-rule-copy .mark-d{color:#62c9e8;font-weight:1000}.answer-rule-copy .mark-ed{color:#f2c14e;font-weight:1000}.answer-rule-copy .mark-ied{color:#35c99a;font-weight:1000}.answer-rule-copy .mark-double{color:#c084fc;font-weight:1000}.answer-rule-copy .mark-irregular{color:#ff5b62;font-weight:1000}
+.answer-full-sentence{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin:12px auto 0;font-size:17px;font-weight:750;color:#eaf4fb;text-align:center}
+.answer-full-sentence .speaker{width:38px;height:38px;min-height:38px;margin:0;padding:0}
+.blank-slot{letter-spacing:.02em;white-space:nowrap}
+@media(max-width:620px){.answer-teaching-card{padding:12px 10px;border-radius:16px;overflow:visible}.answer-transform{display:grid!important;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr)!important;grid-template-rows:auto;gap:4px}.answer-word{font-size:clamp(18px,5.8vw,30px)}.answer-word-label{min-width:76px;font-size:13px;padding:4px 10px}.answer-transform-arrow{font-size:26px}.answer-word-audio{width:34px;height:34px;min-height:34px}.answer-rule-box{padding:10px}.answer-rule-copy{font-size:16px}.answer-full-sentence{font-size:15px}}
+/* V4.64 UI guard: keep transformation left-to-right; never stack the two words vertically. */
+.answer-transform{grid-auto-flow:row;}
+.answer-word{overflow-wrap:normal;word-break:normal;}
+.answer-transform-arrow{align-self:center;justify-self:center;}
+@media(max-width:380px){.answer-teaching-card{padding:10px 7px}.answer-transform{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)!important;gap:2px}.answer-word{font-size:clamp(17px,5.2vw,22px)}.answer-word-label{min-width:0;padding:4px 8px}.answer-rule-copy{font-size:15px}}
 </style>
 <style id="v447-ux-fixes">
 .baseverb{font-size:24px!important;font-weight:800;color:#c5d9e8;margin:0 auto 8px!important;text-align:center;line-height:1.4}
@@ -783,10 +811,11 @@ const QUESTION_BANK = {
 };
 
 
+// V4.63: unified explanation card, full-length blanks, and fixed Stage 13 study question.
 // V4.61: concise one-rule feedback and map navigation; keep Y → -ied and CVC doubling separate so Stage 13
 // cannot randomly begin with a non-Y item such as hop → hopped.
 const pastSpellingSource = QUESTION_BANK.pastSpelling || [];
-QUESTION_BANK.pastY = pastSpellingSource.filter(q => q.rule === "past-ied").concat([
+QUESTION_BANK.pastY = [{id:"py00",sentence:"I __________ English last year.",verb:"study",choices:["studied","studies"],answer:"studied",rule:"past-ied"}].concat(pastSpellingSource.filter(q => q.rule === "past-ied"), [
   {id:"py01",sentence:"We _____ soccer after school yesterday.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
   {id:"py02",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stay","stayed"],answer:"stayed",rule:"past-ed"}
 ]);
@@ -1222,11 +1251,23 @@ function stageQuestions(stageId,count=5){
   const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
   picked.push(...fallback.slice(0,Math.max(0,count-picked.length)));
 
+  if(stageId==="past4"){
+    const anchor=unique.find(q=>q.id==="py00");
+    if(anchor && !picked.some(q=>q.id==="py00")){
+      if(picked.length>=count) picked[picked.length-1]=anchor;
+      else picked.push(anchor);
+    }
+  }
+
   // Difficulty policy:
   // - Normal missions are intentionally easy/medium only.
   // - Hard questions appear only after the child opts into 加強難度.
   // - Challenge mode uses meaningful rule contrasts, not harder vocabulary.
   const result=shuffle(picked.slice(0,count)).map(q=>{const {_sourceType,...clean}=q; return clean;});
+  if(stageId==="past4"){
+    const anchorIndex=result.findIndex(q=>q.id==="py00");
+    if(anchorIndex>0){ const [anchor]=result.splice(anchorIndex,1); result.unshift(anchor); }
+  }
   // No hidden challenge mode: every mission uses the same child-friendly difficulty policy.
   result.forEach(q=>{ q.difficulty = Math.random()<0.25 ? "medium" : "easy"; });
 
@@ -1371,7 +1412,12 @@ function buildWarmupQuestions(stageId){
   // Warm-up is intentionally easy and short. Prefer the new rule, then review.
   const easy=pool.filter(q=>(q.difficulty||"easy")==="easy");
   const source=easy.length>=2?easy:pool;
-  return shuffle(source).slice(0,Math.min(2,source.length)).map(q=>{
+  let selected=shuffle(source).slice(0,Math.min(2,source.length));
+  if(stageId==="past4"){
+    const anchor=pool.find(q=>q.id==="py00");
+    if(anchor){ selected=[anchor,...selected.filter(q=>q.id!=="py00")].slice(0,Math.min(2,source.length)); }
+  }
+  return selected.map(q=>{
     const type=q._sourceType==="error"?"error":q._sourceType==="ing"?"ing":q.poke?"rule":"sentence";
     const {_sourceType,...clean}=q;
     return {...clean,type};
@@ -1444,7 +1490,7 @@ function renderWarmupQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(q.sentence)}</div>
+      <div class="sentence">${highlightBlank(normalizeQuestionSentence(q))}</div>
       ${(!String(q.rule||"").startsWith("past-") || !["past-was-were","past-had"].includes(q.rule)) && q.verb ? `<div class="baseverb">${escapeHtml(q.verb)}</div>` : ""}
       <div class="choice-row">${(q.choices||[]).map(c=>currentSession?.stageId?.startsWith("past") ? `<div class="past-choice-wrap"><button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button><button class="speaker choice-speaker" type="button" aria-label="播放 ${escapeHtml(c)}" title="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(c)}')">🔊</button></div>` : `<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
@@ -1485,7 +1531,7 @@ function handleWarmupAnswer(correct,answer,extra){
       const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>`;
       const applicableExplanation=correctRuleExplanation(q) || (type==="rule" ? ruleTeachingMarkup(q,ex) : "");
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}${applicableExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>`;
+      f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${example}${applicableExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>`;
       speak("Correct");
       speak(ex.sentence);
       return;
@@ -1499,17 +1545,15 @@ function handleWarmupAnswer(correct,answer,extra){
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        const filled=escapeHtml(normalizeQuestionSentence(q)).replace(/_{3,}/,`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
     const isPastWarmup=String(q.rule||"").startsWith("past-");
-    const pastExplanation=isPastWarmup ? correctRuleExplanation(q) : "";
-    const pastSentenceAudio=isPastWarmup ? pastSentenceAudioMarkup(q) : "";
-    f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${pastExplanation}${pastSentenceAudio}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
+    const answerCard=answerTeachingMarkup(q);
+    f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${answerCard}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
     if(!isPastWarmup) speak("Correct");
-    if(q.sentence && !isPastWarmup) speak(q.sentence.replace("_____",answer));
     return;
   }
   const pastWrong=String(currentQuestion?.rule||"").startsWith("past-");
@@ -1524,11 +1568,8 @@ function handleWarmupAnswer(correct,answer,extra){
     : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(currentQuestion.answer));
   if(rightChoice) rightChoice.classList.add("correct");
   const wrongDetail=`<div class="result-detail">你選的是：<b>${escapeHtml(selectedLabel)}</b><br>正確答案：<b style="color:#7fc79a">${escapeHtml(correctLabel)}</b></div>`;
-  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}${pastWrong?correctRuleExplanation(currentQuestion):((currentQuestion?.poke)?ruleTeachingMarkup(currentQuestion,verbExample(currentQuestion)):"")}`;
-  if(currentQuestion?.sentence && pastWrong){
-    const sentenceMarkup=pastSentenceAudioMarkup(currentQuestion);
-    if(sentenceMarkup) f.insertAdjacentHTML("beforeend",sentenceMarkup);
-  }
+  const correctionCard=currentQuestion?.poke ? ruleTeachingMarkup(currentQuestion,verbExample(currentQuestion)) : answerTeachingMarkup(currentQuestion);
+  f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}${correctionCard}`;
   if(!pastWrong) speak("答錯了，再試一次");
   setTimeout(()=>{answerLocked=false;},700);
 }
@@ -1637,7 +1678,7 @@ function renderQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence">${highlightBlank(currentQuestion.sentence)}</div>
+      <div class="sentence">${highlightBlank(normalizeQuestionSentence(currentQuestion))}</div>
       ${(!String(currentQuestion.rule||"").startsWith("past-") || !["past-was-were","past-had"].includes(currentQuestion.rule)) && currentQuestion.verb ? `<div class="baseverb">${escapeHtml(currentQuestion.verb)}</div>` : ""}
       <div class="choice-row">${currentQuestion.choices.map(c=>currentSession?.stageId?.startsWith("past") ? `<div class="past-choice-wrap"><button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button><button class="speaker choice-speaker" type="button" aria-label="播放 ${escapeHtml(c)}" title="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(c)}')">🔊</button></div>` : `<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
@@ -1683,7 +1724,22 @@ function getSpeakText(){
   }
   return currentQuestion.sentence.replace("_____","blank");
 }
-function highlightBlank(s){return escapeHtml(s).replace("_____","<span class=\"red\">_____</span>")}
+function highlightBlank(s){return escapeHtml(s).replace(/_{3,}/g, m=>`<span class="red blank-slot">${"_".repeat(Math.max(5,Math.min(m.length,10)))}</span>`)}
+function normalizeQuestionSentence(q){
+  let sentence=String(q?.sentence||"");
+  const verb=String(q?.verb||"").trim();
+  if(!sentence || !verb || !String(q?.rule||"").startsWith("past-")) return sentence;
+  // If a verb stem was accidentally left before the blank (e.g. "I studi_____"),
+  // remove that fragment and restore a complete answer blank.
+  const stemCandidates=[verb, verb.slice(0,-1)+"i", verb.slice(0,-1), verb.slice(0,-1)+"y"];
+  const alternatives=[...new Set(stemCandidates.filter(Boolean))].sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));
+  if(alternatives.length){
+    const re=new RegExp(`\\b(?:${alternatives.join("|")})_{3,}`,"ig");
+    sentence=sentence.replace(re,"__________");
+  }
+  return sentence;
+}
+
 function questionType(q){
   if(q.type) return q.type;
   if(q.poke) return "rule";
@@ -2045,6 +2101,85 @@ function pastSentenceAudioMarkup(q){
   return `<div class="past-sentence-audio" role="group" aria-label="完整句子發音"><span class="sentence-text">完整句子：${escapeHtml(fullSentence)}</span><button class="speaker" type="button" aria-label="播放完整句子發音" title="播放完整句子發音" onclick="event.stopPropagation();speak('${escapeHtml(fullSentence).replace(/'/g, "\\'")}')">🔊 聽整句</button></div>`;
 }
 
+function answerTeachingMarkup(q){
+  if(!q || q.poke) return ""; // Preserve the existing Verb/Pokémon unit.
+  const rule=String(q.rule||"").toLowerCase();
+  const base=String(q.verb||"").toLowerCase();
+  const answer=String(q.answer||"").toLowerCase();
+  const esc=escapeHtml;
+  const jsArg=(value)=>JSON.stringify(String(value)).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const speaker=(word,label)=>`<button class="answer-word-audio" type="button" aria-label="播放${esc(label)}發音" title="播放${esc(label)}發音" onclick="event.stopPropagation();speak(${jsArg(word)})">🔊</button>`;
+  let left=esc(base), right=esc(answer), explanation="";
+
+  if(rule==="past-was-were"){
+    left="be"; right=`<span class="mark-irregular">${esc(answer)}</span>`;
+    explanation=answer==="was"?`這題的主詞使用 <span class="mark-irregular">was</span>。`:`這題的主詞使用 <span class="mark-irregular">were</span>。`;
+  } else if(rule==="past-had"){
+    left=esc(base||"have / has"); right=`<span class="mark-irregular">had</span>`;
+    explanation=`have / has 的過去式是 <span class="mark-irregular">had</span>。`;
+  } else if(rule==="past-ied" || (rule==="consonant+y" && !/[aeiou]y$/.test(base))){
+    const before=base.slice(-2,-1);
+    left=`${esc(base.slice(0,-2))}<span class="mark-consonant">${esc(before)}</span><span class="mark-y">y</span>`;
+    right=rule==="past-ied" ? `${esc(answer.slice(0,-4))}<span class="mark-consonant">${esc(before)}</span><span class="mark-ied">ied</span>` : `${esc(answer.slice(0,-3))}<span class="mark-consonant">${esc(before)}</span><span class="mark-ied">ies</span>`;
+    explanation=`先找紅色的 <span class="mark-y">y</span>，看前面是子音 <span class="mark-consonant">${esc(before)}</span>，所以把 <span class="mark-y">y</span> 改成 <span class="mark-ied">i</span>，再加上 <span class="mark-ied">-${rule==="past-ied"?"ed":"es"}</span>。`;
+  } else if((rule==="past-ed" && /[aeiou]y$/.test(base)) || rule==="vowel+y"){
+    const before=base.slice(-2,-1);
+    left=`${esc(base.slice(0,-2))}<span class="mark-vowel">${esc(before)}</span><span class="mark-y">y</span>`;
+    const suffix=rule==="vowel+y"?answer.slice(base.length):"ed";
+    right=`${esc(answer.slice(0,-suffix.length-2))}<span class="mark-vowel">${esc(before)}</span><span class="mark-y">y</span><span class="mark-ed">${esc(suffix)}</span>`;
+    explanation=rule==="vowel+y"?`先找紅色的 <span class="mark-y">y</span>，前面是母音 <span class="mark-vowel">${esc(before)}</span>，所以保留 y，再加上 <span class="mark-ending">-${esc(suffix)}</span>。`:`先找紅色的 <span class="mark-y">y</span>；前面是母音 <span class="mark-vowel">${esc(before)}</span>，所以保留 <span class="mark-y">y</span>，直接加上 <span class="mark-ending">-ed</span>。`;
+  } else if(rule==="past-double"){
+    const last=base.slice(-1);
+    left=`${esc(base.slice(0,-1))}<span class="mark-consonant">${esc(last)}</span>`;
+    right=`${esc(base.slice(0,-1))}<span class="mark-consonant">${esc(last)}</span><span class="mark-double">${esc(last)}</span><span class="mark-double">ed</span>`;
+    explanation=`短母音 CVC，字尾子音重複加 <span class="mark-double">-ed</span>。`;
+  } else if(rule==="cvc"){
+    const last=base.slice(-1);
+    left=`${esc(base.slice(0,-1))}<span class="mark-consonant">${esc(last)}</span>`;
+    right=`${esc(base.slice(0,-1))}<span class="mark-consonant">${esc(last+last)}</span><span class="mark-ending">ing</span>`;
+    explanation=`短母音 CVC，字尾子音重複，再加 <span class="mark-ending">-ing</span>。`;
+  } else if(rule==="past-irregular"){
+    left=esc(base); right=`<span class="mark-irregular">${esc(answer)}</span>`;
+    explanation=`不規則過去式：<span class="mark-irregular">${esc(base)} → ${esc(answer)}</span>。`;
+  } else if(rule==="past-d"){
+    left=esc(base); right=`${esc(answer.slice(0,-1))}<span class="mark-d">d</span>`;
+    explanation=`動詞字尾已有 e，直接加 <span class="mark-d">-d</span>。`;
+  } else if(rule==="past-ed"){
+    left=esc(base); right=`${esc(answer.slice(0,-2))}<span class="mark-ed">ed</span>`;
+    explanation=`一般動詞過去式加上 <span class="mark-ed">-ed</span>。`;
+  } else if(rule==="drop-e"){
+    left=esc(base); right=`${esc(answer.slice(0,-3))}<span class="mark-ending">ing</span>`;
+    explanation=`去掉字尾 e，再加 <span class="mark-ending">-ing</span>。`;
+  } else if(rule==="+ing"){
+    left=esc(base); right=`${esc(answer.slice(0,-3))}<span class="mark-ending">ing</span>`;
+    explanation=`動詞加上 <span class="mark-ending">-ing</span>，表示正在進行的動作。`;
+  } else if(rule==="subject" || ["s","es","ch","sh","ss","x","o"].includes(rule)){
+    left=esc(base);
+    if(rule==="subject" && /[^aeiou]y$/i.test(base) && answer===base.slice(0,-1)+"ies"){
+      const before=base.slice(-2,-1);
+      left=`${esc(base.slice(0,-2))}<span class="mark-consonant">${esc(before)}</span><span class="mark-y">y</span>`;
+      right=`${esc(answer.slice(0,-3))}<span class="mark-consonant">${esc(before)}</span><span class="mark-consonant"><span class="mark-y">i</span><span class="mark-ending">es</span></span>`;
+      explanation=`先看紅色的 <span class="mark-y">y</span> 前面是子音 <span class="mark-consonant">${esc(before)}</span>，所以改成 i，再加上 <span class="mark-ending">-es</span>。`;
+    } else if(rule==="subject" && /[aeiou]y$/i.test(base) && answer===base+"s"){
+      const before=base.slice(-2,-1);
+      left=`${esc(base.slice(0,-2))}<span class="mark-vowel">${esc(before)}</span><span class="mark-y">y</span>`;
+      right=`${esc(base.slice(0,-2))}<span class="mark-vowel">${esc(before)}</span><span class="mark-vowel"><span class="mark-y">y</span><span class="mark-ending">s</span></span>`;
+      explanation=`先看紅色的 <span class="mark-y">y</span> 前面是母音 <span class="mark-vowel">${esc(before)}</span>，所以保留 y，再加上 <span class="mark-ending">-s</span>。`;
+    } else {
+      const suffix=answer.startsWith(base)?answer.slice(base.length):"";
+      right=suffix?`${esc(base)}<span class="mark-ending">${esc(suffix)}</span>`:esc(answer);
+      explanation=`依照主詞，動詞使用正確形式 <span class="mark-ending">${esc(answer)}</span>。`;
+    }
+  } else {
+    left=esc(base||"原形"); right=esc(answer);
+    explanation=`這一題要使用動詞 <span class="mark-ending">${esc(answer)}</span>。`;
+  }
+
+  const fullSentence=String(q.sentence||"").replace(/_{3,}/,answer);
+  const sentenceAudio=fullSentence?`<div class="answer-full-sentence"><button class="speaker" type="button" aria-label="播放完整句子：${esc(fullSentence)}" title="聽整句" onclick="event.stopPropagation();speak(${jsArg(fullSentence)})">🔊 聽整句</button></div>`:"";
+  return `<section class="answer-teaching-card" aria-label="文法解說"><div class="answer-transform"><div class="answer-word-side"><span class="answer-word-label">原形</span><span class="answer-word">${left}</span>${speaker(rule==="past-was-were"?"be":base,"原形")}</div><div class="answer-transform-arrow" aria-hidden="true">→</div><div class="answer-word-side"><span class="answer-word-label">變化後</span><span class="answer-word">${right}</span>${speaker(answer,"變化後")}</div></div><div class="answer-rule-box"><div class="answer-rule-title">文法小提醒</div><div class="answer-rule-copy">${explanation}</div></div></section>${sentenceAudio}`;
+}
+
 function renderFeedback(correct,answer,errorType,exp,extra={}){
   const f=getActiveLearningElement("feedback");
   if(!f)return;
@@ -2064,7 +2199,7 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
       if(sentenceEl){
         const speaker=sentenceEl.querySelector(".speaker");
         const speakerHtml=speaker?speaker.outerHTML:"";
-        const filled=escapeHtml(q.sentence).replace("_____",`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
+        const filled=escapeHtml(normalizeQuestionSentence(q)).replace(/_{3,}/,`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         sentenceEl.innerHTML=speakerHtml+filled;
       }
     }
@@ -2082,8 +2217,10 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
     }
     const type=questionType(q);
     const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>` : "";
-    const ruleExplanation=correctRuleExplanation(q) || (type==="rule" && ex ? ruleTeachingMarkup(q,ex) : "");
-    const pastSentenceAudio=pastSentenceAudioMarkup(q);
+    const ruleExplanation=q.poke
+      ? (correctRuleExplanation(q) || (type==="rule" && ex ? ruleTeachingMarkup(q,ex) : ""))
+      : answerTeachingMarkup(q);
+    const pastSentenceAudio=""; // Full sentence audio is included in the standardized card for non-Verb units.
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
@@ -2091,14 +2228,14 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
-      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
+      f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
         </div>`;
     }else{
       const pastUnit=String(q.rule||"").startsWith("past-");
-      f.innerHTML=`<div class="result-banner" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
+      f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="${pastUnit?"下一題":"Next"}" title="${pastUnit?"下一題":"Next"}" onclick="nextQuestion()">${pastUnit?"下一題":"→ Next"}</button>
         </div>`;
@@ -2115,10 +2252,10 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
   // so the child can practice the rule until it is understood.
   const wrongTeach=(currentQuestion && currentQuestion.poke)
     ? ruleTeachingMarkup(currentQuestion, verbExample(currentQuestion))
-    : "";
+    : (!String(currentQuestion?.rule||"").startsWith("past-") ? answerTeachingMarkup(currentQuestion) : "");
   const isPastTenseQuestion=String(currentQuestion?.rule||"").startsWith("past-");
-  const pastWrongExplanation=isPastTenseQuestion ? correctRuleExplanation(currentQuestion) : "";
-  const pastSentenceAudio=isPastTenseQuestion ? pastSentenceAudioMarkup(currentQuestion) : "";
+  const pastWrongExplanation=isPastTenseQuestion ? answerTeachingMarkup(currentQuestion) : "";
+  const pastSentenceAudio="";
   const selectedLabel=currentQuestion?.poke ? (extra?.selectedVerb||answer) : answer;
   const correctLabel=currentQuestion?.poke ? currentQuestion.verb : currentQuestion?.answer;
   const wrongChoice=currentQuestion?.poke
@@ -2130,7 +2267,7 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
     : [...document.querySelectorAll(".choice")].find(btn=>btn.textContent.trim()===String(currentQuestion.answer));
   if(rightChoice) rightChoice.classList.add("correct");
   const wrongDetail=`<div class="result-detail">你選的是：<b>${escapeHtml(selectedLabel)}</b><br>正確答案：<b style="color:#7fc79a">${escapeHtml(correctLabel)}</b></div>`;
-  f.innerHTML=`<div class="result-banner" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}${isPastTenseQuestion?pastWrongExplanation:wrongTeach}${pastSentenceAudio}`;
+  f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#e98b91">✕ 答錯了，再試一次</div>${wrongDetail}${isPastTenseQuestion?pastWrongExplanation:wrongTeach}${pastSentenceAudio}`;
   if(!isPastTenseQuestion) speak("答錯了，再試一次");
   setTimeout(()=>{
     if(!currentSession)return;
@@ -2171,6 +2308,16 @@ function finishSession(){
   const firstTryPct=Math.round((Number(s.firstTryCorrect)||0)/Math.max(1,total)*100);
   const finalCorrectCount=Object.values(s.questionAttemptData||{}).filter(q=>q.completed && (q.answers||[]).some(a=>a.correct)).length;
   const finalCompletionPct=Math.round(finalCorrectCount/Math.max(1,total)*100);
+  // Primary practice score penalizes retries so a corrected answer never turns the score into 100%.
+  const earnedPoints=s.questions.reduce((sum,q,i)=>{
+    const answers=s.questionAttemptData?.[i]?.answers||[];
+    const firstCorrect=answers.findIndex(a=>a.correct);
+    if(firstCorrect===0) return sum+100;
+    if(firstCorrect===1) return sum+50;
+    if(firstCorrect===2) return sum+25;
+    return sum;
+  },0);
+  const practiceScorePct=Math.round(earnedPoints/Math.max(1,total));
 
   if(!false){
     const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
@@ -2198,7 +2345,7 @@ function finishSession(){
     showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
       <div class="reward-title">🌟 本關完成！</div>
       <p role="status">本次共 ${total} 題。每一題都會標示第一次是否答對、最後是否修正成功，以及正確答案。</p>
-      <div class="test-result-score"><div><span>第一次答對</span><b>${s.firstTryCorrect} / ${total}</b><strong>${firstTryRate}%</strong></div><div><span>最後完成答對</span><b>${finalCorrectCount} / ${total}</b><strong>${finalRate}%</strong></div><div><span>修正次數</span><b>${s.improvementCount}</b><strong>次</strong></div></div>
+      <div class="test-result-score"><div><span>練習得分（含重試扣分）</span><b>${practiceScorePct}%</b><strong>本次得分</strong></div><div><span>第一次答對</span><b>${s.firstTryCorrect} / ${total}</b><strong>${firstTryRate}%</strong></div><div><span>最後完成答對</span><b>${finalCorrectCount} / ${total}</b><strong>${finalRate}%</strong></div><div><span>修正次數</span><b>${s.improvementCount}</b><strong>次</strong></div></div>
       ${buildSessionReviewMarkup(s)}
       ${levelHtml}${rewardHtml}
       ${firstTryPct>=70 ? `<p class="muted">✓ 首次作答正確率達到 70%。</p>` : `<p style="color:#e5c86f">這次可以再練習一次，試著讓更多題目第一次就答對。</p>`}
