@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.46｜過去式專區</title>
+<title>Anson 英文文法冒險 V4.47｜過去式專區</title>
 <style>
 :root{
   --bg:#081018;
@@ -107,6 +107,12 @@ main{margin-top:18px}
 .rule-teach .focus{color:#62c9e8;font-weight:1000}
 .rule-teach .focus-y{color:#e67b7f;font-weight:1000}
 .rule-teach .rule-label{color:#62c9e8;font-weight:1000}
+/* Past-tense teaching colors: Y is deep blue; consonant and -ied share the same cyan. */
+.rule-teach .past-y{color:#2457d6;font-weight:1000}
+.rule-teach .past-consonant,.rule-teach .past-ied{color:#62c9e8;font-weight:1000}
+.rule-teach .past-ied{font-weight:1000}
+.rule-teach .past-ch{color:#ff5b62;font-weight:1000}
+.rule-teach .past-rule-copy{font-size:17px;line-height:1.5;text-align:center;margin-top:6px}
 .rule-teach .speaker{width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;font-size:14px!important;margin-right:0!important}
 .rule-teach-small{font-size:16px;color:var(--muted);font-weight:700}
 .y-focus-note{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;font-size:17px;font-weight:900;color:#62c9e8}
@@ -159,8 +165,8 @@ main{margin-top:18px}
 }
 .stage.locked{opacity:.48;cursor:not-allowed}
 .stage .num{font-size:12px;color:#8ea2b2}
-.stage h3{margin:8px 0 5px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px}.stage-enter{font-size:16px;padding:9px 14px;min-height:40px}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
-.badge{position:absolute;right:12px;top:12px;font-size:12px;color:#c8d4dd}
+.stage h3{margin:8px 0 5px;padding-right:74px}.stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}.stage-cta-wrap{margin-top:14px}.stage-enter{font-size:16px;padding:9px 14px;min-height:40px}.stage:not(.locked){outline:1px solid rgba(105,153,192,.16)}
+.badge{position:absolute;right:12px;top:12px;font-size:12px;color:#c8d4dd}.stage-score{margin-top:9px;padding:7px 9px;border-radius:9px;background:rgba(255,255,255,.045);font-size:13px;line-height:1.45;color:var(--text)}.stage-score .rate{font-weight:800;color:#f4c95d}.stage-score .no-score{color:var(--muted)}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .stat b{display:block;font-size:25px;margin-top:5px}.stat span{color:var(--muted);font-size:13px}
 .poke-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
@@ -272,6 +278,30 @@ main{margin-top:18px}
 #backupFile{max-width:100%;font-size:13px}
 @media(max-width:620px){.toast-message{bottom:95px}.settings-actions .btn{flex:1 1 100%}}
 </style>
+<style id="v447-ux-fixes">
+.baseverb{font-size:24px!important;font-weight:800;color:#c5d9e8;margin:0 auto 8px!important;text-align:center;line-height:1.4}
+.choice-row{display:flex!important;justify-content:center!important;align-items:stretch;flex-wrap:wrap;gap:12px;margin:18px auto 24px!important;max-width:720px;width:100%}
+.choice-row .choice{flex:0 1 250px;min-height:72px;font-size:22px}
+#questionCard{padding-bottom:30px!important}
+#learn{padding-bottom:130px!important;scroll-margin-bottom:130px}
+#learn .feedback{padding-bottom:8px}
+.topbar{pointer-events:auto}
+@media(max-width:620px){.baseverb{font-size:25px!important}.choice-row .choice{flex:1 1 calc(50% - 12px);min-width:130px;min-height:68px}.app{padding-bottom:150px!important}#learn{padding-bottom:150px!important}}
+</style>
+
+<style id="v451-stability-fixes">
+/* V4.51: child-friendly no-hint UI and safe responsive layout */
+#hintArea,#hintTrigger,#warmupHintArea,#warmupHintTrigger,.hintbox,.hint-head,.hint-en,.hint-cn,.hint-title,.hint-trigger,.hint-button{display:none!important;}
+#learn{padding-bottom:max(150px,env(safe-area-inset-bottom))!important;scroll-padding-bottom:160px;}
+#questionCard{padding-bottom:32px!important;overflow:visible;}
+.choice-row,.options{position:relative;z-index:2;justify-content:center!important;align-items:stretch;}
+.choice-row .choice{touch-action:manipulation;min-height:68px;}
+button:disabled{cursor:default;opacity:.8;}
+.sentence .speaker,.sentence button.speaker{display:none!important;}
+.baseverb{font-size:26px!important;font-weight:800;text-align:center;margin:8px auto 12px!important;}
+.stage-score{overflow-wrap:anywhere;}
+@media(max-width:620px){#learn{padding-bottom:175px!important}.choice-row .choice{min-width:125px;min-height:64px;font-size:20px}.question,.sentence{overflow-wrap:anywhere}}
+</style>
 </head>
 <body>
 <div id="appToast" class="toast-message hidden" role="status" aria-live="polite"></div>
@@ -298,7 +328,7 @@ main{margin-top:18px}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.46｜新增一般過去式 6 個單元；原有現在式文法與學習紀錄功能保留。</p>
+      <p class="small-note">V4.47｜新增一般過去式 6 個單元；原有現在式文法與學習紀錄功能保留。</p>
       <p>English questions. Audio support. Short missions. Pokémon learning companions.</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
@@ -398,7 +428,8 @@ main{margin-top:18px}
         <li><b>按鈕沒有反應：</b>重新整理頁面，再從首頁重新進入關卡。</li>
         <li><b>進度或紀錄不見：</b>確認使用同一個瀏覽器、同一個裝置與同一個檔案位置；無痕模式或清除瀏覽資料可能讓本機資料消失。</li>
         <li><b>換裝置後資料不同：</b>下載完整備份，在另一台裝置開啟遊戲後，於此頁匯入 JSON 備份。</li>
-        <li><b>語音沒有播放：</b>確認裝置音量，點擊單字旁的喇叭；若瀏覽器不支援語音，仍可照文字作答。</li>
+        <li><b>題目沒有聲音：</b>填空句子與原形動詞不提供朗讀按鈕，這是刻意的介面設計；若其他仍有保留的語音功能無法播放，請確認裝置音量及瀏覽器語音支援。</li>
+        <li><b>看不到提示：</b>本版本已移除 Hint，答對後會直接顯示文法解說；孩子可直接作答，不需要開啟提示。</li>
         <li><b>仍有問題：</b>先下載完整備份，再重新整理。不要先清除瀏覽器資料。</li>
       </ol>
       <div class="settings-actions"><button class="btn" onclick="checkStorageHealth()">檢查資料儲存狀態</button><button class="btn" onclick="showScreen('logs')">查看學習紀錄</button></div>
@@ -673,7 +704,10 @@ const QUESTION_BANK = {
     {id:"pi07",sentence:"The boy _____ very fast in the race.",verb:"run",choices:["runned","ran"],answer:"ran",rule:"past-irregular"},
     {id:"pi08",sentence:"We _____ water after playing outside.",verb:"drink",choices:["drinked","drank"],answer:"drank",rule:"past-irregular"},
     {id:"pi09",sentence:"Dad _____ a paper airplane for me.",verb:"make",choices:["maked","made"],answer:"made",rule:"past-irregular"},
-    {id:"pi10",sentence:"She _____ a gift from her aunt.",verb:"get",choices:["getted","got"],answer:"got",rule:"past-irregular"}
+    {id:"pi10",sentence:"She _____ a gift from her aunt.",verb:"get",choices:["getted","got"],answer:"got",rule:"past-irregular"},
+    {id:"pi11",sentence:"I _____ well last night.",verb:"sleep",choices:["sleeped","slept"],answer:"slept",rule:"past-irregular"},
+    {id:"pi12",sentence:"We _____ on the bench after lunch.",verb:"sit",choices:["sitted","sat"],answer:"sat",rule:"past-irregular"},
+    {id:"pi13",sentence:"My friend _____ me a birthday card.",verb:"give",choices:["gived","gave"],answer:"gave",rule:"past-irregular"}
   ],
 
 };
@@ -925,7 +959,7 @@ function downloadBlob(blob, filename){
 }
 function exportBackup(){
   try{
-    const payload={app:"Anson English Grammar Adventure",version:"V4.46",exportedAt:new Date().toISOString(),data:state};
+    const payload={app:"Anson English Grammar Adventure",version:"V4.51",exportedAt:new Date().toISOString(),data:state};
     downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`Anson_Grammar_Backup_${new Date().toISOString().slice(0,10)}.json`);
     showToast("完整備份已開始下載。請將檔案保存在安全的位置。");
   }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
@@ -1043,14 +1077,22 @@ function renderMap(){
   if(!state.learning.mastery || typeof state.learning.mastery !== "object") state.learning.mastery={};
   el.innerHTML=STAGES.map((s,i)=>{
     try{
-      const st=state.stageStats[s.id]||{best:0,plays:0};
+      const st=state.stageStats[s.id]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
       const locked=!state.unlocked.includes(s.id);
       const mastery=stageMastery(s);
+      const totalQuestions=Math.max(0,Number(st.totalQuestions)||0);
+      const totalCorrect=Math.max(0,Number(st.totalCorrect)||0);
+      const accuracy=totalQuestions>0?Math.round(Math.min(totalCorrect,totalQuestions)/totalQuestions*100):null;
       const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
+      const badgeText=locked?"🔒":(accuracy===null?status:`${mastery>=70&&mastery<90?"🟡":mastery>=90?"⭐":st.plays>0?"🔵":"⚪"} ${accuracy}%`);
       const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview));
+      const scoreMarkup=accuracy===null
+        ? `<div class="stage-score no-score">成績：尚無作答紀錄</div>`
+        : `<div class="stage-score">成績：答對 <b>${Math.min(totalCorrect,totalQuestions)}</b> / ${totalQuestions} 題 <span class="rate">· ${accuracy}% 答對率</span></div>`;
       return `<div class="card stage ${locked?"locked":""}" ${locked?"":"data-stage=\"${s.id}\" role=\"button\" tabindex=\"0\" aria-label=\"進入 ${escapeHtml(s.title)}\""}>
-        <span class="num">STAGE ${i+1}</span><span class="badge">${locked?"🔒":status}</span>
+        <span class="num">STAGE ${i+1}</span><span class="badge">${badgeText}</span>
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
+        ${scoreMarkup}
         ${locked
           ? `<div class="small-note" style="margin-top:12px">🔒 尚未解鎖</div>`
           : `<div class="stage-cta-wrap"><button class="btn primary stage-enter" type="button" data-enter-stage="${s.id}" aria-label="進入 ${escapeHtml(s.title)}">${review?"🔁 複習本關":"▶ 進入本關"}</button></div>
@@ -1390,13 +1432,11 @@ function renderWarmupQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(q.sentence)}')">🔊</button>
-      ${highlightBlank(q.sentence)}</div>
-      <div class="baseverb">(${escapeHtml(q.verb||"")}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${escapeHtml(q.verb||"")}')">🔊</button></div>
+      <div class="sentence">${highlightBlank(q.sentence)}</div>
+      <div class="baseverb">${escapeHtml(q.verb||"")}</div>
       <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
-  html+=`<div id="warmupHintArea"></div><div id="warmupFeedback" class="feedback"></div>
-    <div class="actions" id="warmupHintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
+  html+=`<div id="warmupFeedback" class="feedback"></div>`;
   card.innerHTML=html;
   const learn=document.getElementById("learn");
   if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
@@ -1404,7 +1444,7 @@ function renderWarmupQuestion(){
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=getActiveLearningElement("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && type==="rule") setTimeout(()=>speak(getSpeakText()),250);
 }
 
 function handleWarmupAnswer(correct,answer,extra){
@@ -1549,20 +1589,18 @@ function renderQuestion(){
   }else{
     const isError=type==="error";
     html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
-      <div class="sentence"><button class="speaker" onclick="speak('${escapeHtml(currentQuestion.sentence)}')">🔊</button>
-      ${highlightBlank(currentQuestion.sentence)}</div>
-      <div class="baseverb">(${currentQuestion.verb}) <button class="speaker" style="width:32px;height:32px;font-size:14px" onclick="speak('${currentQuestion.verb}')">🔊</button></div>
+      <div class="sentence">${highlightBlank(currentQuestion.sentence)}</div>
+      <div class="baseverb">${escapeHtml(currentQuestion.verb||"")}</div>
       <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${c}</button>`).join("")}</div>`;
   }
-  html+=`<div id="hintArea"></div><div id="feedback" class="feedback"></div>
-    <div class="actions" id="hintTrigger"><button class="btn gold" onclick="showHint()">💡 看提示</button></div>`;
+  html+=`<div id="feedback" class="feedback"></div>`;
   document.getElementById("questionCard").innerHTML=html;
   // A new question must start with no feedback/Next state from the previous question.
   const freshFeedback=getActiveLearningElement("feedback");
   if(freshFeedback) freshFeedback.innerHTML="";
   const freshHint=getActiveLearningElement("hintTrigger");
   if(freshHint) freshHint.style.display="flex";
-  if(state.settings.autoSpeak && true) setTimeout(()=>speak(getSpeakText()),250);
+  if(state.settings.autoSpeak && type==="rule") setTimeout(()=>speak(getSpeakText()),250);
 }
 function ruleQuestionPrompt(q){
   const answer=q?.answer||"";
@@ -1718,6 +1756,11 @@ function makeRuleOptions(answer){
 }
 
 function showHint(){
+  // V4.51: hints are intentionally disabled in the child-facing interface.
+  hintLevel=0;
+  const hiddenHint=getActiveLearningElement("hintArea"); if(hiddenHint) hiddenHint.innerHTML="";
+  const hiddenTrigger=getActiveLearningElement("hintTrigger"); if(hiddenTrigger) hiddenTrigger.style.display="none";
+  return;
   if(answerLocked)return;
   hintLevel=Math.min(3,hintLevel+1);
   const rule=["CH","SH","SS","X","O"].includes(currentQuestion.rule)?currentQuestion.rule:
@@ -1992,6 +2035,34 @@ function yTransformMarkup(q,ex){
   return `<span>${baseMarked}</span><span class="arrow">→</span><b>${resultMarked}</b>`;
 }
 
+function correctRuleExplanation(q){
+  if(!q) return "";
+  const v=String(q.verb||"").toLowerCase();
+  const a=String(q.answer||"").toLowerCase();
+  const r=String(q.rule||"").toLowerCase();
+  const safe=escapeHtml;
+  if(r==="past-ied"){
+    const beforeY=v.slice(-2,-1);
+    return `<div class="rule-teach"><div class="past-rule-copy">The letter before <span class="past-y">Y</span> is a <span class="past-consonant">consonant</span>, so change <span class="past-y">Y</span> to <span class="past-ied">I</span> and add <span class="past-ied">-ed</span>.</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-3))}<span class="past-ied">ied</span></div></div>`;
+  }
+  if(r==="past-ed") return `<div class="rule-teach"><div class="past-rule-copy">For most regular verbs, add <b class="past-ied">-ed</b>.</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-2))}<b class="past-ied">ed</b></div></div>`;
+  if(r==="past-d") return `<div class="rule-teach"><div class="past-rule-copy">If a verb ends in <b>e</b>, add <b class="past-ied">-d</b>.</div><div class="past-rule-copy">${safe(v)} → ${safe(a.slice(0,-1))}<b class="past-ied">d</b></div></div>`;
+  if(r==="past-double") return `<div class="rule-teach"><div class="past-rule-copy">This short CVC verb has a short vowel. Double the final consonant, then add <b class="past-ied">-ed</b>.</div><div class="past-rule-copy">${safe(v)} → ${safe(a)}</div><div class="past-rule-copy">C = consonant · V = vowel · C = consonant</div></div>`;
+  if(r==="past-was-were") return `<div class="rule-teach"><div class="past-rule-copy">Use <b>was</b> with I / he / she / it. Use <b>were</b> with you / we / they.</div></div>`;
+  if(r==="past-had") return `<div class="rule-teach"><div class="past-rule-copy"><b>Have</b> and <b>has</b> change to <b>had</b> in the past tense.</div></div>`;
+  if(r==="past-irregular"){
+    if(v==="catch") return `<div class="rule-teach"><div class="past-rule-copy"><b>Catch</b> is irregular: its past tense is <b>caught</b>, not catched.</div><div class="past-rule-copy">cat<span class="past-ch">ch</span> → caught</div></div>`;
+    return `<div class="rule-teach"><div class="past-rule-copy">This is an irregular verb. Its past tense changes form, so learn it by memory.</div><div class="past-rule-copy"><b>${safe(v)} → ${safe(a)}</b></div><div class="past-rule-copy">Examples: see → saw · go → went · drink → drank · sleep → slept · sit → sat · give → gave · run → ran · eat → ate</div></div>`;
+  }
+  if(["consonant+y","vowel+y"].includes(r)){
+    if(r==="consonant+y") return `<div class="rule-teach"><div class="past-rule-copy">If the letter before <span class="past-y">Y</span> is a <span class="past-consonant">consonant</span>, change <span class="past-y">Y</span> to I and add <span class="past-ied">-ed</span>.</div></div>`;
+    return `<div class="rule-teach"><div class="past-rule-copy">If the letter before <span class="past-y">Y</span> is a vowel, keep Y and add <b class="past-ied">-ed</b>.</div></div>`;
+  }
+  if(r==="cvc") return `<div class="rule-teach"><div class="past-rule-copy">C = consonant, V = vowel, C = consonant. For a short CVC verb, double the final consonant before adding the ending.</div></div>`;
+  if(["CH","SH","SS","X","O"].includes(q.rule)) return `<div class="rule-teach"><div class="past-rule-copy">For present-tense he / she / it, verbs ending in ${safe(q.rule)} usually add <b>-es</b>. This is not the past-tense rule.</div></div>`;
+  return "";
+}
+
 function ruleTeachingMarkup(q,ex){
   if(!q) return "";
   const v=q.verb||ex?.base||"";
@@ -2054,6 +2125,7 @@ function renderFeedback(correct,answer,errorType,exp){
     }
     const type=questionType(q);
     const example=ex ? `<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${ex.form}</b>`)}</span></div>${type==="rule"?ruleTeachingMarkup(q,ex):""}` : "";
+    const ruleExplanation=correctRuleExplanation(q);
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
@@ -2061,13 +2133,13 @@ function renderFeedback(correct,answer,errorType,exp){
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
-      f.innerHTML=`${example}
+      f.innerHTML=`${example}${ruleExplanation}
         <div class="mission-finished" role="status">✓ 本關完成</div>
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
         </div>`;
     }else{
-      f.innerHTML=`${example}
+      f.innerHTML=`${example}${ruleExplanation}
         <div class="actions feedback-next">
           <button class="btn primary next-arrow" aria-label="Next" title="Next" onclick="nextQuestion()">→ Next</button>
         </div>`;
@@ -2390,8 +2462,7 @@ function renderLogs(){
   document.getElementById("stats").innerHTML=`
     <div class="card stat"><span>學習答題</span><b>${learning.length}</b></div>
     <div class="card stat"><span>每次作答正確率</span><b>${acc}%</b></div>
-    <div class="card stat"><span>獨立答對</span><b>${independent}</b></div>
-    <div class="card stat"><span>Hint 後答對</span><b>${hintCorrect}</b></div>`;
+    <div class="card stat"><span>不使用提示答對</span><b>${independent}</b></div>`;
   const all=state.logs.map((l,index)=>({...l,_logIndex:index})).sort((a,b)=>b.ts-a.ts).slice(0,1000);
   const groups={};
   all.forEach(l=>{const d=new Date(l.ts);const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;(groups[key]??=[]).push(l);});
@@ -2504,3 +2575,4 @@ init();
 </script>
 </body>
 </html>
+
