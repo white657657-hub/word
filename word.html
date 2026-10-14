@@ -1398,6 +1398,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             <button id="star-icon" type="button" class="word-tool-btn word-star-btn" onclick="toggleStar()" aria-label="加入或移除星號複習" title="加入或移除星號複習">☆</button>
         </div>
         <div id="practice-target-word" class="practice-target-word" hidden aria-live="polite"></div>
+        <div id="spelling-feedback" class="spelling-feedback" style="display:none" aria-live="polite"></div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:auto;"></div>
         <div id="letter-area" class="box-input-container"></div>
         <div id="child-answer-feedback" class="child-answer-feedback" role="status" aria-live="polite" hidden></div>
@@ -1428,8 +1429,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             </div>
 
 
-<div id="spelling-feedback" class="spelling-feedback" style="display:none"></div>
-            <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 先練習這題（不計戰鬥）</button>
+<button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 先練習這題（不計戰鬥）</button>
         </div>
     </div>
 
@@ -1696,19 +1696,21 @@ html, body { height:100% !important; overflow:hidden !important; }
         state.oppHP = state.oppMaxHP;
     }
 
-    let wrongAttemptsThisQuestion = 0;
     // 動畫屬於裝飾性功能；CDN 未載入時不得中斷測驗或資料保存。
     function safeConfetti(options) {
         try { if (typeof window.confetti === 'function') window.confetti(options); }
         catch (err) { console.warn('動畫未執行，不影響學習流程。', err); }
     }
 
-    let state = { banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, chosenOppId: 0, opponentPickMode: false, quizCompleted: 0, quizPassedCount: 0, quizTotalCount: 0, quizResultRows: [], sessionStats: { correct: 0, incorrect: 0, passes: 0 }, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
+    let state = { wrongAttemptsThisQuestion: 0, banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, chosenOppId: 0, opponentPickMode: false, quizCompleted: 0, quizPassedCount: 0, quizTotalCount: 0, quizResultRows: [], sessionStats: { correct: 0, incorrect: 0, passes: 0 }, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
     let currentUserKey = '';
     let isAnsonUser = false;
     let bankSourceMode = 'text'; // 預設依目前使用者讀取 GitHub Pages 同目錄的 Vicky.txt／Anson.txt
+    // 只允許最新一次題庫載入更新畫面；避免快速重試時舊回應覆蓋新題庫。
+    let bankLoadRequestId = 0;
+    let bankLoadAbortController = null;
 
     function normalizeUserKey(name) {
         return encodeURIComponent(String(name || '').trim().toLowerCase());
@@ -1719,7 +1721,36 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
     function setHeroData(n, v) { localStorage.setItem(scopedKey(n), String(v)); }
     function getHeroData(n) { return localStorage.getItem(scopedKey(n)); }
-    async function fetchTranslation(t) { try { const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(t)}`); const d = await r.json(); return d[0][0][0]; } catch (e) { return ""; } }
+    // 線上翻譯僅作為補助；失敗時回傳空字串，但留下可診斷的錯誤狀態。
+    async function fetchTranslation(t, options = {}) {
+        const clean = String(t || '').trim();
+        if (!clean) return '';
+        const controller = new AbortController();
+        const timeoutMs = Math.max(1000, Number(options.timeoutMs) || 5000);
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(clean)}`;
+            const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            const translated = Array.isArray(data?.[0])
+                ? data[0].map(part => Array.isArray(part) ? String(part[0] || '') : '').join('').trim()
+                : '';
+            if (!translated) throw new Error('翻譯服務沒有回傳可用文字');
+            window.__wordHeroTranslationStatus = { ok: true, word: clean, at: Date.now() };
+            return translated;
+        } catch (error) {
+            const timedOut = error?.name === 'AbortError';
+            window.__wordHeroTranslationStatus = {
+                ok: false, word: clean, at: Date.now(),
+                error: timedOut ? `逾時（${timeoutMs} ms）` : String(error?.message || error)
+            };
+            console.warn('線上翻譯暫時不可用：', window.__wordHeroTranslationStatus);
+            return '';
+        } finally {
+            clearTimeout(timer);
+        }
+    }
 
     function getLocalJSON(key, fallback) {
         try { return JSON.parse(localStorage.getItem(scopedKey(key)) || JSON.stringify(fallback)); }
@@ -2356,34 +2387,53 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
 
     async function loadUserTxtQuestionBank() {
+        const requestId = ++bankLoadRequestId;
+        const userKeyAtStart = currentUserKey;
         const fileName = `${getUserBankFileStem()}.txt`;
         const url = new URL(getUserBankUrl(), document.baseURI).href;
-        window.__wordHeroBankLoadInfo = { ok: false, url, status: null, count: 0 };
+        const timeoutMs = 8000;
+        if (bankLoadAbortController) bankLoadAbortController.abort();
+        const controller = new AbortController();
+        bankLoadAbortController = controller;
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        window.__wordHeroBankLoadInfo = { ok: false, loading: true, url, status: null, count: 0, user: currentUserName };
         try {
-            const response = await fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`, { cache: 'no-store' });
+            const response = await fetch(`${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`, {
+                cache: 'no-store', signal: controller.signal
+            });
+            if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
             window.__wordHeroBankLoadInfo.status = response.status;
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}：無法讀取 ${fileName}`);
             const raw = await response.text();
+            if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
             const sourceText = extractBankTextFromHtml(raw);
             const parsed = parseAnsonTxt(sourceText);
             const count = Object.values(parsed).reduce((n, arr) => n + arr.length, 0);
             if (!Object.keys(parsed).length || count === 0) {
                 throw new Error('TXT 題庫已取得，但沒有解析出單字；請確認檔案包含 [W1] 單元標題及英文,中文資料。');
             }
-            state.banks = normalizeLegacyEarthInBanks(parsed);
-            setLocalJSON('hero_text_bank', state.banks);
-            window.__wordHeroBankLoadInfo = { ok: true, url, status: response.status, units: Object.keys(parsed), count };
+            if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
+            const normalized = normalizeLegacyEarthInBanks(parsed);
+            state.banks = normalized;
+            setLocalJSON('hero_text_bank', normalized);
+            window.__wordHeroBankLoadInfo = { ok: true, loading: false, url, status: response.status, units: Object.keys(normalized), count, user: currentUserName };
             return true;
         } catch (error) {
-            window.__wordHeroBankLoadInfo.error = String(error);
+            // 舊請求被新請求取代時，不可清空新請求已載入的題庫。
+            if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
+            const timedOut = error?.name === 'AbortError';
+            const message = timedOut ? `讀取逾時（${timeoutMs / 1000} 秒），請確認網路及 ${fileName} 是否可存取。` : String(error?.message || error);
+            window.__wordHeroBankLoadInfo = {
+                ok: false, loading: false, url, status: window.__wordHeroBankLoadInfo.status,
+                count: 0, user: currentUserName, error: message
+            };
             console.error(`${fileName} 載入失敗：`, window.__wordHeroBankLoadInfo);
-            // 依序回退：本使用者上次成功載入的雲端題庫快取 → 本機自訂題庫 → 內建基本題庫。
-            const cachedText = getLocalJSON('hero_text_bank', null);
-            const ownCustom = getLocalJSON('hero_question_bank', null);
-            const cached = cachedText && Object.keys(cachedText).length ? cachedText :
-                (ownCustom && Object.keys(ownCustom).length ? ownCustom : banksFromPairs(getFixedBanks()));
-            state.banks = cloneBanks(cached);
+            // 不可靜默改讀快取、其他題庫或內建題目；避免使用者以為正在練習自己的 TXT。
+            state.banks = {};
             return false;
+        } finally {
+            clearTimeout(timer);
+            if (requestId === bankLoadRequestId) bankLoadAbortController = null;
         }
     }
     function removeLegacyEartFromAnsonTextCache() {
@@ -2418,10 +2468,9 @@ html, body { height:100% !important; overflow:hidden !important; }
     function normalizeCurrentBank() {
         state.banks = normalizeLegacyEarthInBanks(state.banks);
         const hasWords = Object.values(state.banks || {}).some(arr => Array.isArray(arr) && arr.length);
-        if (!hasWords) {
-            state.banks = banksFromPairs(getFixedBanks());
-            window.__wordHeroBankLoadInfo = window.__wordHeroBankLoadInfo || {};
-            window.__wordHeroBankLoadInfo.fallback = 'built-in';
+        if (!hasWords && bankSourceMode === 'text') {
+            // TXT 來源載入失敗時保持空題庫，讓孩子不能誤用內建或舊快取資料。
+            state.banks = {};
         }
         if (bankSourceMode === 'custom') saveUserQuestionBank();
     }
@@ -2439,7 +2488,11 @@ html, body { height:100% !important; overflow:hidden !important; }
         refreshUnitSelectors();
         if (typeof updateBankSourceUI === 'function') updateBankSourceUI();
         renderBankManager();
-        if (!loaded) alert(`無法載入目前使用者的題庫：${getUserBankUrl()}\n請確認 GitHub Pages 同目錄有 ${getUserBankFileStem()}.txt，格式為 [W1] 後接英文,中文。`);
+        if (!loaded) {
+            const info = window.__wordHeroBankLoadInfo || {};
+            const reason = info.error || (info.status ? `HTTP ${info.status}` : '網路或檔案讀取失敗');
+            alert(`無法載入目前使用者的題庫。\n檔案：${getUserBankUrl()}\n原因：${reason}\n請確認 HTML 與 ${getUserBankFileStem()}.txt 位於同一網站目錄，且格式為 [W1] 後接英文,中文。修正後可重新載入。`);
+        }
     }
 
 
@@ -2533,7 +2586,14 @@ html, body { height:100% !important; overflow:hidden !important; }
         if (customBtn) customBtn.classList.toggle('active', bankSourceMode === 'custom');
         if (!note) return;
         if (bankSourceMode === 'text') {
-            note.innerHTML = `目前使用：<b>${escapeHtml(getUserBankUrl())}</b>。題庫依使用者分開讀取；學習進度與自訂修改也依使用者分開保存。`;
+            const info = window.__wordHeroBankLoadInfo || {};
+            if (info.ok === false && info.error) {
+                note.innerHTML = `<b style="color:#fca5a5">題庫載入失敗</b>：${escapeHtml(getUserBankUrl())}<br><span style="color:#fca5a5">未載入任何替代題庫，請確認 TXT 路徑、檔名與格式後重新載入。</span>`;
+            } else if (info.ok === true) {
+                note.innerHTML = `<b style="color:#86efac">已載入題庫</b>：<b>${escapeHtml(getUserBankUrl())}</b>｜${Number(info.count)||0} 個單字、${Array.isArray(info.units)?info.units.length:0} 個單元。`;
+            } else {
+                note.innerHTML = `題庫來源：<b>${escapeHtml(getUserBankUrl())}</b>。尚未確認載入狀態。`;
+            }
         } else {
             note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除只影響這位使用者。`;
         }
@@ -2775,20 +2835,25 @@ html, body { height:100% !important; overflow:hidden !important; }
         if (!cn) cn = await fetchTranslation(clean);
         let audio = '';
         // 優先取得字典提供的真人／標準英文發音音檔；失敗時由瀏覽器 TTS 播放。
+        const dictionaryController = new AbortController();
+        const dictionaryTimer = setTimeout(() => dictionaryController.abort(), 3500);
         try {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 3500);
-            const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(clean)}`, {
-                cache: 'no-store', signal: controller.signal
+            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(clean)}`, {
+                cache: 'no-store', signal: dictionaryController.signal
             });
-            clearTimeout(timer);
-            if (r.ok) {
-                const data = await r.json();
+            if (response.ok) {
+                const data = await response.json();
                 const phonetics = Array.isArray(data) ? data.flatMap(x => Array.isArray(x.phonetics) ? x.phonetics : []) : [];
                 const hit = phonetics.find(x => x && x.audio) || phonetics.find(x => x && x.text);
                 if (hit && hit.audio) audio = hit.audio;
+            } else {
+                console.warn(`字典音檔查詢失敗：${clean}，HTTP ${response.status}`);
             }
-        } catch (e) {}
+        } catch (error) {
+            console.warn(`字典音檔暫時不可用：${clean}`, error?.name === 'AbortError' ? '逾時' : String(error));
+        } finally {
+            clearTimeout(dictionaryTimer);
+        }
         return { en: clean, cn: cn || '', audio };
     }
 
@@ -3998,7 +4063,7 @@ const storyWordGloss = {
     async function loadWord() {
         const activeRef = state.currentList && state.currentList[state.index] ? state.currentList[state.index].ref : '';
         const resumeBossQuestion = state.mode === 'quiz' && !!state.resumeBossAttemptRef && state.resumeBossAttemptRef === activeRef;
-        wrongAttemptsThisQuestion = resumeBossQuestion ? Math.max(0, Number(state.resumeBossWrongAttempts) || 0) : 0;
+        state.wrongAttemptsThisQuestion = resumeBossQuestion ? Math.max(0, Number(state.resumeBossWrongAttempts) || 0) : 0;
         state.questionStartedAt = resumeBossQuestion && state.resumeBossQuestionStartedAt ? state.resumeBossQuestionStartedAt : Date.now();
         state.attemptStartedAt = Date.now();
         state.questionAttemptCount = resumeBossQuestion ? Math.max(0, Number(state.resumeBossQuestionAttemptCount) || 0) : 0;
@@ -4034,7 +4099,7 @@ const storyWordGloss = {
         const showModelWord = state.mode === 'practice' && !state.tempPractice;
         if (practiceTarget) {
             practiceTarget.hidden = !showModelWord;
-            practiceTarget.textContent = showModelWord ? `照著單字輸入：${String(word.en || '')}` : '';
+            practiceTarget.textContent = showModelWord ? String(word.en || '') : '';
         }
         const modeLabel = document.getElementById('child-mode-label');
         if (modeLabel) modeLabel.textContent = state.tempPractice && state.mode === 'quiz' ? '魔王練習（不計戰鬥）' : state.mode === 'quiz' ? '魔王挑戰' : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
@@ -4252,7 +4317,7 @@ const storyWordGloss = {
             if (supportSpellingFeedback) { supportSpellingFeedback.style.display = 'none'; supportSpellingFeedback.innerHTML = ''; }
             document.querySelectorAll('.letter-box').forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
             state.resumeBossAttemptRef = word.ref || '';
-            state.resumeBossWrongAttempts = wrongAttemptsThisQuestion;
+            state.resumeBossWrongAttempts = state.wrongAttemptsThisQuestion;
             state.resumeBossQuestionStartedAt = state.questionStartedAt || Date.now();
             state.resumeBossQuestionAttemptCount = state.questionAttemptCount || 0;
             state.tempPractice = false;
@@ -4357,7 +4422,7 @@ const storyWordGloss = {
                 state.previousSubmittedInput = ui;
                 state.attemptStartedAt = Date.now();
                 const supportFeedback = document.getElementById('child-answer-feedback');
-                if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback try'; supportFeedback.textContent = '再試一次！紅色字母格需要修改；這次練習不會扣 HP。'; }
+                if (supportFeedback) { supportFeedback.hidden = true; supportFeedback.textContent = ''; supportFeedback.className = 'child-answer-feedback'; }
                 const answerChars = Array.from(String(word.en || '').replace(/[\s\/-]/g, '').toLowerCase());
                 const inputChars = Array.from(ui.replace(/[\s\/-]/g, '').toLowerCase());
                 boxes.forEach((b, i) => { const typed=inputChars[i]||''; const expected=answerChars[i]||''; b.classList.remove('wrong','mismatch','correct-place'); b.classList.add(typed && expected && typed===expected ? 'correct-place' : 'mismatch'); });
@@ -4369,7 +4434,7 @@ const storyWordGloss = {
             if (state.mode === 'quiz' && !state.tempPractice) { const reviewRow = (state.quizResultRows || []).find(item => item.ref === (word.ref || String(word.en || '').trim().toLowerCase())); if (reviewRow) reviewRow.lastWrongInput = ui; }
             if (!state.tempPractice) state.sessionStats.incorrect++;
             const childFeedback = document.getElementById('child-answer-feedback');
-            if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback try'; childFeedback.textContent = '這次還不正確，看看紅色字母格，再試一次。'; }
+            if (childFeedback) { childFeedback.hidden = true; childFeedback.textContent = ''; childFeedback.className = 'child-answer-feedback'; }
             // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
             addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
@@ -4398,17 +4463,17 @@ const storyWordGloss = {
             }
 
             if (state.mode === 'quiz' && !state.tempPractice) {
-                wrongAttemptsThisQuestion++;
+                state.wrongAttemptsThisQuestion++;
                 const forcePractice = document.getElementById('btn-force-practice');
                 if (forcePractice) forcePractice.style.display = 'flex';
-                if (wrongAttemptsThisQuestion >= 3) {
+                if (state.wrongAttemptsThisQuestion >= 3) {
                     state.playerHP = Math.max(0, state.playerHP - 1);
                     showDamage('player',1);
                     if (feedback) feedback.innerHTML += '<br>🛡️ 已嘗試 3 次，本題扣除 1 HP。可以繼續練習或使用 PASS。';
-                    wrongAttemptsThisQuestion = 0;
+                    state.wrongAttemptsThisQuestion = 0;
                     if (state.playerHP <= 0) { handlePlayerDeath(); return; }
                 } else if (feedback) {
-                    feedback.innerHTML += `<br>🌱 第 ${wrongAttemptsThisQuestion} 次嘗試：先不扣 HP，再檢查紅色位置。`;
+                    feedback.innerHTML += `<br>🌱 第 ${state.wrongAttemptsThisQuestion} 次嘗試：先不扣 HP，再檢查紅色位置。`;
                 }
             }
 
@@ -4444,7 +4509,7 @@ const storyWordGloss = {
     function startInGamePractice() {
         const word = state.currentList && state.currentList[state.index];
         state.resumeBossAttemptRef = word ? word.ref : '';
-        state.resumeBossWrongAttempts = wrongAttemptsThisQuestion;
+        state.resumeBossWrongAttempts = state.wrongAttemptsThisQuestion;
         state.resumeBossQuestionStartedAt = state.questionStartedAt || Date.now();
         state.resumeBossQuestionAttemptCount = state.questionAttemptCount || 0;
         state.supportAttemptCount = 0;
@@ -4633,8 +4698,14 @@ const storyWordGloss = {
         refreshSpeechVoices();
         // 部分 Chrome 平板要等 voiceschanged 才會有完整語音清單。
         try {
-            window.speechSynthesis.onvoiceschanged = refreshSpeechVoices;
-        } catch (e) {}
+            if (typeof window.speechSynthesis.addEventListener === 'function') {
+                window.speechSynthesis.addEventListener('voiceschanged', refreshSpeechVoices);
+            } else {
+                window.speechSynthesis.onvoiceschanged = refreshSpeechVoices;
+            }
+        } catch (e) {
+            console.warn('無法註冊語音清單更新事件：', e);
+        }
     }
 
     function speakEnglish(text, options = {}) {
@@ -4662,13 +4733,15 @@ const storyWordGloss = {
             utter.onerror = (event) => {
                 const reason = event && event.error ? String(event.error) : 'unknown';
                 console.warn('Word Hero speechSynthesis error:', reason);
-                showVoiceStatus('語音暫時無法播放，請再點一次 🔊。');
+                showVoiceStatus('語音暫時無法播放，請再點一次 🔊；若仍無聲，請檢查裝置音量或瀏覽器語音設定。');
             };
             utter.onstart = () => showVoiceStatus('');
+            utter.onend = () => showVoiceStatus('');
             synth.speak(utter);
             return true;
         } catch (e) {
             console.warn('Word Hero speech playback failed:', e);
+            showVoiceStatus('語音啟動失敗，請確認瀏覽器支援語音功能後重試。');
             return false;
         }
     }
@@ -5020,4 +5093,75 @@ const storyWordGloss = {
 <style id="wordhero-child-practice-model-style">
 .practice-target-word{margin:8px auto 4px;max-width:min(92%,760px);padding:9px 16px;text-align:center;color:#f7d27c;font-size:clamp(1.25rem,2.6vw,1.9rem);font-weight:850;letter-spacing:.035em;line-height:1.35;border:1px solid #5f7793;border-radius:12px;background:#14243a;overflow-wrap:anywhere}
 .practice-target-word[hidden]{display:none!important}
+</style>
+
+<style id="wordhero-child-feedback-layout-fix">
+  /* 目標單字：保留單字本身，移除「照著單字輸入」冗語及卡片框線 */
+  .practice-target-word {
+    display:block;
+    width:fit-content;
+    max-width:92%;
+    margin:8px auto 2px;
+    padding:0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    color:#f6c96b;
+    text-align:center;
+    font-size:clamp(1.35rem,2.8vw,1.9rem);
+    font-weight:850;
+    line-height:1.35;
+    letter-spacing:.025em;
+    overflow-wrap:anywhere;
+  }
+  .practice-target-word[hidden] { display:none !important; }
+  /* 字母提示直接放在目標單字下方；提示文字本身不再套卡片或外框 */
+  #spelling-feedback {
+    width:min(92%,760px) !important;
+    max-width:760px !important;
+    margin:2px auto 8px !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    color:#f3d9a1 !important;
+    text-align:center !important;
+    font-size:.98rem !important;
+    font-weight:700 !important;
+    line-height:1.45 !important;
+  }
+  #spelling-feedback b { color:#ff858b !important; }
+  /* 一般答錯不再顯示第二句重複提醒；正確回饋仍可使用 child-answer-feedback */
+  #child-answer-feedback.try { display:none !important; }
+  /* PASS 是清楚可辨識的操作按鈕，文字水平、垂直置中 */
+  #btn-game-pass.game-pass-after-context {
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+    box-sizing:border-box !important;
+    width:160px !important;
+    min-width:160px !important;
+    min-height:48px !important;
+    margin:10px auto 0 !important;
+    padding:10px 24px !important;
+    border:1px solid #4f91d8 !important;
+    border-radius:12px !important;
+    background:#245a91 !important;
+    color:#ffffff !important;
+    font-size:1.05rem !important;
+    font-weight:800 !important;
+    line-height:1.2 !important;
+    box-shadow:0 2px 0 rgba(0,0,0,.24) !important;
+    cursor:pointer;
+  }
+  #btn-game-pass.game-pass-after-context:hover { background:#2d6eac !important; }
+  #btn-game-pass.game-pass-after-context:active { transform:translateY(1px); box-shadow:none !important; }
+  #btn-game-pass.game-pass-after-context:focus-visible { outline:3px solid #f6c96b; outline-offset:3px; }
+  @media(max-width:600px) {
+    #spelling-feedback { font-size:.9rem !important; margin-bottom:6px !important; }
+    #btn-game-pass.game-pass-after-context { width:150px !important; min-width:150px !important; }
+  }
 </style>
