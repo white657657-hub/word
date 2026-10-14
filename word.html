@@ -1252,7 +1252,7 @@ html, body { height:100% !important; overflow:hidden !important; }
     <button id="global-home-button" type="button" class="global-home-button" onclick="handleGlobalHome()" aria-label="回首頁">← 回首頁</button>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 v1.0.1">v1.0.1</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 v1.0.4">v1.0.4</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1927,7 +1927,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             child: getChildName(),
             date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
             time: `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
-            unit: state.unit || '',
+            unit: state.currentQuestionUnit || state.unit || '',
             correct: word.en,
             typed: typed
         };
@@ -2668,7 +2668,7 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
 
     function refreshUnitSelectors() {
-        const units = Object.keys(state.banks).sort();
+        const units = Object.keys(state.banks).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
         ['unit-selector','bank-manage-unit','question-unit'].forEach(id => {
             const el = document.getElementById(id); if (!el) return;
             const old = el.value;
@@ -3239,7 +3239,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         const bulk=document.getElementById('question-editor-bulk');
         const single=document.getElementById('question-editor-single');
         const title=document.getElementById('question-editor-title');
-        const units=Object.keys(state.banks).sort();
+        const units=Object.keys(state.banks).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));
         if(!units.length) return alert('請先建立單元。');
 
         if(editingQuestionRef) {
@@ -3668,7 +3668,7 @@ html, body { height:100% !important; overflow:hidden !important; }
               street:[['This is my street.','這是我住的街道。'],['We walk on the street.','我們走在街道上。']], earth:[['We live on Earth.','我們住在地球上。'],['Earth is our home.','地球是我們的家。']],
               dance:[['I can dance.','我會跳舞。'],['Let us dance!','我們來跳舞吧！']], cloud:[['I see a white cloud.','我看到一朵白雲。'],['The cloud is big.','這朵雲很大。']], lake:[['The lake is blue.','湖水是藍色的。'],['We are near the lake.','我們在湖邊。']], near:[['The camp is near the lake.','營地在湖附近。'],['The lizard is near the lake.','蜥蜴在湖附近。']], valley:[['The valley is green.','山谷是綠色的。'],['We walk in the valley.','我們在山谷裡走。']], yesterday:[['I played yesterday.','我昨天玩了。'],['We went home yesterday.','我們昨天回家了。']],
               camp:[['We go to camp.','我們去露營。'],['I like camp.','我喜歡營隊。']], map:[['I have a map.','我有一張地圖。'],['Look at the map.','看這張地圖。']], star:[['I see a star.','我看到一顆星星。'],['The star is bright.','星星很明亮。']], east:[['The sun rises in the east.','太陽從東方升起。']], north:[['Look north.','看北方。']], south:[['Go south.','往南走。']], west:[['The sun sets in the west.','太陽在西方落下。']], far:[['The castle is far from the camp.','城堡離營地很遠。'],['The lake is not far.','湖不遠。']],
-              lizard:[['I see a lizard.','我看到一隻蜥蜴。'],['The lizard is small.','這隻蜥蜴很小。']], castle:[['The castle is big.','城堡很大。'],['I see a castle.','我看到一座城堡。']], gold:[['I see gold.','我看到黃金。'],['The box has gold.','箱子裡有黃金。']], today:[['Today is sunny.','今天是晴天。'],['I am happy today.','我今天很開心。']], australia:[['I live in Australia.','我住在澳洲。'],['Australia is a country.','澳洲是一個國家。']], country:[['Taiwan is a country.','台灣是一個國家。'],['What country is it?','這是哪個國家？']], flag:[['This is our flag.','這是我們的旗子。'],['I see a flag.','我看到一面旗子。']], born:[['I was born in Taiwan.','我在台灣出生。']], chinese:[['I speak Chinese.','我說中文。'],['I read a Chinese book.','我讀一本中文書。']], continent:[['Asia is a continent.','亞洲是一個洲。']],
+              lizard:[['I see a lizard.','我看到一隻蜥蜴。'],['The lizard is small.','這隻蜥蜴很小。']], castle:[['The castle is big.','城堡很大。'],['I see a castle.','我看到一座城堡。']], gold:[['I see gold.','我看到黃金。'],['The box has gold.','箱子裡有黃金。']], today:[['Today is sunny.','今天是晴天。'],['I am happy today.','我今天很開心。']], australia:[['I live in Australia.','我住在澳洲。'],['Australia is a country.','澳洲是一個國家。']], country:[['Egypt is a country.','埃及是一個國家。'],['What country is it?','這是哪個國家？']], flag:[['This is our flag.','這是我們的旗子。'],['I see a flag.','我看到一面旗子。']], born:[['I was born in Taiwan.','我在台灣出生。']], chinese:[['I speak Chinese.','我說中文。'],['I read a Chinese book.','我讀一本中文書。']], continent:[['Asia is a continent.','亞洲是一個洲。']],
               april:[['My birthday is in April.','我的生日在四月。']], august:[['It is hot in August.','八月很熱。']], february:[['February is a short month.','二月是比較短的月份。']], january:[['January is the first month.','一月是第一個月。']], july:[['July is in summer.','七月在夏天。']], june:[['June is a month.','六月是一個月份。']], march:[['March comes after February.','三月在二月之後。']], may:[['May comes after April.','五月在四月之後。']], december:[['December is the last month.','十二月是最後一個月。']], november:[['It is cool in November.','十一月天氣涼爽。']], october:[['October is a month.','十月是一個月份。']], september:[['School starts in September.','學校在九月開學。']], season:[['Spring is a season.','春天是一個季節。']], spring:[['Spring is warm.','春天很溫暖。']], summer:[['Summer is hot.','夏天很熱。']], winter:[['Winter is cold.','冬天很冷。']], hurry:[['Hurry up!','快一點！'],['We must hurry.','我們必須趕快。']], cheer:[['We cheer for our team.','我們為自己的隊伍加油。']], witch:[['The witch is in the story.','故事裡有一位巫婆。']], complain:[['Do not complain.','不要抱怨。']], except:[['Everyone came except Tom.','除了 Tom，大家都來了。']], miss:[['Do not miss the street near the lake.','不要錯過湖附近的那條街。']], tape:[['I need tape.','我需要膠帶。']], beg:[['The dog may beg for food.','狗狗可能會討食物。']], promise:[['I promise to try.','我答應會努力。']], shocked:[['I am shocked.','我很震驚。']], gasp:[['I gasp in surprise.','我驚訝地倒抽一口氣。']], scream:[['Do not scream.','不要尖叫。']], cubby:[['My bag is in the cubby.','我的書包在置物格裡。']], floor:[['The ball is on the floor.','球在地板上。']], trade:[['We trade cards.','我們交換卡片。']], recess:[['We play at recess.','我們下課時玩。']],
               'picnic table':[['We eat at the picnic table.','我們在野餐桌旁吃東西。']], 'parking lot':[['The car is in the parking lot.','車子在停車場裡。']], 'capital city':[['Taipei is the capital city of Taiwan.','台北是台灣的首都。']], 'mix up':[['Do not mix up east and west.','不要把東方和西方搞混。']], 'united states of america':[['The United States of America is a country.','美利堅合眾國是一個國家。']],
               english:[['I learn English.','我學英文。'],['English is fun.','英文很有趣。']], mexico:[['Mexico is a country.','墨西哥是一個國家。']], american:[['My American friend is near the lake.','我的美國朋友在湖附近。']], australian:[['My Australian friend is at camp.','我的澳洲朋友在營地。']], china:[['China is a country.','中國是一個國家。']], egypt:[['Egypt is a country.','埃及是一個國家。']], measurement:[['This is a measurement.','這是一個測量結果。']]
@@ -4070,6 +4070,21 @@ const storyWordGloss = {
         updateSentenceChoiceUI();
     }
 
+
+    function getUnitForWord(word) {
+        if (!word) return state.unit || '';
+        const ref = String(word.ref || '');
+        const en = String(word.en || '').trim().toLowerCase();
+        for (const [unit, bank] of Object.entries(state.banks || {})) {
+            const found = (bank || []).find(item =>
+                (ref && String(item.ref || '') === ref) ||
+                (!ref && String(item.en || '').trim().toLowerCase() === en)
+            );
+            if (found) return unit;
+        }
+        return state.unit || '';
+    }
+
     async function loadWord() {
         state.questionRenderToken = (state.questionRenderToken || 0) + 1;
         const questionRenderToken = state.questionRenderToken;
@@ -4111,7 +4126,8 @@ const storyWordGloss = {
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         let word = state.currentList[state.index];
         // 題庫是標準答案來源。若練習中的物件被其他流程意外改寫，依 ref 從原始題庫還原。
-        const canonicalWord = (state.banks[state.unit] || []).find(item => item && item.ref === word.ref);
+        const canonicalWord = Object.values(state.banks || {}).flat().find(item => item && item.ref === word.ref);
+        state.currentQuestionUnit = getUnitForWord(canonicalWord || word);
         if (canonicalWord && String(word.en || '') !== String(canonicalWord.en || '')) {
             console.warn('[WordHero] 練習單字與題庫不一致，已還原標準答案', {
                 ref: word.ref, practice: word.en, bank: canonicalWord.en
@@ -4346,6 +4362,8 @@ const storyWordGloss = {
     function checkFinalAnswer() {
         const word = state.currentList[state.index];
         if (!word) return;
+        const answerAreaAtStart = document.getElementById('letter-area');
+        if (answerAreaAtStart && answerAreaAtStart.dataset.answerLocked === '1') return;
         const supportAttempt = state.mode === 'quiz' && state.tempPractice;
         if (supportAttempt) state.supportAttemptCount = (state.supportAttemptCount || 0) + 1;
         else state.questionAttemptCount = (state.questionAttemptCount || 0) + 1;
@@ -4362,12 +4380,11 @@ const storyWordGloss = {
 
         if (normalizedInput === normalizedAnswer) {
             const answerArea = document.getElementById('letter-area');
-            if (answerArea && answerArea.dataset.answerLocked === '1') return;
             if (answerArea) answerArea.dataset.answerLocked = '1';
             boxes.forEach(box => { box.readOnly = true; });
         }
         if (normalizedInput === normalizedAnswer && state.mode === 'quiz' && state.tempPractice) {
-            addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
+            addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
             const supportFeedback = document.getElementById('child-answer-feedback');
             if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback good'; supportFeedback.textContent = '練習答對了！回到魔王挑戰，再正式作答一次。'; }
             const supportSpellingFeedback = document.getElementById('spelling-feedback');
@@ -4388,7 +4405,7 @@ const storyWordGloss = {
             const childFeedback = document.getElementById('child-answer-feedback');
             if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback good'; childFeedback.textContent = '答對了！做得好！'; }
             updateErrorBank(word, true);
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: attemptResponseMs, questionElapsedMs, attempts: state.questionAttemptCount || 1, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: attemptResponseMs, questionElapsedMs, attempts: state.questionAttemptCount || 1, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
             recordWordReview(word, 'correct', state.mode || 'practice');
             const spellingFeedback = document.getElementById('spelling-feedback');
@@ -4475,7 +4492,7 @@ const storyWordGloss = {
             }
         } else {
             if (state.mode === 'quiz' && state.tempPractice) {
-                addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
+                addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
                 state.previousSubmittedInput = ui;
                 state.attemptStartedAt = Date.now();
                 const supportFeedback = document.getElementById('child-answer-feedback');
@@ -4493,7 +4510,7 @@ const storyWordGloss = {
             const childFeedback = document.getElementById('child-answer-feedback');
             if (childFeedback) { childFeedback.hidden = true; childFeedback.textContent = ''; childFeedback.className = 'child-answer-feedback'; }
             // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
             state.attemptStartedAt = Date.now();
             addErrorLog(word, ui || '(空白)');
@@ -4539,7 +4556,16 @@ const storyWordGloss = {
     }
 
     function handlePass() {
-        if (state.index >= state.currentList.length) return;
+        if (!state.currentList || state.index >= state.currentList.length) return;
+        const answerArea = document.getElementById('letter-area');
+        if (answerArea && answerArea.dataset.answerLocked === '1') return;
+        const liveBoxes = [...document.querySelectorAll('.letter-box')];
+        const liveTyped = liveBoxes.map(box => box.value).join('').replace(/[\s\/-]/g, '').toLowerCase();
+        const liveExpected = String(state.currentList[state.index]?.en || '').replace(/[\s\/-]/g, '').toLowerCase();
+        if (liveBoxes.length && liveBoxes.every(box => box.value.length === 1) && liveTyped === liveExpected) {
+            checkFinalAnswer();
+            return;
+        }
         const skippedWord = state.currentList[state.index];
         recordQuizWordResult(skippedWord, 'skipped');
         if (state.sessionStats) state.sessionStats.passes++;
