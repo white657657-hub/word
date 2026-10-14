@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.66｜Chromium 檢查與題目修正</title>
+<title>Anson 英文文法冒險 V4.68｜Chromium 操作測試與題庫修正</title>
 <style>
 :root{
   --bg:#081018;
@@ -392,6 +392,9 @@ main{margin-top:18px}
 .wrong-item .wrong-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .wrong-item .btn{white-space:nowrap}
 @media(max-width:620px){.answer-teaching-card{grid-template-columns:minmax(0,1fr);gap:8px;padding:10px}.answer-transform{grid-column:1;grid-row:1;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr)!important}.answer-rule-box{grid-column:1;grid-row:2;padding:8px 10px}.answer-word{font-size:clamp(21px,6vw,29px)}.answer-rule-copy{font-size:14px}.wrong-item{grid-template-columns:1fr}.wrong-item .wrong-actions{justify-content:flex-start}}
+
+.stage-group{margin:0 0 24px}.stage-group-title{margin:18px 0 12px;font-size:20px}.stage-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:stretch}.past-input-form{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px auto 24px;max-width:720px}.past-input-form label{flex-basis:100%;font-size:15px;color:var(--muted,#9ca3af);text-align:center}.past-answer-input{flex:1 1 220px;max-width:360px;min-height:58px;border:2px solid var(--line,#475569);border-radius:12px;background:var(--panel,#111827);color:var(--text,#fff);font-size:24px;text-align:center;padding:10px 14px}.past-submit{flex:0 1 180px;min-height:58px!important}@media(max-width:520px){.stage-group-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stage-group-grid .stage{padding:12px 10px}.stage-group-grid .stage h3{font-size:15px}.stage-group-grid .stage p{font-size:12px}.past-input-form{gap:8px}.past-answer-input{flex-basis:100%;max-width:none}.past-submit{flex:1 1 100%}}
+
 </style>
 <style id="v447-ux-fixes">
 .baseverb{font-size:24px!important;font-weight:800;color:#c5d9e8;margin:0 auto 8px!important;text-align:center;line-height:1.4}
@@ -445,7 +448,7 @@ button:disabled{cursor:default;opacity:.8;}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.66｜題目語意修正、答題回饋與錯題複習。</p>
+      <p class="small-note">V4.68｜過去式題庫補強、答題回饋與錯題複習。</p>
       <p>短時間練習、單字發音、句型應用與學習夥伴。</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
@@ -814,11 +817,17 @@ const QUESTION_BANK = {
     {id:"ps04",sentence:"We _____ the game after lunch yesterday.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
     {id:"ps05",sentence:"The bus _____ near the school yesterday.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
     {id:"ps06",sentence:"The boy _____ the desk twice yesterday.",verb:"tap",choices:["taped","tapped"],answer:"tapped",rule:"past-double"},
-    {id:"ps07",sentence:"He _____ the heavy bag yesterday.",verb:"carry",choices:["carryed","carried"],answer:"carried",rule:"past-ied"},
+    {id:"ps07",sentence:"The gardener _____ the plants yesterday.",verb:"tidy",choices:["tidyed","tidied"],answer:"tidied",rule:"past-ied"},
     {id:"ps08",sentence:"The frog _____ into the pond yesterday.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"},
     {id:"ps09",sentence:"The baby _____ when she was tired.",verb:"cry",choices:["cryed","cried"],answer:"cried",rule:"past-ied"},
     {id:"ps10",sentence:"He _____ to catch the bus yesterday.",verb:"hurry",choices:["hurryed","hurried"],answer:"hurried",rule:"past-ied"},
-    {id:"ps11",sentence:"I _____ to open the box yesterday.",verb:"try",choices:["tryed","tried"],answer:"tried",rule:"past-ied"}
+    {id:"ps11",sentence:"I _____ to open the box yesterday.",verb:"try",choices:["tryed","tried"],answer:"tried",rule:"past-ied"},
+    {id:"pc01",sentence:"The dog _____ my hand gently yesterday.",verb:"hug",choices:["huged","hugged"],answer:"hugged",rule:"past-double"},
+    {id:"pc02",sentence:"Mum _____ a trip for the weekend yesterday.",verb:"plan",choices:["planed","planned"],answer:"planned",rule:"past-double"},
+    {id:"pc03",sentence:"The team _____ their hands after the show.",verb:"clap",choices:["claped","clapped"],answer:"clapped",rule:"past-double"},
+    {id:"pc04",sentence:"The rabbit _____ over the small rock yesterday.",verb:"skip",choices:["skiped","skipped"],answer:"skipped",rule:"past-double"},
+    {id:"pc05",sentence:"He _____ the empty box on the floor yesterday.",verb:"drop",choices:["droped","dropped"],answer:"dropped",rule:"past-double"},
+    {id:"pc06",sentence:"The cat _____ onto the chair yesterday.",verb:"jump",choices:["jumped","jumpped"],answer:"jumped",rule:"past-ed"}
   ],
   pastIrregular:[
     {id:"pi01",sentence:"Yesterday, we _____ to the science museum.",verb:"go",choices:["goed","went"],answer:"went",rule:"past-irregular"},
@@ -840,15 +849,16 @@ const QUESTION_BANK = {
 };
 
 
+// V4.68: expanded CVC question pool and removed duplicate carry item from past-Y bank.
 // V4.63: unified explanation card, full-length blanks, and fixed Stage 13 study question.
 // V4.61: concise one-rule feedback and map navigation; keep Y → -ied and CVC doubling separate so Stage 13
 // cannot randomly begin with a non-Y item such as hop → hopped.
 const pastSpellingSource = QUESTION_BANK.pastSpelling || [];
-QUESTION_BANK.pastY = [{id:"py00",sentence:"I __________ English last year.",verb:"study",choices:["studied","studies"],answer:"studied",rule:"past-ied"}].concat(pastSpellingSource.filter(q => q.rule === "past-ied"), [
-  {id:"py01",sentence:"We _____ soccer after school yesterday.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
-  {id:"py02",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stay","stayed"],answer:"stayed",rule:"past-ed"}
+QUESTION_BANK.pastY = pastSpellingSource.filter(q => q.rule === "past-ied").concat([
+  {id:"py12",sentence:"We _____ soccer after school yesterday.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
+  {id:"py13",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stay","stayed"],answer:"stayed",rule:"past-ed"}
 ]);
-QUESTION_BANK.pastDouble = pastSpellingSource.filter(q => q.rule === "past-double");
+QUESTION_BANK.pastDouble = pastSpellingSource.filter((q,i,arr) => q.rule === "past-double" && arr.findIndex(x=>x.verb===q.verb)===i);
 delete QUESTION_BANK.pastSpelling;
 
 // Rule Hunt examples: every vocabulary item is a VERB. Examples are contextual,
@@ -1212,7 +1222,7 @@ function renderMap(){
   state.unlocked=STAGES.map(x=>x.id);
   if(!state.learning || typeof state.learning !== "object") state.learning={mastery:{},recentQuestionIds:[],learningTime:{activeMs:0,restRequired:false}};
   if(!state.learning.mastery || typeof state.learning.mastery !== "object") state.learning.mastery={};
-  el.innerHTML=STAGES.map((s,i)=>{
+  const renderStageCard=(s,i)=>{
     try{
       const st=state.stageStats[s.id]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
       const locked=!state.unlocked.includes(s.id);
@@ -1236,7 +1246,11 @@ function renderMap(){
       console.warn("stage card render fallback",s?.id,e);
       return `<div class="card stage"><span class="num">STAGE ${i+1}</span><h3>${escapeHtml(s?.title||"Grammar Skill")}</h3><p>目前正在準備這個關卡。</p></div>`;
     }
-  }).join("");
+  };
+  const verbStages=STAGES.filter(s=>s.id.startsWith("unit"));
+  const pastStages=STAGES.filter(s=>s.id.startsWith("past"));
+  const stageIndex=new Map(STAGES.map((s,i)=>[s.id,i]));
+  el.innerHTML=`<section class="stage-group"><h2 class="stage-group-title">Verb｜現在式動詞變化</h2><div class="stage-group-grid">${verbStages.map(s=>renderStageCard(s,stageIndex.get(s.id))).join("")}</div></section><section class="stage-group"><h2 class="stage-group-title">Past Tense｜過去式</h2><div class="stage-group-grid">${pastStages.map(s=>renderStageCard(s,stageIndex.get(s.id))).join("")}</div></section>`;
 
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
@@ -1585,6 +1599,7 @@ function renderWarmupQuestion(){
   if(learn){learn.onclick=null;learn.dataset.feedbackPhase="";}
   const freshFeedback=getActiveLearningElement("feedback");
   if(freshFeedback) freshFeedback.innerHTML="";
+  if(isPastInputPhase()) setTimeout(()=>document.getElementById("pastAnswerInput")?.focus(),80);
   if(state.settings.autoSpeak && type==="rule") setTimeout(()=>speak(getSpeakText()),250);
 }
 
@@ -1736,6 +1751,22 @@ function getActiveLearningElement(id){
   return id==="feedback" ? document.getElementById("warmupFeedback") : null;
 }
 
+function isPastTenseStage(){
+  return ["past1","past2","past3","past4","past4b","past5","past6"].includes(currentSession?.stageId);
+}
+function isPastInputPhase(){
+  // First three questions scaffold recognition; the remaining questions require recall.
+  return isPastTenseStage() && currentSession.index >= 3;
+}
+function submitPastInput(){
+  if(answerLocked) return;
+  const input=document.getElementById("pastAnswerInput");
+  if(!input) return;
+  const answer=String(input.value||"").trim().toLowerCase();
+  if(!answer){ input.focus(); return; }
+  answerSentence(answer);
+}
+
 function renderQuestion(){
   answerLocked=false;hintLevel=0;
   document.getElementById("questionCard")?.classList.remove("warmup-mode");
@@ -1764,8 +1795,8 @@ function renderQuestion(){
     const isError=type==="error";
     html=`<span class="rule-chip">${String(currentQuestion.rule||"").startsWith("past-")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
       <div class="sentence">${highlightBlank(normalizeQuestionSentence(currentQuestion))}</div>
-      ${(!String(currentQuestion.rule||"").startsWith("past-") || !["past-was-were","past-had"].includes(currentQuestion.rule)) && currentQuestion.verb ? `<div class="baseverb">${escapeHtml(currentQuestion.verb)}</div>` : ""}
-      <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" type="button" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+      ${currentQuestion.verb ? `<div class="baseverb">${currentQuestion.rule==="past-was-were"?"主詞":"原形動詞"}：<b>${escapeHtml(currentQuestion.verb)}</b></div>` : ""}
+      ${isPastInputPhase() ? `<form class="past-input-form" onsubmit="event.preventDefault();submitPastInput()"><label for="pastAnswerInput">請輸入過去式</label><input id="pastAnswerInput" class="past-answer-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="輸入答案" aria-label="輸入過去式答案"><button class="choice past-submit" type="submit">確認答案</button></form>` : `<div class="choice-row">${(currentQuestion.choices||[]).map(c=>`<button class="choice" type="button" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`}`;
   }
   html+=`<div id="feedback" class="feedback"></div>`;
   document.getElementById("questionCard").innerHTML=html;
@@ -1950,7 +1981,10 @@ function answerRule(verb,answer,poke){
 }
 function answerSentence(answer){
   if(answerLocked)return;
-  const correct=answer===currentQuestion.answer;
+  const normalizedAnswer=String(answer??"").trim().toLowerCase();
+  const expectedAnswer=String(currentQuestion?.answer??"").trim().toLowerCase();
+  const correct=normalizedAnswer===expectedAnswer;
+  answer=normalizedAnswer;
   if(currentSession?.warmup){ handleWarmupAnswer(correct,answer,{}); return; }
   handleAnswer(correct,answer,{});
 }
