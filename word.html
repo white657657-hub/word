@@ -1222,6 +1222,10 @@ html, body { height:100% !important; overflow:hidden !important; }
 @media(max-height:720px) and (min-width:601px){#combat-arena{height:185px!important;min-height:185px!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
+
+        /* Boss challenge: examples are intentionally omitted to keep attention on spelling. */
+        #practice-context-card[hidden] { display: none !important; }
+        #practice-context-card[aria-hidden="true"] { display: none !important; }
 </style>
 </head>
 <body onload="initSystem()">
@@ -1393,6 +1397,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             <span id="display-cn">...</span>
             <button id="star-icon" type="button" class="word-tool-btn word-star-btn" onclick="toggleStar()" aria-label="加入或移除星號複習" title="加入或移除星號複習">☆</button>
         </div>
+        <div id="practice-target-word" class="practice-target-word" hidden aria-live="polite"></div>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:auto;"></div>
         <div id="letter-area" class="box-input-container"></div>
         <div id="child-answer-feedback" class="child-answer-feedback" role="status" aria-live="polite" hidden></div>
@@ -1424,7 +1429,7 @@ html, body { height:100% !important; overflow:hidden !important; }
 
 
 <div id="spelling-feedback" class="spelling-feedback" style="display:none"></div>
-            <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 進入練習</button>
+            <button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 先練習這題（不計戰鬥）</button>
         </div>
     </div>
 
@@ -1685,7 +1690,9 @@ html, body { height:100% !important; overflow:hidden !important; }
         const playerInfo = getEvoInfo(state.activePokeId);
         state.playerMaxHP = getPokemonMaxHP(playerInfo.displayId, true);
         state.playerHP = state.playerMaxHP;
-        state.oppMaxHP = getPokemonMaxHP(state.currentOppId, false);
+        const rawOpponentHP = getPokemonMaxHP(state.currentOppId, false);
+        const bossQuestionCount = state.mode === 'quiz' ? (state.currentList || []).length : rawOpponentHP;
+        state.oppMaxHP = state.mode === 'quiz' ? Math.min(rawOpponentHP, Math.max(1, Math.ceil(bossQuestionCount * 0.7))) : rawOpponentHP;
         state.oppHP = state.oppMaxHP;
     }
 
@@ -1864,7 +1871,14 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
 
     function getErrorLog() {
-        return getLocalJSON('hero_error_log', []);
+        const rows = getLocalJSON('hero_error_log', []);
+        if (!Array.isArray(rows)) return [];
+        if (rows.length > WORD_HERO_LOG_LIMIT) {
+            const trimmed = rows.slice(-WORD_HERO_LOG_LIMIT);
+            setLocalJSON('hero_error_log', trimmed);
+            return trimmed;
+        }
+        return rows;
     }
 
     function addErrorLog(word, typed) {
@@ -1879,8 +1893,8 @@ html, body { height:100% !important; overflow:hidden !important; }
             typed: typed
         };
         const log = getErrorLog();
-        log.push(item);
-        setLocalJSON('hero_error_log', log);
+        log.push({ logSchema: 2, timestampMs: now.getTime(), ...item });
+        setLocalJSON('hero_error_log', log.slice(-WORD_HERO_LOG_LIMIT));
     }
     // 錯題庫：累計錯 5 次自動加入；連續答對 3 次自動移出。
     // 各使用者資料透過 getHeroData/setHeroData 隔離。
@@ -1965,25 +1979,51 @@ html, body { height:100% !important; overflow:hidden !important; }
         setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    function getLearningLog() { return getLocalJSON('hero_learning_log', []); }
+    const WORD_HERO_LOG_LIMIT = 1000;
+    function getLearningLog() {
+        const rows = getLocalJSON('hero_learning_log', []);
+        if (!Array.isArray(rows)) return [];
+        if (rows.length > WORD_HERO_LOG_LIMIT) {
+            const trimmed = rows.slice(-WORD_HERO_LOG_LIMIT);
+            setLocalJSON('hero_learning_log', trimmed);
+            return trimmed;
+        }
+        return rows;
+    }
     function addLearningLog(item) {
         try {
             const rows = getLearningLog();
-            rows.push({ child: getChildName(), at: new Date().toISOString(), ...item });
-            setLocalJSON('hero_learning_log', rows.slice(-10000));
+            const now = new Date();
+            rows.push({
+                logSchema: 2,
+                logId: `wh-${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
+                timestampMs: now.getTime(),
+                child: getChildName(),
+                at: now.toISOString(),
+                ...item
+            });
+            setLocalJSON('hero_learning_log', rows.slice(-WORD_HERO_LOG_LIMIT));
         } catch (e) { /* Log 寫入失敗不可阻斷孩子作答 */ }
     }
     function refreshLogStorageStatus() {
+        // 先正規化舊版超量資料，再顯示實際留存筆數。
+        getLearningLog(); getErrorLog();
         const keys = ['hero_learning_log','hero_error_log','hero_word_review_queue'];
         let bytes = 0; const counts = {};
         keys.forEach(k => { const raw = getHeroData(k) || ''; bytes += new Blob([raw]).size; try { const v=JSON.parse(raw||'[]'); counts[k]=Array.isArray(v)?v.length:0; } catch(e){counts[k]=0;} });
         const el=document.getElementById('log-storage-status');
-        if(el) el.textContent=`目前這位使用者的學習資料約 ${(bytes/1024).toFixed(1)} KB；學習紀錄 ${counts.hero_learning_log} 筆、舊版錯題 ${counts.hero_error_log} 筆、待複習 ${counts.hero_word_review_queue} 筆。容量為估算值。`;
+        if(el) el.textContent=`目前這位使用者的學習資料約 ${(bytes/1024).toFixed(1)} KB；學習紀錄 ${counts.hero_learning_log} 筆、舊版錯題 ${counts.hero_error_log} 筆、待複習 ${counts.hero_word_review_queue} 筆。容量為估算值；學習／錯題 Log 各最多保留最新 1000 筆。`;
     }
     function clearOldLearningLogs() {
         const days=90, cutoff=Date.now()-days*86400000;
         const logs=getLearningLog(), errors=getErrorLog();
-        const keep=x=>{const t=x&&x.at?new Date(x.at).getTime():NaN; return !Number.isFinite(t)||t>=cutoff;};
+        const keep = x => {
+            if (!x || typeof x !== 'object') return true;
+            let t = Number.isFinite(Number(x.timestampMs)) ? Number(x.timestampMs) : NaN;
+            if (!Number.isFinite(t) && x.at) t = new Date(x.at).getTime();
+            if (!Number.isFinite(t) && x.date) t = new Date(`${x.date}T${x.time || '00:00:00'}`).getTime();
+            return !Number.isFinite(t) || t >= cutoff;
+        };
         const nextLogs=logs.filter(keep), nextErrors=errors.filter(keep);
         const removed=(logs.length-nextLogs.length)+(errors.length-nextErrors.length);
         if(!removed) return alert('沒有可清除的 90 天以前紀錄。');
@@ -2116,53 +2156,7 @@ html, body { height:100% !important; overflow:hidden !important; }
 #view-main .more-tools .admin-btn:focus-visible, #view-bank button:focus-visible, #learning-report-overlay button:focus-visible { outline:3px solid #f2c66d !important; outline-offset:2px !important; }
 @media(max-width:600px){#view-main{max-width:100%!important}#view-bank .bank-source-buttons{grid-template-columns:1fr}#view-bank .bank-entry-card,#view-bank .bank-existing-card,#view-bank .bank-control-card{padding:10px!important}}
 </style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">報告產生：${esc(new Date().toLocaleString())}</div><section class="panel"><h3>日期篩選</h3><div class="filters"><label>開始日期<input type="date" id="from"></label><label>結束日期<input type="date" id="to"></label><button id="reset">顯示全部日期</button></div><p class="muted">選擇日期後，摘要、圖表、錯誤統計及下方紀錄會同步更新。</p></section><section class="panel note" id="no-data-note" hidden>目前尚無學習紀錄。完成第一輪練習後，這裡會顯示答題表現與學習觀察；不會將空白資料解讀為能力不足。</section><section class="stats"><div class="stat"><strong id="total">0</strong>作答／學習紀錄</div><div class="stat"><strong id="rate">—</strong>單字答對率</div><div class="stat"><strong id="first">0</strong>首次答對題次</div><div class="stat"><strong id="passes">0</strong>PASS 次數</div><div class="stat"><strong id="mins">—</strong>平均答對時間</div></section><section class="panel"><h3>每日學習與答題表現</h3><svg id="chart" class="chart" viewBox="0 0 900 230" role="img" aria-label="每日答題數與答對率圖表"></svg><div class="muted">柱狀高度代表每日單字作答數；折線代表當日答對率。資料不足的日期不計算答對率。</div></section><section class="panel"><h3>最常答錯的單字</h3><div id="words"></div><p class="muted">以下先按單字統計錯誤次數；同一單字的具體錯字會在「反覆出現的拼字錯誤」中拆開比較。</p></section><section class="panel"><h3>反覆出現的拼字錯誤</h3><p class="muted">比對孩子輸入與標準拼法。相同輸入會合併計數；不同拼法分開列出，方便看是否反覆卡在同一種錯法。</p><div id="spelling-patterns"></div></section><section class="panel"><h3>造句檢查常見提醒</h3><div id="grammar"></div><p class="note">解讀提醒：這裡只統計本機檢查實際偵測到的目標字、標點與空格提醒，不是完整文法診斷；目前不能據此判定時態、主詞動詞一致或語序能力。舊版紀錄未保存分類者會標示資料不足。</p></section><h2>逐筆學習紀錄</h2><label for="q">搜尋單字、句子、結果或回饋</label><input id="q" type="search" placeholder="輸入關鍵字…" style="width:100%;font:inherit;padding:12px;border:1px solid #9aa8bd;border-radius:9px"> <div id="count" class="muted"></div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const DATA=${payload};const cards=[...document.querySelectorAll('.log')],q=document.getElementById('q'),from=document.getElementById('from'),to=document.getElementById('to');const day=x=>{if(x.at){const d=new Date(x.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return x.date||''};function filtered(){return DATA.filter(x=>(!from.value||day(x)>=from.value)&&(!to.value||day(x)<=to.value))}function htmlText(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;')}function bars(el,entries){if(!entries.length){el.innerHTML='<div class="empty">目前沒有足夠資料。</div>';return}const max=Math.max(1,...entries.map(x=>x[1]));el.innerHTML=entries.map(([k,v])=>'<div class="barrow"><span>'+htmlText(k)+'</span><div class="track"><div class="fill" style="width:'+v/max*100+'%"></div></div><b>'+v+'</b></div>').join('')}function render(){const rows=filtered();document.getElementById('no-data-note').hidden=DATA.length>0;const w=rows.filter(x=>x.type==='word_answer'),ok=w.filter(x=>x.result==='correct'),bad=w.filter(x=>x.result==='incorrect'),pass=rows.filter(x=>x.type==='word_pass');document.getElementById('total').textContent=rows.length;document.getElementById('rate').textContent=w.length?Math.round(ok.length/w.length*100)+'%':'—';document.getElementById('first').textContent=ok.filter(x=>Number(x.attempts||x.attemptIndex||1)===1).length;document.getElementById('passes').textContent=pass.length;const t=ok.map(x=>Number(x.responseMs)).filter(x=>Number.isFinite(x)&&x>=0&&x<3600000);document.getElementById('mins').textContent=t.length?(t.reduce((a,b)=>a+b,0)/t.length/1000).toFixed(1)+' 秒':'—';const freq={};bad.forEach(x=>{const k=x.word||'未標示';freq[k]=(freq[k]||0)+1});bars(document.getElementById('words'),Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8));const variants={};bad.forEach(x=>{const word=String(x.word||'').trim(),typed=String(x.input||x.typed||'').trim();if(!word||!typed)return;const key=word.toLowerCase()+'\\u0000'+typed.toLowerCase();variants[key]||={word,typed,count:0,expected:word};variants[key].count++});const variantRows=Object.values(variants).sort((a,b)=>b.count-a.count).slice(0,12);document.getElementById('spelling-patterns').innerHTML=variantRows.length?variantRows.map(x=>'<div class="barrow"><span>'+htmlText(x.word)+'</span><div><b>'+htmlText(x.typed)+'</b><span class="muted"> → '+htmlText(x.expected)+'</span></div><b>×'+x.count+'</b></div>').join(''):'<div class="empty">目前沒有可比對的錯字輸入紀錄；舊紀錄若未保存孩子輸入內容，無法還原錯字。</div>';const gf={};const issueLabels={target_missing:'句子沒有使用目標單字',punctuation_missing:'句尾缺少標點',extra_spaces:'單字間有多餘空格',repeated_punctuation:'句尾標點重複',empty:'未輸入句子',other:'其他檢查提醒'};rows.filter(x=>x.type==='sentence').forEach(x=>{(Array.isArray(x.issueTypes)?x.issueTypes:[]).forEach(k=>{const label=issueLabels[k]||'其他檢查提醒';gf[label]=(gf[label]||0)+1});if(x.result==='local_basic_check_review'&&!Array.isArray(x.issueTypes))gf['舊版造句紀錄（缺少具體錯誤分類）']=(gf['舊版造句紀錄（缺少具體錯誤分類）']||0)+1});bars(document.getElementById('grammar'),Object.entries(gf).sort((a,b)=>b[1]-a[1]).slice(0,8));const daily={};w.forEach(x=>{const d=day(x);if(!d)return;(daily[d]||= {n:0,ok:0}).n++;if(x.result==='correct')daily[d].ok++});const ds=Object.entries(daily).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14),svg=document.getElementById('chart');if(!ds.length){svg.innerHTML='<text x="450" y="115" text-anchor="middle" fill="#667085">尚無可繪製的單字作答資料</text>'}else{const max=Math.max(1,...ds.map(x=>x[1].n)),step=840/ds.length;let s='';ds.forEach(([d,v],i)=>{const x=45+i*step+step*.25,h=145*v.n/max,y=180-h,rate=v.ok/v.n; s+='<rect x="'+x+'" y="'+y+'" width="'+step*.5+'" height="'+h+'" rx="4" fill="#8aa6d4"/><circle cx="'+(x+step*.25)+'" cy="'+(170-rate*125)+'" r="4" fill="#d17b39"/><text x="'+(x+step*.25)+'" y="202" font-size="11" text-anchor="middle" fill="#667085">'+d.slice(5)+'</text>'});svg.innerHTML='<line x1="35" y1="180" x2="885" y2="180" stroke="#9aa8bd"/>'+s+'<text x="42" y="18" fill="#5478ad" font-size="12">作答數（柱）</text><circle cx="165" cy="14" r="4" fill="#d17b39"/><text x="176" y="18" fill="#a45c27" font-size="12">答對率（點）</text>'}let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=(!from.value||c.dataset.day>=from.value)&&(!to.value||c.dataset.day<=to.value)&&c.dataset.search.includes(term);c.hidden=!show;if(show)n++});document.getElementById('count').textContent='目前顯示 '+n+' / '+cards.length+' 筆';}from.addEventListener('change',render);to.addEventListener('change',render);q.addEventListener('input',render);document.getElementById('reset').addEventListener('click',()=>{from.value='';to.value='';q.value='';render()});render();<\/script>
-<style id="wordhero-scroll-return-fix">
-  /* Persistent escape hatch: never trap the user at the bottom of long admin panels. */
-  #wh-return-top {
-    position: fixed !important;
-    right: max(14px, env(safe-area-inset-right)) !important;
-    bottom: max(14px, env(safe-area-inset-bottom)) !important;
-    z-index: 2147483646 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 7px !important;
-    min-height: 46px !important;
-    min-width: 118px !important;
-    padding: 10px 16px !important;
-    border: 1px solid #8db8e6 !important;
-    border-radius: 999px !important;
-    background: #1d4ed8 !important;
-    color: #fff !important;
-    font: 700 15px/1.2 system-ui, sans-serif !important;
-    box-shadow: 0 4px 18px #0008 !important;
-    cursor: pointer !important;
-    touch-action: manipulation;
-  }
-  #wh-return-top:focus-visible { outline: 3px solid #facc15 !important; outline-offset: 3px !important; }
-  @media (max-width: 480px) { #wh-return-top { right: 10px !important; bottom: 10px !important; min-height: 44px !important; } }
-</style>
-<button id="wh-return-top" type="button" aria-label="回到頁面最上方" title="回到頁面最上方">↑ 回到頂端</button>
-<script id="wordhero-scroll-return-fix-js">
-(function () {
-  const btn = document.getElementById('wh-return-top');
-  if (!btn) return;
-  btn.addEventListener('click', function () {
-    // The app has several nested scroll containers depending on viewport and view.
-    // Reset every plausible scroll owner, including the currently visible feature view.
-    const candidates = [document.scrollingElement, document.documentElement, document.body,
-      document.querySelector('.container'), ...document.querySelectorAll('.view-section'),
-      document.querySelector('.learning-report-shell'), document.querySelector('#learning-report-frame')];
-    candidates.forEach(function (el) {
-      if (!el) return;
-      try { el.scrollTo({ top: 0, left: 0, behavior: 'auto' }); } catch (_) { el.scrollTop = 0; el.scrollLeft = 0; }
-      try { el.scrollTop = 0; } catch (_) {}
-    });
-    try { window.scrollTo({ top: 0, left: 0, behavior: 'auto' }); } catch (_) {}
-    // Keep the control usable after view changes or nested panel scrolling.
-  });
-})();
-<\/script>
+
 
 </body></html>`;
     }
@@ -4002,9 +3996,18 @@ const storyWordGloss = {
     }
 
     async function loadWord() {
-        wrongAttemptsThisQuestion = 0;
-        state.questionStartedAt = Date.now();
-        state.questionAttemptCount = 0;
+        const activeRef = state.currentList && state.currentList[state.index] ? state.currentList[state.index].ref : '';
+        const resumeBossQuestion = state.mode === 'quiz' && !!state.resumeBossAttemptRef && state.resumeBossAttemptRef === activeRef;
+        wrongAttemptsThisQuestion = resumeBossQuestion ? Math.max(0, Number(state.resumeBossWrongAttempts) || 0) : 0;
+        state.questionStartedAt = resumeBossQuestion && state.resumeBossQuestionStartedAt ? state.resumeBossQuestionStartedAt : Date.now();
+        state.attemptStartedAt = Date.now();
+        state.questionAttemptCount = resumeBossQuestion ? Math.max(0, Number(state.resumeBossQuestionAttemptCount) || 0) : 0;
+        if (resumeBossQuestion) {
+            state.resumeBossAttemptRef = '';
+            state.resumeBossWrongAttempts = 0;
+            state.resumeBossQuestionStartedAt = 0;
+            state.resumeBossQuestionAttemptCount = 0;
+        }
         state.previousSubmittedInput = ''; 
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         let word = state.currentList[state.index];
@@ -4017,19 +4020,24 @@ const storyWordGloss = {
             word = { ...canonicalWord };
             state.currentList[state.index] = word;
         }
-        // 保留除錯資訊，方便日後確認實際出題來源與字母格數。
+        // 僅保留不含標準答案的診斷資訊，避免答案透過 window 全域變數外露。
         window.__wordHeroLastQuestionDebug = {
-            unit: state.unit, ref: word.ref, answer: String(word.en || ''),
+            unit: state.unit, ref: word.ref,
             answerLength: Array.from(String(word.en || '')).filter(ch => !/[ \/-]/.test(ch)).length,
-            bankAnswer: canonicalWord ? String(canonicalWord.en || '') : null,
             at: Date.now()
         };
         const display = document.getElementById('display-cn');
         let tip = localDict[word.en.toLowerCase()] || word.cn;
         if (!tip) { display.innerText = "載入中..."; tip = await fetchTranslation(word.en); }
         display.innerText = tip;
+        const practiceTarget = document.getElementById('practice-target-word');
+        const showModelWord = state.mode === 'practice' && !state.tempPractice;
+        if (practiceTarget) {
+            practiceTarget.hidden = !showModelWord;
+            practiceTarget.textContent = showModelWord ? `照著單字輸入：${String(word.en || '')}` : '';
+        }
         const modeLabel = document.getElementById('child-mode-label');
-        if (modeLabel) modeLabel.textContent = state.mode === 'quiz' ? '魔王挑戰' : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
+        if (modeLabel) modeLabel.textContent = state.tempPractice && state.mode === 'quiz' ? '魔王練習（不計戰鬥）' : state.mode === 'quiz' ? '魔王挑戰' : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
         const progressLabel = document.getElementById('child-question-progress');
         if (progressLabel) {
             const total = (state.currentList || []).length + (state.mode === 'quiz' ? (state.quizCompleted || 0) : 0);
@@ -4055,7 +4063,11 @@ const storyWordGloss = {
         sentenceTargetWord = String(word.en || '').trim();
         const contextCard = document.getElementById('practice-context-card');
         const showContextExample = state.mode !== 'quiz';
-        if (contextCard) contextCard.style.display = showContextExample ? '' : 'none';
+        if (contextCard) {
+            contextCard.hidden = !showContextExample;
+            contextCard.setAttribute('aria-hidden', String(!showContextExample));
+            contextCard.style.display = showContextExample ? '' : 'none';
+        }
         if (showContextExample) refreshPracticeContextSentence(sentenceTargetWord);
 
         const area = document.getElementById('letter-area');
@@ -4218,7 +4230,12 @@ const storyWordGloss = {
     function checkFinalAnswer() {
         const word = state.currentList[state.index];
         if (!word) return;
-        state.questionAttemptCount = (state.questionAttemptCount || 0) + 1;
+        const supportAttempt = state.mode === 'quiz' && state.tempPractice;
+        if (supportAttempt) state.supportAttemptCount = (state.supportAttemptCount || 0) + 1;
+        else state.questionAttemptCount = (state.questionAttemptCount || 0) + 1;
+        const attemptIndex = supportAttempt ? state.supportAttemptCount : state.questionAttemptCount;
+        const attemptResponseMs = state.attemptStartedAt ? Date.now() - state.attemptStartedAt : null;
+        const questionElapsedMs = state.questionStartedAt ? Date.now() - state.questionStartedAt : null;
 
         const boxes = document.querySelectorAll('.letter-box');
         let ui = "";
@@ -4227,26 +4244,35 @@ const storyWordGloss = {
         const normalizedInput = ui.replace(/[\s\/-]/g, '').toLowerCase();
         const normalizedAnswer = String(word.en || '').replace(/[\s\/-]/g, '').toLowerCase();
 
+        if (normalizedInput === normalizedAnswer && state.mode === 'quiz' && state.tempPractice) {
+            addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
+            const supportFeedback = document.getElementById('child-answer-feedback');
+            if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback good'; supportFeedback.textContent = '練習答對了！回到魔王挑戰，再正式作答一次。'; }
+            const supportSpellingFeedback = document.getElementById('spelling-feedback');
+            if (supportSpellingFeedback) { supportSpellingFeedback.style.display = 'none'; supportSpellingFeedback.innerHTML = ''; }
+            document.querySelectorAll('.letter-box').forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
+            state.resumeBossAttemptRef = word.ref || '';
+            state.resumeBossWrongAttempts = wrongAttemptsThisQuestion;
+            state.resumeBossQuestionStartedAt = state.questionStartedAt || Date.now();
+            state.resumeBossQuestionAttemptCount = state.questionAttemptCount || 0;
+            state.tempPractice = false;
+            setTimeout(loadWord, 600);
+            return;
+        }
+
         if (normalizedInput === normalizedAnswer) {
             recordQuizWordResult(word, 'correct');
             if (!state.tempPractice) state.sessionStats.correct++;
             const childFeedback = document.getElementById('child-answer-feedback');
             if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback good'; childFeedback.textContent = '答對了！做得好！'; }
             updateErrorBank(word, true);
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: state.questionStartedAt ? Date.now() - state.questionStartedAt : null, attempts: state.questionAttemptCount || 1, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: attemptResponseMs, questionElapsedMs, attempts: state.questionAttemptCount || 1, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
             recordWordReview(word, 'correct', state.mode || 'practice');
             const spellingFeedback = document.getElementById('spelling-feedback');
             if (spellingFeedback) { spellingFeedback.style.display = 'none'; spellingFeedback.innerHTML = ''; }
             boxes.forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
             safeConfetti({ particleCount: 30, spread: 50 });
-
-            // 暫時練習答對只代表完成練習，不直接算魔王挑戰通關；返回正式題目重新作答。
-            if (state.mode === 'quiz' && state.tempPractice) {
-                state.tempPractice = false;
-                setTimeout(loadWord, 600);
-                return;
-            }
 
             if (state.mode === 'quiz' && !state.tempPractice) {
                 state.oppHP--;
@@ -4293,7 +4319,8 @@ const storyWordGloss = {
                         ? un[Math.floor(Math.random() * un.length)]
                         : Math.floor(Math.random() * 151) + 1;
 
-                    state.oppMaxHP = getPokemonMaxHP(state.currentOppId, false);
+                    const rawOpponentHP = getPokemonMaxHP(state.currentOppId, false);
+                    state.oppMaxHP = Math.min(rawOpponentHP, Math.max(1, Math.ceil(state.currentList.length * 0.7)));
                     state.oppHP = state.oppMaxHP;
                 }
 
@@ -4325,14 +4352,28 @@ const storyWordGloss = {
                 setTimeout(loadWord, 600);
             }
         } else {
+            if (state.mode === 'quiz' && state.tempPractice) {
+                addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
+                state.previousSubmittedInput = ui;
+                state.attemptStartedAt = Date.now();
+                const supportFeedback = document.getElementById('child-answer-feedback');
+                if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback try'; supportFeedback.textContent = '再試一次！紅色字母格需要修改；這次練習不會扣 HP。'; }
+                const answerChars = Array.from(String(word.en || '').replace(/[\s\/-]/g, '').toLowerCase());
+                const inputChars = Array.from(ui.replace(/[\s\/-]/g, '').toLowerCase());
+                boxes.forEach((b, i) => { const typed=inputChars[i]||''; const expected=answerChars[i]||''; b.classList.remove('wrong','mismatch','correct-place'); b.classList.add(typed && expected && typed===expected ? 'correct-place' : 'mismatch'); });
+                const supportSpellingFeedback = document.getElementById('spelling-feedback');
+                if (supportSpellingFeedback) { const wrongCount=boxes.length-answerChars.reduce((n,ch,i)=>n+((inputChars[i]||'')===ch?1:0),0); supportSpellingFeedback.style.display='block'; supportSpellingFeedback.innerHTML=`💡 有 <b>${wrongCount}</b> 個字母需要再看看！紅色框就是需要修正的位置。`; }
+                return;
+            }
             recordQuizWordResult(word, 'incorrect');
             if (state.mode === 'quiz' && !state.tempPractice) { const reviewRow = (state.quizResultRows || []).find(item => item.ref === (word.ref || String(word.en || '').trim().toLowerCase())); if (reviewRow) reviewRow.lastWrongInput = ui; }
             if (!state.tempPractice) state.sessionStats.incorrect++;
             const childFeedback = document.getElementById('child-answer-feedback');
             if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback try'; childFeedback.textContent = '這次還不正確，看看紅色字母格，再試一次。'; }
             // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: state.questionStartedAt ? Date.now() - state.questionStartedAt : null, attemptIndex: state.questionAttemptCount || 1, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
+            state.attemptStartedAt = Date.now();
             addErrorLog(word, ui || '(空白)');
             updateErrorBank(word, false);
 
@@ -4380,7 +4421,7 @@ const storyWordGloss = {
         const skippedWord = state.currentList[state.index];
         recordQuizWordResult(skippedWord, 'skipped');
         if (state.sessionStats) state.sessionStats.passes++;
-        addLearningLog({ type:'word_pass', mode:state.mode||'', unit:state.unit||'', word:skippedWord.en||'', meaning:skippedWord.cn||'', attemptCount:state.questionAttemptCount||0, responseMs:state.questionStartedAt?Date.now()-state.questionStartedAt:null });
+        addLearningLog({ type:'word_pass', mode:state.mode||'', unit:state.unit||'', word:skippedWord.en||'', meaning:skippedWord.cn||'', attemptCount:state.questionAttemptCount||0, responseMs:state.attemptStartedAt?Date.now()-state.attemptStartedAt:null, questionElapsedMs:state.questionStartedAt?Date.now()-state.questionStartedAt:null });
         recordWordReview(skippedWord, 'pass', state.mode);
 
         // PASS 不代表學會。魔王挑戰採「移出本輪、保留待複習」策略，
@@ -4400,7 +4441,16 @@ const storyWordGloss = {
             loadWord();
         }
     }
-    function startInGamePractice() { state.tempPractice = true; loadWord(); }
+    function startInGamePractice() {
+        const word = state.currentList && state.currentList[state.index];
+        state.resumeBossAttemptRef = word ? word.ref : '';
+        state.resumeBossWrongAttempts = wrongAttemptsThisQuestion;
+        state.resumeBossQuestionStartedAt = state.questionStartedAt || Date.now();
+        state.resumeBossQuestionAttemptCount = state.questionAttemptCount || 0;
+        state.supportAttemptCount = 0;
+        state.tempPractice = true;
+        loadWord();
+    }
 
     // PASS 代表「先跳過」，不是已學會；保存待複習清單，供之後再次練習。
     function recordWordReview(word, result, mode) {
@@ -4947,5 +4997,27 @@ const storyWordGloss = {
         document.getElementById('dex-count').innerText=`已捕捉 ${caught} / 151｜另有 ${extra} 張進化型態卡｜目前指定對手：${state.chosenOppId ? getPokemonName(state.chosenOppId) : '隨機'}｜未收服對手每次可能以不同進化型態出現，進化型 HP 較高。`;
     }
 </script>
+
+<style id="wordhero-main-scroll-return">
+  #wh-return-top {
+    position: fixed; right: max(14px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom)); z-index: 2147483646;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 46px; min-width: 118px; padding: 10px 16px;
+    border: 1px solid #8db8e6; border-radius: 999px;
+    background: #1d4ed8; color: #fff; font: 700 15px/1.2 system-ui,sans-serif;
+    box-shadow: 0 4px 18px #0008; cursor: pointer; touch-action: manipulation;
+  }
+  #wh-return-top:focus-visible { outline: 3px solid #facc15; outline-offset: 3px; }
+  @media(max-width:480px){#wh-return-top{right:10px;bottom:10px;min-height:44px;}}
+</style>
+<button id="wh-return-top" type="button" aria-label="回到頁面最上方" title="回到頁面最上方"
+ onclick="(function(){var es=[document.scrollingElement,document.documentElement,document.body,document.querySelector('.container'),...document.querySelectorAll('.view-section')];es.forEach(function(e){if(e){try{e.scrollTop=0;e.scrollLeft=0;}catch(_){}}});window.scrollTo(0,0);})()">↑ 回到頂端</button>
+
 </body>
 </html>
+
+<style id="wordhero-child-practice-model-style">
+.practice-target-word{margin:8px auto 4px;max-width:min(92%,760px);padding:9px 16px;text-align:center;color:#f7d27c;font-size:clamp(1.25rem,2.6vw,1.9rem);font-weight:850;letter-spacing:.035em;line-height:1.35;border:1px solid #5f7793;border-radius:12px;background:#14243a;overflow-wrap:anywhere}
+.practice-target-word[hidden]{display:none!important}
+</style>
