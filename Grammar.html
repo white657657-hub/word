@@ -163,6 +163,25 @@ main{margin-top:18px}
 .past-choice-wrap{display:flex;align-items:stretch;gap:6px;flex:0 1 250px;min-width:0}
 .past-choice-wrap .choice{flex:1;min-width:0}
 .past-choice-wrap .choice-speaker{width:38px;height:38px;min-width:38px;padding:0;margin:0;align-self:center;font-size:15px}
+
+/* V4.69: clear two-level domain navigation */
+.domain-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:22px 0;}
+.domain-card{display:flex;align-items:center;gap:18px;text-align:left;min-height:190px;padding:26px;border:1px solid var(--border,#2b3b49);border-radius:22px;color:var(--text,#eef4fa);background:linear-gradient(140deg,#12283a,#172431);cursor:pointer;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;}
+.domain-card:hover,.domain-card:focus-visible{transform:translateY(-2px);border-color:#6ca7d8;outline:2px solid transparent;}
+.domain-past{background:linear-gradient(140deg,#302044,#1d2336);}
+.domain-symbol{display:grid;place-items:center;flex:0 0 66px;width:66px;height:66px;border-radius:18px;background:#245a86;color:#fff;font-weight:800;font-size:28px;}
+.domain-past .domain-symbol{background:#68458a;}
+.domain-copy{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.domain-copy strong{font-size:30px;line-height:1.1;}
+.domain-copy b{font-size:19px;}
+.domain-copy small{font-size:14px;color:var(--muted,#aebdca);line-height:1.5;}
+.domain-arrow{margin-left:auto;font-size:42px;color:#9bc9f0;line-height:1;}
+.domain-footer{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+#stages .map{grid-template-columns:repeat(2,minmax(0,1fr));}
+#stages .stage-group-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+@media(max-width:700px){.domain-grid{grid-template-columns:1fr;gap:12px}.domain-card{min-height:140px;padding:18px}.domain-copy strong{font-size:26px}#stages .map{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.domain-card{gap:12px;padding:14px}.domain-symbol{flex-basis:52px;width:52px;height:52px}.domain-copy strong{font-size:23px}.domain-copy b{font-size:16px}.domain-copy small{font-size:12px}#stages .map{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#stages .stage{padding:12px}}
+
 @media(max-width:620px){.past-choice-wrap{flex:1 1 calc(50% - 12px);min-width:0}.past-choice-wrap .choice-speaker{width:34px;height:34px;min-width:34px}}
 .choice.correct{background:#193a2b;border-color:#69ad86}
 .choice.wrong{background:#3a2227;border-color:#a85b64}
@@ -448,10 +467,10 @@ button:disabled{cursor:default;opacity:.8;}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.68｜過去式題庫補強、答題回饋與錯題複習。</p>
+      <p class="small-note">V4.69｜分層選單、過去式輸入練習與題庫檢查。</p>
       <p>短時間練習、單字發音、句型應用與學習夥伴。</p>
       <div class="hero-actions">
-        <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
+        <button class="btn primary" onclick="showScreen('map')">⚔️ 選擇文法</button>
         <button class="btn" onclick="showScreen('myPokemon')">⭐ 我的寶可夢</button>
         <button class="btn" onclick="showScreen('pokedex')">📖 寶可夢圖鑑</button>
         <button class="btn" onclick="showScreen('logs')">📊 學習紀錄</button>
@@ -463,9 +482,25 @@ button:disabled{cursor:default;opacity:.8;}
 </section>
 
 <section id="map" class="screen">
-  <div class="backrow"><button class="btn small" onclick="showScreen('home')">← 首頁</button></div>
-  <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">所有關卡皆已開放，可自由選擇</span></div>
-  <div class="card small-note" style="margin-bottom:12px"><b>使用方式：</b>前 9 關是原有文法單元；第 10–16 關是「一般過去式專區」，Y 字尾與 CVC 雙寫分開練習，可直接選擇任一關練習。</div>
+  <div class="section-title"><h2>選擇學習領域</h2><span class="muted">先選文法，再選關卡</span></div>
+  <div class="domain-grid">
+    <button class="domain-card domain-verb" type="button" onclick="openDomain('verb')">
+      <span class="domain-symbol" aria-hidden="true">Aa</span>
+      <span class="domain-copy"><strong>Verb</strong><b>現在式動詞變化</b><small>S、ES、Y 規則、CVC 等</small></span>
+      <span class="domain-arrow" aria-hidden="true">›</span>
+    </button>
+    <button class="domain-card domain-past" type="button" onclick="openDomain('past')">
+      <span class="domain-symbol" aria-hidden="true">↶</span>
+      <span class="domain-copy"><strong>Past Tense</strong><b>過去式</b><small>was / were、規則與不規則動詞</small></span>
+      <span class="domain-arrow" aria-hidden="true">›</span>
+    </button>
+  </div>
+  <div class="domain-footer"><button class="btn" type="button" onclick="showScreen('myPokemon')">⭐ 我的寶可夢</button><button class="btn" type="button" onclick="showScreen('pokedex')">📖 寶可夢圖鑑</button><button class="btn" type="button" onclick="showScreen('logs')">📊 學習紀錄</button></div>
+</section>
+
+<section id="stages" class="screen">
+  <div class="backrow"><button class="btn small" type="button" onclick="showScreen('map')">← 返回首頁</button></div>
+  <div class="section-title"><h2 id="domainTitle">Past Tense｜過去式</h2><span class="muted">選擇要練習的關卡</span></div>
   <div class="map" id="stageMap"></div>
   <div class="section-title"><h2>🧩 錯題區</h2><span class="muted">最近答錯、尚待複習的題目</span></div>
   <section id="wrongAnswersPanel" class="wrong-answers-panel" aria-live="polite"></section>
@@ -475,7 +510,7 @@ button:disabled{cursor:default;opacity:.8;}
 
 <section id="learn" class="screen">
   <div class="learning-header">
-    <button class="btn small" onclick="endSession()">← 回關卡地圖</button>
+    <button class="btn small" onclick="endSession()">← 返回領域關卡</button>
     <div style="flex:1;display:flex;justify-content:center;gap:10px;align-items:center">
       <b id="stageTitle">ES 森林</b>
       <span class="muted" id="questionCounter">1 / 10</span>
@@ -964,6 +999,7 @@ const STORAGE_KEY = "ansonGrammarAdventureV2";
 const SCHEMA_VERSION = 7;
 const state = loadState();
 let currentSession = null;
+let currentDomain = "verb";
 let currentQuestion = null;
 let hintLevel = 0;
 let answerLocked = false;
@@ -1125,7 +1161,7 @@ function showScreen(id){
   document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
   target.classList.add("active");
   document.body.classList.toggle("learning-active",id==="learn");
-  if(id==="map"){
+  if(id==="stages"){
     try{ renderMap(); }catch(e){
       console.error("Map render failed",e);
       const mapEl=document.getElementById("stageMap");
@@ -1214,6 +1250,11 @@ function startWrongReviewAll(){
   createReviewSession(unique,"wrong-review","錯題複習");
 }
 
+function openDomain(domain){
+  currentDomain=domain==="past"?"past":"verb";
+  showScreen("stages");
+}
+
 function renderMap(){
   const el=document.getElementById("stageMap");
   if(!el) return;
@@ -1249,8 +1290,11 @@ function renderMap(){
   };
   const verbStages=STAGES.filter(s=>s.id.startsWith("unit"));
   const pastStages=STAGES.filter(s=>s.id.startsWith("past"));
+  const selectedStages=currentDomain==="past"?pastStages:verbStages;
   const stageIndex=new Map(STAGES.map((s,i)=>[s.id,i]));
-  el.innerHTML=`<section class="stage-group"><h2 class="stage-group-title">Verb｜現在式動詞變化</h2><div class="stage-group-grid">${verbStages.map(s=>renderStageCard(s,stageIndex.get(s.id))).join("")}</div></section><section class="stage-group"><h2 class="stage-group-title">Past Tense｜過去式</h2><div class="stage-group-grid">${pastStages.map(s=>renderStageCard(s,stageIndex.get(s.id))).join("")}</div></section>`;
+  const titleEl=document.getElementById("domainTitle");
+  if(titleEl) titleEl.textContent=currentDomain==="past"?"Past Tense｜過去式":"Verb｜現在式動詞變化";
+  el.innerHTML=selectedStages.map(s=>renderStageCard(s,stageIndex.get(s.id))).join("");
 
   // Use event delegation instead of inline onclick so stage cards remain reliably clickable
   // after every re-render. Keyboard Enter/Space is supported as well.
@@ -2564,7 +2608,7 @@ function endSession(){
   if(currentSession) accumulateLearningTime();
   currentSession=null;
   closeModal();
-  showScreen("map");
+  showScreen("stages");
 }
 function detectError(q,answer){
   if(q.rule==="consonant+y") return "consonant_y_rule";
@@ -2821,6 +2865,8 @@ function startLearningTicker(){
 function init(){
   updateHeroPokemon();
   renderMap();updateHeader();startLearningTicker();
+  // The first visible screen is the domain selector, as requested.
+  showScreen("map");
 }
 init();
 </script>
