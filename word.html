@@ -1234,6 +1234,17 @@ html, body { height:100% !important; overflow:hidden !important; }
 
         /* VERSION BADGE: small build identifier next to Word Hero on home screen */
         .wh-version-badge{display:inline-flex;align-items:center;vertical-align:middle;margin-left:7px;padding:2px 6px;border:1px solid #40536b;border-radius:999px;background:#13243a;color:#9fb4cc;font-size:.48em;font-weight:500;letter-spacing:.02em;line-height:1.4;white-space:nowrap}
+
+        /* V1524: parent refresh reminder */
+        .parent-refresh-reminder{
+            max-width:760px;margin:4px auto 0;padding:4px 9px;
+            color:#9fb3c8;font-size:.68rem;line-height:1.45;text-align:center;
+            border:1px solid rgba(112,145,174,.24);border-radius:8px;
+            background:rgba(17,35,55,.45)
+        }
+        @media(max-width:520px){
+            .parent-refresh-reminder{font-size:.62rem;padding:4px 7px;margin-top:3px}
+        }
 </style>
 </head>
 <body onload="initSystem()">
@@ -1252,7 +1263,10 @@ html, body { height:100% !important; overflow:hidden !important; }
     <button id="global-home-button" type="button" class="global-home-button" onclick="handleGlobalHome()" aria-label="回首頁">← 回首頁</button>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 v1.0.4">v1.0.4</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1524">V1524</span></div>
+            <div class="parent-refresh-reminder" role="note">
+                家長提醒：更新 Word Hero 後，請重新整理頁面；若出現「沒有可用的單字資料」，請先強制重新整理，再確認 Anson.txt 與 HTML 位於同一資料夾。
+            </div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -2420,7 +2434,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             const parsed = parseAnsonTxt(sourceText);
             const count = Object.values(parsed).reduce((n, arr) => n + arr.length, 0);
             if (!Object.keys(parsed).length || count === 0) {
-                throw new Error('TXT 題庫已取得，但沒有解析出單字；請確認檔案包含 [W1] 單元標題及英文,中文資料。');
+                throw new Error('TXT 檔案已取得，但沒有解析出單字。請家長先重新整理頁面（Windows：Ctrl+F5；Mac：Cmd+Shift+R）；若仍失敗，請確認 HTML 同目錄有 Anson.txt，單元標題可為 [W2]、[W3] 等任意 W+數字格式，單字每行使用英文,中文。');
             }
             if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
             const normalized = normalizeLegacyEarthInBanks(parsed);
@@ -3459,7 +3473,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         state.unit = document.getElementById('unit-selector').value;
 
         if (!state.unit || !state.banks[state.unit] || state.banks[state.unit].length === 0) {
-            return alert(`目前沒有可用的單字資料。\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認同目錄有 ${getUserBankFileStem()}.txt，格式為 [W1] 後接英文,中文。`);
+            return alert(`目前沒有可用的單字資料。\n\n請家長先重新整理頁面（Windows：Ctrl+F5；Mac：Cmd+Shift+R）。\n\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認 HTML 同目錄有 ${getUserBankFileStem()}.txt，並確認單元標題格式如 [W2]、[W3]（W 後可接數字），每行單字格式為英文,中文。\n\n若仍無資料，請到「家長與設定」確認題庫來源及載入狀態。`);
         }
 
         // 每次開新練習都建立獨立副本，避免練習流程意外修改題庫原始物件。
