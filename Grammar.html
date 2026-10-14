@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anson 英文文法冒險 V4.64｜過去式橫式解說與程式碼檢查</title>
+<title>Anson 英文文法冒險 V4.66｜Chromium 檢查與題目修正</title>
 <style>
 :root{
   --bg:#081018;
@@ -44,9 +44,10 @@ button{cursor:pointer}
 }
 .profile{display:flex;align-items:center;gap:12px}
 .avatar{
-  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
-  background:#172536;border:1px solid rgba(255,255,255,.12);font-size:25px
+  width:54px;height:54px;border-radius:50%;display:grid;place-items:center;overflow:hidden;
+  background:#172536;border:1px solid rgba(255,255,255,.12);font-size:25px;flex:0 0 auto
 }
+.avatar img{width:48px;height:48px;object-fit:contain;display:block}
 .profile b{font-size:18px}.profile small{color:var(--muted)}
 .xpwrap{width:180px}.xpbar{height:8px;background:#253542;border-radius:99px;overflow:hidden;margin-top:6px}
 .xpfill{height:100%;width:0;background:linear-gradient(90deg,#6faecf,#8ccf9c);transition:.4s}
@@ -365,6 +366,32 @@ main{margin-top:18px}
 .answer-word{overflow-wrap:normal;word-break:normal;}
 .answer-transform-arrow{align-self:center;justify-self:center;}
 @media(max-width:380px){.answer-teaching-card{padding:10px 7px}.answer-transform{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr)!important;gap:2px}.answer-word{font-size:clamp(17px,5.2vw,22px)}.answer-word-label{min-width:0;padding:4px 8px}.answer-rule-copy{font-size:15px}}
+
+/* V4.65: compact answer feedback, sentence-only audio after correctness, and error-review panel. */
+.answer-teaching-card{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px;align-items:center;margin:10px auto 0;padding:10px 12px;max-width:900px;border-radius:16px}
+.answer-transform{grid-column:1;grid-row:1;gap:6px;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr)!important}
+.answer-word-label{min-width:72px;padding:3px 10px;font-size:13px}
+.answer-word{font-size:clamp(22px,3vw,34px);line-height:1.15}
+.answer-transform-arrow{font-size:26px}
+.answer-word-audio{display:none!important}
+.answer-rule-box{grid-column:2;grid-row:1;margin:0;padding:10px 12px;border-radius:12px}
+.answer-rule-title{font-size:13px;padding:4px 10px;margin-bottom:4px}
+.answer-rule-copy{font-size:clamp(14px,1.25vw,16px);line-height:1.35;font-weight:700}
+.answer-full-sentence{display:none!important}
+.sentence-audio-after-correct{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;min-width:36px;border:0;border-radius:50%;background:#0868b3;color:#fff;font-size:17px;vertical-align:middle;margin-right:10px}
+.sentence.has-correct-audio{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.feedback-result-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px auto 4px}
+.feedback-result-row .result-banner{margin:0!important}
+.feedback-result-row .next-arrow{margin:0!important}
+.wrong-answers-panel{display:grid;gap:10px;margin-bottom:18px}
+.wrong-empty{padding:18px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(145deg,#111e29,#152530);color:var(--muted)}
+.wrong-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:14px;border:1px solid rgba(220,105,115,.28);border-radius:16px;background:linear-gradient(145deg,rgba(53,31,39,.62),rgba(17,30,41,.98))}
+.wrong-item .wrong-question{font-weight:800;font-size:16px;line-height:1.5}
+.wrong-item .wrong-meta{color:var(--muted);font-size:12px;margin-bottom:4px}
+.wrong-item .wrong-answers{font-size:13px;line-height:1.5;margin-top:5px}
+.wrong-item .wrong-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.wrong-item .btn{white-space:nowrap}
+@media(max-width:620px){.answer-teaching-card{grid-template-columns:minmax(0,1fr);gap:8px;padding:10px}.answer-transform{grid-column:1;grid-row:1;grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr)!important}.answer-rule-box{grid-column:1;grid-row:2;padding:8px 10px}.answer-word{font-size:clamp(21px,6vw,29px)}.answer-rule-copy{font-size:14px}.wrong-item{grid-template-columns:1fr}.wrong-item .wrong-actions{justify-content:flex-start}}
 </style>
 <style id="v447-ux-fixes">
 .baseverb{font-size:24px!important;font-weight:800;color:#c5d9e8;margin:0 auto 8px!important;text-align:center;line-height:1.4}
@@ -398,7 +425,7 @@ button:disabled{cursor:default;opacity:.8;}
 <div class="app">
 <header class="topbar">
   <div class="profile">
-    <div class="avatar">🧒</div>
+    <div class="avatar"><img id="profilePokemon" alt="學習夥伴" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"></div>
     <div>
       <b>Anson</b><br><small id="levelText">Lv. 1</small>
     </div>
@@ -418,7 +445,7 @@ button:disabled{cursor:default;opacity:.8;}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1>Anson<br><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.61｜精簡規則說明，完成後顯示逐題結果。</p>
+      <p class="small-note">V4.66｜題目語意修正、答題回饋與錯題複習。</p>
       <p>短時間練習、單字發音、句型應用與學習夥伴。</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 開始冒險</button>
@@ -437,6 +464,8 @@ button:disabled{cursor:default;opacity:.8;}
   <div class="section-title"><h2>🗺️ 關卡地圖</h2><span class="muted">所有關卡皆已開放，可自由選擇</span></div>
   <div class="card small-note" style="margin-bottom:12px"><b>使用方式：</b>前 9 關是原有文法單元；第 10–16 關是「一般過去式專區」，Y 字尾與 CVC 雙寫分開練習，可直接選擇任一關練習。</div>
   <div class="map" id="stageMap"></div>
+  <div class="section-title"><h2>🧩 錯題區</h2><span class="muted">最近答錯、尚待複習的題目</span></div>
+  <section id="wrongAnswersPanel" class="wrong-answers-panel" aria-live="polite"></section>
   <div class="section-title"><h2>⭐ 下一步建議</h2></div>
   <div class="card" id="recommendation"></div>
 </section>
@@ -736,75 +765,75 @@ const QUESTION_BANK = {
 ],
   pastWasWere:[
     {id:"pw01",sentence:"I _____ at the park yesterday.",verb:"I",choices:["was","were"],answer:"was",rule:"past-was-were"},
-    {id:"pw02",sentence:"They _____ happy after the game.",verb:"they",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw02",sentence:"They _____ happy after the game yesterday.",verb:"they",choices:["was","were"],answer:"were",rule:"past-was-were"},
     {id:"pw03",sentence:"She _____ at home last night.",verb:"she",choices:["was","were"],answer:"was",rule:"past-was-were"},
     {id:"pw04",sentence:"We _____ late for school yesterday.",verb:"we",choices:["was","were"],answer:"were",rule:"past-was-were"},
-    {id:"pw05",sentence:"The cat _____ under the table.",verb:"the cat",choices:["was","were"],answer:"was",rule:"past-was-were"},
+    {id:"pw05",sentence:"The cat _____ under the table last night.",verb:"the cat",choices:["was","were"],answer:"was",rule:"past-was-were"},
     {id:"pw06",sentence:"You _____ very kind yesterday.",verb:"you",choices:["was","were"],answer:"were",rule:"past-was-were"},
-    {id:"pw07",sentence:"My friends _____ in the library.",verb:"my friends",choices:["was","were"],answer:"were",rule:"past-was-were"},
-    {id:"pw08",sentence:"It _____ cold this morning.",verb:"it",choices:["was","were"],answer:"was",rule:"past-was-were"}
+    {id:"pw07",sentence:"My friends _____ in the library yesterday.",verb:"my friends",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw08",sentence:"It _____ cold yesterday morning.",verb:"it",choices:["was","were"],answer:"was",rule:"past-was-were"}
   ],
   pastHad:[
     {id:"ph01",sentence:"I _____ a red pencil yesterday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
-    {id:"ph02",sentence:"He _____ a big lunch at noon.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
-    {id:"ph03",sentence:"They _____ a great time at the zoo.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph02",sentence:"He _____ a big lunch at noon yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
+    {id:"ph03",sentence:"They _____ a great time at the zoo last Sunday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
     {id:"ph04",sentence:"We _____ two classes yesterday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
-    {id:"ph05",sentence:"The dog _____ some water after the walk.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
+    {id:"ph05",sentence:"The dog _____ some water after the walk yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
     {id:"ph06",sentence:"She _____ a cold last week.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
-    {id:"ph07",sentence:"Anson and I _____ fun at the museum.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph07",sentence:"Anson and I _____ fun at the museum last weekend.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
     {id:"ph08",sentence:"My brother _____ a new book yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"}
   ],
   pastRegular:[
     {id:"pr01",sentence:"Yesterday, I _____ to school with Dad.",verb:"walk",choices:["walk","walked"],answer:"walked",rule:"past-ed"},
     {id:"pr02",sentence:"She _____ a picture last night.",verb:"paint",choices:["paint","painted"],answer:"painted",rule:"past-ed"},
-    {id:"pr03",sentence:"We _____ soccer after school.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
+    {id:"pr03",sentence:"We _____ soccer after school yesterday.",verb:"play",choices:["play","played"],answer:"played",rule:"past-ed"},
     {id:"pr04",sentence:"He _____ his room yesterday.",verb:"clean",choices:["clean","cleaned"],answer:"cleaned",rule:"past-ed"},
-    {id:"pr05",sentence:"I _____ the door carefully.",verb:"close",choices:["close","closed"],answer:"closed",rule:"past-d"},
+    {id:"pr05",sentence:"I _____ the door carefully yesterday.",verb:"close",choices:["close","closed"],answer:"closed",rule:"past-d"},
     {id:"pr06",sentence:"They _____ their grandparents last Sunday.",verb:"visit",choices:["visit","visited"],answer:"visited",rule:"past-ed"},
-    {id:"pr07",sentence:"Mia _____ the cake after dinner.",verb:"like",choices:["like","liked"],answer:"liked",rule:"past-d"},
+    {id:"pr07",sentence:"Mia _____ the cake after dinner yesterday.",verb:"like",choices:["like","liked"],answer:"liked",rule:"past-d"},
     {id:"pr08",sentence:"We _____ a movie last night.",verb:"watch",choices:["watch","watched"],answer:"watched",rule:"past-ed"},
     {id:"pr09",sentence:"The class _____ about insects yesterday.",verb:"learn",choices:["learn","learned"],answer:"learned",rule:"past-ed"},
-    {id:"pr10",sentence:"He _____ his bike in the park.",verb:"use",choices:["use","used"],answer:"used",rule:"past-d"},
-    {id:"pr11",sentence:"The children _____ high during the game.",verb:"jump",choices:["jump","jumped"],answer:"jumped",rule:"past-ed"},
+    {id:"pr10",sentence:"He _____ his bike in the park yesterday.",verb:"use",choices:["use","used"],answer:"used",rule:"past-d"},
+    {id:"pr11",sentence:"The children _____ high during the game yesterday.",verb:"jump",choices:["jump","jumped"],answer:"jumped",rule:"past-ed"},
     {id:"pr12",sentence:"I _____ carefully to the story yesterday.",verb:"listen",choices:["listen","listened"],answer:"listened",rule:"past-ed"},
-    {id:"pr13",sentence:"She _____ her homework before dinner.",verb:"finish",choices:["finish","finished"],answer:"finished",rule:"past-ed"},
-    {id:"pr14",sentence:"The animal _____ in the forest for years.",verb:"live",choices:["live","lived"],answer:"lived",rule:"past-d"},
+    {id:"pr13",sentence:"She _____ her homework before dinner yesterday.",verb:"finish",choices:["finish","finished"],answer:"finished",rule:"past-ed"},
+    {id:"pr14",sentence:"The animal _____ in the forest for years before it moved away.",verb:"live",choices:["live","lived"],answer:"lived",rule:"past-d"},
     {id:"pr15",sentence:"Dad _____ the school last night.",verb:"phone",choices:["phone","phoned"],answer:"phoned",rule:"past-d"},
-    {id:"pr16",sentence:"He _____ his teeth before bed.",verb:"brush",choices:["brush","brushed"],answer:"brushed",rule:"past-ed"},
-    {id:"pr17",sentence:"Mum _____ the car on Sunday.",verb:"wash",choices:["wash","washed"],answer:"washed",rule:"past-ed"},
-    {id:"pr18",sentence:"Anson _____ the window this morning.",verb:"open",choices:["open","opened"],answer:"opened",rule:"past-ed"},
+    {id:"pr16",sentence:"He _____ his teeth before bed last night.",verb:"brush",choices:["brush","brushed"],answer:"brushed",rule:"past-ed"},
+    {id:"pr17",sentence:"Mum _____ the car last Sunday.",verb:"wash",choices:["wash","washed"],answer:"washed",rule:"past-ed"},
+    {id:"pr18",sentence:"Anson _____ the window yesterday morning.",verb:"open",choices:["open","opened"],answer:"opened",rule:"past-ed"},
     {id:"pr19",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stay","stayed"],answer:"stayed",rule:"past-ed"},
     {id:"pr20",sentence:"I _____ to finish the puzzle yesterday.",verb:"want",choices:["want","wanted"],answer:"wanted",rule:"past-ed"},
-    {id:"pr21",sentence:"The ants _____ on the rock after the rain.",verb:"gather",choices:["gather","gathered"],answer:"gathered",rule:"past-ed"},
+    {id:"pr21",sentence:"The ants _____ on the rock after the rain yesterday.",verb:"gather",choices:["gather","gathered"],answer:"gathered",rule:"past-ed"},
     {id:"pr22",sentence:"It _____ all afternoon yesterday.",verb:"rain",choices:["rain","rained"],answer:"rained",rule:"past-ed"}
   ],
   pastSpelling:[
-    {id:"ps01",sentence:"The girl _____ hard for the test.",verb:"study",choices:["studyed","studied"],answer:"studied",rule:"past-ied"},
-    {id:"ps02",sentence:"Dad _____ the box to the car.",verb:"carry",choices:["carryed","carried"],answer:"carried",rule:"past-ied"},
-    {id:"ps03",sentence:"The rabbit _____ over the log.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"},
-    {id:"ps04",sentence:"We _____ the game after lunch.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
-    {id:"ps05",sentence:"The bus _____ near the school.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
-    {id:"ps06",sentence:"She _____ the baby carefully.",verb:"plan",choices:["planed","planned"],answer:"planned",rule:"past-double"},
+    {id:"ps01",sentence:"The girl _____ hard for the test yesterday.",verb:"study",choices:["studyed","studied"],answer:"studied",rule:"past-ied"},
+    {id:"ps02",sentence:"Dad _____ the box to the car yesterday.",verb:"carry",choices:["carryed","carried"],answer:"carried",rule:"past-ied"},
+    {id:"ps03",sentence:"The rabbit _____ over the log yesterday.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"},
+    {id:"ps04",sentence:"We _____ the game after lunch yesterday.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
+    {id:"ps05",sentence:"The bus _____ near the school yesterday.",verb:"stop",choices:["stoped","stopped"],answer:"stopped",rule:"past-double"},
+    {id:"ps06",sentence:"The boy _____ the desk twice yesterday.",verb:"tap",choices:["taped","tapped"],answer:"tapped",rule:"past-double"},
     {id:"ps07",sentence:"He _____ the heavy bag yesterday.",verb:"carry",choices:["carryed","carried"],answer:"carried",rule:"past-ied"},
-    {id:"ps08",sentence:"The frog _____ into the pond.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"},
+    {id:"ps08",sentence:"The frog _____ into the pond yesterday.",verb:"hop",choices:["hoped","hopped"],answer:"hopped",rule:"past-double"},
     {id:"ps09",sentence:"The baby _____ when she was tired.",verb:"cry",choices:["cryed","cried"],answer:"cried",rule:"past-ied"},
     {id:"ps10",sentence:"He _____ to catch the bus yesterday.",verb:"hurry",choices:["hurryed","hurried"],answer:"hurried",rule:"past-ied"},
     {id:"ps11",sentence:"I _____ to open the box yesterday.",verb:"try",choices:["tryed","tried"],answer:"tried",rule:"past-ied"}
   ],
   pastIrregular:[
     {id:"pi01",sentence:"Yesterday, we _____ to the science museum.",verb:"go",choices:["goed","went"],answer:"went",rule:"past-irregular"},
-    {id:"pi02",sentence:"I _____ a colorful bird in the tree.",verb:"see",choices:["seed","saw"],answer:"saw",rule:"past-irregular"},
-    {id:"pi03",sentence:"She _____ an apple after lunch.",verb:"eat",choices:["eated","ate"],answer:"ate",rule:"past-irregular"},
+    {id:"pi02",sentence:"I _____ a colorful bird in the tree yesterday.",verb:"see",choices:["seed","saw"],answer:"saw",rule:"past-irregular"},
+    {id:"pi03",sentence:"She _____ an apple after lunch yesterday.",verb:"eat",choices:["eated","ate"],answer:"ate",rule:"past-irregular"},
     {id:"pi04",sentence:"My uncle _____ to our house last night.",verb:"come",choices:["comed","came"],answer:"came",rule:"past-irregular"},
-    {id:"pi05",sentence:"He _____ a photo of the butterfly.",verb:"take",choices:["taked","took"],answer:"took",rule:"past-irregular"},
-    {id:"pi06",sentence:"I _____ a letter to my friend.",verb:"write",choices:["writed","wrote"],answer:"wrote",rule:"past-irregular"},
-    {id:"pi07",sentence:"The boy _____ very fast in the race.",verb:"run",choices:["runned","ran"],answer:"ran",rule:"past-irregular"},
-    {id:"pi08",sentence:"We _____ water after playing outside.",verb:"drink",choices:["drinked","drank"],answer:"drank",rule:"past-irregular"},
-    {id:"pi09",sentence:"Dad _____ a paper airplane for me.",verb:"make",choices:["maked","made"],answer:"made",rule:"past-irregular"},
-    {id:"pi10",sentence:"She _____ a gift from her aunt.",verb:"get",choices:["getted","got"],answer:"got",rule:"past-irregular"},
+    {id:"pi05",sentence:"He _____ a photo of the butterfly yesterday.",verb:"take",choices:["taked","took"],answer:"took",rule:"past-irregular"},
+    {id:"pi06",sentence:"I _____ a letter to my friend yesterday.",verb:"write",choices:["writed","wrote"],answer:"wrote",rule:"past-irregular"},
+    {id:"pi07",sentence:"The boy _____ very fast in the race last weekend.",verb:"run",choices:["runned","ran"],answer:"ran",rule:"past-irregular"},
+    {id:"pi08",sentence:"We _____ water after playing outside yesterday.",verb:"drink",choices:["drinked","drank"],answer:"drank",rule:"past-irregular"},
+    {id:"pi09",sentence:"Dad _____ a paper airplane for me yesterday.",verb:"make",choices:["maked","made"],answer:"made",rule:"past-irregular"},
+    {id:"pi10",sentence:"She _____ a gift from her aunt last week.",verb:"get",choices:["getted","got"],answer:"got",rule:"past-irregular"},
     {id:"pi11",sentence:"I _____ well last night.",verb:"sleep",choices:["sleeped","slept"],answer:"slept",rule:"past-irregular"},
-    {id:"pi12",sentence:"We _____ on the bench after lunch.",verb:"sit",choices:["sitted","sat"],answer:"sat",rule:"past-irregular"},
-    {id:"pi13",sentence:"My friend _____ me a birthday card.",verb:"give",choices:["gived","gave"],answer:"gave",rule:"past-irregular"},
+    {id:"pi12",sentence:"We _____ on the bench after lunch yesterday.",verb:"sit",choices:["sitted","sat"],answer:"sat",rule:"past-irregular"},
+    {id:"pi13",sentence:"My friend _____ me a birthday card yesterday.",verb:"give",choices:["gived","gave"],answer:"gave",rule:"past-irregular"},
     {id:"pi14",sentence:"The boy _____ the ball yesterday.",verb:"catch",choices:["catched","caught"],answer:"caught",rule:"past-irregular"}
   ],
 
@@ -1010,7 +1039,7 @@ function downloadBlob(blob, filename){
 }
 function exportBackup(){
   try{
-    const payload={app:"Anson English Grammar Adventure",version:"V4.61",exportedAt:new Date().toISOString(),data:state};
+    const payload={app:"Anson English Grammar Adventure",version:"V4.66",exportedAt:new Date().toISOString(),data:state};
     downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`Anson_Grammar_Backup_${new Date().toISOString().slice(0,10)}.json`);
     showToast("完整備份已開始下載。請將檔案保存在安全的位置。");
   }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
@@ -1105,6 +1134,8 @@ function showScreen(id){
 
 function updateHeader(){
   const need=100 + (state.level-1)*50;
+  const profilePokemon=document.getElementById("profilePokemon");
+  if(profilePokemon){ const active=POKEMON[state.activePokemon||25]||POKEMON[25]; profilePokemon.src=active.img; profilePokemon.alt=active.name; }
   document.getElementById("levelText").textContent=`Lv. ${state.level}`;
   document.getElementById("xpText").textContent=`${state.xp} / ${need} EXP`;
   document.getElementById("xpFill").style.width=Math.min(100,state.xp/need*100)+"%";
@@ -1115,6 +1146,62 @@ function saveSettings(){
 }
 function renderSettings(){
   document.getElementById("autoSpeak").checked=state.settings.autoSpeak;
+}
+
+function findQuestionRecord(questionId){
+  for(const stage of STAGES){
+    for(const type of (stage.types||[])){
+      const list=QUESTION_BANK[type]||[];
+      const q=list.find(item=>String(item.id)===String(questionId));
+      if(q) return {question:q,stage};
+    }
+  }
+  return null;
+}
+function getPendingWrongQuestions(){
+  const latest=new Map();
+  for(const log of (state.logs||[]).filter(x=>x.mode==="LEARNING")){
+    const id=String(log.questionId||`${log.stage}|${log.question||""}`);
+    const prev=latest.get(id);
+    if(!prev || Number(log.ts||0)>=Number(prev.ts||0)) latest.set(id,log);
+  }
+  return [...latest.values()].filter(log=>!log.correct).sort((a,b)=>(Number(b.ts)||0)-(Number(a.ts)||0)).slice(0,50).map(log=>({...log,found:findQuestionRecord(log.questionId)}));
+}
+function renderWrongAnswers(){
+  const panel=document.getElementById("wrongAnswersPanel");
+  if(!panel) return;
+  const wrongs=getPendingWrongQuestions();
+  if(!wrongs.length){
+    panel.innerHTML=`<div class="wrong-empty">目前沒有待複習的錯題。答錯過的題目會出現在這裡，方便之後再練習。</div>`;
+    return;
+  }
+  panel.innerHTML=wrongs.map((log,i)=>{
+    const stage=log.found?.stage;
+    const q=log.found?.question;
+    const prompt=q?.sentence?normalizeQuestionSentence(q):(log.question||"題目");
+    const verb=q?.verb||log.verb||"";
+    const userAnswer=log.selectedAnswer||log.answer||"—";
+    const correctAnswer=q?.answer||log.correctAnswer||"—";
+    return `<article class="wrong-item"><div><div class="wrong-meta">${escapeHtml(stage?.title||log.stage||"文法練習")}</div><div class="wrong-question">${escapeHtml(prompt)}</div>${verb?`<div class="wrong-meta">原形：${escapeHtml(verb)}</div>`:""}<div class="wrong-answers"><span style="color:#e98b91">你選的：${escapeHtml(userAnswer)}</span>　<span style="color:#7fc79a">正確答案：${escapeHtml(correctAnswer)}</span></div></div><div class="wrong-actions"><button class="btn primary small" type="button" ${q?`onclick="startWrongQuestion('${escapeHtml(q.id)}','${escapeHtml(stage?.id||log.stage||"")}')"`:"disabled"}>再練一次</button></div></article>`;
+  }).join("")+`<div class="actions" style="justify-content:flex-start;margin-top:2px"><button class="btn primary" type="button" onclick="startWrongReviewAll()">全部錯題再練一次（${wrongs.filter(x=>x.found?.question).length} 題）</button></div>`;
+}
+function createReviewSession(questions,stageId,title){
+  if(!questions.length){showToast("目前沒有可複習的錯題。",false);return;}
+  currentSession={stageId,questions,index:0,correct:0,firstTryCorrect:0,independent:0,hintCorrect:0,wrong:0,started:Date.now(),attempts:0,questionScores:[],answerAttempts:0,hintCount:0,suspiciousAttempts:0,improvementCount:0,questionAttemptData:{},levelUps:0,uniqueCompleted:0,learningSegmentStartedAt:Date.now(),reviewOnly:true};
+  document.getElementById("stageTitle").textContent=title;
+  showScreen("learn");
+  renderQuestion();
+}
+function startWrongQuestion(questionId,stageId){
+  const found=findQuestionRecord(questionId);
+  if(!found){showToast("找不到這道題目，請先重新整理關卡地圖。",true);return;}
+  createReviewSession([found.question],stageId||found.stage.id,`${found.stage.title}｜錯題複習`);
+}
+function startWrongReviewAll(){
+  const wrongs=getPendingWrongQuestions();
+  const qs=wrongs.map(x=>x.found?.question).filter(Boolean);
+  const unique=[...new Map(qs.map(q=>[q.id,q])).values()];
+  createReviewSession(unique,"wrong-review","錯題複習");
 }
 
 function renderMap(){
@@ -1130,15 +1217,12 @@ function renderMap(){
       const st=state.stageStats[s.id]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
       const locked=!state.unlocked.includes(s.id);
       const mastery=stageMastery(s);
-      const totalQuestions=Math.max(0,Number(st.totalQuestions)||0);
-      const totalCorrect=Math.max(0,Number(st.totalCorrect)||0);
-      const accuracy=totalQuestions>0?Math.round(Math.min(totalCorrect,totalQuestions)/totalQuestions*100):null;
       const status=mastery>=90?"⭐ Mastered":mastery>=70?"🟡 Practicing":st.plays>0?"🔵 Exploring":"⚪ Not started";
-      const badgeText=locked?"🔒":(accuracy===null?status:`${mastery>=70&&mastery<90?"🟡":mastery>=90?"⭐":st.plays>0?"🔵":"⚪"} ${accuracy}%`);
+      const badgeText=locked?"🔒":(st.plays===0?"⚪ 尚未開始":`${mastery>=90?"⭐":mastery>=70?"🟡":"🔵"} ${Math.round(mastery)}% 熟練度`);
       const review=(s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview));
-      const scoreMarkup=accuracy===null
-        ? `<div class="stage-score no-score">成績：尚無作答紀錄</div>`
-        : `<div class="stage-score">首次答對 <b>${Math.min(totalCorrect,totalQuestions)}</b> / ${totalQuestions} 題 <span class="rate">· ${accuracy}% 首次正確率</span></div>`;
+      const scoreMarkup=Number(st.plays)>0
+        ? `<div class="stage-score">已練習 <b>${Number(st.plays)||0}</b> 次，持續累積中</div>`
+        : `<div class="stage-score no-score">尚未開始練習</div>`;
       return `<div class="card stage ${locked?"locked":""}" ${locked?"":`data-stage="${s.id}" role="button" tabindex="0" aria-label="進入 ${escapeHtml(s.title)}"`}>
         <span class="num">STAGE ${i+1}</span><span class="badge">${badgeText}</span>
         <h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(s.desc)}</p>
@@ -1175,6 +1259,7 @@ function renderMap(){
     event.preventDefault();
     startStage(card.dataset.stage);
   };
+  renderWrongAnswers();
   const candidates=STAGES.filter(s=>Array.isArray(state.unlocked) && state.unlocked.includes(s.id));
   const safeMastery=(s)=>{ try{return stageMastery(s)}catch(e){console.warn("stageMastery warning",s?.id,e);return 0;} };
   const reviewStage=candidates.find(s=>safeMastery(s)>=70 && safeMastery(s)<90 && (s.types||[]).some(t=>(QUESTION_BANK[t]||[]).some(q=>state.learning?.mastery?.[masterySkill(q)]?.needsReview)));
@@ -1489,10 +1574,10 @@ function renderWarmupQuestion(){
       }).join("")}</div>`;
   }else{
     const isError=type==="error";
-    html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+    html=`<span class="rule-chip">${String(currentQuestion.rule||"").startsWith("past-")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
       <div class="sentence">${highlightBlank(normalizeQuestionSentence(q))}</div>
       ${(!String(q.rule||"").startsWith("past-") || !["past-was-were","past-had"].includes(q.rule)) && q.verb ? `<div class="baseverb">${escapeHtml(q.verb)}</div>` : ""}
-      <div class="choice-row">${(q.choices||[]).map(c=>currentSession?.stageId?.startsWith("past") ? `<div class="past-choice-wrap"><button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button><button class="speaker choice-speaker" type="button" aria-label="播放 ${escapeHtml(c)}" title="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(c)}')">🔊</button></div>` : `<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+      <div class="choice-row">${(q.choices||[]).map(c=>`<button class="choice" type="button" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="warmupFeedback" class="feedback"></div>`;
   card.innerHTML=html;
@@ -1531,7 +1616,7 @@ function handleWarmupAnswer(correct,answer,extra){
       const example=`<div class="feedback-example"><button class="speaker" style="width:36px;height:36px;font-size:16px" onclick="event.stopPropagation();speak('${escapeHtml(ex.sentence)}')">🔊</button><span>${escapeHtml(ex.sentence).replace(ex.form,`<b class="red">${escapeHtml(ex.form)}</b>`)}</span></div>`;
       const applicableExplanation=correctRuleExplanation(q) || (type==="rule" ? ruleTeachingMarkup(q,ex) : "");
       const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
-      f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${example}${applicableExplanation}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>`;
+      f.innerHTML=`<div class="feedback-result-row"><div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>${example}${applicableExplanation}`;
       speak("Correct");
       speak(ex.sentence);
       return;
@@ -1543,16 +1628,16 @@ function handleWarmupAnswer(correct,answer,extra){
       if(correctChoice) correctChoice.classList.add("correct");
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
-        const speaker=sentenceEl.querySelector(".speaker");
-        const speakerHtml=speaker?speaker.outerHTML:"";
         const filled=escapeHtml(normalizeQuestionSentence(q)).replace(/_{3,}/,`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
-        sentenceEl.innerHTML=speakerHtml+filled;
+        const spokenSentence=String(normalizeQuestionSentence(q)).replace(/_{3,}/,String(answer));
+        sentenceEl.classList.add("has-correct-audio");
+        sentenceEl.innerHTML=`<button class="sentence-audio-after-correct" type="button" aria-label="播放完整句子" title="聽整句" onclick="event.stopPropagation();speak(${JSON.stringify(spokenSentence).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")})">🔊</button><span>${filled}</span>`;
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
     const isPastWarmup=String(q.rule||"").startsWith("past-");
     const answerCard=answerTeachingMarkup(q);
-    f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${answerCard}<div class="actions feedback-next"><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題'}</button></div>`;
+    f.innerHTML=`<div class="feedback-result-row"><div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div><button class="btn primary next-arrow" aria-label="${last?'開始正式練習':'下一題'}" title="${last?'開始正式練習':'下一題'}" onclick="${last?'beginFormalPractice()':'nextWarmupQuestion()'}">${last?'開始練習':'下一題 →'}</button></div>${answerCard}`;
     if(!isPastWarmup) speak("Correct");
     return;
   }
@@ -1677,10 +1762,10 @@ function renderQuestion(){
       }).join("")}</div>`;
   }else{
     const isError=type==="error";
-    html=`<span class="rule-chip">${currentSession?.stageId?.startsWith("past")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
+    html=`<span class="rule-chip">${String(currentQuestion.rule||"").startsWith("past-")?"一般過去式":isError?"錯誤偵探":type==="ing"?"現在進行式":"句子填空"}</span>
       <div class="sentence">${highlightBlank(normalizeQuestionSentence(currentQuestion))}</div>
       ${(!String(currentQuestion.rule||"").startsWith("past-") || !["past-was-were","past-had"].includes(currentQuestion.rule)) && currentQuestion.verb ? `<div class="baseverb">${escapeHtml(currentQuestion.verb)}</div>` : ""}
-      <div class="choice-row">${currentQuestion.choices.map(c=>currentSession?.stageId?.startsWith("past") ? `<div class="past-choice-wrap"><button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button><button class="speaker choice-speaker" type="button" aria-label="播放 ${escapeHtml(c)}" title="播放單字發音" onclick="event.stopPropagation();speak('${escapeHtml(c)}')">🔊</button></div>` : `<button class="choice" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
+      <div class="choice-row">${currentQuestion.choices.map(c=>`<button class="choice" type="button" onclick="answerSentence('${escapeHtml(c)}')">${escapeHtml(c)}</button>`).join("")}</div>`;
   }
   html+=`<div id="feedback" class="feedback"></div>`;
   document.getElementById("questionCard").innerHTML=html;
@@ -2108,7 +2193,6 @@ function answerTeachingMarkup(q){
   const answer=String(q.answer||"").toLowerCase();
   const esc=escapeHtml;
   const jsArg=(value)=>JSON.stringify(String(value)).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-  const speaker=(word,label)=>`<button class="answer-word-audio" type="button" aria-label="播放${esc(label)}發音" title="播放${esc(label)}發音" onclick="event.stopPropagation();speak(${jsArg(word)})">🔊</button>`;
   let left=esc(base), right=esc(answer), explanation="";
 
   if(rule==="past-was-were"){
@@ -2175,9 +2259,7 @@ function answerTeachingMarkup(q){
     explanation=`這一題要使用動詞 <span class="mark-ending">${esc(answer)}</span>。`;
   }
 
-  const fullSentence=String(q.sentence||"").replace(/_{3,}/,answer);
-  const sentenceAudio=fullSentence?`<div class="answer-full-sentence"><button class="speaker" type="button" aria-label="播放完整句子：${esc(fullSentence)}" title="聽整句" onclick="event.stopPropagation();speak(${jsArg(fullSentence)})">🔊 聽整句</button></div>`:"";
-  return `<section class="answer-teaching-card" aria-label="文法解說"><div class="answer-transform"><div class="answer-word-side"><span class="answer-word-label">原形</span><span class="answer-word">${left}</span>${speaker(rule==="past-was-were"?"be":base,"原形")}</div><div class="answer-transform-arrow" aria-hidden="true">→</div><div class="answer-word-side"><span class="answer-word-label">變化後</span><span class="answer-word">${right}</span>${speaker(answer,"變化後")}</div></div><div class="answer-rule-box"><div class="answer-rule-title">文法小提醒</div><div class="answer-rule-copy">${explanation}</div></div></section>${sentenceAudio}`;
+  return `<section class="answer-teaching-card" aria-label="文法解說"><div class="answer-transform"><div class="answer-word-side"><span class="answer-word-label">原形</span><span class="answer-word">${left}</span></div><div class="answer-transform-arrow" aria-hidden="true">→</div><div class="answer-word-side"><span class="answer-word-label">變化後</span><span class="answer-word">${right}</span></div></div><div class="answer-rule-box"><div class="answer-rule-title">文法小提醒</div><div class="answer-rule-copy">${explanation}</div></div></section>`;
 }
 
 function renderFeedback(correct,answer,errorType,exp,extra={}){
@@ -2197,10 +2279,10 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
       if(correctChoice) correctChoice.classList.add("correct");
       const sentenceEl=document.querySelector(".sentence");
       if(sentenceEl){
-        const speaker=sentenceEl.querySelector(".speaker");
-        const speakerHtml=speaker?speaker.outerHTML:"";
         const filled=escapeHtml(normalizeQuestionSentence(q)).replace(/_{3,}/,`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
-        sentenceEl.innerHTML=speakerHtml+filled;
+        const spokenSentence=String(normalizeQuestionSentence(q)).replace(/_{3,}/,String(answer));
+        sentenceEl.classList.add("has-correct-audio");
+        sentenceEl.innerHTML=`<button class="sentence-audio-after-correct" type="button" aria-label="播放完整句子" title="聽整句" onclick="event.stopPropagation();speak(${JSON.stringify(spokenSentence).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")})">🔊</button><span>${filled}</span>`;
       }
     }
     // Put the grammar transformation inside the correct Pokémon card so the child
@@ -2220,7 +2302,7 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
     const ruleExplanation=q.poke
       ? (correctRuleExplanation(q) || (type==="rule" && ex ? ruleTeachingMarkup(q,ex) : ""))
       : answerTeachingMarkup(q);
-    const pastSentenceAudio=""; // Full sentence audio is included in the standardized card for non-Verb units.
+    const pastSentenceAudio=""; // Sentence audio appears beside the completed sentence only.
     // Learning mode: show the verb transformation inside the Pokémon card and the example below.
     // The child advances only by pressing the visible arrow button.
     clearTimeout(window._learningAdvanceTimer);
@@ -2228,17 +2310,10 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
     if(isLastQuestion){
       // Final question: never show "Next". Make the state explicit so a child
       // cannot mistake the end of the mission for another question.
-      f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
-        <div class="mission-finished" role="status">✓ 本關完成</div>
-        <div class="actions feedback-next">
-          <button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">完成</button>
-        </div>`;
+      f.innerHTML=`<div class="feedback-result-row"><div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div><button class="btn primary next-arrow" aria-label="完成本關" title="完成本關" onclick="nextQuestion()">本關完成 →</button></div>${example}${ruleExplanation}${pastSentenceAudio}`;
     }else{
       const pastUnit=String(q.rule||"").startsWith("past-");
-      f.innerHTML=`<div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div>${example}${ruleExplanation}${pastSentenceAudio}
-        <div class="actions feedback-next">
-          <button class="btn primary next-arrow" aria-label="${pastUnit?"下一題":"Next"}" title="${pastUnit?"下一題":"Next"}" onclick="nextQuestion()">${pastUnit?"下一題":"→ Next"}</button>
-        </div>`;
+      f.innerHTML=`<div class="feedback-result-row"><div class="result-banner" role="status" aria-live="polite" style="color:#7fc79a">✓ 答對了！</div><button class="btn primary next-arrow" aria-label="下一題" title="下一題" onclick="nextQuestion()">下一題 →</button></div>${example}${ruleExplanation}${pastSentenceAudio}`;
     }
     if(String(q.rule||"").startsWith("past-")) {
       // Past-tense rule explanations are Chinese; keep sentence audio for the completed example.
@@ -2320,13 +2395,14 @@ function finishSession(){
   const practiceScorePct=Math.round(earnedPoints/Math.max(1,total));
 
   if(!false){
-    const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
-    old.best=Math.max(old.best,firstTryPct); old.plays++; old.totalCorrect+=s.firstTryCorrect; old.totalQuestions+=total;
-    state.stageStats[s.stageId]=old;
-      // All stages are available from the beginning; completion never gates access.
+    if(!s.reviewOnly){
+      const old=state.stageStats[s.stageId]||{best:0,plays:0,totalCorrect:0,totalQuestions:0};
+      old.best=Math.max(old.best,firstTryPct); old.plays++; old.totalCorrect+=s.firstTryCorrect; old.totalQuestions+=total;
+      state.stageStats[s.stageId]=old;
       state.unlocked=STAGES.map(x=>x.id);
-      const unlockedNextId=null;
-    s.reward=maybeReward(s,firstTryPct);
+      s.reward=maybeReward(s,firstTryPct);
+    } else { s.reward=null; }
+    const unlockedNextId=null;
     saveState();
     let shouldRest=false;
     if(s.learningSegmentStartedAt){
@@ -2343,12 +2419,12 @@ function finishSession(){
     const firstTryRate=firstTryPct;
     const finalRate=finalCompletionPct;
     showModal(`<div class="reward-poke mission-complete-pulse"><img src="${POKEMON[state.activePokemon||25].img}" alt="${POKEMON[state.activePokemon||25].name}"></div>
-      <div class="reward-title">🌟 本關完成！</div>
-      <p role="status">本次共 ${total} 題。每一題都會標示第一次是否答對、最後是否修正成功，以及正確答案。</p>
+      <div class="reward-title">${s.reviewOnly?"🧩 錯題複習完成！":"🌟 本關完成！"}</div>
+      <p role="status">${s.reviewOnly?"本次複習":"本次練習"}共 ${total} 題。每一題都會標示第一次是否答對、最後是否修正成功，以及正確答案。</p>
       <div class="test-result-score"><div><span>練習得分（含重試扣分）</span><b>${practiceScorePct}%</b><strong>本次得分</strong></div><div><span>第一次答對</span><b>${s.firstTryCorrect} / ${total}</b><strong>${firstTryRate}%</strong></div><div><span>最後完成答對</span><b>${finalCorrectCount} / ${total}</b><strong>${finalRate}%</strong></div><div><span>修正次數</span><b>${s.improvementCount}</b><strong>次</strong></div></div>
       ${buildSessionReviewMarkup(s)}
       ${levelHtml}${rewardHtml}
-      ${firstTryPct>=70 ? `<p class="muted">✓ 首次作答正確率達到 70%。</p>` : `<p style="color:#e5c86f">這次可以再練習一次，試著讓更多題目第一次就答對。</p>`}
+      ${s.reviewOnly?"":(firstTryPct>=70 ? `<p class="muted">✓ 本次首次作答表現良好。</p>` : `<p style="color:#e5c86f">可以繼續練習，熟悉後會更順手。</p>`)}
       <div class="actions">
         ${unlockedNextId?`<button class="btn primary" onclick="closeModal();startStage('${unlockedNextId}')">→ 進入第 5 關</button>`:""}
         <button class="btn primary" onclick="closeModal();showScreen('map')">🗺️ 回到地圖</button>
