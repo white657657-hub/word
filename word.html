@@ -961,6 +961,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition-duration:.01ms !important; } }
 
 
+        /* TEACHER REVIEW: the target word must appear once only; the guide is legacy duplicate UI. */
+        #practice-guide { display:none !important; visibility:hidden !important; height:0 !important; min-height:0 !important; margin:0 !important; padding:0 !important; }
+        #practice-guide * { display:none !important; }
+        /* TEACHER REVIEW: non-combat modes should not show HP/EXP battle UI. */
+        #combat-arena[hidden] { display:none !important; }
         /* FINAL UI FIX: true dark theme + combat layout collision prevention */
         :root {
           color-scheme: dark !important;
@@ -1159,7 +1164,7 @@ body{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif!important}
 #practice-guide{margin:0 auto 4px!important;min-height:0!important;height:auto!important;line-height:1.1!important;font-size:clamp(1.3rem,3.5vw,2rem)!important;color:#9ac7dc!important}
 .practice-guide-wordline{display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important;min-height:0!important}
 .practice-guide-wordline .word-audio-icon{display:none!important}
-#letter-area{display:flex!important;justify-content:center!important;align-items:center!important;flex-wrap:nowrap!important;gap:6px!important;width:100%!important;max-width:100%!important;overflow:visible!important;margin:5px auto 8px!important;padding:5px 8px!important}
+#letter-area{display:flex!important;justify-content:center!important;align-items:center!important;flex-wrap:nowrap!important;gap:6px!important;width:100%!important;max-width:100%!important;overflow:visible!important;margin:2px auto 5px!important;padding:3px 8px!important}
 .letter-box{flex:0 1 54px!important;width:clamp(35px,5.3vw,54px)!important;min-width:0!important;height:clamp(48px,7vh,62px)!important;line-height:1!important;border:2px solid #6e9ab7!important;border-radius:11px!important;background:#132238!important;color:#f5f8fc!important;font-size:clamp(1.25rem,2.6vw,1.8rem)!important;font-weight:850!important;text-align:center!important;padding:0!important;outline-offset:3px!important;box-shadow:none!important}
 .letter-box.mismatch,.letter-box.wrong{background:#342027!important;border-color:#f07880!important;color:#fff0f1!important}
 .letter-box.correct-place{background:#17382f!important;border-color:#65c99a!important;color:#e7fff2!important}
@@ -1429,7 +1434,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             </div>
 
 
-<button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()">🛡️ 先練習這題（不計戰鬥）</button>
+<button id="btn-force-practice" class="game-action-btn" onclick="startInGamePractice()" aria-label="先練習這題，不計戰鬥">🛡️ 先練習這題<br><span class="force-practice-subtitle">（不計戰鬥）</span></button>
         </div>
     </div>
 
@@ -2339,7 +2344,9 @@ html, body { height:100% !important; overflow:hidden !important; }
             if (en.toLowerCase() === 'cubby' && /小房間/.test(cn)) cn = '小置物格';
             if (en.toLowerCase() === 'mix up' && /混合起來/.test(cn)) cn = '搞混；弄錯';
             if (en.toLowerCase() === 'trade' && /^交易$/.test(cn)) cn = '交換；交易';
-            if (en.toLowerCase() === 'land' && /^土地$/.test(cn)) cn = '土地；陸地';
+            if (en.toLowerCase() === 'near' && /^附近$/.test(cn)) cn = '附近；靠近';
+            if (en.toLowerCase() === 'born' && /^出生$/.test(cn)) cn = '出生；誕生';
+            if (en.toLowerCase() === 'land' && /土地/.test(cn) && !/降落/.test(cn)) cn = '降落；土地；陸地';
             if (en.toLowerCase() === 'chinese' && /^中國人$/.test(cn)) cn = '中文；中國人／中國的';
             if (!currentUnit) currentUnit = 'W1';
             serial++;
@@ -4061,6 +4068,30 @@ const storyWordGloss = {
     }
 
     async function loadWord() {
+        state.questionRenderToken = (state.questionRenderToken || 0) + 1;
+        const questionRenderToken = state.questionRenderToken;
+        // 每題重新開始時清除上一題的錯誤提示與錯誤格樣式；不可把上一題的錯誤狀態帶到新題。
+        const staleSpellingFeedback = document.getElementById('spelling-feedback');
+        if (staleSpellingFeedback) {
+            staleSpellingFeedback.style.display = 'none';
+            staleSpellingFeedback.textContent = '';
+        }
+        const promptNode = document.getElementById('display-cn');
+        if (promptNode) promptNode.textContent = '載入題目…';
+        const targetNode = document.getElementById('practice-target-word');
+        if (targetNode) { targetNode.hidden = true; targetNode.textContent = ''; }
+        const contextNode = document.getElementById('practice-context-card');
+        if (contextNode) { contextNode.hidden = true; contextNode.style.display = 'none'; contextNode.setAttribute('aria-hidden', 'true'); }
+        const existingLetterArea = document.getElementById('letter-area');
+        if (existingLetterArea) {
+            existingLetterArea.innerHTML = '';
+            delete existingLetterArea.dataset.answerLocked;
+            existingLetterArea.querySelectorAll('.letter-box').forEach(box => {
+                box.classList.remove('wrong', 'mismatch', 'correct-place');
+            });
+            delete existingLetterArea.dataset.lastEvaluatedInput;
+            delete existingLetterArea.dataset.answerCheckPending;
+        }
         const activeRef = state.currentList && state.currentList[state.index] ? state.currentList[state.index].ref : '';
         const resumeBossQuestion = state.mode === 'quiz' && !!state.resumeBossAttemptRef && state.resumeBossAttemptRef === activeRef;
         state.wrongAttemptsThisQuestion = resumeBossQuestion ? Math.max(0, Number(state.resumeBossWrongAttempts) || 0) : 0;
@@ -4092,8 +4123,13 @@ const storyWordGloss = {
             at: Date.now()
         };
         const display = document.getElementById('display-cn');
-        let tip = localDict[word.en.toLowerCase()] || word.cn;
-        if (!tip) { display.innerText = "載入中..."; tip = await fetchTranslation(word.en); }
+        let tip = String(word.cn || '').trim() || localDict[word.en.toLowerCase()] || '';
+        if (!tip) {
+            display.innerText = "載入中...";
+            tip = await fetchTranslation(word.en);
+            if (questionRenderToken !== state.questionRenderToken) return;
+        }
+        if (questionRenderToken !== state.questionRenderToken) return;
         display.innerText = tip;
         const practiceTarget = document.getElementById('practice-target-word');
         const showModelWord = state.mode === 'practice' && !state.tempPractice;
@@ -4101,6 +4137,9 @@ const storyWordGloss = {
             practiceTarget.hidden = !showModelWord;
             practiceTarget.textContent = showModelWord ? String(word.en || '') : '';
         }
+        const arena = document.getElementById('combat-arena');
+        const isRealBattle = state.mode === 'quiz' && !state.tempPractice;
+        if (arena) arena.hidden = !isRealBattle;
         const modeLabel = document.getElementById('child-mode-label');
         if (modeLabel) modeLabel.textContent = state.tempPractice && state.mode === 'quiz' ? '魔王練習（不計戰鬥）' : state.mode === 'quiz' ? '魔王挑戰' : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
         const progressLabel = document.getElementById('child-question-progress');
@@ -4127,11 +4166,17 @@ const storyWordGloss = {
         if (sentenceResult) { sentenceResult.style.display = 'none'; sentenceResult.className = 'sentence-status'; sentenceResult.innerHTML = ''; }
         sentenceTargetWord = String(word.en || '').trim();
         const contextCard = document.getElementById('practice-context-card');
-        const showContextExample = state.mode !== 'quiz';
+        const showContextExample = state.mode === 'practice' && !state.tempPractice;
         if (contextCard) {
             contextCard.hidden = !showContextExample;
             contextCard.setAttribute('aria-hidden', String(!showContextExample));
             contextCard.style.display = showContextExample ? '' : 'none';
+            if (!showContextExample) {
+                const sentence = document.getElementById('practice-context-sentence');
+                const translation = document.getElementById('practice-context-translation');
+                if (sentence) sentence.textContent = '';
+                if (translation) translation.textContent = '';
+            }
         }
         if (showContextExample) refreshPracticeContextSentence(sentenceTargetWord);
 
@@ -4198,6 +4243,7 @@ const storyWordGloss = {
             };
 
             inp.oninput = (e) => {
+                if (area.dataset.answerLocked === '1') return;
                 // 一格只允許一個字母；輸入後自動跳到下一格
                 const chars = Array.from(String(e.target.value || ""));
                 e.target.value = chars.length ? chars[chars.length - 1] : "";
@@ -4276,7 +4322,9 @@ const storyWordGloss = {
 
         // 顯示目前題目的實際字母數，避免字框數與答案不一致。
         area.dataset.answerLength = String(inputIdx);
-        renderPracticeGuide((state.mode === 'practice' || state.mode === 'quiz' || state.tempPractice) ? word.en : "", { showText: state.mode !== 'quiz' });
+        // 單字只在 practice-target-word 顯示一次；避免 practice-guide 再重複顯示同一個英文答案。
+        // 發音由上方 current-word-speak 負責，因此此處不再渲染第二份單字／音訊列。
+        renderPracticeGuide("", { showText: false });
         setTimeout(() => { const f = document.querySelector('.letter-box'); if(f) f.focus(); }, 450); playVoice();
     }
 
@@ -4309,6 +4357,12 @@ const storyWordGloss = {
         const normalizedInput = ui.replace(/[\s\/-]/g, '').toLowerCase();
         const normalizedAnswer = String(word.en || '').replace(/[\s\/-]/g, '').toLowerCase();
 
+        if (normalizedInput === normalizedAnswer) {
+            const answerArea = document.getElementById('letter-area');
+            if (answerArea && answerArea.dataset.answerLocked === '1') return;
+            if (answerArea) answerArea.dataset.answerLocked = '1';
+            boxes.forEach(box => { box.readOnly = true; });
+        }
         if (normalizedInput === normalizedAnswer && state.mode === 'quiz' && state.tempPractice) {
             addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
             const supportFeedback = document.getElementById('child-answer-feedback');
@@ -4321,7 +4375,7 @@ const storyWordGloss = {
             state.resumeBossQuestionStartedAt = state.questionStartedAt || Date.now();
             state.resumeBossQuestionAttemptCount = state.questionAttemptCount || 0;
             state.tempPractice = false;
-            setTimeout(loadWord, 600);
+            setTimeout(loadWord, 1000);
             return;
         }
 
@@ -4394,7 +4448,7 @@ const storyWordGloss = {
                 if (state.currentList.length === 0) {
                     setTimeout(handleVictory, Math.max(500, evolutionDelay));
                 } else {
-                    setTimeout(loadWord, Math.max(600, evolutionDelay));
+                    setTimeout(loadWord, Math.max(1000, evolutionDelay));
                 }
                 return;
             }
@@ -4414,7 +4468,7 @@ const storyWordGloss = {
                 }
 
                 updateHPUI();
-                setTimeout(loadWord, 600);
+                setTimeout(loadWord, 1000);
             }
         } else {
             if (state.mode === 'quiz' && state.tempPractice) {
@@ -5087,6 +5141,25 @@ const storyWordGloss = {
 <button id="wh-return-top" type="button" aria-label="回到頁面最上方" title="回到頁面最上方"
  onclick="(function(){var es=[document.scrollingElement,document.documentElement,document.body,document.querySelector('.container'),...document.querySelectorAll('.view-section')];es.forEach(function(e){if(e){try{e.scrollTop=0;e.scrollLeft=0;}catch(_){}}});window.scrollTo(0,0);})()">↑ 回到頂端</button>
 
+
+<style id="wordhero-child-mode-logic-fix">
+  #btn-force-practice {
+    flex-direction: column !important;
+    gap: 2px !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+  }
+  #btn-force-practice .force-practice-subtitle {
+    display: block;
+    font-size: .9em;
+    font-weight: 750;
+    line-height: 1.2;
+  }
+  #spelling-feedback:empty { display: none !important; }
+  #practice-context-card[hidden] { display: none !important; }
+</style>
+
 </body>
 </html>
 
@@ -5101,7 +5174,7 @@ const storyWordGloss = {
     display:block;
     width:fit-content;
     max-width:92%;
-    margin:8px auto 2px;
+    margin:4px auto 0;
     padding:0;
     border:0;
     border-radius:0;
@@ -5164,4 +5237,13 @@ const storyWordGloss = {
     #spelling-feedback { font-size:.9rem !important; margin-bottom:6px !important; }
     #btn-game-pass.game-pass-after-context { width:150px !important; min-width:150px !important; }
   }
+</style>
+
+<style id="wordhero-teacher-mode-visibility-final">
+  /* Final rule must win over legacy !important styles earlier in this single-file app. */
+  #practice-guide { display:none !important; visibility:hidden !important; height:0 !important; min-height:0 !important; margin:0 !important; padding:0 !important; }
+  #practice-guide * { display:none !important; }
+  #combat-arena[hidden] { display:none !important; }
+  #practice-context-card[hidden] { display:none !important; }
+  #practice-target-word[hidden] { display:none !important; }
 </style>
