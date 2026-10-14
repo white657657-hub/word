@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英文文法冒險 V4.72｜個人化與跨裝置備份</title>
+<title>英文文法冒險 V4.76｜完整關卡驗收修正版</title>
 <style>
 :root{
   --bg:#081018;
@@ -467,7 +467,7 @@ button:disabled{cursor:default;opacity:.8;}
     <div>
       <div class="muted">English Grammar Adventure</div>
       <h1><span style="color:#9dc4e5">英文文法冒險</span></h1>
-      <p class="small-note">V4.72｜個人化玩家名稱、十題關卡與進度備份。</p>
+      <p class="small-note">V4.76｜完整關卡驗收修正版。</p>
       <p>短時間練習、單字發音、句型應用與學習夥伴。</p>
       <div class="hero-actions">
         <button class="btn primary" onclick="showScreen('map')">⚔️ 選擇文法</button>
@@ -814,7 +814,9 @@ const QUESTION_BANK = {
     {id:"pw05",sentence:"The cat _____ under the table last night.",verb:"the cat",choices:["was","were"],answer:"was",rule:"past-was-were"},
     {id:"pw06",sentence:"You _____ very kind yesterday.",verb:"you",choices:["was","were"],answer:"were",rule:"past-was-were"},
     {id:"pw07",sentence:"My friends _____ in the library yesterday.",verb:"my friends",choices:["was","were"],answer:"were",rule:"past-was-were"},
-    {id:"pw08",sentence:"It _____ cold yesterday morning.",verb:"it",choices:["was","were"],answer:"was",rule:"past-was-were"}
+    {id:"pw08",sentence:"It _____ cold yesterday morning.",verb:"it",choices:["was","were"],answer:"was",rule:"past-was-were"},
+    {id:"pw09",sentence:"The books _____ on the desk yesterday.",verb:"the books",choices:["was","were"],answer:"were",rule:"past-was-were"},
+    {id:"pw10",sentence:"My dad _____ tired last night.",verb:"my dad",choices:["was","were"],answer:"was",rule:"past-was-were"}
   ],
   pastHad:[
     {id:"ph01",sentence:"I _____ a red pencil yesterday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
@@ -824,7 +826,9 @@ const QUESTION_BANK = {
     {id:"ph05",sentence:"The dog _____ some water after the walk yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
     {id:"ph06",sentence:"She _____ a cold last week.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
     {id:"ph07",sentence:"Anson and I _____ fun at the museum last weekend.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
-    {id:"ph08",sentence:"My brother _____ a new book yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"}
+    {id:"ph08",sentence:"My brother _____ a new book yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"},
+    {id:"ph09",sentence:"The girls _____ a picnic last Sunday.",verb:"have",choices:["have","had"],answer:"had",rule:"past-had"},
+    {id:"ph10",sentence:"Our teacher _____ a meeting yesterday.",verb:"has",choices:["has","had"],answer:"had",rule:"past-had"}
   ],
   pastRegular:[
     {id:"pr01",sentence:"Yesterday, I _____ to school with Dad.",verb:"walk",choices:["walk","walked"],answer:"walked",rule:"past-ed"},
@@ -833,7 +837,7 @@ const QUESTION_BANK = {
     {id:"pr04",sentence:"He _____ his room yesterday.",verb:"clean",choices:["clean","cleaned"],answer:"cleaned",rule:"past-ed"},
     {id:"pr05",sentence:"I _____ the door carefully yesterday.",verb:"close",choices:["close","closed"],answer:"closed",rule:"past-d"},
     {id:"pr06",sentence:"They _____ their grandparents last Sunday.",verb:"visit",choices:["visit","visited"],answer:"visited",rule:"past-ed"},
-    {id:"pr07",sentence:"Mia _____ the cake after dinner yesterday.",verb:"like",choices:["like","liked"],answer:"liked",rule:"past-d"},
+    {id:"pr07",sentence:"Mia _____ the cake she tried yesterday.",verb:"like",choices:["like","liked"],answer:"liked",rule:"past-d"},
     {id:"pr08",sentence:"We _____ a movie last night.",verb:"watch",choices:["watch","watched"],answer:"watched",rule:"past-ed"},
     {id:"pr09",sentence:"The class _____ about insects yesterday.",verb:"learn",choices:["learn","learned"],answer:"learned",rule:"past-ed"},
     {id:"pr10",sentence:"He _____ his bike in the park yesterday.",verb:"use",choices:["use","used"],answer:"used",rule:"past-d"},
@@ -862,12 +866,14 @@ const QUESTION_BANK = {
     {id:"ps09",sentence:"The baby _____ when she was tired.",verb:"cry",choices:["cryed","cried"],answer:"cried",rule:"past-ied"},
     {id:"ps10",sentence:"He _____ to catch the bus yesterday.",verb:"hurry",choices:["hurryed","hurried"],answer:"hurried",rule:"past-ied"},
     {id:"ps11",sentence:"I _____ to open the box yesterday.",verb:"try",choices:["tryed","tried"],answer:"tried",rule:"past-ied"},
-    {id:"pc01",sentence:"The dog _____ my hand gently yesterday.",verb:"hug",choices:["huged","hugged"],answer:"hugged",rule:"past-double"},
+    {id:"pc01",sentence:"The child _____ the dog gently yesterday.",verb:"hug",choices:["huged","hugged"],answer:"hugged",rule:"past-double"},
     {id:"pc02",sentence:"Mum _____ a trip for the weekend yesterday.",verb:"plan",choices:["planed","planned"],answer:"planned",rule:"past-double"},
     {id:"pc03",sentence:"The team _____ their hands after the show.",verb:"clap",choices:["claped","clapped"],answer:"clapped",rule:"past-double"},
     {id:"pc04",sentence:"The rabbit _____ over the small rock yesterday.",verb:"skip",choices:["skiped","skipped"],answer:"skipped",rule:"past-double"},
     {id:"pc05",sentence:"He _____ the empty box on the floor yesterday.",verb:"drop",choices:["droped","dropped"],answer:"dropped",rule:"past-double"},
-    {id:"pc06",sentence:"The cat _____ onto the chair yesterday.",verb:"jump",choices:["jumped","jumpped"],answer:"jumped",rule:"past-ed"}
+    {id:"pc06",sentence:"The cat _____ onto the chair yesterday.",verb:"jump",choices:["jumped","jumpped"],answer:"jumped",rule:"past-ed"},
+    {id:"pc07",sentence:"The boy _____ the rope yesterday.",verb:"tug",choices:["tuged","tugged"],answer:"tugged",rule:"past-double"},
+    {id:"pc08",sentence:"He _____ his eyes after waking up.",verb:"rub",choices:["rubed","rubbed"],answer:"rubbed",rule:"past-double"}
   ],
   pastIrregular:[
     {id:"pi01",sentence:"Yesterday, we _____ to the science museum.",verb:"go",choices:["goed","went"],answer:"went",rule:"past-irregular"},
@@ -895,13 +901,17 @@ const QUESTION_BANK = {
 // V4.61: concise one-rule feedback and map navigation; keep Y → -ied and CVC doubling separate so Stage 13
 // cannot randomly begin with a non-Y item such as hop → hopped.
 const pastSpellingSource = QUESTION_BANK.pastSpelling || [];
-QUESTION_BANK.pastY = pastSpellingSource.filter(q => q.rule === "past-ied").map(q=>{
+// Keep a balanced 6:4 contrast set: consonant+y → -ied and vowel+y → -yed distractor vs -ed answer.
+QUESTION_BANK.pastY = pastSpellingSource.filter(q => q.rule === "past-ied" && q.verb !== "hurry").map(q=>{
   // Keep the distractor focused on the target spelling contrast: -yed vs -ied.
   const wrong = q.verb.replace(/y$/i,"yed");
   return {...q, choices:[wrong,q.answer]};
 }).concat([
   {id:"py12",sentence:"We _____ soccer after school yesterday.",verb:"play",choices:["playied","played"],answer:"played",rule:"past-ed"},
-  {id:"py13",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stayied","stayed"],answer:"stayed",rule:"past-ed"}
+  {id:"py13",sentence:"We _____ at home last Saturday.",verb:"stay",choices:["stayied","stayed"],answer:"stayed",rule:"past-ed"},
+  {id:"py14",sentence:"She _____ to the message yesterday.",verb:"reply",choices:["replyed","replied"],answer:"replied",rule:"past-ied"},
+  {id:"py15",sentence:"They _____ their time at the zoo yesterday.",verb:"enjoy",choices:["enjoyied","enjoyed"],answer:"enjoyed",rule:"past-ed"},
+  {id:"py16",sentence:"We _____ the meeting until Friday yesterday.",verb:"delay",choices:["delayied","delayed"],answer:"delayed",rule:"past-ed"}
 ]);
 QUESTION_BANK.pastDouble = pastSpellingSource.filter((q,i,arr) => q.rule === "past-double" && arr.findIndex(x=>x.verb===q.verb)===i);
 delete QUESTION_BANK.pastSpelling;
@@ -1097,7 +1107,7 @@ function downloadBlob(blob, filename){
 function exportBackup(){
   try{
     // Include the complete game state: player name, XP, level, learning/mastery, Pokémon, settings and logs.
-    const payload={app:"英文文法冒險",format:"grammar-adventure-backup",version:"V4.72",exportedAt:new Date().toISOString(),data:state};
+    const payload={app:"英文文法冒險",format:"grammar-adventure-backup",version:"V4.76",exportedAt:new Date().toISOString(),data:state};
     downloadBlob(new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"}),`英文文法冒險_完整備份_${new Date().toISOString().slice(0,10)}.json`);
     showToast("完整進度備份已開始下載。換裝置時請匯入這個 JSON 檔。");
   }catch(e){console.error(e);showToast("備份失敗。請確認瀏覽器允許下載檔案，再重試。",true)}
@@ -1412,14 +1422,6 @@ function stageQuestions(stageId,count=5){
   const fallback=shuffle([...fresh,...old,...unique]).filter((q,i,a)=>a.findIndex(x=>x.id===q.id)===i && !picked.some(x=>x.id===q.id));
   picked.push(...fallback.slice(0,Math.max(0,count-picked.length)));
 
-  if(stageId==="past4"){
-    const anchor=unique.find(q=>q.id==="py00");
-    if(anchor && !picked.some(q=>q.id==="py00")){
-      if(picked.length>=count) picked[picked.length-1]=anchor;
-      else picked.push(anchor);
-    }
-  }
-
   // Difficulty policy:
   // - Normal missions are intentionally easy/medium only.
   // - Hard questions appear only after the child opts into 加強難度.
@@ -1433,10 +1435,6 @@ function stageQuestions(stageId,count=5){
     while(finalPicked.length<count && fillers.length){ finalPicked.push({...fillers[i%fillers.length],_repeatFallback:true}); i++; }
   }
   const result=finalPicked.map(q=>{const {_sourceType,...clean}=q; return clean;});
-  if(stageId==="past4"){
-    const anchorIndex=result.findIndex(q=>q.id==="py00");
-    if(anchorIndex>0){ const [anchor]=result.splice(anchorIndex,1); result.unshift(anchor); }
-  }
   // No hidden challenge mode: every mission uses the same child-friendly difficulty policy.
   result.forEach(q=>{ q.difficulty = Math.random()<0.25 ? "medium" : "easy"; });
 
@@ -1651,7 +1649,7 @@ function renderWarmupQuestion(){
   let html="";
   const type=questionType(q);
   if(type==="rule"){
-    const options=makeRuleOptions(q.answer);
+    const options=balanceAnswerOptions(makeRuleOptions(q.answer),q.answer);
     html=`<div class="question"><button class="speaker" onclick="speak(getSpeakText())">🔊</button>
       ${ruleQuestionPrompt(q)}</div>
       <div class="options">${options.map(o=>{
@@ -1722,7 +1720,9 @@ function handleWarmupAnswer(correct,answer,extra){
         const filled=escapeHtml(normalizeQuestionSentence(q)).replace(/_{3,}/,`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         const spokenSentence=String(normalizeQuestionSentence(q)).replace(/_{3,}/,String(answer));
         sentenceEl.classList.add("has-correct-audio");
-        sentenceEl.innerHTML=`<button class="sentence-audio-after-correct" type="button" aria-label="播放完整句子" title="聽整句" onclick="event.stopPropagation();speak(${JSON.stringify(spokenSentence).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")})">🔊</button><span>${filled}</span>`;
+        sentenceEl.innerHTML=`<button class="sentence-audio-after-correct" type="button" aria-label="播放完整句子" title="聽整句">🔊</button><span>${filled}</span>`;
+        const sentenceAudioButton=sentenceEl.querySelector(".sentence-audio-after-correct");
+        sentenceAudioButton?.addEventListener("click",event=>{event.stopPropagation();speak(spokenSentence)});
       }
     }
     const last=currentSession.warmupIndex+1>=currentSession.warmupQuestions.length;
@@ -2392,7 +2392,9 @@ function renderFeedback(correct,answer,errorType,exp,extra={}){
         const filled=escapeHtml(normalizeQuestionSentence(q)).replace(/_{3,}/,`<span class="filled-answer red">${escapeHtml(answer)}</span>`);
         const spokenSentence=String(normalizeQuestionSentence(q)).replace(/_{3,}/,String(answer));
         sentenceEl.classList.add("has-correct-audio");
-        sentenceEl.innerHTML=`<button class="sentence-audio-after-correct" type="button" aria-label="播放完整句子" title="聽整句" onclick="event.stopPropagation();speak(${JSON.stringify(spokenSentence).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")})">🔊</button><span>${filled}</span>`;
+        sentenceEl.innerHTML=`<button class="sentence-audio-after-correct" type="button" aria-label="播放完整句子" title="聽整句">🔊</button><span>${filled}</span>`;
+        const sentenceAudioButton=sentenceEl.querySelector(".sentence-audio-after-correct");
+        sentenceAudioButton?.addEventListener("click",event=>{event.stopPropagation();speak(spokenSentence)});
       }
     }
     // Put the grammar transformation inside the correct Pokémon card so the child
@@ -2486,7 +2488,7 @@ function buildSessionReviewMarkup(session){
     const status=!attempts.length?"尚未作答":firstCorrect?"第一次答對":finallyCorrect?"第一次答錯，後來修正成功":"仍需複習";
     const cls=!attempts.length?"pending":firstCorrect?"first":finallyCorrect?"retry":"unresolved";
     return `<div class="result-row"><div class="result-status ${cls}">${i+1}. ${status}</div><div class="result-prompt">${escapeHtml(prompt)}</div><div>第一次選擇：<b>${escapeHtml(selectedFirst)}</b></div>${attempts.length>1?`<div>最後一次選擇：<b>${escapeHtml(selectedLast)}</b></div>`:""}<div>正確答案：<b class="result-answer">${escapeHtml(answerText)}</b></div></div>`;
-  }).join("");
+  });
   const visibleRows=rows.filter(Boolean);
   if(!visibleRows.length) return `<h3 style="text-align:left;margin:18px 0 6px">本次答題結果</h3><p class="muted" style="text-align:left;margin:0">太好了！本次所有題目都在第一次作答就答對，不需要列出錯題。</p>`;
   return `<h3 style="text-align:left;margin:18px 0 6px">需要留意的題目</h3><p class="muted" style="text-align:left;margin:0">以下只列出第一次答錯或尚未完成的題目，方便針對性複習。</p><div class="result-summary">${visibleRows.join("")}</div>`;
