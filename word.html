@@ -1231,6 +1231,9 @@ html, body { height:100% !important; overflow:hidden !important; }
         /* Boss challenge: examples are intentionally omitted to keep attention on spelling. */
         #practice-context-card[hidden] { display: none !important; }
         #practice-context-card[aria-hidden="true"] { display: none !important; }
+
+        /* VERSION BADGE: small build identifier next to Word Hero on home screen */
+        .wh-version-badge{display:inline-flex;align-items:center;vertical-align:middle;margin-left:7px;padding:2px 6px;border:1px solid #40536b;border-radius:999px;background:#13243a;color:#9fb4cc;font-size:.48em;font-weight:500;letter-spacing:.02em;line-height:1.4;white-space:nowrap}
 </style>
 </head>
 <body onload="initSystem()">
@@ -1249,7 +1252,7 @@ html, body { height:100% !important; overflow:hidden !important; }
     <button id="global-home-button" type="button" class="global-home-button" onclick="handleGlobalHome()" aria-label="回首頁">← 回首頁</button>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO</div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 v1.0.1">v1.0.1</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
