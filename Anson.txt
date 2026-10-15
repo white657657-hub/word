@@ -44,7 +44,7 @@ golden,金色的
 today,今天
 American,美國的；美國人
 Australia,澳洲
-Australian,澳洲的
+Australian,澳洲的；澳洲人
 China,中國
 country,國家
 Egypt,埃及
