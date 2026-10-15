@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero｜兒童友善 UI 版 V1529</title>
+    <title>Word Hero 2B｜GitHub 題庫版 V1536</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1300,7 +1300,46 @@ html, body { height:100% !important; overflow:hidden !important; }
 #view-main .more-tools.parent-tools-open>div.admin-btn{background:#14243a!important;border-color:#405b79!important;}
 @media(max-width:600px){#view-main .more-tools.parent-tools-open{inset:6px!important;max-height:calc(100dvh - 12px)!important;padding:12px!important;grid-template-columns:1fr!important;border-radius:16px!important}#view-main .more-tools.parent-tools-open>div.admin-btn{grid-column:1/-1}}
 
-</style>
+
+/* V1536：造句頁不顯示「練習模式」返回鈕，標題與全站導覽列對齊 */
+#view-sentence-practice > .sentence-page-topbar{
+  min-height:42px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:12px!important;margin:0 0 8px!important;padding:0 8px 0 150px!important;
+  box-sizing:border-box!important;
+}
+#view-sentence-practice .sentence-page-title{font-size:1rem;font-weight:850;color:#fbbf24;line-height:1.2;white-space:nowrap}
+
+#sentence-unit-progress-top{
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;
+  min-height:38px!important;text-align:right!important;
+}
+#view-sentence-practice .sentence-unit-card{margin-top:0!important}
+/* 所有非首頁頁面使用相同的頂部留白，避免回首頁按鈕與頁面標題錯位 */
+.view-section:not(#view-main){scroll-margin-top:54px}
+@media(max-width:600px){
+  #view-sentence-practice > .sentence-page-topbar{min-height:38px!important;margin-bottom:6px!important;padding-left:132px!important;padding-right:4px!important}
+  #view-sentence-practice .sentence-page-title{font-size:.88rem!important}
+  #sentence-unit-progress-top{font-size:.78rem!important}
+}
+
+
+    /* V1536: 唯一題庫來源為 GitHub Anson.txt；管理畫面採唯讀，避免本機副本與雲端分歧。 */
+    #view-bank .bank-control-card,
+    #view-bank #paste-bank-card,
+    #view-bank > .bank-entry-card:not(#paste-bank-card),
+    #view-bank .bank-bottom-actions,
+    #view-bank #bank-json-import,
+    #view-bank .bank-tip,
+    #view-bank #txt-file-input { display:none !important; }
+    #view-bank .bank-source-buttons { display:flex; }
+    #view-bank #bank-source-custom[hidden] { display:none !important; }
+    #view-bank .bank-existing-subtitle::after { content:"｜唯讀：修改請至 GitHub 編輯 Anson.txt"; color:#93c5fd; }
+    #view-bank .bank-ref { display:none; }
+    #view-bank .bank-action, #view-bank .bank-control-card, #view-bank .bank-entry-card, #view-bank .bank-bottom-actions, #view-bank #bank-json-import { display:none !important; }
+    #bank-load-child-status { margin:8px 0;padding:10px 12px;border-radius:12px;background:#7f1d1d;color:#fff;font-weight:800;text-align:center; }
+    #bank-load-child-status[hidden] { display:none !important; }
+    </style>
 </head>
 <body onload="initSystem()">
 
@@ -1318,7 +1357,7 @@ html, body { height:100% !important; overflow:hidden !important; }
     <button id="global-home-button" type="button" class="global-home-button" onclick="handleGlobalHome()" aria-label="回首頁">← 回首頁</button>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1527">V1527</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1536">V1536</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1416,12 +1455,11 @@ html, body { height:100% !important; overflow:hidden !important; }
     </div>
 
     <div id="view-sentence-practice" class="view-section">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-            <button class="mode-btn" style="width:auto;padding:6px 12px;background:#334155;font-size:.8rem;" onclick="switchView('view-practice-menu')">← 練習模式</button>
+        <div class="sentence-page-topbar">
+            <div class="sentence-page-title">✍️ 單字造句</div>
             <div id="sentence-unit-progress-top" style="color:#94a3b8;font-size:.8rem;font-weight:800;"></div>
         </div>
         <div class="sentence-unit-card">
-            <div style="text-align:center;color:#fbbf24;font-weight:1000;font-size:1rem;margin-bottom:2px;">✍️ 單字造句</div>
             <div id="sentence-unit-cn" class="sentence-unit-cn"></div>
             <div id="sentence-unit-word" class="sentence-unit-word"></div>
             <label class="sentence-auto-puncture">
@@ -1445,7 +1483,6 @@ html, body { height:100% !important; overflow:hidden !important; }
             <button type="button" class="sentence-next-btn" onclick="sentenceUnitPass()">下一題 →</button>
             <div id="sentence-unit-progress" class="sentence-unit-progress"></div>
         </div>
-        <button class="mode-btn sentence-unit-back" onclick="switchView('view-main')">🏠 結束造句練習</button>
     </div>
 
     <div id="word-help-overlay" class="word-help-overlay" onclick="if(event.target===this)closeWordHelp()" role="dialog" aria-modal="true" aria-label="單字解說">
@@ -1543,10 +1580,10 @@ html, body { height:100% !important; overflow:hidden !important; }
         <div id="bank-storage-info" class="bank-storage-card">題庫儲存方式載入中……</div>
 
         <div class="bank-source-panel bank-source-panel-new">
-            <div class="bank-source-title">① 題庫方式</div>
+            <div class="bank-source-title">① GitHub 題庫</div>
             <div class="bank-source-buttons">
-                <button id="bank-source-text" class="bank-source-btn" onclick="useTextQuestionBank()">📄 文字題庫</button>
-                <button id="bank-source-custom" class="bank-source-btn" onclick="useCustomQuestionBank()">✏️ 自行變更題庫</button>
+                <button id="bank-source-text" class="bank-source-btn" onclick="useTextQuestionBank()">🔄 重新載入 GitHub 題庫</button>
+                <button id="bank-source-custom" class="bank-source-btn" onclick="useCustomQuestionBank()" hidden>✏️ 自行變更題庫</button>
             </div>
             <div id="bank-source-note" class="bank-source-note"></div>
             <input id="txt-file-input" type="file" accept=".txt,text/plain" onchange="handleTxtFile(event)">
@@ -1592,7 +1629,7 @@ html, body { height:100% !important; overflow:hidden !important; }
             <div class="bank-existing-head">
                 <div>
                     <div class="bank-existing-title">⑤ 已有題目</div>
-                    <div class="bank-existing-subtitle">可以搜尋、編輯或刪除</div>
+                    <div class="bank-existing-subtitle">可搜尋與檢視（唯讀）</div>
                 </div>
                 <input id="bank-search" type="search" placeholder="🔍 搜尋英文或中文" oninput="renderBankManagerList()">
             </div>
@@ -1686,7 +1723,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         if (/^(anson|2b)$/i.test(name)) return 'Anson';
         return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Anson';
     }
-    function getUserBankUrl() { return `./${encodeURIComponent(getUserBankFileStem())}.txt`; }
+    function getUserBankUrl() { return `https://raw.githubusercontent.com/white657657-hub/word/main/${encodeURIComponent(getUserBankFileStem())}.txt`; }
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
     // 寶可夢名稱安全查詢：任何畫面都優先走這裡，避免顯示 No.XX。
     const PK_NAME_ALIASES = {
@@ -1798,6 +1835,14 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
     function setHeroData(n, v) { localStorage.setItem(scopedKey(n), String(v)); }
     function getHeroData(n) { return localStorage.getItem(scopedKey(n)); }
+    function clearLegacyLocalQuestionBanks() {
+        // 僅清除舊版本機題庫副本與本機題庫編輯資料，不碰學習紀錄、星號、寶可夢或進度。
+        ['hero_question_bank','hero_text_bank','hero_anson_txt_cache','hero_custom_units',
+         'hero_custom_questions','hero_question_edits','hero_deleted_question_refs']
+            .forEach(key => { try { localStorage.removeItem(scopedKey(key)); } catch (_) {} });
+        bankSourceMode = 'text';
+        try { setHeroData('hero_bank_source_mode', 'text'); } catch (_) {}
+    }
     // 線上翻譯僅作為補助；失敗時回傳空字串，但留下可診斷的錯誤狀態。
     async function fetchTranslation(t, options = {}) {
         const clean = String(t || '').trim();
@@ -1840,7 +1885,7 @@ html, body { height:100% !important; overflow:hidden !important; }
 
     function migrateLegacyUserData() {
         if (!currentUserKey) return;
-        const keys = ['hero_pokedex_bits','hero_myPoke','hero_priority','hero_error_log','hero_custom_units','hero_custom_questions','hero_question_edits','hero_deleted_question_refs','hero_question_bank'];
+        const keys = ['hero_pokedex_bits','hero_myPoke','hero_priority','hero_error_log'];
         keys.forEach(key => {
             const target = scopedKey(key);
             if (localStorage.getItem(target) !== null) return;
@@ -2231,47 +2276,38 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
 
     function buildLearningLogHTML() {
-        const logs = getLearningLog(); const errors = getErrorLog();
-        const meaningful = x => ['word_answer','sentence','word_pass'].includes(x.type) || Boolean(String(x.sentence||'').trim()) || (Boolean(String(x.word||'').trim()) && Boolean(String(x.result||'').trim()) && Boolean(String(x.input||x.typed||'').trim()));
-        const usefulLogs = logs.filter(meaningful);
-        const usefulErrors = errors.filter(meaningful);
-        const all = [...usefulLogs.map((x,i)=>({...x,_group:'學習紀錄',_index:i+1})), ...usefulErrors.map((x,i)=>({...x,_group:'錯題紀錄',_index:i+1}))];
-        const esc = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-        const labelMap={at:'時間',type:'紀錄類型',child:'使用者',mode:'練習模式',unit:'單元',word:'英文單字',meaning:'中文意思',input:'孩子輸入',result:'結果',responseMs:'作答時間（毫秒）',attempts:'本題提交次數',sentence:'造句內容',issueCount:'檢查問題數',feedback:'系統回饋',strategy:'觀察到的作答策略',hintUsed:'是否使用提示',changedAnswer:'是否修改答案',attemptIndex:'第幾次提交',previousInput:'前一次輸入',correct:'正確答案',typed:'孩子輸入'};
-        const cards=all.map(item=>{const title=item.word||item.sentence||item.type||'紀錄';const date=item.at?new Date(item.at).toLocaleString():'時間未記錄';const day=item.at?(()=>{const d=new Date(item.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})():(item.date||'');const fields=Object.entries(item).filter(([k])=>!k.startsWith('_')).map(([k,v])=>`<div class="field"><b>${esc(labelMap[k]||k)}</b><div>${esc(typeof v==='object'&&v!==null?JSON.stringify(v,null,2):v===true?'是':v===false?'否':v??'（無資料）')}</div></div>`).join('');return `<article class="log" data-day="${esc(day)}" data-search="${esc([item._group,title,item.meaning,item.input,item.sentence,item.result,JSON.stringify(item)].join(' ').toLowerCase())}"><header><span class="tag">${esc(item._group)}</span><time>${esc(date)}</time></header><h2>${esc(title)}</h2><p class="sub">${esc(item.meaning||'')}　｜　${esc(item.result||'未標示')}　｜　${esc(item.mode||'')}</p><details><summary>查看家長觀察細節</summary><div class="fields">${fields}</div></details></article>`}).join('');
-        const payload=JSON.stringify(all).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
-        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title><style>*{box-sizing:border-box}body{margin:0;background:#08111f;color:#edf3fa;font:16px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}h1{font-size:28px;margin:0}h2{font-size:19px;margin:8px 0}h3{font-size:17px;margin:0 0 8px}.muted{color:#b6c6d8}.panel,.stat,.log{background:#111e30;color:#edf3fa;border:1px solid #344c66;border-radius:14px;padding:16px;margin:12px 0}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:16px 0}.stat strong{display:block;font-size:25px}.filters{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.filters label{display:grid;gap:4px;font-weight:600}.filters input{font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:white}.filters button{padding:10px 14px;border:0;border-radius:8px;background:#244f91;color:white;font:inherit;cursor:pointer}.chart{width:100%;height:230px;display:block}.barrow{display:grid;grid-template-columns:minmax(90px,1fr) 3fr 42px;gap:8px;align-items:center;margin:8px 0}.track{height:12px;background:#26394f;border-radius:20px;overflow:hidden}.fill{height:100%;background:#6389c6;border-radius:20px}.tag{background:#203650;color:#d8e8f8;border-radius:20px;padding:2px 10px}.log header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#667085;font-size:14px}.sub{margin:2px 0 12px;color:#596579}summary{cursor:pointer;font-weight:650;color:#2459a8}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-top:12px}.field{background:#0d1929;border:1px solid #2b4058;border-radius:8px;padding:10px;min-width:0}.field b{display:block;color:#b6c6d8;font-size:13px}.field div{white-space:pre-wrap;overflow-wrap:anywhere}.note{background:#302b20;border-left:4px solid #d6ad55;color:#f7e8bf;padding:12px;border-radius:8px}.empty{padding:18px;color:#667085}@media(max-width:600px){.wrap{padding:16px 10px}h1{font-size:23px}.barrow{grid-template-columns:85px 1fr 30px}}
-/* V3 audit fix: keep the requested two-column home layout at every viewport. */
-.home-main-actions { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-#victory-message { white-space: pre-line; overflow-wrap: anywhere; text-align: left; }
-#victory-message .result-heading { font-weight: 800; }
-@media (max-width: 360px) {
-  .home-main-actions { gap: 7px !important; }
-  .home-action { padding: 9px 5px !important; font-size: .96rem !important; }
-  .home-action small { font-size: .74rem !important; }
-}
-
-/* V4 final overrides: visible scrollbars, larger usable content area, tidy parent tools. */
-#view-main { max-width:1320px !important; width:100% !important; }
-#view-main .home-main-actions { gap:10px !important; }
-#view-main .home-action { min-height:74px !important; padding:10px 14px !important; }
-#view-main .home-adventure-title { margin-top:7px !important; }
-#view-main .more-tools { margin-bottom:12px !important; }
-#view-bank { max-width:1280px !important; width:100% !important; }
-#view-bank .bank-page-title { letter-spacing:.01em; }
-#view-bank .bank-entry-subtitle, #view-bank .bank-tip { font-size:.82rem !important; }
-#view-bank .bank-entry-card, #view-bank .bank-existing-card, #view-bank .bank-control-card { padding:14px !important; margin-bottom:12px !important; }
-#view-bank .bank-source-buttons { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
-#view-bank .bank-source-btn { min-height:48px !important; border-radius:11px !important; }
-#view-bank .bank-existing-card { margin-bottom:24px !important; }
-#view-main .more-tools > div.admin-btn { border:1px solid #405a75 !important; }
-#view-main .more-tools > div.admin-btn b { display:block; margin-bottom:5px; color:#f3f6fb; }
-#view-main .more-tools .admin-btn:focus-visible, #view-bank button:focus-visible, #learning-report-overlay button:focus-visible { outline:3px solid #f2c66d !important; outline-offset:2px !important; }
-@media(max-width:600px){#view-main{max-width:100%!important}#view-bank .bank-source-buttons{grid-template-columns:1fr}#view-bank .bank-entry-card,#view-bank .bank-existing-card,#view-bank .bank-control-card{padding:10px!important}}
-</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">報告產生：${esc(new Date().toLocaleString())}</div><section class="panel"><h3>日期篩選</h3><div class="filters"><label>開始日期<input type="date" id="from"></label><label>結束日期<input type="date" id="to"></label><button id="reset">顯示全部日期</button></div><p class="muted">選擇日期後，摘要、圖表、錯誤統計及下方紀錄會同步更新。</p></section><section class="panel note" id="no-data-note" hidden>目前尚無學習紀錄。完成第一輪練習後，這裡會顯示答題表現與學習觀察；不會將空白資料解讀為能力不足。</section><section class="stats"><div class="stat"><strong id="total">0</strong>作答／學習紀錄</div><div class="stat"><strong id="rate">—</strong>單字答對率</div><div class="stat"><strong id="first">0</strong>首次答對題次</div><div class="stat"><strong id="passes">0</strong>PASS 次數</div><div class="stat"><strong id="mins">—</strong>平均答對時間</div></section><section class="panel"><h3>每日學習與答題表現</h3><svg id="chart" class="chart" viewBox="0 0 900 230" role="img" aria-label="每日答題數與答對率圖表"></svg><div class="muted">柱狀高度代表每日單字作答數；折線代表當日答對率。資料不足的日期不計算答對率。</div></section><section class="panel"><h3>最常答錯的單字</h3><div id="words"></div><p class="muted">以下先按單字統計錯誤次數；同一單字的具體錯字會在「反覆出現的拼字錯誤」中拆開比較。</p></section><section class="panel"><h3>反覆出現的拼字錯誤</h3><p class="muted">比對孩子輸入與標準拼法。相同輸入會合併計數；不同拼法分開列出，方便看是否反覆卡在同一種錯法。</p><div id="spelling-patterns"></div></section><section class="panel"><h3>造句檢查常見提醒</h3><div id="grammar"></div><p class="note">解讀提醒：這裡只統計本機檢查實際偵測到的目標字、標點與空格提醒，不是完整文法診斷；目前不能據此判定時態、主詞動詞一致或語序能力。舊版紀錄未保存分類者會標示資料不足。</p></section><h2>有效學習紀錄</h2><p class="muted">只顯示有助於理解學習情況的作答、錯字與造句紀錄；缺少作答結果或內容的舊版空泛 Log 不列出，原始資料仍保留在本機。</p><label for="q">搜尋單字、句子、結果或回饋</label><input id="q" type="search" placeholder="輸入關鍵字…" style="width:100%;font:inherit;padding:12px;border:1px solid #9aa8bd;border-radius:9px"> <div id="count" class="muted"></div>${cards||'<div class="empty">目前沒有學習紀錄。</div>'}</main><script>const DATA=${payload};const cards=[...document.querySelectorAll('.log')],q=document.getElementById('q'),from=document.getElementById('from'),to=document.getElementById('to');const day=x=>{if(x.at){const d=new Date(x.at);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return x.date||''};function filtered(){return DATA.filter(x=>(!from.value||day(x)>=from.value)&&(!to.value||day(x)<=to.value))}function htmlText(v){return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;')}function bars(el,entries){if(!entries.length){el.innerHTML='<div class="empty">目前沒有足夠資料。</div>';return}const max=Math.max(1,...entries.map(x=>x[1]));el.innerHTML=entries.map(([k,v])=>'<div class="barrow"><span>'+htmlText(k)+'</span><div class="track"><div class="fill" style="width:'+v/max*100+'%"></div></div><b>'+v+'</b></div>').join('')}function render(){const rows=filtered();document.getElementById('no-data-note').hidden=DATA.length>0;const w=rows.filter(x=>x.type==='word_answer'),ok=w.filter(x=>x.result==='correct'),bad=w.filter(x=>x.result==='incorrect'),pass=rows.filter(x=>x.type==='word_pass');document.getElementById('total').textContent=rows.length;document.getElementById('rate').textContent=w.length?Math.round(ok.length/w.length*100)+'%':'—';document.getElementById('first').textContent=ok.filter(x=>Number(x.attempts||x.attemptIndex||1)===1).length;document.getElementById('passes').textContent=pass.length;const t=ok.map(x=>Number(x.responseMs)).filter(x=>Number.isFinite(x)&&x>=0&&x<3600000);document.getElementById('mins').textContent=t.length?(t.reduce((a,b)=>a+b,0)/t.length/1000).toFixed(1)+' 秒':'—';const freq={};bad.forEach(x=>{const k=x.word||'未標示';freq[k]=(freq[k]||0)+1});bars(document.getElementById('words'),Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8));const variants={};bad.forEach(x=>{const word=String(x.word||'').trim(),typed=String(x.input||x.typed||'').trim();if(!word||!typed)return;const key=word.toLowerCase()+'\\u0000'+typed.toLowerCase();variants[key]||={word,typed,count:0,expected:word};variants[key].count++});const variantRows=Object.values(variants).sort((a,b)=>b.count-a.count).slice(0,12);document.getElementById('spelling-patterns').innerHTML=variantRows.length?variantRows.map(x=>'<div class="barrow"><span>'+htmlText(x.word)+'</span><div><b>'+htmlText(x.typed)+'</b><span class="muted"> → '+htmlText(x.expected)+'</span></div><b>×'+x.count+'</b></div>').join(''):'<div class="empty">目前沒有可比對的錯字輸入紀錄；舊紀錄若未保存孩子輸入內容，無法還原錯字。</div>';const gf={};const issueLabels={target_missing:'句子沒有使用目標單字',punctuation_missing:'句尾缺少標點',extra_spaces:'單字間有多餘空格',repeated_punctuation:'句尾標點重複',empty:'未輸入句子',other:'其他檢查提醒'};rows.filter(x=>x.type==='sentence').forEach(x=>{(Array.isArray(x.issueTypes)?x.issueTypes:[]).forEach(k=>{const label=issueLabels[k]||'其他檢查提醒';gf[label]=(gf[label]||0)+1});if(x.result==='local_basic_check_review'&&!Array.isArray(x.issueTypes))gf['舊版造句紀錄（缺少具體錯誤分類）']=(gf['舊版造句紀錄（缺少具體錯誤分類）']||0)+1});bars(document.getElementById('grammar'),Object.entries(gf).sort((a,b)=>b[1]-a[1]).slice(0,8));const daily={};w.forEach(x=>{const d=day(x);if(!d)return;(daily[d]||= {n:0,ok:0}).n++;if(x.result==='correct')daily[d].ok++});const ds=Object.entries(daily).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14),svg=document.getElementById('chart');if(!ds.length){svg.innerHTML='<text x="450" y="115" text-anchor="middle" fill="#667085">尚無可繪製的單字作答資料</text>'}else{const max=Math.max(1,...ds.map(x=>x[1].n)),step=840/ds.length;let s='';ds.forEach(([d,v],i)=>{const x=45+i*step+step*.25,h=145*v.n/max,y=180-h,rate=v.ok/v.n; s+='<rect x="'+x+'" y="'+y+'" width="'+step*.5+'" height="'+h+'" rx="4" fill="#8aa6d4"/><circle cx="'+(x+step*.25)+'" cy="'+(170-rate*125)+'" r="4" fill="#d17b39"/><text x="'+(x+step*.25)+'" y="202" font-size="11" text-anchor="middle" fill="#667085">'+d.slice(5)+'</text>'});svg.innerHTML='<line x1="35" y1="180" x2="885" y2="180" stroke="#9aa8bd"/>'+s+'<text x="42" y="18" fill="#5478ad" font-size="12">作答數（柱）</text><circle cx="165" cy="14" r="4" fill="#d17b39"/><text x="176" y="18" fill="#a45c27" font-size="12">答對率（點）</text>'}let n=0;const term=q.value.trim().toLowerCase();cards.forEach(c=>{const show=(!from.value||c.dataset.day>=from.value)&&(!to.value||c.dataset.day<=to.value)&&c.dataset.search.includes(term);c.hidden=!show;if(show)n++});document.getElementById('count').textContent='目前顯示 '+n+' / '+cards.length+' 筆';}from.addEventListener('change',render);to.addEventListener('change',render);q.addEventListener('input',render);document.getElementById('reset').addEventListener('click',()=>{from.value='';to.value='';q.value='';render()});render();<\/script>
-
-
-</body></html>`;
+        const logs = getLearningLog();
+        const errors = getErrorLog();
+        const all = [...logs, ...errors.map(x => ({...x, _legacyErrorLog:true}))]
+            .filter(x => x && typeof x === 'object')
+            .map((x, i) => ({...x, _rid: String(x.logId || x.id || `${x.at || x.timestampMs || 'old'}-${i}`)}));
+        const payload = JSON.stringify(all).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+        return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#08111f;color:#edf3fa;font:16px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}h1{font-size:27px;margin:0}h2{font-size:20px;margin:0}h3{font-size:17px;margin:0}.muted{color:#a9bbd0}.panel,.unit-card,.category-card,.date-card,.record{background:#111e30;border:1px solid #344c66;border-radius:14px;padding:14px;margin:10px 0}.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:14px 0}.toolbar label{display:grid;gap:4px}.toolbar input{font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:#fff;color:#111827}.toolbar button,.small-btn{padding:9px 13px;border:0;border-radius:9px;background:#285b9b;color:#fff;font:inherit;cursor:pointer}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px}.stat{background:#172a42;border:1px solid #344c66;border-radius:12px;padding:12px}.stat strong{display:block;font-size:24px}.unit-card{border-left:5px solid #38bdf8}.unit-card>summary{font-size:19px;color:#e6f4ff}.category-card{margin-left:8px;background:#132238}.category-card>summary{font-size:16px;color:#c8dcff}.date-card{margin-left:8px;background:#0d1a2a}.date-card>summary{color:#b9d7ff}.record{background:#091523;padding:12px;margin:8px 0}.record-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:750}.pill{display:inline-block;border-radius:20px;padding:2px 9px;background:#203b5a;color:#d8e9ff;font-size:13px}.record p{margin:6px 0;overflow-wrap:anywhere}.answer-bad{color:#ffb2b7}.answer-good{color:#8be5bd}.empty{padding:14px;color:#a9bbd0}.hint{background:#1a2b40;border-radius:10px;padding:12px;color:#c9d8e8;margin:12px 0}details>summary{cursor:pointer;font-weight:700;padding:4px 0}details[open]>summary{margin-bottom:8px}.more-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.count{color:#a9bbd0;font-size:14px}@media(max-width:600px){.wrap{padding:15px 10px}.unit-card,.category-card,.date-card{padding:10px;margin:8px 0}.record{padding:10px}}
+</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">依單元整理錯字與造句；詳細紀錄按日期展開。</div>
+<section class="panel"><div class="summary"><div class="stat"><strong id="unitCount">0</strong>單元</div><div class="stat"><strong id="wrongTotal">0</strong>答錯紀錄</div><div class="stat"><strong id="variantTotal">0</strong>拼字錯誤類型</div><div class="stat"><strong id="sentenceTotal">0</strong>造句提交次數</div></div>
+<div class="toolbar"><label>搜尋單字或造句<input id="search" type="search" placeholder="例如 castle、句子內容…"></label><label>開始日期<input id="from" type="date"></label><label>結束日期<input id="to" type="date"></label><button id="reset">清除篩選</button></div>
+<div class="hint">選擇單元後，可分別查看「最常答錯的單字」、「反覆出現的拼字錯誤」與「每一次造句」。再依日期展開查看原始紀錄。每個分類預設顯示最近 100 筆；較舊資料仍保留在本機 Log 中，不因畫面限制而刪除。</div></section>
+<div id="report"></div></main>
+<script>
+const DATA=${payload};
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+function dateInfo(x){let d=x.at?new Date(x.at):x.timestampMs?new Date(Number(x.timestampMs)):x.date?new Date(x.date):null;if(!d||Number.isNaN(d.getTime()))return {key:'日期未記錄',label:'日期未記錄',time:'時間未記錄'};return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),label:d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0'),time:d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}}
+function unitOf(x){return String(x.unit||x.unitName||x.unitTitle||'未標示單元').trim()||'未標示單元'}
+function wordOf(x){return String(x.word||x.correct||x.english||'').trim()}
+function resultOf(x){return String(x.result||x.status||'').toLowerCase()}
+function isSentence(x){return x.type==='sentence'||x.mode==='sentence'||Object.prototype.hasOwnProperty.call(x,'sentence')&&String(x.sentence||'').trim()!==''}
+function isWrong(x){let r=resultOf(x);return r==='incorrect'||r==='wrong'||r==='false'||x.correct===false||x._legacyErrorLog&&Boolean(wordOf(x)&&String(x.typed||x.input||'').trim())}
+function typedOf(x){return String(x.input||x.typed||x.previousInput||'').trim()}
+function matches(x){const q=$('search').value.trim().toLowerCase(),d=dateInfo(x).key;return (!q||[wordOf(x),x.meaning,x.sentence,x.input,x.typed,x.result,x.feedback].join(' ').toLowerCase().includes(q))&&(!$('from').value||d==='日期未記錄'||d>=$('from').value)&&(!$('to').value||d==='日期未記錄'||d<=$('to').value)}
+function detailRecord(x,kind){const d=dateInfo(x),word=wordOf(x),typed=typedOf(x),sentence=String(x.sentence||'').trim();let body='';if(kind==='sentence'){body='<p><b>目標單字：</b>'+esc(word||'未標示')+'</p><p><b>造句內容：</b>'+esc(sentence||'（本次未保存句子內容）')+'</p><p><b>檢查結果：</b>'+esc(x.result||'未標示')+'</p>';if(x.issues)body+='<p><b>系統提醒：</b>'+esc(Array.isArray(x.issues)?x.issues.join('；'):x.issues)+'</p>';}else{body='<p><b>標準拼法：</b>'+esc(word||'未標示')+'</p><p><b>孩子輸入：</b><span class="answer-bad">'+esc(typed||'（舊紀錄未保存輸入內容）')+'</span></p><p><b>結果：</b>'+esc(x.result||'錯題紀錄')+'</p>';if(x.meaning)body+='<p><b>中文意思：</b>'+esc(x.meaning)+'</p>';if(x.feedback)body+='<p><b>回饋：</b>'+esc(x.feedback)+'</p>';}return '<article class="record"><div class="record-title"><span>'+esc(kind==='sentence'?(word||'造句紀錄'):word||'未標示單字')+'</span><span class="pill">'+esc(d.time)+'</span></div>'+body+'<details><summary>更多紀錄資訊</summary><p>使用者：'+esc(x.child||'2B')+'　｜　模式：'+esc(x.mode||'未標示')+'</p><p>作答時間：'+esc(x.responseMs==null?'未記錄':x.responseMs+' ms')+'　｜　提交次數：'+esc(x.attempts||x.attemptIndex||'未記錄')+'</p></details></article>'}
+function dateGroups(rows,kind){const by={};rows.forEach(x=>{const d=dateInfo(x);(by[d.key]||(by[d.key]={label:d.label,rows:[]})).rows.push(x)});const keys=Object.keys(by).sort((a,b)=>b.localeCompare(a));let total=0;return keys.map(k=>{const g=by[k],shown=g.rows.slice().sort((a,b)=>String(b.at||b.timestampMs||'').localeCompare(String(a.at||a.timestampMs||''))).slice(0,100);total+=shown.length;return '<details class="date-card"><summary>'+esc(g.label)+'（'+g.rows.length+' 筆）</summary>'+shown.map(x=>detailRecord(x,kind)).join('')+(g.rows.length>100?'<p class="count">本日期共有 '+g.rows.length+' 筆；目前顯示最新 100 筆。</p>':'')+'</details>'}).join('')+'<div class="count">此分類顯示 '+total+' 筆</div>'}
+function section(title,rows,kind,inner){return '<details class="category-card"><summary>'+esc(title)+'（'+rows.length+' 筆）</summary>'+(rows.length?inner(rows):'<div class="empty">目前沒有符合條件的紀錄。</div>')+'</details>'}
+function render(){const rows=DATA.filter(matches),units=[...new Set(DATA.map(unitOf))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true}));const wrong=rows.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x));const sentence=rows.filter(isSentence);const variants=new Set(wrong.filter(x=>typedOf(x)).map(x=>wordOf(x).toLowerCase()+'\u0000'+typedOf(x).toLowerCase()));$('unitCount').textContent=units.length;$('wrongTotal').textContent=wrong.length;$('variantTotal').textContent=variants.size;$('sentenceTotal').textContent=sentence.length;let html='';const unitNames=[...new Set(rows.map(unitOf))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true}));unitNames.forEach(u=>{const ur=rows.filter(x=>unitOf(x)===u),uw=ur.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x)),us=ur.filter(isSentence);const byWord={};uw.forEach(x=>{const w=wordOf(x);(byWord[w]||(byWord[w]=[])).push(x)});const common=Object.entries(byWord).sort((a,b)=>b[1].length-a[1].length).map(([w,rs])=>'<details class="date-card"><summary>'+esc(w)+'　｜　答錯 '+rs.length+' 次</summary>'+dateGroups(rs,'wrong')+'</details>').join('');const byVariant={};uw.forEach(x=>{const t=typedOf(x);if(!t)return;const k=wordOf(x).toLowerCase()+'\u0000'+t.toLowerCase();byVariant[k]||(byVariant[k]={word:wordOf(x),typed:t,rows:[]});byVariant[k].rows.push(x)});const variantList=Object.values(byVariant).sort((a,b)=>b.rows.length-a.rows.length).map(v=>'<details class="date-card"><summary>'+esc(v.word)+'：孩子輸入「'+esc(v.typed)+'」× '+v.rows.length+'</summary>'+dateGroups(v.rows,'wrong')+'</details>').join('');html+='<details class="unit-card"><summary>'+esc(u)+'　｜　答錯 '+uw.length+' 筆・造句 '+us.length+' 筆</summary>'+section('最常答錯的單字',uw,'wrong',()=>common)+section('反覆出現的拼字錯誤',uw,'wrong',()=>variantList)+section('每一次造句',us,'sentence',rs=>dateGroups(rs,'sentence'))+'</details>'});$('report').innerHTML=html||'<div class="panel empty">目前沒有符合搜尋或日期條件的紀錄。</div>'}
+$('search').addEventListener('input',render);$('from').addEventListener('change',render);$('to').addEventListener('change',render);$('reset').addEventListener('click',()=>{$('search').value='';$('from').value='';$('to').value='';render()});render();
+<\/script></body></html>`;
     }
     function openLearningReportInApp() {
         // 即使尚無紀錄，也開啟報告並呈現空資料說明，避免按鈕看似無反應。
@@ -2316,50 +2352,8 @@ html, body { height:100% !important; overflow:hidden !important; }
 
 
     async function importAllQuestionBanks(event) {
-        const input = event?.target;
-        const file = input?.files?.[0];
-        if (!file) return;
-        try {
-            const raw = await file.text();
-            const parsed = JSON.parse(raw);
-            const source = parsed?.banks && typeof parsed.banks === 'object' ? parsed.banks : parsed;
-            if (!source || typeof source !== 'object' || Array.isArray(source)) throw new Error('檔案必須是「單元名稱：單字陣列」的 JSON 題庫格式。');
-            const normalized = {};
-            Object.entries(source).forEach(([unitName, entries]) => {
-                const unit = String(unitName || '').trim();
-                if (!unit || !Array.isArray(entries)) throw new Error(`單元「${unitName}」格式不正確。`);
-                const seen = new Set();
-                normalized[unit] = entries.map((item, idx) => {
-                    const en = String(Array.isArray(item) ? item[0] : item?.en ?? '').trim();
-                    const cn = String(Array.isArray(item) ? item[1] : item?.cn ?? '').trim();
-                    if (!en) throw new Error(`單元「${unit}」第 ${idx+1} 題缺少英文。`);
-                    const key = en.toLowerCase();
-                    if (seen.has(key)) throw new Error(`單元「${unit}」有重複英文：${en}`);
-                    seen.add(key);
-                    return {en, cn, ref: `IMPORT_${Date.now()}_${unit.replace(/[^a-z0-9]/gi,'_')}_${idx+1}`};
-                });
-            });
-            const total = Object.values(normalized).reduce((n, arr) => n + arr.length, 0);
-            if (!Object.keys(normalized).length || !total) throw new Error('檔案沒有可匯入的題目。');
-            const summary = Object.entries(normalized).map(([u, arr]) => `${u}：${arr.length} 題`).join('\n');
-            if (!confirm(`即將匯入 ${Object.keys(normalized).length} 個單元、共 ${total} 題：\n\n${summary}\n\n這會取代目前的自訂題庫，且無法由本頁復原。確定繼續嗎？`)) return;
-            state.banks = normalized;
-            bankSourceMode = 'custom';
-            setHeroData('hero_bank_source_mode', 'custom');
-            setLocalJSON('hero_question_bank', normalized);
-            setLocalJSON('hero_custom_units', []);
-            setLocalJSON('hero_custom_questions', []);
-            setLocalJSON('hero_question_edits', {});
-            setLocalJSON('hero_deleted_question_refs', []);
-            refreshUnitSelectors();
-            updateBankSourceUI();
-            renderBankManager();
-            alert(`匯入完成！\n${Object.keys(normalized).length} 個單元、${total} 題已保存於目前使用者的本機題庫。`);
-        } catch (err) {
-            alert(`匯入失敗：${err.message || '檔案無法讀取'}\n\n原有題庫未變更。`);
-        } finally {
-            if (input) input.value = '';
-        }
+        if (event?.target) event.target.value = '';
+        alert('題庫只讀取 GitHub 的 Anson.txt。請直接在 GitHub 編輯檔案後，按「重新載入 GitHub 題庫」。');
     }
 
     function parseQuestionBankRow(line) {
@@ -2394,38 +2388,29 @@ html, body { height:100% !important; overflow:hidden !important; }
         let serial = 0;
         const lines = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/);
 
-        lines.forEach(raw => {
+        lines.forEach((raw, lineIndex) => {
             const line = raw.trim();
             if (!line || line.startsWith('#') || line.startsWith('//')) return;
 
             const heading = line.match(/^\[?\s*(W\d+|Unit\s*\d+)\s*\]?$/i);
             if (heading) {
-                currentUnit = heading[1].replace(/\s+/g,'').toUpperCase().replace(/^UNIT/,'W');
+                currentUnit = heading[1].replace(/\s+/g, '').toUpperCase().replace(/^UNIT/, 'W');
                 if (!banks[currentUnit]) banks[currentUnit] = [];
                 return;
             }
 
             const parts = parseQuestionBankRow(line);
-            let en = String(parts.shift() || '').trim();
-            let cn = parts.join(',').trim();
+            const en = String(parts.shift() || '').trim();
+            const cn = parts.join(',').trim();
             if (!en || (/^(english|英文|單字)$/i.test(en) && /^(chinese|中文|翻譯)$/i.test(cn))) return;
-            // 已由使用者確認的題庫更正：gloden 是 typo；March／May 在此單元指月份。
-            if (en.toLowerCase() === 'gloden') en = 'golden';
-            if (en.toLowerCase() === 'march') cn = '三月';
-            if (en.toLowerCase() === 'may') cn = '五月';
-            if (en.toLowerCase() === 'feelings' && /情懷/.test(cn)) cn = '感受；情緒';
-            if (en.toLowerCase() === 'continent' && /大陸/.test(cn)) cn = '洲；大洲';
-            if (en.toLowerCase() === 'floor' && /地面/.test(cn)) cn = '地板；樓層';
-            if (en.toLowerCase() === 'beg' && /^求$/.test(cn)) cn = '央求；乞求';
-            if (en.toLowerCase() === 'gasp' && /^喘氣$/.test(cn)) cn = '倒抽一口氣';
-            if (en.toLowerCase() === 'cubby' && /小房間/.test(cn)) cn = '小置物格';
-            if (en.toLowerCase() === 'mix up' && /混合起來/.test(cn)) cn = '搞混；弄錯';
-            if (en.toLowerCase() === 'trade' && /^交易$/.test(cn)) cn = '交換；交易';
-            if (en.toLowerCase() === 'near' && /^附近$/.test(cn)) cn = '附近；靠近';
-            if (en.toLowerCase() === 'born' && /^出生$/.test(cn)) cn = '出生；誕生';
-            if (en.toLowerCase() === 'land' && /土地/.test(cn) && !/降落/.test(cn)) cn = '降落；土地；陸地';
-            if (en.toLowerCase() === 'chinese' && /^中國人$/.test(cn)) cn = '中文；中國人／中國的';
-            if (!currentUnit) currentUnit = 'W1';
+
+            if (!currentUnit) {
+                throw new Error(`第 ${lineIndex + 1} 行的單字出現在單元標題之前。請先加上 [W2] 這類單元標題。`);
+            }
+            if (!cn) {
+                throw new Error(`第 ${lineIndex + 1} 行「${en}」缺少中文翻譯，請檢查 Anson.txt。`);
+            }
+
             serial++;
             banks[currentUnit].push({
                 en,
@@ -2436,16 +2421,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         return banks;
     }
 
-    function mergeFixedBanks(base) {
-        // TXT 是 Anson 的真正題庫來源；只補上 TXT 沒有的 W1-W4，不覆蓋 TXT 已修改的內容。
-        const result = cloneBanks(base || {});
-        const fixed = banksFromPairs(getFixedBanks());
-        Object.keys(fixed).forEach(unit => {
-            if (!Array.isArray(result[unit]) || !result[unit].length) result[unit] = fixed[unit];
-        });
-        return result;
-    }
-
+    
     function extractBankTextFromHtml(rawHtml) {
         const raw = String(rawHtml || '');
         // 支援 TXT 原始 [W1]／英文,中文格式；保留舊版 HTML 題庫相容讀取。
@@ -2493,20 +2469,20 @@ html, body { height:100% !important; overflow:hidden !important; }
             const sourceText = extractBankTextFromHtml(raw);
             const parsed = parseAnsonTxt(sourceText);
             const count = Object.values(parsed).reduce((n, arr) => n + arr.length, 0);
-            if (!Object.keys(parsed).length || count === 0) {
-                throw new Error('TXT 檔案已取得，但沒有解析出單字。請家長先重新整理頁面（Windows：Ctrl+F5；Mac：Cmd+Shift+R）；若仍失敗，請確認 HTML 同目錄有 Anson.txt，單元標題可為 [W2]、[W3] 等任意 W+數字格式，單字每行使用英文,中文。');
+            if (!Object.keys(parsed).length || count === 0 || !Object.keys(parsed).some(unit => /^W\d+$/i.test(unit))) {
+                throw new Error('GitHub 題庫已取得，但沒有解析出單字。請家長確認 Anson.txt 格式：單元標題如 [W2]，每行使用英文,中文。');
             }
             if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
             const normalized = normalizeLegacyEarthInBanks(parsed);
             state.banks = normalized;
-            setLocalJSON('hero_text_bank', normalized);
+            // 不保存題庫副本：GitHub Anson.txt 是唯一題庫來源。
             window.__wordHeroBankLoadInfo = { ok: true, loading: false, url, status: response.status, units: Object.keys(normalized), count, user: currentUserName };
             return true;
         } catch (error) {
             // 舊請求被新請求取代時，不可清空新請求已載入的題庫。
             if (requestId !== bankLoadRequestId || userKeyAtStart !== currentUserKey) return false;
             const timedOut = error?.name === 'AbortError';
-            const message = timedOut ? `讀取逾時（${timeoutMs / 1000} 秒），請確認網路及 ${fileName} 是否可存取。` : String(error?.message || error);
+            const message = timedOut ? `讀取逾時（${timeoutMs / 1000} 秒），請確認網路及 GitHub 題庫網址是否可存取。` : String(error?.message || error);
             window.__wordHeroBankLoadInfo = {
                 ok: false, loading: false, url, status: window.__wordHeroBankLoadInfo.status,
                 count: 0, user: currentUserName, error: message
@@ -2533,21 +2509,7 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
 
     // 舊版本曾把 Earth 存成 eart；啟動時自動修正舊本機資料，避免畫面只產生 4 個字框。
-    function normalizeLegacyEarthInBanks(banks) {
-        if (banks && typeof banks === 'object') { Object.keys(banks).forEach(k => { (banks[k] || []).forEach(w => { if (w && String(w.en || '').trim().toLowerCase() === 'gloden') w.en = 'golden'; }); }); }
-        // 將舊版常見誤字 gloden 統一修正為 golden。
-        const result = cloneBanks(banks || {});
-        Object.keys(result).forEach(unit => {
-            if (!Array.isArray(result[unit])) return;
-            result[unit] = result[unit].map(w => {
-                if (!w) return w;
-                const en = String(w.en || '').trim();
-                if (en.toLowerCase() === 'eart') return { ...w, en: 'Earth' };
-                return w;
-            });
-        });
-        return result;
-    }
+    function normalizeLegacyEarthInBanks(banks) { return cloneBanks(banks || {}); }
 
     function normalizeCurrentBank() {
         state.banks = normalizeLegacyEarthInBanks(state.banks);
@@ -2560,8 +2522,8 @@ html, body { height:100% !important; overflow:hidden !important; }
     }
 
     function loadLocalQuestionBank() {
-        const saved = getLocalJSON('hero_question_bank', {});
-        state.banks = saved && typeof saved === 'object' && !Array.isArray(saved) ? cloneBanks(saved) : {};
+        // V1536 不再讀取本機題庫；保留函式名稱以兼容舊呼叫，但永遠不載入資料。
+        state.banks = {};
     }
 
     async function useTextQuestionBank() {
@@ -2575,7 +2537,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         if (!loaded) {
             const info = window.__wordHeroBankLoadInfo || {};
             const reason = info.error || (info.status ? `HTTP ${info.status}` : '網路或檔案讀取失敗');
-            alert(`無法載入目前使用者的題庫。\n檔案：${getUserBankUrl()}\n原因：${reason}\n請確認 HTML 與 ${getUserBankFileStem()}.txt 位於同一網站目錄，且格式為 [W1] 後接英文,中文。修正後可重新載入。`);
+            alert(`無法載入目前使用者的題庫。\n檔案：${getUserBankUrl()}\n原因：${reason}\n請確認 GitHub 儲存庫中的 ${getUserBankFileStem()}.txt 可公開讀取，且格式為 [W1] 後接英文,中文。修正後可重新載入。`);
         }
     }
 
@@ -2590,71 +2552,6 @@ html, body { height:100% !important; overflow:hidden !important; }
         return JSON.parse(JSON.stringify(banks || {}));
     }
 
-    function getFixedBanks() {
-        return {
-            'W1': [
-                ['dinosaur','恐龍'],
-                ['million','百萬'],
-                ['street','街道'],
-                ['Earth','地球'],
-                ['dance','跳舞'],
-                ['cloud','雲'],
-                ['lake','湖'],
-                ['near','附近'],
-                ['valley','山谷'],
-                ['yesterday','昨天']
-            ],
-            'W2': [
-                ['camp','營地'],
-                ['map','地圖'],
-                ['eighty','八十'],
-                ['fifty','五十'],
-                ['forty','四十'],
-                ['star','星星'],
-                ['seventy','七十'],
-                ['sixty','六十'],
-                ['thirty','三十'],
-                ['twenty','二十']
-            ],
-            'W3': [
-                ['hundred','一百'],
-                ['ninety','九十'],
-                ['east','東方'],
-                ['north','北方'],
-                ['south','南方'],
-                ['west','西方'],
-                ['far','遠的'],
-                ['picnic table','野餐桌'],
-                ['parking lot','停車場'],
-                ['lizard','蜥蜴']
-            ],
-            'W4': [
-                ['castle','城堡'],
-                ['gold','黃金'],
-                ['golden','金色的'],
-                ['today','今天'],
-                ['American','美國的'],
-                ['Australia','澳洲'],
-                ['Australian','澳洲的'],
-                ['China','中國'],
-                ['country','國家'],
-                ['Egypt','埃及'],
-                ['flag','國旗']
-            ]
-        };
-    }
-
-    function banksFromPairs(pairs) {
-        const banks = {};
-        Object.keys(pairs).forEach(unit => {
-            banks[unit] = pairs[unit].map((item, idx) => ({
-                en: item[0],
-                cn: item[1],
-                ref: `FIXED_${unit}_${idx + 1}`
-            }));
-        });
-        return banks;
-    }
 
     function setBankSourceMode(mode) {
         bankSourceMode = mode === 'text' ? 'text' : 'custom';
@@ -2666,47 +2563,24 @@ html, body { height:100% !important; overflow:hidden !important; }
         const textBtn = document.getElementById('bank-source-text');
         const customBtn = document.getElementById('bank-source-custom');
         const note = document.getElementById('bank-source-note');
-        if (textBtn) textBtn.classList.toggle('active', bankSourceMode === 'text');
-        if (customBtn) customBtn.classList.toggle('active', bankSourceMode === 'custom');
+        if (textBtn) { textBtn.classList.add('active'); textBtn.textContent = '🔄 重新載入 GitHub 題庫'; }
+        if (customBtn) customBtn.hidden = true;
         if (!note) return;
-        if (bankSourceMode === 'text') {
-            const info = window.__wordHeroBankLoadInfo || {};
-            if (info.ok === false && info.error) {
-                note.innerHTML = `<b style="color:#fca5a5">題庫載入失敗</b>：${escapeHtml(getUserBankUrl())}<br><span style="color:#fca5a5">未載入任何替代題庫，請確認 TXT 路徑、檔名與格式後重新載入。</span>`;
-            } else if (info.ok === true) {
-                note.innerHTML = `<b style="color:#86efac">已載入題庫</b>：<b>${escapeHtml(getUserBankUrl())}</b>｜${Number(info.count)||0} 個單字、${Array.isArray(info.units)?info.units.length:0} 個單元。`;
-            } else {
-                note.innerHTML = `題庫來源：<b>${escapeHtml(getUserBankUrl())}</b>。尚未確認載入狀態。`;
-            }
+        const info = window.__wordHeroBankLoadInfo || {};
+        if (info.ok === false && info.loading) {
+            note.innerHTML = '<b style="color:#fbbf24">正在載入 GitHub 題庫……</b>';
+        } else if (info.ok === false && info.error) {
+            note.innerHTML = `<b style="color:#fca5a5">題庫載入失敗</b><br><span style="color:#fca5a5">${escapeHtml(info.error)}</span><br><span>請確認網路連線後，按上方按鈕重試。沒有載入替代題庫。</span>`;
+        } else if (info.ok === true) {
+            note.innerHTML = `<b style="color:#86efac">已載入 GitHub 題庫</b>｜${Number(info.count)||0} 個單字、${Array.isArray(info.units)?info.units.length:0} 個單元。`;
         } else {
-            note.innerHTML = `目前使用：<b>${escapeHtml(getChildName())}</b> 的本機可修改題庫。新增、編輯、刪除只影響這位使用者。`;
+            note.textContent = '題庫來源：GitHub Anson.txt。';
         }
     }
 
     function handleTxtFile(event) {
-        const file = event.target.files && event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-            try {
-                const parsed = parseAnsonTxt(String(reader.result || ''));
-                if (!Object.keys(parsed).length || !Object.values(parsed).some(arr => arr.length)) {
-                    alert('TXT 裡沒有讀到單字。\n\n格式請使用：\n[W1]\ndinosaur,恐龍\nmillion,百萬');
-                    return;
-                }
-                setLocalJSON('hero_text_bank', parsed);
-                state.banks = cloneBanks(parsed);
-                bankSourceMode = 'text';
-                setHeroData('hero_bank_source_mode', bankSourceMode);
-                refreshUnitSelectors();
-                updateBankSourceUI();
-                renderBankManager();
-                alert(`📄 已載入「${file.name}」文字題庫。\n\n這個 TXT 會保存在「${getChildName()}」的本機資料，不會影響其他使用者。`);
-            } catch (e) {
-                alert('TXT 讀取失敗，請確認檔案格式。');
-            }
-        };
-        reader.readAsText(file, 'UTF-8');
+        if (event?.target) event.target.value = '';
+        alert('本版本只讀取 GitHub 的 Anson.txt，不接受本機題庫檔案。請直接在 GitHub 編輯題庫後，再按「重新載入 GitHub 題庫」。');
     }
 
     function applyLocalQuestionChanges() {
@@ -3277,7 +3151,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         if(bankSourceMode!=='custom') {
             const copied=cloneBanks(state.banks);
             state.banks=normalizeLegacyEarthInBanks(copied);
-            setLocalJSON('hero_question_bank',state.banks);
+            // 已停用本機題庫副本；GitHub Anson.txt 為唯一題庫來源。
             bankSourceMode='custom';
             setHeroData('hero_bank_source_mode',bankSourceMode);
         }
@@ -3350,7 +3224,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         if (bankSourceMode !== 'custom') {
             const copied = cloneBanks(state.banks);
             state.banks = normalizeLegacyEarthInBanks(copied);
-            setLocalJSON('hero_question_bank', state.banks);
+            // 已停用本機題庫副本；GitHub Anson.txt 為唯一題庫來源。
             bankSourceMode = 'custom';
             setHeroData('hero_bank_source_mode', bankSourceMode);
         }
@@ -3408,47 +3282,29 @@ html, body { height:100% !important; overflow:hidden !important; }
 
     function saveUserQuestionBank() {
         if (!currentUserKey || bankSourceMode !== 'custom') return;
-        setLocalJSON('hero_question_bank', state.banks);
+            // 已停用本機題庫副本；GitHub Anson.txt 為唯一題庫來源。
     }
 
     function useCustomQuestionBank() {
-        if (bankSourceMode === 'custom') {
-            updateBankSourceUI();
-            renderBankManager();
-            return;
-        }
-
-        // 以目前文字題庫複製一份，作為可自由修改的本機題庫。
-        const copied = cloneBanks(state.banks);
-        state.banks = copied;
-        setLocalJSON('hero_question_bank', copied);
-        bankSourceMode = 'custom';
-        setHeroData('hero_bank_source_mode', bankSourceMode);
-        refreshUnitSelectors();
+        alert('題庫目前以 GitHub 的 Anson.txt 為唯一來源。若要修改題目，請直接編輯 GitHub 儲存庫中的 Anson.txt。');
+        bankSourceMode = 'text';
         updateBankSourceUI();
-        renderBankManager();
-        alert('✏️ 已切換到「自行變更題庫」。\n\n現在新增、編輯、刪除單字，都只會修改這位使用者的本機題庫。');
     }
 
     async function initQuestionBank() {
-        const savedMode = getHeroData('hero_bank_source_mode');
-        if (savedMode === 'text' || savedMode === 'custom') bankSourceMode = savedMode;
-        if (bankSourceMode === 'custom') {
-            loadLocalQuestionBank();
-            applyLocalQuestionChanges();
-            const hasCustomWords = Object.values(state.banks).some(arr => Array.isArray(arr) && arr.length);
-            if (!hasCustomWords) {
-                bankSourceMode = 'text';
-                setHeroData('hero_bank_source_mode', 'text');
-                await loadUserTxtQuestionBank();
-            }
-        } else {
-            await loadUserTxtQuestionBank();
-        }
-        normalizeCurrentBank();
+        bankSourceMode = 'text';
+        setHeroData('hero_bank_source_mode', 'text');
+        const loaded = await loadUserTxtQuestionBank();
+        state.banks = loaded ? normalizeLegacyEarthInBanks(state.banks) : {};
         refreshUnitSelectors();
         updateBankSourceUI();
         initializeErrorBankFromHistory();
+        const status = document.getElementById('bank-load-child-status');
+        if (status) {
+            status.hidden = loaded;
+            status.textContent = loaded ? '' : '題庫暫時無法載入，請請家長檢查網路後重試。';
+        }
+        return loaded;
     }
 
     function getEvolutionBaseId(id) {
@@ -3514,6 +3370,7 @@ html, body { height:100% !important; overflow:hidden !important; }
 
     async function initSystem() {
         ensureChildName();
+        clearLegacyLocalQuestionBanks();
         state.pokedex = normalizePokedexBits(getHeroData('hero_pokedex_bits'));
         setHeroData('hero_pokedex_bits', state.pokedex);
         state.activePokeId = parseInt(getHeroData('hero_myPoke')) || 384;
@@ -3523,7 +3380,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         if (mainName) mainName.textContent = getChildName();
         const storageInfo = document.getElementById('bank-storage-info');
         if (storageInfo) {
-            storageInfo.innerHTML = `${escapeHtml(getChildName())}：使用者題庫讀取 <b>${escapeHtml(getUserBankUrl())}</b>；自行變更題庫則只保存在這位使用者的瀏覽器。`;
+            storageInfo.innerHTML = `${escapeHtml(getChildName())}：唯一題庫來源為 <b>${escapeHtml(getUserBankUrl())}</b>；不使用內建題庫或本機備援。`;
         }
         await initQuestionBank();
         renderBankManager();
@@ -3533,7 +3390,7 @@ html, body { height:100% !important; overflow:hidden !important; }
         state.unit = document.getElementById('unit-selector').value;
 
         if (!state.unit || !state.banks[state.unit] || state.banks[state.unit].length === 0) {
-            return alert(`目前沒有可用的單字資料。\n\n請家長先重新整理頁面（Windows：Ctrl+F5；Mac：Cmd+Shift+R）。\n\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認 HTML 同目錄有 ${getUserBankFileStem()}.txt，並確認單元標題格式如 [W2]、[W3]（W 後可接數字），每行單字格式為英文,中文。\n\n若仍無資料，請到「家長與設定」確認題庫來源及載入狀態。`);
+            return alert(`目前沒有可用的單字資料。\n\n請家長先重新整理頁面（Windows：Ctrl+F5；Mac：Cmd+Shift+R）。\n\n題庫來源：${bankSourceMode === 'text' ? getUserBankUrl() : '目前使用者的本機自訂題庫'}\n請確認 GitHub 上的 ${getUserBankFileStem()}.txt 可公開讀取；每個單元使用 [W2] 這類標題，每行使用英文,中文。\n\n若仍無資料，請到「家長與設定」確認題庫來源及載入狀態。`);
         }
 
         // 每次開新練習都建立獨立副本，避免練習流程意外修改題庫原始物件。
