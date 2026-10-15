@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero 2B｜GitHub 題庫版 V1536</title>
+    <title>Word Hero 2B｜GitHub 題庫版 V1538</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1339,6 +1339,85 @@ html, body { height:100% !important; overflow:hidden !important; }
     #view-bank .bank-action, #view-bank .bank-control-card, #view-bank .bank-entry-card, #view-bank .bank-bottom-actions, #view-bank #bank-json-import { display:none !important; }
     #bank-load-child-status { margin:8px 0;padding:10px 12px;border-radius:12px;background:#7f1d1d;color:#fff;font-weight:800;text-align:center; }
     #bank-load-child-status[hidden] { display:none !important; }
+
+/* V1538：統一三個學習頁的頁首；標題與固定「回首頁」按鈕同列、同字級。 */
+.global-home-button{
+  font-size:1.25rem!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+  min-height:48px!important;
+  padding:8px 12px!important;
+  border-radius:12px!important;
+}
+.view-section:not(#view-main){padding-top:8px!important;}
+#view-sentence-practice > .sentence-page-topbar{
+  min-height:48px!important;
+  margin:8px 0 8px!important;
+  padding:0 8px 0 160px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  box-sizing:border-box!important;
+}
+#view-sentence-practice .sentence-page-title{
+  font-size:1.25rem!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+  white-space:nowrap!important;
+}
+#view-game .child-game-toolbar{
+  min-height:48px!important;
+  margin:8px 0 8px!important;
+  padding:0 8px 0 160px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  box-sizing:border-box!important;
+}
+#view-game .child-game-progress{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  flex-wrap:wrap!important;
+  line-height:1.2!important;
+  text-align:right!important;
+}
+#view-game #child-mode-label{
+  font-size:1.25rem!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+}
+#view-game #child-question-progress{font-size:1rem!important;line-height:1.2!important;}
+@media(max-width:600px){
+  .global-home-button{font-size:1.05rem!important;min-height:42px!important;padding:7px 10px!important;}
+  #view-sentence-practice > .sentence-page-topbar{padding-left:132px!important;padding-right:4px!important;min-height:42px!important;}
+  #view-sentence-practice .sentence-page-title,#view-game #child-mode-label{font-size:1.05rem!important;}
+  #view-game .child-game-toolbar{padding-left:132px!important;padding-right:4px!important;min-height:42px!important;}
+  #view-game .child-game-progress{gap:6px!important;}
+  #view-game #child-question-progress{font-size:.78rem!important;}
+}
+
+
+/* V1538：全站共用頁首。所有功能頁的標題固定與「回首頁」按鈕同列、同字級。 */
+.global-home-button{top:8px!important;left:8px!important;height:48px!important;min-height:48px!important;box-sizing:border-box!important;padding:8px 12px!important;font-size:1.25rem!important;line-height:1.2!important;font-weight:800!important;border-radius:12px!important;}
+.global-page-title{display:none;position:fixed;z-index:9999;top:8px;left:164px;right:12px;height:48px;box-sizing:border-box;align-items:center;justify-content:flex-start;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#edf3fa;font-size:1.25rem;font-weight:800;line-height:1.2;pointer-events:none;}
+body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:flex;}
+/* 由共用頁首負責頁面名稱，避免不同頁面各自使用不同位置／字級的重複標題。 */
+#view-sentence-practice > .sentence-page-topbar{min-height:48px!important;height:48px!important;margin:0 0 4px!important;padding:0 8px 0 160px!important;overflow:visible!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;}
+#view-sentence-practice .sentence-page-title{display:none!important;}
+#view-game .child-game-toolbar{min-height:48px!important;margin:0 0 4px!important;padding:0!important;justify-content:flex-end!important;}
+#view-game #child-mode-label{display:none!important;}
+#view-team > h2,#view-pokedex > h2,#view-practice-menu > .practice-unit-title,#view-victory > h2,#view-bank .bank-page-head,#view-question-editor .bank-page-head{display:none!important;}
+#view-practice-menu > .practice-unit-subtitle{margin-top:0!important;}
+#view-game #child-question-progress{margin-left:auto!important;}
+@media(max-width:600px){
+ .global-home-button{height:42px!important;min-height:42px!important;padding:7px 10px!important;font-size:1.05rem!important;}
+ .global-page-title{left:140px;top:8px;height:42px;font-size:1.05rem;}
+ #view-sentence-practice > .sentence-page-topbar{min-height:42px!important;height:42px!important;padding:0 4px 0 132px!important;}
+ #view-game .child-game-toolbar{min-height:42px!important;}
+}
     </style>
 </head>
 <body onload="initSystem()">
@@ -1355,9 +1434,10 @@ html, body { height:100% !important; overflow:hidden !important; }
 
 <div class="container">
     <button id="global-home-button" type="button" class="global-home-button" onclick="handleGlobalHome()" aria-label="回首頁">← 回首頁</button>
+<div id="global-page-title" class="global-page-title" aria-live="polite"></div>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1536">V1536</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1538">V1538</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -4674,10 +4754,40 @@ const storyWordGloss = {
       document.getElementById(id).style.display = 'flex';
       const home=document.getElementById('global-home-button');
       if(home) home.style.display = id==='view-main' ? 'none' : 'inline-flex';
+      const pageTitle=document.getElementById('global-page-title');
+      const pageTitles={
+        'view-practice-menu':'練習模式',
+        'view-sentence-practice':'✍️ 單字造句',
+        'view-game':'單字練習',
+        'view-team':'🐲 我的夥伴',
+        'view-pokedex':'📸 寶可夢圖鑑',
+        'view-victory':'這一輪完成了！',
+        'view-bank':'題庫管理',
+        'view-question-editor':'新增／編輯題目'
+      };
+      if(pageTitle){
+        let title=pageTitles[id]||'';
+        if(id==='view-game'){
+          const modeLabel=document.getElementById('child-mode-label');
+          if(modeLabel && modeLabel.textContent.trim()) title=modeLabel.textContent.trim();
+        }
+        pageTitle.textContent=title;
+        pageTitle.style.display=id==='view-main'?'none':'flex';
+      }
       if(id === 'view-team') renderTeam();
       if(id === 'view-pokedex') renderDex();
       if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); }
     }
+    const sharedGameTitleObserver = new MutationObserver(() => {
+      const activeGame = document.getElementById('view-game');
+      const sharedTitle = document.getElementById('global-page-title');
+      const modeLabel = document.getElementById('child-mode-label');
+      if (activeGame && activeGame.style.display !== 'none' && sharedTitle && modeLabel && modeLabel.textContent.trim()) {
+        sharedTitle.textContent = modeLabel.textContent.trim();
+      }
+    });
+    const sharedGameModeLabel = document.getElementById('child-mode-label');
+    if (sharedGameModeLabel) sharedGameTitleObserver.observe(sharedGameModeLabel, {childList:true, characterData:true, subtree:true});
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeWordHelp(); closeSentencePractice(); closeUserAddModal(); } });
     // 兒童版只保留完整單字及完整單字播放；不顯示未經校對的自然發音切分或音標。
     function renderPracticeGuide(text, options = {}) {
