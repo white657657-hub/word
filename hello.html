@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero｜兒童友善 UI 版</title>
+    <title>Word Hero｜兒童友善 UI 版 V1529</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1235,16 +1235,57 @@ html, body { height:100% !important; overflow:hidden !important; }
         /* VERSION BADGE: small build identifier next to Word Hero on home screen */
         .wh-version-badge{display:inline-flex;align-items:center;vertical-align:middle;margin-left:7px;padding:2px 6px;border:1px solid #40536b;border-radius:999px;background:#13243a;color:#9fb4cc;font-size:.48em;font-weight:500;letter-spacing:.02em;line-height:1.4;white-space:nowrap}
 
-        /* V1526: parent refresh reminder */
-        .parent-refresh-reminder{
-            max-width:760px;margin:4px auto 0;padding:4px 9px;
-            color:#9fb3c8;font-size:.68rem;line-height:1.45;text-align:center;
-            border:1px solid rgba(112,145,174,.24);border-radius:8px;
-            background:rgba(17,35,55,.45)
+        /* V1527：首頁增色（僅視覺樣式；不更動答題／題庫邏輯） */
+        #view-main {
+            background:
+              radial-gradient(ellipse at 8% 2%, rgba(14,165,233,.13), transparent 35%),
+              radial-gradient(ellipse at 95% 18%, rgba(168,85,247,.12), transparent 34%),
+              radial-gradient(ellipse at 50% 100%, rgba(16,185,129,.08), transparent 42%);
+            border-radius:20px;
+            padding:10px;
         }
-        @media(max-width:520px){
-            .parent-refresh-reminder{font-size:.62rem;padding:4px 7px;margin-top:3px}
+        #view-main .home-title {
+            background:linear-gradient(90deg,#38bdf8 0%,#a78bfa 42%,#f472b6 72%,#fbbf24 100%);
+            -webkit-background-clip:text; background-clip:text; color:transparent;
+            text-shadow:0 0 24px rgba(56,189,248,.10);
         }
+        #view-main .unit-card {
+            background:linear-gradient(135deg,rgba(14,165,233,.16),rgba(30,41,59,.92) 58%,rgba(139,92,246,.14));
+            border:1px solid rgba(56,189,248,.48);
+            box-shadow:0 8px 22px rgba(2,132,199,.09);
+        }
+        #view-main .unit-label { color:#bae6fd; }
+        #view-main #unit-selector { border-color:#38bdf8; background:#0b1530; }
+        #view-main .home-main-actions { gap:11px; }
+        #view-main .home-action {
+            position:relative; overflow:hidden; isolation:isolate;
+            min-height:108px; border:1px solid rgba(255,255,255,.18);
+            box-shadow:0 7px 0 rgba(2,6,23,.22),0 12px 22px rgba(0,0,0,.20);
+            transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;
+        }
+        #view-main .home-action::before {
+            content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+            background:linear-gradient(120deg,rgba(255,255,255,.20),transparent 42%,rgba(2,6,23,.10));
+        }
+        #view-main .home-action:hover { filter:brightness(1.10) saturate(1.08); transform:translateY(-2px); }
+        #view-main .home-action:active { transform:translateY(1px); box-shadow:0 3px 0 rgba(2,6,23,.22); }
+        #view-main .home-action.challenge { background:linear-gradient(135deg,#fb7185,#f97316 58%,#fbbf24); }
+        #view-main .home-action.practice { background:linear-gradient(135deg,#0ea5e9,#2563eb 58%,#4f46e5); }
+        #view-main .home-action.sentence { background:linear-gradient(135deg,#a855f7,#7c3aed 58%,#6366f1); }
+        #view-main .home-action.star { background:linear-gradient(135deg,#fde047,#f59e0b 58%,#ea580c); color:#172033; }
+        #view-main .home-action.error-review { background:linear-gradient(135deg,#34d399,#0d9488 58%,#0891b2); }
+        #view-main .home-action.report { background:linear-gradient(135deg,#f472b6,#db2777 58%,#9333ea); }
+        #view-main .home-action small { color:inherit; opacity:.94; }
+        #view-main .home-adventure-title { color:#c4b5fd; font-size:.9rem; letter-spacing:.4px; }
+        #view-main .home-secondary-actions button {
+            border-color:rgba(167,139,250,.55);
+            background:linear-gradient(135deg,rgba(99,102,241,.28),rgba(30,41,59,.95));
+            box-shadow:inset 0 1px rgba(255,255,255,.06);
+        }
+        #view-main .home-secondary-actions button:first-child { border-color:rgba(52,211,153,.55); background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(30,41,59,.96)); }
+        #view-main .more-toggle { border-color:rgba(148,163,184,.42); background:rgba(30,41,59,.42); color:#cbd5e1; }
+        @media (prefers-reduced-motion: reduce) { #view-main .home-action { transition:none; } }
+        @media screen and (max-width:600px) { #view-main { padding:7px; } #view-main .home-action { min-height:96px; } }
 </style>
 </head>
 <body onload="initSystem()">
@@ -1263,10 +1304,7 @@ html, body { height:100% !important; overflow:hidden !important; }
     <button id="global-home-button" type="button" class="global-home-button" onclick="handleGlobalHome()" aria-label="回首頁">← 回首頁</button>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1526">V1526</span></div>
-            <div class="parent-refresh-reminder" role="note">
-                家長提醒：更新 Word Hero 後，請重新整理頁面；若出現「沒有可用的單字資料」，請先強制重新整理，再確認 Anson.txt 與 HTML 位於同一資料夾（首頁使用者顯示為 2B）。
-            </div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1527">V1527</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1286,29 +1324,29 @@ html, body { height:100% !important; overflow:hidden !important; }
 
         <div class="home-main-actions">
             <button class="home-action challenge" onclick="startSession('quiz')">
-                <span>魔王挑戰</span><small>挑戰單字，收服夥伴</small>
+                <span>⚔️ 魔王挑戰</span><small>挑戰單字，收服夥伴</small>
             </button>
             <button class="home-action practice" onclick="startSession('practice')">
-                <span>單字練習</span><small>拼字、聽發音</small>
+                <span>🔤 單字練習</span><small>拼字、聽發音</small>
             </button>
             <button class="home-action sentence" onclick="startSentenceSession()">
-                <span>單字造句</span><small>用單字寫英文句子</small>
+                <span>✍️ 單字造句</span><small>用單字寫英文句子</small>
             </button>
             <button class="home-action star" onclick="startPrioritySession()">
-                <span>星號複習</span><small>複習自己標記的單字</small>
+                <span>⭐ 星號複習</span><small>複習自己標記的單字</small>
             </button>
             <button class="home-action error-review" onclick="startErrorReviewSession()">
-                <span>錯題複習 <b id="error-bank-count" class="error-bank-count">0</b></span><small>把還不熟的單字再練一次</small>
+                <span>🎯 錯題複習 <b id="error-bank-count" class="error-bank-count">0</b></span><small>把還不熟的單字再練一次</small>
             </button>
             <button class="home-action report" onclick="openLearningReportInApp()">
-                <span>學習報告</span><small>和家長一起看看學習進度</small>
+                <span>📊 學習報告</span><small>和家長一起看看學習進度</small>
             </button>
         </div>
 
         <div class="home-adventure-title">我的寶可夢冒險</div>
         <div class="home-secondary-actions">
-            <button onclick="switchView('view-team')"><span>我的夥伴</span></button>
-            <button onclick="switchView('view-pokedex')"><span>寶可夢圖鑑</span></button>
+            <button onclick="switchView('view-team')"><span>🧩 我的夥伴</span></button>
+            <button onclick="switchView('view-pokedex')"><span>📚 寶可夢圖鑑</span></button>
         </div>
         
         <button class="more-toggle" onclick="toggleMoreTools()" aria-expanded="false">家長與設定 <span id="more-arrow">⌄</span></button>
@@ -5335,4 +5373,47 @@ const storyWordGloss = {
   #combat-arena[hidden] { display:none !important; }
   #practice-context-card[hidden] { display:none !important; }
   #practice-target-word[hidden] { display:none !important; }
+
+
+        /* V1529：跨頁 UI 一致性與造句頁緊湊間距 */
+        .view-section { gap: 8px; }
+        .view-section > .mode-btn,
+        .view-section > button.mode-btn,
+        .view-section > .sentence-unit-back { min-height: 42px; border-radius: 11px; font-weight: 800; }
+        .sentence-unit-card {
+            margin: 4px auto 0 !important; /* 不使用 auto 垂直置中，避免平板鍵盤開啟時上方留白過大 */
+            padding: 12px !important;
+            width: min(96%, 620px) !important;
+        }
+        #view-sentence-practice { gap: 6px !important; padding-top: 4px !important; }
+        #view-sentence-practice > div:first-child { min-height: 38px; flex: 0 0 auto; }
+        #sentence-unit-cn { min-height: 0 !important; line-height: 1.25 !important; margin: 2px 0 0 !important; }
+        #sentence-unit-word { margin: 2px 0 6px !important; line-height: 1.12 !important; }
+        .sentence-auto-puncture { margin: 0 0 5px !important; min-height: 30px; }
+        #sentence-unit-input { min-height: 96px !important; }
+        .sentence-own-play { margin: 6px 0 8px !important; }
+        .sentence-own-play button { min-height: 42px; }
+        .sentence-unit-actions { margin-top: 6px !important; gap: 8px !important; }
+        .sentence-unit-actions button { min-height: 48px; }
+        .sentence-unit-progress { margin-top: 5px !important; }
+        .sentence-unit-back { margin-top: 2px !important; }
+        /* 統一互動元件的觸控尺寸與鍵盤焦點，不覆寫各功能的語意色彩 */
+        button, select, input, textarea { font-family: inherit; }
+        button { touch-action: manipulation; }
+        button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible {
+            outline: 2px solid #38bdf8 !important; outline-offset: 2px;
+        }
+        button:disabled { opacity: .55; cursor: not-allowed; }
+        @media (max-width: 600px) {
+            .view-section { padding: 4px !important; gap: 7px !important; }
+            .sentence-unit-card { width: 100% !important; padding: 10px !important; border-radius: 14px !important; }
+            #sentence-unit-word { font-size: clamp(1.7rem, 8vw, 2.1rem) !important; }
+            #sentence-unit-input { min-height: 88px !important; font-size: 1rem !important; }
+            .sentence-unit-actions { grid-template-columns: minmax(0,1fr) 84px !important; }
+            .sentence-unit-actions button { font-size: .95rem; }
+        }
+        @media (max-height: 600px) {
+            #view-sentence-practice { overflow-y: auto !important; justify-content: flex-start !important; }
+            .sentence-unit-card { margin-top: 2px !important; }
+        }
 </style>
