@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero 2B｜兒童拼字學習版 V1549</title>
+    <title>Word Hero 2B｜兒童拼字學習版 V1551</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1495,7 +1495,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
 <div id="global-page-title" class="global-page-title" aria-live="polite"></div>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1549">V1549</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1551">V1551</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1888,12 +1888,14 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
 
 <script>
     const ANSON_USER = 'anson';
-    // GitHub Pages 題庫依目前使用者讀取：Vicky.txt 或 Anson.txt，與主程式放在同一目錄。
+    // V1551：Anson 與 2B 是不同的使用者顯示名稱，但共用唯一題庫 Anson.txt。
+    // 只有 Vicky 使用 Vicky.txt；不可依其他使用者名稱推導出其他題庫檔名。
     function getUserBankFileStem() {
         const name = String((typeof getChildName === 'function' ? getChildName() : '') || localStorage.getItem('wordhero_active_user') || '2B').trim();
         if (/^vicky$/i.test(name)) return 'Vicky';
         if (/^(anson|2b)$/i.test(name)) return 'Anson';
-        return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Anson';
+        console.warn('未設定獨立題庫的使用者名稱，預設使用 Anson.txt：', name);
+        return 'Anson';
     }
     function getUserBankUrl() { return `https://raw.githubusercontent.com/white657657-hub/word/main/${encodeURIComponent(getUserBankFileStem())}.txt`; }
     const PK_NAMES = {1:"妙蛙種子",2:"妙蛙草",3:"妙蛙花",4:"小火龍",5:"火恐龍",6:"噴火龍",7:"傑尼龜",8:"卡咪龜",9:"水箭龜",10:"綠毛蟲",11:"鐵甲蛹",12:"巴大蝶",13:"獨角蟲",14:"鐵殼蛹",15:"大針蜂",16:"波波",17:"比比鳥",18:"大比鳥",19:"小拉達",20:"拉達",21:"烈雀",22:"大嘴雀",23:"阿柏蛇",24:"阿柏怪",25:"皮卡丘",26:"雷丘",27:"穿山鼠",28:"穿山王",29:"尼多蘭",30:"尼多娜",31:"尼多后",32:"尼多朗",33:"尼多力諾",34:"尼多王",35:"皮皮",36:"皮可西",37:"六尾",38:"九尾",39:"胖丁",40:"胖可丁",41:"超音蝠",42:"大嘴蝠",43:"走路草",44:"臭臭花",45:"霸王花",46:"派拉斯",47:"派拉斯特",48:"毛球",49:"摩魯蛾",50:"地鼠",51:"三地鼠",52:"喵喵",53:"貓老大",54:"可達鴨",55:"哥達鴨",56:"猴怪",57:"火爆猴",58:"卡蒂狗",59:"風速狗",60:"蚊香蝌蚪",61:"蚊香君",62:"蚊香泳士",63:"凱西",64:"勇基拉",65:"胡地",66:"腕力",67:"豪力",68:"怪力",69:"喇叭芽",70:"口呆花",71:"大食花",72:"瑪瑙水母",73:"毒刺水母",74:"小拳石",75:"隆隆石",76:"隆隆岩",77:"小火馬",78:"烈焰馬",79:"呆呆獸",80:"呆殼獸",81:"小磁怪",82:"三合一磁怪",83:"大蔥鴨",84:"嘟嘟",85:"嘟嘟利",86:"小海獅",87:"白海獅",88:"臭泥",89:"臭臭泥",90:"大舌貝",91:"刺甲貝",92:"鬼斯",93:"鬼斯通",94:"耿鬼",95:"大岩蛇",96:"催眠貘",97:"引夢貘人",98:"大鉗蟹",99:"巨鉗蟹",100:"雷電球",101:"頑皮雷彈",102:"蛋蛋",103:"椰蛋樹",104:"卡拉卡拉",105:"嘎啦嘎啦",106:"飛腿郎",107:"快拳郎",108:"大舌頭",109:"瓦斯彈",110:"雙彈瓦斯",111:"鐵甲犀牛",112:"鐵甲暴龍",113:"吉利蛋",114:"蔓藤怪",115:"袋獸",116:"墨海馬",117:"海刺龍",118:"角金魚",119:"金魚王",120:"海星星",121:"寶石海星",122:"魔牆人偶",123:"飛天螳螂",124:"迷唇姐",125:"電擊獸",126:"鴨嘴火獸",127:"凱羅斯",128:"肯泰羅",129:"鯉魚王",130:"暴鯉龍",131:"拉普拉斯",132:"百變怪",133:"伊布",134:"水伊布",135:"雷伊布",136:"火伊布",137:"多邊獸",138:"菊石獸",139:"多刺菊石獸",140:"化石盔",141:"鐮刀盔",142:"化石翼龍",143:"卡比獸",144:"急凍鳥",145:"閃電鳥",146:"火焰鳥",147:"迷你龍",148:"哈克龍",149:"快龍",150:"超夢",151:"夢幻",384:"烈空坐",992:"鐵臂膀",10079:"超級烈空坐",10044:"超級超夢Y"};
@@ -2470,6 +2472,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
         const payload = JSON.stringify(all).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
         const schedule = getSpacedReviewSchedule();
         const schedulePayload = JSON.stringify(Object.values(schedule)).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+        const bankUnitsPayload = JSON.stringify(Object.keys(state.banks || {}).sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true,sensitivity:'base'}))).replace(/</g,'\\u003c').replace(/\\u2028/g,'\\u2028').replace(/\\u2029/g,'\\u2029');
         return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#08111f;color:#edf3fa;font:16px/1.6 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1120px;margin:auto;padding:22px 15px 56px}h1{font-size:26px;margin:0}h2{font-size:20px;margin:0 0 10px}h3{font-size:17px;margin:0 0 8px}.muted,.subtle{color:#a9bbd0}.panel,.section-card{background:#111e30;border:1px solid #344c66;border-radius:14px;padding:14px;margin:12px 0}.toolbar{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;align-items:end;margin-top:14px}.toolbar label{display:grid;gap:5px;font-weight:700}.toolbar input,.toolbar select{min-width:0;width:100%;font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:#fff;color:#111827}.toolbar button,.small-btn{padding:10px 13px;border:0;border-radius:9px;background:#285b9b;color:#fff;font:inherit;font-weight:750;cursor:pointer}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.stat{background:#172a42;border:1px solid #344c66;border-radius:12px;padding:12px}.stat strong{display:block;font-size:24px}.section-card h2{display:flex;gap:8px;align-items:center}.section-note{color:#a9bbd0;font-size:14px;margin:-4px 0 10px}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:440px}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #344c66;vertical-align:top}th{color:#c9d8e8;font-size:14px}td.num,th.num{text-align:center;white-space:nowrap}.count{color:#a9bbd0;font-size:14px}.tag{display:inline-block;border-radius:20px;padding:2px 9px;background:#203b5a;color:#d8e9ff;font-size:13px}.record{background:#091523;border:1px solid #2d435c;border-radius:10px;padding:11px;margin:8px 0}.record-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:750}.record p{margin:5px 0;overflow-wrap:anywhere}.bad{color:#ffb2b7}.good{color:#8be5bd}.day-card{background:#0d1a2a;border:1px solid #344c66;border-radius:10px;padding:12px;margin:9px 0}.day-card h3{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.empty{padding:12px;color:#a9bbd0;background:#0d1a2a;border-radius:9px}.hint{background:#1a2b40;border-radius:10px;padding:12px;color:#c9d8e8;margin:12px 0}.section-card .empty{margin-top:8px}@media(max-width:700px){.wrap{padding:15px 10px}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.section-card,.panel{padding:11px}}@media(max-width:420px){.toolbar{grid-template-columns:1fr}h1{font-size:22px}}
@@ -2479,6 +2482,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
 <script>
 const DATA=${payload};
 const SCHEDULE=${schedulePayload};
+const BANK_UNITS=${bankUnitsPayload};
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 function dateInfo(x){let d=x.at?new Date(x.at):x.timestampMs?new Date(Number(x.timestampMs)):x.date?new Date(x.date):null;if(!d||Number.isNaN(d.getTime()))return {key:'',label:'日期未記錄',time:'時間未記錄'};return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),label:d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0'),time:d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}}
@@ -2505,7 +2509,17 @@ const inputHtml=inputs.length?inputs.slice().sort((a,b)=>String(b.at||b.timestam
 const allUnitRows=DATA.filter(x=>selectedUnit(x)&&matchesSearch(x)),allWrong=allUnitRows.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x)),allByWord={};allWrong.forEach(x=>{const w=wordOf(x);(allByWord[w]||(allByWord[w]=[])).push(x)});const cumulative=Object.entries(allByWord).sort((a,b)=>b[1].length-a[1].length);const cumulativeHtml=cumulative.length?'<div class="table-wrap"><table><thead><tr><th>單字</th><th class="num">累積答錯</th><th>最近答錯日期</th></tr></thead><tbody>'+cumulative.map(([w,rs])=>'<tr><td><b>'+esc(w)+'</b></td><td class="num">'+rs.length+' 次</td><td>'+esc(rs.map(x=>dateInfo(x).label).sort().reverse()[0]||'日期未記錄')+'</td></tr>').join('')+'</tbody></table></div>':'<div class="empty">目前沒有累積錯題紀錄。</div>';
 const scheduleRows=SCHEDULE.filter(x=>selectedUnit({unit:x.unit})&&matchesSearch({word:x.word,unit:x.unit})).sort((a,b)=>Number(a.dueAt||0)-Number(b.dueAt||0));const scheduleHtml=scheduleRows.length?'<div class="table-wrap"><table><thead><tr><th>單字</th><th>複習狀態</th><th>上次結果</th><th>下次複習</th></tr></thead><tbody>'+scheduleRows.map(x=>{const due=Number(x.dueAt)||0,d=new Date(due),day=due?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'未排程';return '<tr><td><b>'+esc(x.word||'')+'</b></td><td>'+(!due?'未排程':due<=Date.now()?'已到期／今天複習':'尚未到期')+'</td><td>'+esc(x.lastResult==='correct'?'答對':'答錯')+(x.hintUsed?'（曾使用提示）':'')+'</td><td>'+esc(day)+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="empty">尚未累積複習排程。孩子完成拼字後，系統會依答題結果安排下次複習。</div>';$('report').innerHTML=section('1. 日期分析','每天答錯總次數、涉及單字數與造句次數。',dayHtml)+section('2. 最常答錯的單字','依目前日期區間由答錯次數高至低排列；新舊錯題 Log 已嘗試配對去重。',wordHtml)+section('3. 反覆出現的拼字錯誤','相同目標單字＋相同錯拼才合併計數，不同錯法分開呈現。',variantHtml)+section('4. 每一句造句','依時間由新到舊，保留每次提交的原始句子與檢查結果。',sentenceHtml)+section('5. 孩子輸入過程與提示','最多顯示最新 300 筆逐字／提示紀錄；不會刪除原始資料。',inputHtml)+section('6. 間隔複習排程','依近期作答結果安排下次複習；答錯隔天重練，答對逐步拉長間隔。',scheduleHtml)+section('累積弱點（全部歷史紀錄）','不受上方日期限制，避免只看今天而忽略長期反覆出錯的單字。',cumulativeHtml);
 }
-function initReport(){const units=[...new Set(DATA.map(unitOf))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true}));units.forEach(u=>{const opt=document.createElement('option');opt.value=u;opt.textContent=u;$('unitFilter').appendChild(opt)});const preferred=units.find(u=>/^W2\b/i.test(u));if(preferred)$('unitFilter').value=preferred;$('from').value=todayKey();$('to').value=todayKey();['unitFilter','from','to','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));$('reset').addEventListener('click',()=>{$('unitFilter').value=preferred||'__ALL__';$('from').value=todayKey();$('to').value=todayKey();$('search').value='';render()});render()}
+function initReport(){
+  const bankUnits=[...new Set((Array.isArray(BANK_UNITS)?BANK_UNITS:[]).map(u=>String(u||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true,sensitivity:'base'}));
+  const loggedUnits=[...new Set(DATA.map(unitOf).filter(u=>u&&u!=='未標示單元'))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true,sensitivity:'base'}));
+  const authoritative=new Set(bankUnits.map(u=>u.toLocaleLowerCase()));
+  const orphanUnits=loggedUnits.filter(u=>!authoritative.has(u.toLocaleLowerCase()));
+  bankUnits.forEach(u=>{const opt=document.createElement('option');opt.value=u;opt.textContent=u;$('unitFilter').appendChild(opt)});
+  if(orphanUnits.length){const group=document.createElement('optgroup');group.label='舊紀錄單元（不在目前 Anson.txt）';orphanUnits.forEach(u=>{const opt=document.createElement('option');opt.value=u;opt.textContent=u+'（舊紀錄）';group.appendChild(opt)});$('unitFilter').appendChild(group)}
+  const preferred=bankUnits.find(u=>/^W2\b/i.test(u));if(preferred)$('unitFilter').value=preferred;$('from').value=todayKey();$('to').value=todayKey();['unitFilter','from','to','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));$('reset').addEventListener('click',()=>{$('unitFilter').value=preferred||'__ALL__';$('from').value=todayKey();$('to').value=todayKey();$('search').value='';render()});
+  if(!bankUnits.length){const note=document.createElement('div');note.className='hint';note.textContent='目前無法取得已載入的 Anson.txt 單元清單；請先回主畫面確認 GitHub 題庫載入成功，再重新開啟家長報告。舊紀錄單元仍可供查閱。';$('unitFilter').parentElement.parentElement.insertAdjacentElement('afterend',note);}
+  render()
+}
 initReport();
 <\/script></body></html>`;
     }
