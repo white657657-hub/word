@@ -4691,22 +4691,45 @@ const storyWordGloss = {
       switchView('view-main');
     }
     function switchView(id) {
-      if(!document.getElementById(id)) return;
-      if(id==='view-main') {
-        syncErrorBankCount();
+      const target = document.getElementById(id);
+      if (!target) return;
+
+      if (id === 'view-main') {
+        if (typeof syncErrorBankCount === 'function') syncErrorBankCount();
         // 從家長／設定頁返回時，確保首頁課程選擇區仍顯示且選項依目前題庫重建。
         const unitCard = document.querySelector('#view-main .unit-card');
         if (unitCard) unitCard.style.display = '';
-        refreshUnitSelectors();
-        renderUserSelector();
+        if (typeof refreshUnitSelectors === 'function') refreshUnitSelectors();
+        if (typeof renderUserSelector === 'function') renderUserSelector();
       }
-      document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
-      document.getElementById(id).style.display = 'flex';
-      const home=document.getElementById('global-home-button');
-      if(home) home.style.display = id==='view-main' ? 'none' : 'inline-flex';
-      if(id === 'view-team') renderTeam();
-      if(id === 'view-pokedex') renderDex();
-      if(id === 'view-bank') { refreshUnitSelectors(); renderBankManager(); }
+
+      document.querySelectorAll('.view-section').forEach(view => {
+        view.style.display = 'none';
+      });
+      target.style.display = 'flex';
+
+      // 每次返回首頁都重設「首頁自己的捲動位置」，避免保留上次位置而讓頂部被切掉。
+      if (id === 'view-main') {
+        target.scrollTop = 0;
+        const container = document.querySelector('.container');
+        if (container) container.scrollTop = 0;
+        window.scrollTo(0, 0);
+      } else {
+        // 其他功能頁也從頂部開始，避免切換頁面時沿用舊捲動位置。
+        target.scrollTop = 0;
+      }
+
+      const homeButton = document.getElementById('global-home-button');
+      if (homeButton) {
+        homeButton.style.display = id === 'view-main' ? 'none' : 'inline-flex';
+      }
+
+      if (id === 'view-team' && typeof renderTeam === 'function') renderTeam();
+      if (id === 'view-pokedex' && typeof renderDex === 'function') renderDex();
+      if (id === 'view-bank') {
+        if (typeof refreshUnitSelectors === 'function') refreshUnitSelectors();
+        if (typeof renderBankManager === 'function') renderBankManager();
+      }
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeWordHelp(); closeSentencePractice(); closeUserAddModal(); } });
     // 兒童版只保留完整單字及完整單字播放；不顯示未經校對的自然發音切分或音標。
