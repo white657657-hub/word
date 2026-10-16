@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero 2B｜兒童拼字學習版 V1541</title>
+    <title>Word Hero 2B｜兒童拼字學習版 V1545</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1177,6 +1177,15 @@ body{font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif!important}
 .view-section:not(#view-main){padding-top:52px!important}
 #view-team .child-name-label,#view-pokedex .child-name-label{display:none!important}
 #view-victory #victory-message{white-space:pre-line!important;overflow-wrap:anywhere!important;line-height:1.55!important;text-align:left!important;color:#edf3fa!important}
+.daily-victory-words{display:flex;flex-direction:column;gap:10px;width:min(100%,560px);margin:2px auto 8px}
+.daily-word-status-good{color:#86efac;font-size:.82rem;font-weight:800;white-space:nowrap}.daily-word-status-review{color:#fcd34d;font-size:.82rem;font-weight:800;white-space:nowrap}
+        .daily-word-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #334155;border-radius:16px;background:#0f172a}
+.daily-word-text{font-size:clamp(1.35rem,4.5vw,2rem);font-weight:800;letter-spacing:.02em;color:#38bdf8;overflow-wrap:anywhere}
+.daily-word-audio{flex:0 0 auto;width:48px;height:48px;border:1px solid #38bdf8;border-radius:14px;background:#12304a;color:#e0f2fe;font-size:1.35rem;cursor:pointer}
+.daily-word-audio:focus-visible{outline:3px solid #facc15;outline-offset:2px}
+#view-victory.daily-compact #victory-message{font-size:1rem;line-height:1.35!important;margin:0}
+#view-victory.daily-compact #victory-title{font-size:1.2rem}
+@media(max-width:480px){.daily-word-row{padding:10px 12px}.daily-word-audio{width:44px;height:44px}}
 /* V4 usability fixes: keep each active view scrollable; never clip bank/settings controls. */
 html, body { height:100% !important; overflow:hidden !important; }
 .container { height:100dvh !important; min-height:0 !important; overflow:hidden !important; display:flex !important; flex-direction:column !important; }
@@ -1619,7 +1628,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
         <div id="practice-target-word" class="practice-target-word" hidden aria-live="polite"></div>
         <div id="spelling-feedback" class="spelling-feedback" style="display:none" aria-live="polite"></div>
         <section id="support-hint-panel" class="support-hint-panel" hidden aria-live="polite">
-            <div class="support-hint-title">💡 一步一步看提示，不用盲猜</div>
+            <div class="support-hint-title">💡 拼字救援：一步一步看提示，不用盲猜</div>
             <div id="support-hint-pattern" class="support-hint-pattern">先按提示按鈕</div>
             <div id="support-hint-caption" class="support-hint-caption">每按一次，多看一個字母</div>
             <button id="support-hint-button" type="button" class="support-hint-button" onclick="showNextSupportHint()">💡 看第一個提示</button>
@@ -1676,10 +1685,10 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
     </div>
 
     <div id="view-victory" class="view-section" style="text-align:center;align-items:center;justify-content:center;gap:12px;">
-        <div class="victory-mark" aria-hidden="true">完成</div><h2 style="color:var(--gold);margin:0;">這一輪完成了！</h2>
+        <h2 id="victory-title" style="color:var(--gold);margin:0;">這一輪完成了！</h2>
         <div id="victory-message" style="line-height:1.8;"></div>
-        <div style="font-size:1.1rem;font-weight:800;">下一步：用今天的單字來造句吧！</div>
-        <button class="mode-btn" style="background:#16a34a;" onclick="startSentenceSession()">前往造句練習</button>
+        <div id="daily-victory-words" class="daily-victory-words" aria-label="本輪單字與發音"></div>
+        <button id="victory-sentence-btn" class="mode-btn" style="background:#16a34a;" onclick="startSentenceSession()">前往造句練習</button>
         <button class="mode-btn" style="background:#475569;" onclick="switchView('view-main')">回首頁</button>
     </div>
 
@@ -3559,13 +3568,16 @@ initReport();
     function refreshDailyTaskCard() {
         const btn=document.getElementById('daily-quest-start'), desc=document.getElementById('daily-quest-description'), status=document.getElementById('daily-quest-status'), bar=document.getElementById('daily-quest-progress-bar');
         if(!btn||!desc||!status||!bar)return;
-        const saved=getDailyTaskState(),today=getLocalDayKey(),done=saved.date===today&&saved.completed===true;
-        if(done){desc.textContent='今天的小任務已完成！學習到這裡就很好，可以安心去做喜歡的事。';status.textContent='今日任務已完成，不需要再刷題。';btn.textContent='今天已完成';btn.disabled=true;bar.style.width='100%';}
-        else {desc.textContent='挑戰 3 個單字：先複習需要加強的，再試試其他單字。';status.textContent='答錯可以用提示；完成後就結束，不需要連續闖關。';btn.textContent='開始任務';btn.disabled=false;bar.style.width='0%';}
+        const saved=getDailyTaskState(),today=getLocalDayKey();
+        const sessions=saved.date===today?Math.max(0,Number(saved.sessionsCompleted)||0):0;
+        const maxSessions=3,done=sessions>=maxSessions;
+        if(done){desc.textContent='今天 3 輪小任務都完成了！學習到這裡就好。';status.textContent='今日任務已達上限（每輪 3 個單字，最多 3 輪），可以安心休息。';btn.textContent='今天已完成';btn.disabled=true;bar.style.width='100%';}
+        else {desc.textContent=`第 ${sessions+1}／${maxSessions} 輪：挑戰 3 個單字。想再練時可以自己開始下一輪。`;status.textContent=`今天已完成 ${sessions}／${maxSessions} 輪；每輪結束都會停下來，不會自動接關。`;btn.textContent=sessions?'開始下一輪':'開始任務';btn.disabled=false;bar.style.width=`${sessions/maxSessions*100}%`; }
     }
     function startDailyTask() {
         const saved=getDailyTaskState(),today=getLocalDayKey();
-        if(saved.date===today&&saved.completed===true){refreshDailyTaskCard();return;}
+        const sessions=saved.date===today?Math.max(0,Number(saved.sessionsCompleted)||0):0;
+        if(sessions>=3){refreshDailyTaskCard();return;}
         const unit=document.getElementById('unit-selector').value;
         const bank=(state.banks[unit]||[]).filter(w=>w&&String(w.en||'').trim());
         if(!bank.length){alert('這個單元目前沒有可用單字，請先確認 GitHub Anson.txt 題庫是否載入。');return;}
@@ -4223,7 +4235,7 @@ const storyWordGloss = {
         result.className = 'sentence-status warn';
         result.innerHTML = issues.map(x => `• ${escapeSentenceHtml(x)}`).join('<br>') + '<div style="margin-top:7px;">修改後可以再按一次檢查。這裡不會連線到外部網站。</div>';
         ['sentence-example-box','sentence-inline-example-box'].forEach(id => { const box = document.getElementById(id); if (box) box.hidden = true; });
-        const issueTypes = issues.map(x => x.includes('還沒有使用目標單字') ? 'target_missing' : x.includes('句尾加上') ? 'punctuation_missing' : x.includes('連續兩個以上空格') ? 'extra_spaces' : x.includes('句尾標點可以只留一個') ? 'repeated_punctuation' : 'other');
+        const issueTypes = issues.map(x => x.includes('還沒有使用目標單字') ? 'target_missing' : x.includes('a、an 或 the') ? 'article_missing_possible' : x.includes('一般現在式') ? 'third_person_s_possible' : x.includes('句尾加上') ? 'punctuation_missing' : x.includes('連續兩個以上空格') ? 'extra_spaces' : x.includes('句尾標點可以只留一個') ? 'repeated_punctuation' : 'other');
         addLearningLog({type:'sentence',mode:sourceMode,word:sentenceTargetWord||'',sentence,result:'local_basic_check_review',issues,issueTypes});
     }
 
@@ -4379,7 +4391,7 @@ const storyWordGloss = {
         const isRealBattle = state.mode === 'quiz' && !state.tempPractice;
         if (arena) arena.hidden = !isRealBattle;
         const modeLabel = document.getElementById('child-mode-label');
-        if (modeLabel) modeLabel.textContent = state.tempPractice && state.mode === 'quiz' ? '魔王練習（不計戰鬥）' : state.mode === 'quiz' ? '魔王挑戰' : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
+        if (modeLabel) modeLabel.textContent = state.tempPractice && state.mode === 'quiz' ? (dailyTaskActive ? '拼字小任務練習（不扣 HP）' : '魔王練習（不計戰鬥）') : state.mode === 'quiz' ? (dailyTaskActive ? '今日拼字小任務' : '魔王挑戰') : state.mode === 'priority' ? '星號複習' : state.mode === 'error_review' ? '錯題複習' : '單字練習';
         const progressLabel = document.getElementById('child-question-progress');
         if (progressLabel) {
             const total = (state.currentList || []).length + (state.mode === 'quiz' ? (state.quizCompleted || 0) : 0);
@@ -4645,7 +4657,7 @@ const storyWordGloss = {
         if (normalizedInput === normalizedAnswer && state.mode === 'quiz' && state.tempPractice) {
             addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, hintLevel: state.supportHintLevel || 0, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
             const supportFeedback = document.getElementById('child-answer-feedback');
-            if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback good'; supportFeedback.textContent = '練習答對了！回到魔王挑戰，再正式作答一次。'; }
+            if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback good'; supportFeedback.textContent = dailyTaskActive ? '練習答對了！回到今日小任務，繼續下一步。' : '練習答對了！回到魔王挑戰，再正式作答一次。'; }
             const supportSpellingFeedback = document.getElementById('spelling-feedback');
             if (supportSpellingFeedback) { supportSpellingFeedback.style.display = 'none'; supportSpellingFeedback.innerHTML = ''; }
             document.querySelectorAll('.letter-box').forEach(b => b.classList.remove('wrong','mismatch','correct-place'));
@@ -4934,13 +4946,20 @@ const storyWordGloss = {
                 const detailText = details.length ? `\n\n【需要再練的單字】\n${details.join('\n')}` : '';
                 if (dailyTaskActive) {
                     const today=getLocalDayKey();
-                    setHeroData('hero_daily_task_state',JSON.stringify({date:today,completed:true,unit:state.unit,wordCount:total,correct,wrongTries,completedAt:Date.now()}));
-                    const answerDetails = rows.map(row => `• ${row.en}：${row.result === 'correct' ? '答對 ✓' : row.result === 'skipped' ? '跳過，之後再練' : row.result === 'incorrect' ? '曾答錯，已完成修正' : '尚未完成'}${Number(row.wrongAttempts || 0) ? `（答錯 ${Number(row.wrongAttempts)} 次）` : ''}`).join('\n');
-                    vm.textContent = `今日拼字小任務完成！\n\n【每個單字的結果】\n${answerDetails || '本次沒有可顯示的逐字結果'}\n\n完成單字：${correct} / ${total}\n答錯嘗試：${wrongTries} 次\n\n答錯不是失敗；你有繼續修正、完成任務，這就是進步。\n今天到這裡就好，可以安心休息或去下圍棋！`;
-                    addLearningLog({type:'daily_task_completed',mode:'daily_task',unit:state.unit,wordCount:total,correct,wrongTries,taskDate:today});
+                    const previous=getDailyTaskState(),sessions=(previous.date===today?Math.max(0,Number(previous.sessionsCompleted)||0):0)+1;
+                    setHeroData('hero_daily_task_state',JSON.stringify({date:today,completed:sessions>=3,sessionsCompleted:sessions,unit:state.unit,wordCount:total,correct,wrongTries,completedAt:Date.now()}));
+                    const title=document.getElementById('victory-title'),wordsBox=document.getElementById('daily-victory-words'),sentenceBtn=document.getElementById('victory-sentence-btn'),victory=document.getElementById('view-victory');
+                    if(title)title.textContent='這一輪完成了！';
+                    if(victory)victory.classList.add('daily-compact');
+                    if(wordsBox){wordsBox.innerHTML=rows.map((row)=>{const status=row.result==='correct'?'✓ 已答對':row.result==='skipped'?'待複習':'尚未完成';const statusClass=row.result==='correct'?'daily-word-status-good':'daily-word-status-review';const wrong=Number(row.wrongAttempts||0)>0?`（曾答錯 ${Number(row.wrongAttempts)} 次）`:'';return `<div class="daily-word-row"><span class="daily-word-text">${escapeHtml(row.en||'')}</span><span class="${statusClass}">${status}${wrong}</span><button type="button" class="daily-word-audio" aria-label="播放 ${escapeHtml(row.en||'')} 發音" title="聽發音" onclick="speakEnglish(${JSON.stringify(String(row.en||'' )).replace(/</g,'\\u003c')},{userGesture:true})">🔊</button></div>`}).join('');}
+                    vm.textContent=`答對 ${correct}／${total} 個單字。${wrongTries?`修正了 ${wrongTries} 次錯誤。`:''}第 ${sessions}／3 輪完成！`;
+                    if(sentenceBtn)sentenceBtn.hidden=true;
+                    addLearningLog({type:'daily_task_completed',mode:'daily_task',unit:state.unit,wordCount:total,correct,wrongTries,taskDate:today,sessionNumber:sessions});
                     dailyTaskActive=false;
                     refreshDailyTaskCard();
                 } else {
+                    const victory=document.getElementById('view-victory'),wordsBox=document.getElementById('daily-victory-words'),sentenceBtn=document.getElementById('victory-sentence-btn');
+                    if(victory)victory.classList.remove('daily-compact');if(wordsBox)wordsBox.innerHTML='';if(sentenceBtn)sentenceBtn.hidden=false;
                     vm.textContent = `本輪挑戰完成！\n總題數：${total}\n答對並完成：${correct}\n跳過待複習：${passed}\n本輪正確完成率：${rate}%\n答錯嘗試：${wrongTries} 次${detailText}\n\n${passed ? '跳過的單字不算學會，之後可以再挑戰。' : '太棒了！本輪所有單字都已答對。'}`;
                 }
             }
@@ -5359,8 +5378,22 @@ const storyWordGloss = {
         if (!/[.!?]$/.test(text)) {
             issues.push('建議在句尾加上句號、問號或驚嘆號。');
         }
-        if (/^(i|you|he|she|it|we|they|this|that|there)\s+(am|is|are|was|were)\s+\w+\s+\w+/i.test(text)) {
-            // 僅作為提示，不直接判錯。
+        // 兒童常見文法提醒：只提示高信心情境，不把模糊句子直接判成錯誤。
+        const words = text.toLowerCase().replace(/[^a-z'\s-]/g, ' ').trim().split(/\s+/).filter(Boolean);
+        const hasArticle = words.some(w => ['a','an','the','this','that','my','your','his','her','our','their'].includes(w));
+        const hasPluralOrProgressive = words.some(w => /(?:s|es|ies|ing)$/.test(w));
+        if (!hasArticle && /\b(i|you|we|they)\s+(?:see|have|want|need|like|watch|read|eat|buy|find|make|get)\s+(?:[a-z]+\s+)?[a-z]+\b/i.test(text)) {
+            issues.push('名詞前可能需要 a、an 或 the。試著問自己：是「一個」東西，還是「特定的那個」東西？');
+        }
+        const subjectMatch = text.match(/\b(he|she|it|my [a-z]+|the [a-z]+)\s+(see|like|want|need|play|eat|have|go|do|watch|read|run|walk|make|get|help|live|look|drink|sleep|work)\b/i);
+        if (subjectMatch) {
+            const subject = subjectMatch[1].toLowerCase(), verb = subjectMatch[2].toLowerCase();
+            const nextToken = words[words.indexOf(verb) + 1] || '';
+            const likelyPresentSimple = !/\b(yesterday|last night|last week|ago)\b/i.test(text) && !/\b(am|is|are|was|were)\s+\w+ing\b/i.test(text) && !/\b(did|does|can|will|could|should|must)\s+\w+\b/i.test(text);
+            const verbAlreadyInflected = /(?:s|es|ies)$/.test(verb) || ['has','does','goes'].includes(verb);
+            if (likelyPresentSimple && !verbAlreadyInflected) {
+                issues.push(`主詞「${subject}」是 he／she／it 或單數名詞時，一般現在式的動詞通常要加 s／es。請檢查「${verb}」。`);
+            }
         }
         if (/\s{2,}/.test(text)) {
             issues.push('單字之間不要有連續兩個以上空格。');
