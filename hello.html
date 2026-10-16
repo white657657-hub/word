@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero 2B｜GitHub 題庫版 V1538</title>
+    <title>Word Hero 2B｜兒童拼字學習版 V1541</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1419,6 +1419,26 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
  #view-game .child-game-toolbar{min-height:42px!important;}
 }
     </style>
+
+<style id="v1540-report-and-sentence-polish-css">
+.support-hint-panel{width:min(94%,620px);margin:8px auto 10px;padding:12px 14px;border:1px solid #547ca2;border-radius:14px;background:#10243a;text-align:center;color:#edf6ff}
+.support-hint-panel[hidden]{display:none!important}.support-hint-title{font-size:1rem;font-weight:900;color:#f7d56b}.support-hint-pattern{margin:7px 0 3px;font-size:clamp(1.4rem,5vw,2rem);font-weight:1000;letter-spacing:.12em;color:#fff;overflow-wrap:anywhere}.support-hint-caption{font-size:.9rem;color:#c7d8ea;line-height:1.45}.support-hint-button{display:block;width:min(100%,330px);min-height:46px;margin:9px auto 0;border:1px solid #82b6ec;border-radius:12px;background:#235c91;color:#fff;font:inherit;font-weight:900;cursor:pointer;touch-action:manipulation}.support-hint-button:focus-visible{outline:3px solid #f7d56b;outline-offset:2px}
+@media(max-width:480px){.support-hint-panel{padding:10px}.support-hint-button{min-height:48px;font-size:1rem}}
+</style>
+
+
+<style id="v1541-daily-learning-ui">
+.daily-quest-card{flex:0 0 auto;margin:8px 2px 12px;padding:14px 16px;border:1px solid #256b91;border-radius:18px;background:linear-gradient(135deg,rgba(12,74,110,.72),rgba(15,23,42,.96) 72%);box-shadow:0 8px 24px rgba(0,0,0,.2);color:#f8fafc}
+.daily-quest-top,.daily-quest-footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.daily-quest-kicker{font-size:.72rem;font-weight:900;letter-spacing:.12em;color:#7dd3fc}
+.daily-quest-time{font-size:.78rem;font-weight:800;color:#fde68a;background:rgba(120,53,15,.3);padding:4px 8px;border-radius:999px}
+#daily-quest-title{margin:5px 0;font-size:1.2rem;font-weight:900;color:#fff}
+#daily-quest-description{margin:0 0 10px;color:#cbd5e1;font-size:.9rem;line-height:1.45}
+.daily-quest-progress{height:7px;background:#1e293b;border-radius:99px;overflow:hidden;margin:8px 0 10px}.daily-quest-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#38bdf8,#4ade80);border-radius:99px;transition:width .2s}
+.daily-quest-footer{align-items:center}.daily-quest-footer>span{font-size:.78rem;color:#cbd5e1;line-height:1.35;flex:1;min-width:0}.daily-quest-footer button{flex:0 0 auto;min-height:44px;padding:9px 16px;border:0;border-radius:12px;background:#0ea5e9;color:#04111f;font:inherit;font-weight:900;cursor:pointer;touch-action:manipulation}.daily-quest-footer button:disabled{background:#334155;color:#cbd5e1;cursor:default}
+@media(max-width:480px){.daily-quest-card{padding:12px;margin:6px 1px 10px}.daily-quest-footer{align-items:stretch;flex-direction:column}.daily-quest-footer button{width:100%}#daily-quest-title{font-size:1.08rem}}
+</style>
+
 </head>
 <body onload="initSystem()">
 
@@ -1437,7 +1457,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
 <div id="global-page-title" class="global-page-title" aria-live="polite"></div>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1538">V1538</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1541">V1541</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1454,6 +1474,14 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
             <div class="unit-label">今天要學哪一課？</div>
             <select id="unit-selector"></select>
         </div>
+
+        <section id="daily-quest-card" class="daily-quest-card" aria-labelledby="daily-quest-title">
+            <div class="daily-quest-top"><span class="daily-quest-kicker">TODAY'S MINI QUEST</span><span class="daily-quest-time">約 5 分鐘</span></div>
+            <h2 id="daily-quest-title">今天的拼字小任務</h2>
+            <p id="daily-quest-description">挑戰 3 個單字：複習舊朋友，也認識新單字。</p>
+            <div class="daily-quest-progress" aria-hidden="true"><span id="daily-quest-progress-bar"></span></div>
+            <div class="daily-quest-footer"><span id="daily-quest-status">完成 3 個單字就可以休息，不用一直玩。</span><button id="daily-quest-start" type="button" onclick="startDailyTask()">開始任務</button></div>
+        </section>
 
         <div class="home-main-actions">
             <button class="home-action challenge" onclick="startSession('quiz')">
@@ -1590,6 +1618,12 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
         </div>
         <div id="practice-target-word" class="practice-target-word" hidden aria-live="polite"></div>
         <div id="spelling-feedback" class="spelling-feedback" style="display:none" aria-live="polite"></div>
+        <section id="support-hint-panel" class="support-hint-panel" hidden aria-live="polite">
+            <div class="support-hint-title">💡 一步一步看提示，不用盲猜</div>
+            <div id="support-hint-pattern" class="support-hint-pattern">先按提示按鈕</div>
+            <div id="support-hint-caption" class="support-hint-caption">每按一次，多看一個字母</div>
+            <button id="support-hint-button" type="button" class="support-hint-button" onclick="showNextSupportHint()">💡 看第一個提示</button>
+        </section>
         <div id="practice-guide" style="text-align:center; color:var(--accent); font-weight:700; font-size:1.5rem; height:auto;"></div>
         <div id="letter-area" class="box-input-container"></div>
         <div id="child-answer-feedback" class="child-answer-feedback" role="status" aria-live="polite" hidden></div>
@@ -1893,6 +1927,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
         catch (err) { console.warn('動畫未執行，不影響學習流程。', err); }
     }
 
+    let dailyTaskActive = false;
     let state = { wrongAttemptsThisQuestion: 0, banks: {}, currentList: [], index: 0, mode: 'quiz', tempPractice: false, activePokeId: 384, pokedex: "0".repeat(151), playerHP: 6, playerMaxHP: 6, oppHP: 6, oppMaxHP: 6, currentOppId: 1, chosenOppId: 0, opponentPickMode: false, quizCompleted: 0, quizPassedCount: 0, quizTotalCount: 0, quizResultRows: [], sessionStats: { correct: 0, incorrect: 0, passes: 0 }, awaitingPartner: false, sentenceEnabled: false, sentenceList: [], sentenceIndex: 0, sentenceUnitName: '' };
     let editingQuestionRef = null;
     let currentUserName = '';
@@ -2165,6 +2200,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
         item.word=word.en;map[ref]=item;setLocalJSON('hero_error_bank_state',map);syncErrorBankCount();
     }
     function startErrorReviewSession(){
+        dailyTaskActive = false;
         const refs=getErrorBankRefs();
         if(!refs.length)return alert('錯題庫目前是空的。單字第一次答錯就會加入；連續答對 3 次後才會自動移出。');
         state.currentList=[];Object.values(state.banks||{}).forEach(bank=>(bank||[]).forEach(w=>{if(refs.includes(w.ref))state.currentList.push(w);}));
@@ -2358,35 +2394,61 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
     function buildLearningLogHTML() {
         const logs = getLearningLog();
         const errors = getErrorLog();
-        const all = [...logs, ...errors.map(x => ({...x, _legacyErrorLog:true}))]
+        // 舊版錯題 Log 與新版 word_answer 可能是同一次作答的雙寫；配對後只讓新版紀錄參與統計。
+        const unmatchedModern = new Map();
+        logs.filter(x => x && x.type === 'word_answer' && String(x.result).toLowerCase() === 'incorrect').forEach(x => {
+            const key=[String(x.unit||''),String(x.word||'').trim().toLowerCase(),String(x.input||'').trim().toLowerCase()].join('\u0000');
+            const arr=unmatchedModern.get(key)||[];arr.push(Number(x.timestampMs)||Date.parse(x.at)||0);unmatchedModern.set(key,arr);
+        });
+        const legacyUnique=[];
+        errors.forEach(x=>{
+            const key=[String(x.unit||''),String(x.correct||'').trim().toLowerCase(),String(x.typed||'').trim().toLowerCase()].join('\u0000');
+            const times=unmatchedModern.get(key)||[],t=Number(x.timestampMs)||0,idx=times.findIndex(mt=>!t||!mt||Math.abs(mt-t)<=5000);
+            if(idx>=0){times.splice(idx,1);unmatchedModern.set(key,times);}else legacyUnique.push({...x,_legacyErrorLog:true});
+        });
+        const all = [...logs, ...legacyUnique]
             .filter(x => x && typeof x === 'object')
             .map((x, i) => ({...x, _rid: String(x.logId || x.id || `${x.at || x.timestampMs || 'old'}-${i}`)}));
         const payload = JSON.stringify(all).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+        const schedule = getSpacedReviewSchedule();
+        const schedulePayload = JSON.stringify(Object.values(schedule)).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
         return `<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Word Hero｜家長學習觀察報告</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#08111f;color:#edf3fa;font:16px/1.65 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}h1{font-size:27px;margin:0}h2{font-size:20px;margin:0}h3{font-size:17px;margin:0}.muted{color:#a9bbd0}.panel,.unit-card,.category-card,.date-card,.record{background:#111e30;border:1px solid #344c66;border-radius:14px;padding:14px;margin:10px 0}.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:14px 0}.toolbar label{display:grid;gap:4px}.toolbar input{font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:#fff;color:#111827}.toolbar button,.small-btn{padding:9px 13px;border:0;border-radius:9px;background:#285b9b;color:#fff;font:inherit;cursor:pointer}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px}.stat{background:#172a42;border:1px solid #344c66;border-radius:12px;padding:12px}.stat strong{display:block;font-size:24px}.unit-card{border-left:5px solid #38bdf8}.unit-card>summary{font-size:19px;color:#e6f4ff}.category-card{margin-left:8px;background:#132238}.category-card>summary{font-size:16px;color:#c8dcff}.date-card{margin-left:8px;background:#0d1a2a}.date-card>summary{color:#b9d7ff}.record{background:#091523;padding:12px;margin:8px 0}.record-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:750}.pill{display:inline-block;border-radius:20px;padding:2px 9px;background:#203b5a;color:#d8e9ff;font-size:13px}.record p{margin:6px 0;overflow-wrap:anywhere}.answer-bad{color:#ffb2b7}.answer-good{color:#8be5bd}.empty{padding:14px;color:#a9bbd0}.hint{background:#1a2b40;border-radius:10px;padding:12px;color:#c9d8e8;margin:12px 0}details>summary{cursor:pointer;font-weight:700;padding:4px 0}details[open]>summary{margin-bottom:8px}.more-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.count{color:#a9bbd0;font-size:14px}@media(max-width:600px){.wrap{padding:15px 10px}.unit-card,.category-card,.date-card{padding:10px;margin:8px 0}.record{padding:10px}}
-</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">依單元整理錯字與造句；詳細紀錄按日期展開。</div>
-<section class="panel"><div class="summary"><div class="stat"><strong id="unitCount">0</strong>單元</div><div class="stat"><strong id="wrongTotal">0</strong>答錯紀錄</div><div class="stat"><strong id="variantTotal">0</strong>拼字錯誤類型</div><div class="stat"><strong id="sentenceTotal">0</strong>造句提交次數</div></div>
-<div class="toolbar"><label>搜尋單字或造句<input id="search" type="search" placeholder="例如 castle、句子內容…"></label><label>開始日期<input id="from" type="date"></label><label>結束日期<input id="to" type="date"></label><button id="reset">清除篩選</button></div>
-<div class="hint">選擇單元後，可分別查看「最常答錯的單字」、「反覆出現的拼字錯誤」與「每一次造句」。再依日期展開查看原始紀錄。每個分類預設顯示最近 100 筆；較舊資料仍保留在本機 Log 中，不因畫面限制而刪除。</div></section>
+*{box-sizing:border-box}body{margin:0;background:#08111f;color:#edf3fa;font:16px/1.6 system-ui,-apple-system,"Noto Sans TC",sans-serif}.wrap{max-width:1120px;margin:auto;padding:22px 15px 56px}h1{font-size:26px;margin:0}h2{font-size:20px;margin:0 0 10px}h3{font-size:17px;margin:0 0 8px}.muted,.subtle{color:#a9bbd0}.panel,.section-card{background:#111e30;border:1px solid #344c66;border-radius:14px;padding:14px;margin:12px 0}.toolbar{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;align-items:end;margin-top:14px}.toolbar label{display:grid;gap:5px;font-weight:700}.toolbar input,.toolbar select{min-width:0;width:100%;font:inherit;padding:10px;border:1px solid #9aa8bd;border-radius:8px;background:#fff;color:#111827}.toolbar button,.small-btn{padding:10px 13px;border:0;border-radius:9px;background:#285b9b;color:#fff;font:inherit;font-weight:750;cursor:pointer}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.stat{background:#172a42;border:1px solid #344c66;border-radius:12px;padding:12px}.stat strong{display:block;font-size:24px}.section-card h2{display:flex;gap:8px;align-items:center}.section-note{color:#a9bbd0;font-size:14px;margin:-4px 0 10px}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:440px}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #344c66;vertical-align:top}th{color:#c9d8e8;font-size:14px}td.num,th.num{text-align:center;white-space:nowrap}.count{color:#a9bbd0;font-size:14px}.tag{display:inline-block;border-radius:20px;padding:2px 9px;background:#203b5a;color:#d8e9ff;font-size:13px}.record{background:#091523;border:1px solid #2d435c;border-radius:10px;padding:11px;margin:8px 0}.record-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:750}.record p{margin:5px 0;overflow-wrap:anywhere}.bad{color:#ffb2b7}.good{color:#8be5bd}.day-card{background:#0d1a2a;border:1px solid #344c66;border-radius:10px;padding:12px;margin:9px 0}.day-card h3{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.empty{padding:12px;color:#a9bbd0;background:#0d1a2a;border-radius:9px}.hint{background:#1a2b40;border-radius:10px;padding:12px;color:#c9d8e8;margin:12px 0}.section-card .empty{margin-top:8px}@media(max-width:700px){.wrap{padding:15px 10px}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.section-card,.panel{padding:11px}}@media(max-width:420px){.toolbar{grid-template-columns:1fr}h1{font-size:22px}}
+</style><main class="wrap"><h1>Word Hero｜家長學習觀察報告</h1><div class="muted">先看目前學習，再看反覆出現的弱點；所有統計都由原始學習 Log 彙整。</div>
+<section class="panel"><div class="toolbar"><label>單元<select id="unitFilter"><option value="__ALL__">全部單元</option></select></label><label>開始日期<input id="from" type="date"></label><label>結束日期<input id="to" type="date"></label><label>搜尋單字／拼字／造句<input id="search" type="search" placeholder="例如 thirty、thiry…"></label><button id="reset" type="button">重設為今天</button></div><div id="filterError" class="empty" hidden></div><div class="stats"><div class="stat"><strong id="dayCount">0</strong>有紀錄的日期</div><div class="stat"><strong id="wrongTotal">0</strong>答錯次數</div><div class="stat"><strong id="wordCount">0</strong>答錯單字數</div><div class="stat"><strong id="sentenceTotal">0</strong>造句提交次數</div></div><div class="hint">上方單元與日期會同步套用到「日期分析、最常答錯單字、反覆拼字錯誤、每一句造句、輸入過程」。下方「累積弱點」只套用單元與搜尋，不受日期區間限制，避免只看今天而漏掉長期問題。</div></section>
 <div id="report"></div></main>
 <script>
 const DATA=${payload};
+const SCHEDULE=${schedulePayload};
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-function dateInfo(x){let d=x.at?new Date(x.at):x.timestampMs?new Date(Number(x.timestampMs)):x.date?new Date(x.date):null;if(!d||Number.isNaN(d.getTime()))return {key:'日期未記錄',label:'日期未記錄',time:'時間未記錄'};return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),label:d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0'),time:d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}}
+function dateInfo(x){let d=x.at?new Date(x.at):x.timestampMs?new Date(Number(x.timestampMs)):x.date?new Date(x.date):null;if(!d||Number.isNaN(d.getTime()))return {key:'',label:'日期未記錄',time:'時間未記錄'};return {key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),label:d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0'),time:d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})}}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function unitOf(x){return String(x.unit||x.unitName||x.unitTitle||'未標示單元').trim()||'未標示單元'}
 function wordOf(x){return String(x.word||x.correct||x.english||'').trim()}
 function resultOf(x){return String(x.result||x.status||'').toLowerCase()}
 function isSentence(x){return x.type==='sentence'||x.mode==='sentence'||Object.prototype.hasOwnProperty.call(x,'sentence')&&String(x.sentence||'').trim()!==''}
 function isWrong(x){let r=resultOf(x);return r==='incorrect'||r==='wrong'||r==='false'||x.correct===false||x._legacyErrorLog&&Boolean(wordOf(x)&&String(x.typed||x.input||'').trim())}
 function typedOf(x){return String(x.input||x.typed||x.previousInput||'').trim()}
-function matches(x){const q=$('search').value.trim().toLowerCase(),d=dateInfo(x).key;return (!q||[wordOf(x),x.meaning,x.sentence,x.input,x.typed,x.result,x.feedback].join(' ').toLowerCase().includes(q))&&(!$('from').value||d==='日期未記錄'||d>=$('from').value)&&(!$('to').value||d==='日期未記錄'||d<=$('to').value)}
-function detailRecord(x,kind){const d=dateInfo(x),word=wordOf(x),typed=typedOf(x),sentence=String(x.sentence||'').trim();let body='';if(kind==='sentence'){body='<p><b>目標單字：</b>'+esc(word||'未標示')+'</p><p><b>造句內容：</b>'+esc(sentence||'（本次未保存句子內容）')+'</p><p><b>檢查結果：</b>'+esc(x.result||'未標示')+'</p>';if(x.issues)body+='<p><b>系統提醒：</b>'+esc(Array.isArray(x.issues)?x.issues.join('；'):x.issues)+'</p>';}else{body='<p><b>標準拼法：</b>'+esc(word||'未標示')+'</p><p><b>孩子輸入：</b><span class="answer-bad">'+esc(typed||'（舊紀錄未保存輸入內容）')+'</span></p><p><b>結果：</b>'+esc(x.result||'錯題紀錄')+'</p>';if(x.meaning)body+='<p><b>中文意思：</b>'+esc(x.meaning)+'</p>';if(x.feedback)body+='<p><b>回饋：</b>'+esc(x.feedback)+'</p>';}return '<article class="record"><div class="record-title"><span>'+esc(kind==='sentence'?(word||'造句紀錄'):word||'未標示單字')+'</span><span class="pill">'+esc(d.time)+'</span></div>'+body+'<details><summary>更多紀錄資訊</summary><p>使用者：'+esc(x.child||'2B')+'　｜　模式：'+esc(x.mode||'未標示')+'</p><p>作答時間：'+esc(x.responseMs==null?'未記錄':x.responseMs+' ms')+'　｜　提交次數：'+esc(x.attempts||x.attemptIndex||'未記錄')+'</p></details></article>'}
-function dateGroups(rows,kind){const by={};rows.forEach(x=>{const d=dateInfo(x);(by[d.key]||(by[d.key]={label:d.label,rows:[]})).rows.push(x)});const keys=Object.keys(by).sort((a,b)=>b.localeCompare(a));let total=0;return keys.map(k=>{const g=by[k],shown=g.rows.slice().sort((a,b)=>String(b.at||b.timestampMs||'').localeCompare(String(a.at||a.timestampMs||''))).slice(0,100);total+=shown.length;return '<details class="date-card"><summary>'+esc(g.label)+'（'+g.rows.length+' 筆）</summary>'+shown.map(x=>detailRecord(x,kind)).join('')+(g.rows.length>100?'<p class="count">本日期共有 '+g.rows.length+' 筆；目前顯示最新 100 筆。</p>':'')+'</details>'}).join('')+'<div class="count">此分類顯示 '+total+' 筆</div>'}
-function section(title,rows,kind,inner){return '<details class="category-card"><summary>'+esc(title)+'（'+rows.length+' 筆）</summary>'+(rows.length?inner(rows):'<div class="empty">目前沒有符合條件的紀錄。</div>')+'</details>'}
-function render(){const rows=DATA.filter(matches),units=[...new Set(DATA.map(unitOf))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true}));const wrong=rows.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x));const sentence=rows.filter(isSentence);const variants=new Set(wrong.filter(x=>typedOf(x)).map(x=>wordOf(x).toLowerCase()+'\u0000'+typedOf(x).toLowerCase()));$('unitCount').textContent=units.length;$('wrongTotal').textContent=wrong.length;$('variantTotal').textContent=variants.size;$('sentenceTotal').textContent=sentence.length;let html='';const unitNames=[...new Set(rows.map(unitOf))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true}));unitNames.forEach(u=>{const ur=rows.filter(x=>unitOf(x)===u),uw=ur.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x)),us=ur.filter(isSentence);const byWord={};uw.forEach(x=>{const w=wordOf(x);(byWord[w]||(byWord[w]=[])).push(x)});const common=Object.entries(byWord).sort((a,b)=>b[1].length-a[1].length).map(([w,rs])=>'<details class="date-card"><summary>'+esc(w)+'　｜　答錯 '+rs.length+' 次</summary>'+dateGroups(rs,'wrong')+'</details>').join('');const byVariant={};uw.forEach(x=>{const t=typedOf(x);if(!t)return;const k=wordOf(x).toLowerCase()+'\u0000'+t.toLowerCase();byVariant[k]||(byVariant[k]={word:wordOf(x),typed:t,rows:[]});byVariant[k].rows.push(x)});const variantList=Object.values(byVariant).sort((a,b)=>b.rows.length-a.rows.length).map(v=>'<details class="date-card"><summary>'+esc(v.word)+'：孩子輸入「'+esc(v.typed)+'」× '+v.rows.length+'</summary>'+dateGroups(v.rows,'wrong')+'</details>').join('');html+='<details class="unit-card"><summary>'+esc(u)+'　｜　答錯 '+uw.length+' 筆・造句 '+us.length+' 筆</summary>'+section('最常答錯的單字',uw,'wrong',()=>common)+section('反覆出現的拼字錯誤',uw,'wrong',()=>variantList)+section('每一次造句',us,'sentence',rs=>dateGroups(rs,'sentence'))+'</details>'});$('report').innerHTML=html||'<div class="panel empty">目前沒有符合搜尋或日期條件的紀錄。</div>'}
-$('search').addEventListener('input',render);$('from').addEventListener('change',render);$('to').addEventListener('change',render);$('reset').addEventListener('click',()=>{$('search').value='';$('from').value='';$('to').value='';render()});render();
+function matchesSearch(x){const q=$('search').value.trim().toLowerCase();return !q||[wordOf(x),x.meaning,x.sentence,x.input,x.typed,x.result,x.feedback].join(' ').toLowerCase().includes(q)}
+function inDateRange(x){const d=dateInfo(x).key;return (! $('from').value || (d && d >= $('from').value)) && (! $('to').value || (d && d <= $('to').value))}
+function selectedUnit(x){return $('unitFilter').value==='__ALL__'||unitOf(x)===$('unitFilter').value}
+function filteredRows(){return DATA.filter(x=>selectedUnit(x)&&inDateRange(x)&&matchesSearch(x))}
+function recordCard(x,kind){const d=dateInfo(x),word=wordOf(x),typed=typedOf(x),sentence=String(x.sentence||'').trim();let body='';if(kind==='input'){body='<p><b>輸入狀態：</b><span class="bad">'+esc(x.inputPattern||x.input||'（空白）')+'</span></p><p><b>操作：</b>'+esc(x.inputAction||x.hintKind||x.type||'輸入')+'　｜　已填 '+esc(x.filledLetters==null?'—':x.filledLetters)+' / '+esc(x.totalLetters==null?'—':x.totalLetters)+' 格</p><p><b>提示進度：</b>'+esc(x.hintLevel==null?'0':x.hintLevel)+'　｜　作答經過：'+esc(x.questionElapsedMs==null?'未記錄':x.questionElapsedMs+' ms')+'</p>';}else if(kind==='sentence'){body='<p><b>造句內容：</b>'+esc(sentence||'（本次未保存句子內容）')+'</p><p><b>檢查結果：</b>'+esc(x.result||'未標示')+'</p>';if(x.issues)body+='<p><b>系統提醒：</b>'+esc(Array.isArray(x.issues)?x.issues.join('；'):x.issues)+'</p>';}else{body='<p><b>孩子輸入：</b><span class="bad">'+esc(typed||'（舊紀錄未保存輸入內容）')+'</span></p>';if(x.meaning)body+='<p><b>中文意思：</b>'+esc(x.meaning)+'</p>';if(x.feedback)body+='<p><b>回饋：</b>'+esc(x.feedback)+'</p>';}return '<article class="record"><div class="record-head"><span>'+esc(kind==='sentence'?(word||'造句紀錄'):word||'未標示單字')+'</span><span class="tag">'+esc(d.label)+' '+esc(d.time)+'</span></div>'+body+'</article>'}
+function section(title,sub,content){return '<section class="section-card"><h2>'+title+'</h2><div class="section-note">'+sub+'</div>'+content+'</section>'}
+function render(){const from=$('from').value,to=$('to').value,err=from&&to&&from>to;$('filterError').hidden=!err;$('filterError').textContent=err?'開始日期不可晚於結束日期，請調整日期。':'';if(err){$('report').innerHTML='';return}const rows=filteredRows(),wrong=rows.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x)),sentences=rows.filter(isSentence),inputs=rows.filter(x=>x.type==='word_input_progress'||x.type==='hint_used');const wrongWords=new Set(wrong.map(x=>wordOf(x).toLowerCase()));const days=[...new Set(rows.map(x=>dateInfo(x).key).filter(Boolean))].sort((a,b)=>b.localeCompare(a));$('dayCount').textContent=days.length;$('wrongTotal').textContent=wrong.length;$('wordCount').textContent=wrongWords.size;$('sentenceTotal').textContent=sentences.length;
+const dayHtml=days.length?days.map(day=>{const dr=rows.filter(x=>dateInfo(x).key===day),dw=dr.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x)),ds=dr.filter(isSentence),unique=new Set(dw.map(x=>wordOf(x).toLowerCase()));return '<div class="day-card"><h3><span>'+esc(dateInfo(dr[0]).label)+'</span><span class="tag">答錯 '+dw.length+' 次｜'+unique.size+' 個單字｜造句 '+ds.length+' 次</span></h3><div class="table-wrap"><table><thead><tr><th>答錯單字</th><th class="num">次數</th></tr></thead><tbody>'+([...new Set(dw.map(x=>wordOf(x)))] .map(w=>'<tr><td>'+esc(w)+'</td><td class="num">'+dw.filter(x=>wordOf(x).toLowerCase()===w.toLowerCase()).length+'</td></tr>').join('')||'<tr><td colspan="2" class="subtle">當天沒有答錯單字</td></tr>')+'</tbody></table></div></div>'}).join(''):'<div class="empty">這個日期範圍沒有學習紀錄。</div>';
+const byWord={};wrong.forEach(x=>{const w=wordOf(x);(byWord[w]||(byWord[w]=[])).push(x)});const wordEntries=Object.entries(byWord).sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0]));const wordHtml=wordEntries.length?'<div class="table-wrap"><table><thead><tr><th>單字</th><th class="num">答錯次數</th><th>最近答錯日期</th></tr></thead><tbody>'+wordEntries.map(([w,rs])=>'<tr><td><b>'+esc(w)+'</b></td><td class="num">'+rs.length+'</td><td>'+esc(rs.map(x=>dateInfo(x).label).sort().reverse()[0]||'日期未記錄')+'</td></tr>').join('')+'</tbody></table></div>':'<div class="empty">這個篩選範圍內沒有答錯紀錄。</div>';
+const byVariant={};wrong.forEach(x=>{const t=typedOf(x);if(!t)return;const key=wordOf(x).toLowerCase()+'\u0000'+t.toLowerCase();(byVariant[key]||(byVariant[key]={word:wordOf(x),typed:t,rows:[]})).rows.push(x)});const variantEntries=Object.values(byVariant).sort((a,b)=>b.rows.length-a.rows.length);const variantHtml=variantEntries.length?'<div class="table-wrap"><table><thead><tr><th>目標單字</th><th>孩子的錯拼</th><th class="num">重複次數</th><th>出現日期</th></tr></thead><tbody>'+variantEntries.map(v=>'<tr><td>'+esc(v.word)+'</td><td class="bad"><b>'+esc(v.typed)+'</b></td><td class="num">'+v.rows.length+'</td><td>'+esc([...new Set(v.rows.map(x=>dateInfo(x).label))].sort().reverse().join('、'))+'</td></tr>').join('')+'</tbody></table></div>':'<div class="empty">目前沒有足夠的錯拼內容可判斷反覆錯誤。舊紀錄若未保存孩子輸入，無法回推錯拼。</div>';
+const sentenceHtml=sentences.length?sentences.slice().sort((a,b)=>String(b.at||b.timestampMs||'').localeCompare(String(a.at||a.timestampMs||''))).map(x=>recordCard(x,'sentence')).join(''):'<div class="empty">這個篩選範圍內沒有造句提交紀錄。</div>';
+const inputHtml=inputs.length?inputs.slice().sort((a,b)=>String(b.at||b.timestampMs||'').localeCompare(String(a.at||a.timestampMs||''))).slice(0,300).map(x=>recordCard(x,'input')).join('')+(inputs.length>300?'<p class="count">符合條件共 '+inputs.length+' 筆；目前顯示最新 300 筆，原始 Log 未刪除。</p>':''):'<div class="empty">這個篩選範圍內沒有逐字輸入或提示紀錄。</div>';
+// 累積弱點只套用單元與搜尋條件，不受日期區間限制。
+const allUnitRows=DATA.filter(x=>selectedUnit(x)&&matchesSearch(x)),allWrong=allUnitRows.filter(x=>!isSentence(x)&&isWrong(x)&&wordOf(x)),allByWord={};allWrong.forEach(x=>{const w=wordOf(x);(allByWord[w]||(allByWord[w]=[])).push(x)});const cumulative=Object.entries(allByWord).sort((a,b)=>b[1].length-a[1].length);const cumulativeHtml=cumulative.length?'<div class="table-wrap"><table><thead><tr><th>單字</th><th class="num">累積答錯</th><th>最近答錯日期</th></tr></thead><tbody>'+cumulative.map(([w,rs])=>'<tr><td><b>'+esc(w)+'</b></td><td class="num">'+rs.length+' 次</td><td>'+esc(rs.map(x=>dateInfo(x).label).sort().reverse()[0]||'日期未記錄')+'</td></tr>').join('')+'</tbody></table></div>':'<div class="empty">目前沒有累積錯題紀錄。</div>';
+const scheduleRows=SCHEDULE.filter(x=>selectedUnit({unit:x.unit})&&matchesSearch({word:x.word,unit:x.unit})).sort((a,b)=>Number(a.dueAt||0)-Number(b.dueAt||0));const scheduleHtml=scheduleRows.length?'<div class="table-wrap"><table><thead><tr><th>單字</th><th>複習狀態</th><th>上次結果</th><th>下次複習</th></tr></thead><tbody>'+scheduleRows.map(x=>{const due=Number(x.dueAt)||0,d=new Date(due),day=due?d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'):'未排程';return '<tr><td><b>'+esc(x.word||'')+'</b></td><td>'+(!due?'未排程':due<=Date.now()?'已到期／今天複習':'尚未到期')+'</td><td>'+esc(x.lastResult==='correct'?'答對':'答錯')+(x.hintUsed?'（曾使用提示）':'')+'</td><td>'+esc(day)+'</td></tr>'}).join('')+'</tbody></table></div>':'<div class="empty">尚未累積複習排程。孩子完成拼字後，系統會依答題結果安排下次複習。</div>';$('report').innerHTML=section('1. 日期分析','每天答錯總次數、涉及單字數與造句次數。',dayHtml)+section('2. 最常答錯的單字','依目前日期區間由答錯次數高至低排列；新舊錯題 Log 已嘗試配對去重。',wordHtml)+section('3. 反覆出現的拼字錯誤','相同目標單字＋相同錯拼才合併計數，不同錯法分開呈現。',variantHtml)+section('4. 每一句造句','依時間由新到舊，保留每次提交的原始句子與檢查結果。',sentenceHtml)+section('5. 孩子輸入過程與提示','最多顯示最新 300 筆逐字／提示紀錄；不會刪除原始資料。',inputHtml)+section('6. 間隔複習排程','依近期作答結果安排下次複習；答錯隔天重練，答對逐步拉長間隔。',scheduleHtml)+section('累積弱點（全部歷史紀錄）','不受上方日期限制，避免只看今天而忽略長期反覆出錯的單字。',cumulativeHtml);
+}
+function initReport(){const units=[...new Set(DATA.map(unitOf))].sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true}));units.forEach(u=>{const opt=document.createElement('option');opt.value=u;opt.textContent=u;$('unitFilter').appendChild(opt)});const preferred=units.find(u=>/^W2\b/i.test(u));if(preferred)$('unitFilter').value=preferred;$('from').value=todayKey();$('to').value=todayKey();['unitFilter','from','to','search'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));$('reset').addEventListener('click',()=>{$('unitFilter').value=preferred||'__ALL__';$('from').value=todayKey();$('to').value=todayKey();$('search').value='';render()});render()}
+initReport();
 <\/script></body></html>`;
     }
     function openLearningReportInApp() {
@@ -3464,9 +3526,76 @@ $('search').addEventListener('input',render);$('from').addEventListener('change'
         }
         await initQuestionBank();
         renderBankManager();
+        refreshDailyTaskCard();
+    }
+
+    function getLocalDayKey(date = new Date()) {
+        const y = date.getFullYear(), m = String(date.getMonth()+1).padStart(2,'0'), d = String(date.getDate()).padStart(2,'0');
+        return `${y}-${m}-${d}`;
+    }
+    function getDailyTaskState() {
+        try { return JSON.parse(getHeroData('hero_daily_task_state') || '{}') || {}; } catch(e) { return {}; }
+    }
+    function getSpacedReviewSchedule() {
+        try { const value=JSON.parse(getHeroData('hero_spaced_review_schedule')||'{}'); return value&&typeof value==='object'?value:{}; } catch(e) { return {}; }
+    }
+    function updateSpacedReviewSchedule(word,result,options={}) {
+        if(!word||!word.en)return;
+        const ref=word.ref||String(word.en).trim().toLowerCase(),map=getSpacedReviewSchedule(),old=map[ref]||{};
+        const now=Date.now(),day=86400000;
+        let streak=Math.max(0,Number(old.streak)||0),interval=Number(old.intervalDays)||0;
+        if(result==='correct'){
+            streak+=1;
+            // 間隔複習：第一次隔 1 天，之後 3、7、14 天；有提示時先採較短間隔。
+            const ladder=[1,3,7,14,30];
+            interval=ladder[Math.min(streak-1,ladder.length-1)];
+            if(options.hintUsed)interval=Math.min(interval,1);
+        }else{
+            streak=0;interval=1;
+        }
+        map[ref]={ref,word:String(word.en),unit:options.unit||state.currentQuestionUnit||state.unit||'',streak,intervalDays:interval,lastResult:result,lastReviewedAt:now,dueAt:now+interval*day,hintUsed:!!options.hintUsed};
+        setHeroData('hero_spaced_review_schedule',JSON.stringify(map));
+    }
+    function refreshDailyTaskCard() {
+        const btn=document.getElementById('daily-quest-start'), desc=document.getElementById('daily-quest-description'), status=document.getElementById('daily-quest-status'), bar=document.getElementById('daily-quest-progress-bar');
+        if(!btn||!desc||!status||!bar)return;
+        const saved=getDailyTaskState(),today=getLocalDayKey(),done=saved.date===today&&saved.completed===true;
+        if(done){desc.textContent='今天的小任務已完成！學習到這裡就很好，可以安心去做喜歡的事。';status.textContent='今日任務已完成，不需要再刷題。';btn.textContent='今天已完成';btn.disabled=true;bar.style.width='100%';}
+        else {desc.textContent='挑戰 3 個單字：先複習需要加強的，再試試其他單字。';status.textContent='答錯可以用提示；完成後就結束，不需要連續闖關。';btn.textContent='開始任務';btn.disabled=false;bar.style.width='0%';}
+    }
+    function startDailyTask() {
+        const saved=getDailyTaskState(),today=getLocalDayKey();
+        if(saved.date===today&&saved.completed===true){refreshDailyTaskCard();return;}
+        const unit=document.getElementById('unit-selector').value;
+        const bank=(state.banks[unit]||[]).filter(w=>w&&String(w.en||'').trim());
+        if(!bank.length){alert('這個單元目前沒有可用單字，請先確認 GitHub Anson.txt 題庫是否載入。');return;}
+        const wrongRows=getErrorLog().filter(r=>String(r.unit||'')===String(unit));
+        const wrongCounts={};wrongRows.forEach(r=>{const k=String(r.correct||'').trim().toLowerCase();if(k)wrongCounts[k]=(wrongCounts[k]||0)+1;});
+        const priorityRefs=JSON.parse(getHeroData('hero_priority')||'[]');
+        const reviewRows=JSON.parse(getHeroData('hero_word_review_queue')||'[]');
+        const reviewRefs=Array.isArray(reviewRows)?reviewRows.map(r=>r&&r.ref).filter(Boolean):[];
+        const schedule=getSpacedReviewSchedule(),now=Date.now();
+        const recentWordSet=new Set(getLearningLog().filter(r=>r&&r.type==='word_answer'&&String(r.unit||'')===String(unit)&&now-(Number(r.timestampMs)||Date.parse(r.at)||0)<7*86400000).map(r=>String(r.word||'').trim().toLowerCase()));
+        const rank=w=>{
+            const k=String(w.en||'').trim().toLowerCase(),entry=schedule[w.ref||k];
+            if(entry&&Number(entry.dueAt||0)<=now)return 0; // 到期複習優先
+            if((wrongCounts[k]||0)>0)return 1;
+            if(reviewRefs.includes(w.ref))return 2;
+            if(priorityRefs.includes(w.ref))return 3;
+            if(!recentWordSet.has(k))return 4; // 優先選最近一週沒練過的字
+            return 5;
+        };
+        // 先打散同優先級的單字，避免沒有錯題時每天都只出題庫最前面的三個字。
+        const pool=bank.slice().sort(()=>Math.random()-.5).sort((a,b)=>rank(a)-rank(b)||(wrongCounts[String(b.en||'').toLowerCase()]||0)-(wrongCounts[String(a.en||'').toLowerCase()]||0));
+        const selected=pool.slice(0,Math.min(3,pool.length));
+        if(!selected.length)return;
+        dailyTaskActive=true;state.unit=unit;state.currentList=selected.map(w=>({...w}));state.mode='quiz';state.tempPractice=false;state.index=0;state.sentenceEnabled=false;state.quizCompleted=0;state.quizPassedCount=0;state.quizTotalCount=state.currentList.length;state.quizResultRows=state.currentList.map(item=>({ref:item.ref||String(item.en||'').trim().toLowerCase(),en:String(item.en||''),cn:String(item.cn||''),result:'pending',wrongAttempts:0}));state.sessionStats={correct:0,incorrect:0,passes:0};state.playerHP=0;state.oppHP=0;state.playerMaxHP=6;state.oppMaxHP=6;
+        addLearningLog({type:'daily_task_started',mode:'daily_task',unit,wordCount:selected.length,words:selected.map(w=>w.en),taskDate:today});
+        switchView('view-game');initArena();
     }
 
     function startSession(m) {
+        dailyTaskActive = false;
         state.unit = document.getElementById('unit-selector').value;
 
         if (!state.unit || !state.banks[state.unit] || state.banks[state.unit].length === 0) {
@@ -3931,7 +4060,12 @@ const storyWordGloss = {
             const text = document.getElementById(`${prefix}-text`);
             const translation = document.getElementById(`${prefix}-translation`);
             if (text) text.innerHTML = renderStoryTokens(state.currentSentenceExample.en);
-            if (translation) translation.textContent = state.currentSentenceExample.zh;
+            if (translation) {
+                const hideChineseForToday = String(target).trim().toLowerCase() === 'today';
+                translation.textContent = hideChineseForToday ? '' : state.currentSentenceExample.zh;
+                translation.hidden = hideChineseForToday;
+                translation.style.display = hideChineseForToday ? 'none' : '';
+            }
         });
     }
 
@@ -3950,7 +4084,13 @@ const storyWordGloss = {
             const text = document.getElementById(`${prefix}-text`);
             const translation = document.getElementById(`${prefix}-translation`);
             if (text) text.innerHTML = renderStoryTokens(state.currentSentenceExample.en);
-            if (translation) translation.textContent = state.currentSentenceExample.zh;
+            if (translation) {
+                const currentTarget = String(sentenceTargetWord || '').trim().toLowerCase();
+                const hideChineseForToday = currentTarget === 'today';
+                translation.textContent = hideChineseForToday ? '' : state.currentSentenceExample.zh;
+                translation.hidden = hideChineseForToday;
+                translation.style.display = hideChineseForToday ? 'none' : '';
+            }
         });
     }
     function nextSentenceExample() { changeSentenceExample(1); }
@@ -4009,7 +4149,12 @@ const storyWordGloss = {
         const result = document.getElementById('sentence-unit-result');
         const progress = document.getElementById('sentence-unit-progress');
         const top = document.getElementById('sentence-unit-progress-top');
-        if (cn) cn.textContent = word.cn || localDict[sentenceTargetWord.toLowerCase()] || '';
+        const isTodayTarget = sentenceTargetWord.toLowerCase() === 'today';
+        if (cn) {
+            cn.textContent = isTodayTarget ? '' : (word.cn || localDict[sentenceTargetWord.toLowerCase()] || '');
+            cn.hidden = isTodayTarget;
+            cn.style.display = isTodayTarget ? 'none' : '';
+        }
         if (en) en.textContent = sentenceTargetWord;
         if (input) { input.value = ''; input.focus(); }
         if (result) { result.style.display = 'none'; result.className = 'sentence-status'; result.innerHTML = ''; }
@@ -4104,6 +4249,59 @@ const storyWordGloss = {
         return state.unit || '';
     }
 
+    // V1539：魔王輔助練習的逐步提示；只在「魔王練習（不計戰鬥）」顯示。
+    function renderSupportHintPattern(level) {
+        const word = state.currentList && state.currentList[state.index];
+        const pattern = document.getElementById('support-hint-pattern');
+        const caption = document.getElementById('support-hint-caption');
+        const button = document.getElementById('support-hint-button');
+        if (!word || !pattern || !caption || !button) return;
+        const chars = Array.from(String(word.en || ''));
+        const letterIndexes = chars.map((c,i)=>/[A-Za-z]/.test(c)?i:-1).filter(i=>i>=0);
+        const revealed = Math.min(Math.max(0, Number(level)||0), letterIndexes.length);
+        const show = chars.map((c,i)=>{
+            if (!/[A-Za-z]/.test(c)) return c === ' ' ? '　' : c;
+            const pos = letterIndexes.indexOf(i);
+            return pos < revealed ? c : '＿';
+        }).join('');
+        pattern.textContent = show;
+        caption.textContent = revealed >= letterIndexes.length
+            ? '已顯示完整單字；看清楚拼法，再自己輸入一次。'
+            : `共 ${letterIndexes.length} 個字母，已提示 ${revealed} 個。每按一次再多顯示一個字母。`;
+        button.textContent = revealed >= letterIndexes.length ? '已看完提示' : revealed === 0 ? '💡 看第一個提示' : '💡 再看一個字母';
+        button.disabled = revealed >= letterIndexes.length;
+    }
+    function showNextSupportHint() {
+        if (!(state.mode === 'quiz' && state.tempPractice)) return;
+        const word = state.currentList && state.currentList[state.index];
+        if (!word) return;
+        state.supportHintLevel = Math.min((state.supportHintLevel || 0) + 1, Array.from(String(word.en||'')).filter(c=>/[A-Za-z]/.test(c)).length);
+        renderSupportHintPattern(state.supportHintLevel);
+        addLearningLog({type:'hint_used', mode:'boss_support', unit:state.currentQuestionUnit||state.unit||'', word:word.en||'', meaning:word.cn||'', hintLevel:state.supportHintLevel, hintKind:'progressive_letter_reveal', questionElapsedMs:state.questionStartedAt?Date.now()-state.questionStartedAt:null});
+    }
+    function recordInputProgress(action, changedIndex) {
+        try {
+            const word = state.currentList && state.currentList[state.index];
+            if (!word) return;
+            const boxes = [...document.querySelectorAll('#letter-area .letter-box')];
+            const partial = boxes.map(b=>String(b.value||'')).join('');
+            const filled = boxes.filter(b=>String(b.value||'').length>0).length;
+            const snapshot = boxes.map(b=>String(b.value||'')).join('|');
+            if (state.lastInputProgressSnapshot === snapshot && action !== 'question_start') return;
+            state.lastInputProgressSnapshot = snapshot;
+            addLearningLog({
+                type:'word_input_progress', mode:state.tempPractice?'boss_support':(state.mode||''),
+                unit:state.currentQuestionUnit||state.unit||'', word:word.en||'', meaning:word.cn||'',
+                input:partial, inputPattern:boxes.map(b=>b.value||'＿').join(' '),
+                filledLetters:filled, totalLetters:boxes.length, changedIndex:changedIndex==null?null:Number(changedIndex),
+                inputAction:action, hintLevel:state.supportHintLevel||0,
+                responseMs:state.attemptStartedAt?Date.now()-state.attemptStartedAt:null,
+                questionElapsedMs:state.questionStartedAt?Date.now()-state.questionStartedAt:null,
+                attemptIndex:state.tempPractice?(state.supportAttemptCount||0):(state.questionAttemptCount||0)
+            });
+        } catch (e) { /* 記錄失敗不可阻斷作答 */ }
+    }
+
     async function loadWord() {
         state.questionRenderToken = (state.questionRenderToken || 0) + 1;
         const questionRenderToken = state.questionRenderToken;
@@ -4141,7 +4339,9 @@ const storyWordGloss = {
             state.resumeBossQuestionStartedAt = 0;
             state.resumeBossQuestionAttemptCount = 0;
         }
-        state.previousSubmittedInput = ''; 
+        state.previousSubmittedInput = '';
+        state.supportHintLevel = 0;
+        state.lastInputProgressSnapshot = null;
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         let word = state.currentList[state.index];
         // 題庫是標準答案來源。若練習中的物件被其他流程意外改寫，依 ref 從原始題庫還原。
@@ -4185,6 +4385,11 @@ const storyWordGloss = {
             const total = (state.currentList || []).length + (state.mode === 'quiz' ? (state.quizCompleted || 0) : 0);
             const current = state.mode === 'quiz' ? (state.quizCompleted || 0) + 1 : (state.index || 0) + 1;
             progressLabel.textContent = total ? `第 ${Math.min(current,total)} 題／共 ${total} 題` : '準備開始';
+        }
+        const supportHintPanel = document.getElementById('support-hint-panel');
+        if (supportHintPanel) {
+            supportHintPanel.hidden = !(state.mode === 'quiz' && state.tempPractice);
+            if (state.mode === 'quiz' && state.tempPractice) renderSupportHintPattern(0);
         }
         const childFeedback = document.getElementById('child-answer-feedback');
         if (childFeedback) { childFeedback.hidden = true; childFeedback.textContent = ''; childFeedback.className = 'child-answer-feedback'; }
@@ -4277,6 +4482,7 @@ const storyWordGloss = {
                     if (e.target.value !== "") {
                         e.preventDefault();
                         e.target.value = "";
+                        recordInputProgress('backspace_clear_current', e.target.dataset.idx);
                         return;
                     }
 
@@ -4289,6 +4495,7 @@ const storyWordGloss = {
                     if (prev) {
                         prev.focus();
                         prev.value = "";
+                        recordInputProgress('backspace_clear_previous', prev.dataset.idx);
                     }
                 }
             };
@@ -4303,6 +4510,7 @@ const storyWordGloss = {
                 const complete = boxes.length > 0 && boxes.every(b => b.value.length === 1);
                 const typed = boxes.map(b => b.value).join('').replace(/[\s\/-]/g, '').toLowerCase();
                 const expected = String(state.currentList[state.index]?.en || '').replace(/[\s\/-]/g, '').toLowerCase();
+                recordInputProgress(e.target.value ? 'type_or_replace' : 'clear', e.target.dataset.idx);
 
                 // 自動跳格；但不要求孩子移到最後一格才能重新判定。
                 if (e.target.value.length === 1) {
@@ -4376,14 +4584,15 @@ const storyWordGloss = {
 
         // 顯示目前題目的實際字母數，避免字框數與答案不一致。
         area.dataset.answerLength = String(inputIdx);
+        recordInputProgress('question_start', null);
         if (state.mode === 'quiz' && state.tempPractice) {
             const hint = document.getElementById('spelling-feedback');
             if (hint) {
                 const preservedCount = (state.supportPrefillLetters || []).filter(Boolean).length;
                 hint.style.display = 'block';
                 hint.innerHTML = preservedCount
-                    ? `🛡️ 已保留 <b>${preservedCount}</b> 個答對的字母；請重新輸入空白格。填滿後會再提示需要修正的位置。`
-                    : '🛡️ 先看中文提示重新拼寫。填滿字母格後，會提示需要修正的位置。';
+                    ? `🛡️ 已保留 <b>${preservedCount}</b> 個答對的字母；請重新輸入空白格。也可以按上方「看提示」，不用盲猜。`
+                    : '🛡️ 先看中文提示；不確定時按上方「看提示」，每次多看一個字母。';
             }
         }
         // 單字只在 practice-target-word 顯示一次；避免 practice-guide 再重複顯示同一個英文答案。
@@ -4434,7 +4643,7 @@ const storyWordGloss = {
             boxes.forEach(box => { box.readOnly = true; });
         }
         if (normalizedInput === normalizedAnswer && state.mode === 'quiz' && state.tempPractice) {
-            addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
+            addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', supportPractice: true, hintLevel: state.supportHintLevel || 0, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
             const supportFeedback = document.getElementById('child-answer-feedback');
             if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback good'; supportFeedback.textContent = '練習答對了！回到魔王挑戰，再正式作答一次。'; }
             const supportSpellingFeedback = document.getElementById('spelling-feedback');
@@ -4455,7 +4664,8 @@ const storyWordGloss = {
             const childFeedback = document.getElementById('child-answer-feedback');
             if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback good'; childFeedback.textContent = '答對了！做得好！'; }
             updateErrorBank(word, true);
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: attemptResponseMs, questionElapsedMs, attempts: state.questionAttemptCount || 1, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: dailyTaskActive ? 'daily_task' : (state.mode || ''), unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui, result: 'correct', responseMs: attemptResponseMs, questionElapsedMs, attempts: state.questionAttemptCount || 1, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            updateSpacedReviewSchedule(word,'correct',{unit:state.currentQuestionUnit||state.unit||'',hintUsed:(state.supportHintLevel||0)>0});
             state.previousSubmittedInput = ui;
             recordWordReview(word, 'correct', state.mode || 'practice');
             const spellingFeedback = document.getElementById('spelling-feedback');
@@ -4542,7 +4752,7 @@ const storyWordGloss = {
             }
         } else {
             if (state.mode === 'quiz' && state.tempPractice) {
-                addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', supportPractice: true, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
+                addLearningLog({ type: 'support_practice_answer', mode: 'boss_support', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', supportPractice: true, hintLevel: state.supportHintLevel || 0, responseMs: attemptResponseMs, questionElapsedMs, attemptIndex });
                 addErrorLog(word, ui || '(空白)');
                 updateErrorBank(word, false);
                 recordWordReview(word, 'incorrect', 'boss_support');
@@ -4563,10 +4773,11 @@ const storyWordGloss = {
             const childFeedback = document.getElementById('child-answer-feedback');
             if (childFeedback) { childFeedback.hidden = true; childFeedback.textContent = ''; childFeedback.className = 'child-answer-feedback bad'; }
             // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
-            addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
+            addLearningLog({ type: 'word_answer', mode: dailyTaskActive ? 'daily_task' : (state.mode || ''), unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
             state.attemptStartedAt = Date.now();
             addErrorLog(word, ui || '(空白)');
+            updateSpacedReviewSchedule(word,'incorrect',{unit:state.currentQuestionUnit||state.unit||''});
             updateErrorBank(word, false);
 
             const answerChars = Array.from(word.en.replace(/[\s\/-]/g, '').toLowerCase());
@@ -4693,6 +4904,7 @@ const storyWordGloss = {
     }
 
     function startPrioritySession() {
+        dailyTaskActive = false;
         const pRefs = JSON.parse(getHeroData('hero_priority') || '[]');
         if(pRefs.length === 0) return alert("還沒有星號單字！");
         state.currentList = []; Object.values(state.banks).forEach(b => b.forEach(w => { if(pRefs.includes(w.ref)) state.currentList.push(w); }));
@@ -4720,7 +4932,17 @@ const storyWordGloss = {
                     `• ${row.en}｜你的作答：${row.lastWrongInput || '曾答錯'}｜正確答案：${row.en}（答錯 ${row.wrongAttempts} 次）`
                 );
                 const detailText = details.length ? `\n\n【需要再練的單字】\n${details.join('\n')}` : '';
-                vm.textContent = `本輪挑戰完成！\n總題數：${total}\n答對並完成：${correct}\n跳過待複習：${passed}\n本輪正確完成率：${rate}%\n答錯嘗試：${wrongTries} 次${detailText}\n\n${passed ? '跳過的單字不算學會，之後可以再挑戰。' : '太棒了！本輪所有單字都已答對。'}`;
+                if (dailyTaskActive) {
+                    const today=getLocalDayKey();
+                    setHeroData('hero_daily_task_state',JSON.stringify({date:today,completed:true,unit:state.unit,wordCount:total,correct,wrongTries,completedAt:Date.now()}));
+                    const answerDetails = rows.map(row => `• ${row.en}：${row.result === 'correct' ? '答對 ✓' : row.result === 'skipped' ? '跳過，之後再練' : row.result === 'incorrect' ? '曾答錯，已完成修正' : '尚未完成'}${Number(row.wrongAttempts || 0) ? `（答錯 ${Number(row.wrongAttempts)} 次）` : ''}`).join('\n');
+                    vm.textContent = `今日拼字小任務完成！\n\n【每個單字的結果】\n${answerDetails || '本次沒有可顯示的逐字結果'}\n\n完成單字：${correct} / ${total}\n答錯嘗試：${wrongTries} 次\n\n答錯不是失敗；你有繼續修正、完成任務，這就是進步。\n今天到這裡就好，可以安心休息或去下圍棋！`;
+                    addLearningLog({type:'daily_task_completed',mode:'daily_task',unit:state.unit,wordCount:total,correct,wrongTries,taskDate:today});
+                    dailyTaskActive=false;
+                    refreshDailyTaskCard();
+                } else {
+                    vm.textContent = `本輪挑戰完成！\n總題數：${total}\n答對並完成：${correct}\n跳過待複習：${passed}\n本輪正確完成率：${rate}%\n答錯嘗試：${wrongTries} 次${detailText}\n\n${passed ? '跳過的單字不算學會，之後可以再挑戰。' : '太棒了！本輪所有單字都已答對。'}`;
+                }
             }
             switchView('view-victory');
             return;
@@ -4749,7 +4971,7 @@ const storyWordGloss = {
     }
     function switchView(id) {
       if(!document.getElementById(id)) return;
-      if(id==='view-main')syncErrorBankCount();
+      if(id==='view-main'){syncErrorBankCount();refreshDailyTaskCard();}
       document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
       document.getElementById(id).style.display = 'flex';
       const home=document.getElementById('global-home-button');
@@ -5429,6 +5651,12 @@ const storyWordGloss = {
 #view-game .game-action-row #btn-force-practice br,
 #view-game .game-action-row #btn-force-practice .force-practice-subtitle { display:none!important; }
 @media(max-width:600px){#view-game .game-action-row{gap:8px;margin-top:6px}#view-game .game-action-row button{font-size:.95rem;padding:10px 8px}}
+
+    /* V1542：手機版回到頂端按鈕避開首頁底部操作 */
+    @media (max-width:600px){
+      #back-to-top, .back-to-top, .scroll-top-btn { bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important; right: 12px !important; z-index: 1000 !important; }
+      body:has(#daily-quest-card) .back-to-top { opacity:.78; }
+    }
 </style>
 <script id="v1530-action-row-mount">
 (function(){
