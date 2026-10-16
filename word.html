@@ -1235,16 +1235,6 @@ html, body { height:100% !important; overflow:hidden !important; }
         /* VERSION BADGE: small build identifier next to Word Hero on home screen */
         .wh-version-badge{display:inline-flex;align-items:center;vertical-align:middle;margin-left:7px;padding:2px 6px;border:1px solid #40536b;border-radius:999px;background:#13243a;color:#9fb4cc;font-size:.48em;font-weight:500;letter-spacing:.02em;line-height:1.4;white-space:nowrap}
 
-        /* V1524: parent refresh reminder */
-        .parent-refresh-reminder{
-            max-width:760px;margin:4px auto 0;padding:4px 9px;
-            color:#9fb3c8;font-size:.68rem;line-height:1.45;text-align:center;
-            border:1px solid rgba(112,145,174,.24);border-radius:8px;
-            background:rgba(17,35,55,.45)
-        }
-        @media(max-width:520px){
-            .parent-refresh-reminder{font-size:.62rem;padding:4px 7px;margin-top:3px}
-        }
 </style>
 </head>
 <body onload="initSystem()">
@@ -1264,9 +1254,6 @@ html, body { height:100% !important; overflow:hidden !important; }
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
             <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1524">V1524</span></div>
-            <div class="parent-refresh-reminder" role="note">
-                家長提醒：更新 Word Hero 後，請重新整理頁面；若出現「沒有可用的單字資料」，請先強制重新整理，再確認 Anson.txt 與 HTML 位於同一資料夾。
-            </div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1630,8 +1617,9 @@ html, body { height:100% !important; overflow:hidden !important; }
     // GitHub Pages 題庫依目前使用者讀取：Vicky.txt 或 Anson.txt，與主程式放在同一目錄。
     function getUserBankFileStem() {
         const name = String((typeof getChildName === 'function' ? getChildName() : '') || localStorage.getItem('wordhero_active_user') || 'Anson').trim();
+        // Anson 與 2B 共用同一份 Anson.txt；不因使用者顯示名稱而改讀 2B.txt。
+        if (/^(anson|2b)$/i.test(name)) return 'Anson';
         if (/^vicky$/i.test(name)) return 'Vicky';
-        if (/^anson$/i.test(name)) return 'Anson';
         return name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Anson';
     }
     function getUserBankUrl() { return `./${encodeURIComponent(getUserBankFileStem())}.txt`; }
@@ -4510,7 +4498,7 @@ const storyWordGloss = {
                 state.previousSubmittedInput = ui;
                 state.attemptStartedAt = Date.now();
                 const supportFeedback = document.getElementById('child-answer-feedback');
-                if (supportFeedback) { supportFeedback.hidden = true; supportFeedback.textContent = ''; supportFeedback.className = 'child-answer-feedback'; }
+                if (supportFeedback) { supportFeedback.hidden = false; supportFeedback.className = 'child-answer-feedback try'; supportFeedback.textContent = '練習還沒答對，再試一次！紅色框是需要修正的位置。'; }
                 const answerChars = Array.from(String(word.en || '').replace(/[\s\/-]/g, '').toLowerCase());
                 const inputChars = Array.from(ui.replace(/[\s\/-]/g, '').toLowerCase());
                 boxes.forEach((b, i) => { const typed=inputChars[i]||''; const expected=answerChars[i]||''; b.classList.remove('wrong','mismatch','correct-place'); b.classList.add(typed && expected && typed===expected ? 'correct-place' : 'mismatch'); });
@@ -4522,7 +4510,7 @@ const storyWordGloss = {
             if (state.mode === 'quiz' && !state.tempPractice) { const reviewRow = (state.quizResultRows || []).find(item => item.ref === (word.ref || String(word.en || '').trim().toLowerCase())); if (reviewRow) reviewRow.lastWrongInput = ui; }
             if (!state.tempPractice) state.sessionStats.incorrect++;
             const childFeedback = document.getElementById('child-answer-feedback');
-            if (childFeedback) { childFeedback.hidden = true; childFeedback.textContent = ''; childFeedback.className = 'child-answer-feedback'; }
+            if (childFeedback) { childFeedback.hidden = false; childFeedback.className = 'child-answer-feedback try'; childFeedback.textContent = '還沒答對，再試一次！紅色框是需要修正的位置。'; }
             // 每次錯誤提交都記錄，並保留舊版錯題 Log 相容。
             addLearningLog({ type: 'word_answer', mode: state.mode || '', unit: state.currentQuestionUnit || state.unit || '', word: word.en || '', meaning: word.cn || '', input: ui || '(空白)', result: 'incorrect', responseMs: attemptResponseMs, questionElapsedMs, attemptIndex, changedAnswer: state.previousSubmittedInput !== '' && state.previousSubmittedInput !== ui, previousInput: state.previousSubmittedInput || null });
             state.previousSubmittedInput = ui;
@@ -4670,11 +4658,12 @@ const storyWordGloss = {
                 const rate = total ? Math.round(correct / total * 100) : 0;
                 const wrongTries = (state.sessionStats && state.sessionStats.incorrect) || 0;
                 const rows = state.quizResultRows || [];
+                const wrongQuestions = rows.filter(row => Number(row.wrongAttempts || 0) > 0).length;
                 const details = rows.filter(row => Number(row.wrongAttempts || 0) > 0).map(row =>
                     `• ${row.en}｜你的作答：${row.lastWrongInput || '曾答錯'}｜正確答案：${row.en}（答錯 ${row.wrongAttempts} 次）`
                 );
                 const detailText = details.length ? `\n\n【需要再練的單字】\n${details.join('\n')}` : '';
-                vm.textContent = `本輪挑戰完成！\n總題數：${total}\n答對並完成：${correct}\n跳過待複習：${passed}\n本輪正確完成率：${rate}%\n答錯嘗試：${wrongTries} 次${detailText}\n\n${passed ? '跳過的單字不算學會，之後可以再挑戰。' : '太棒了！本輪所有單字都已答對。'}`;
+                vm.textContent = `本輪挑戰完成！\n總題數：${total}\n答對並完成：${correct}\n跳過待複習：${passed}\n本輪正確完成率：${rate}%\n曾答錯單字：${wrongQuestions} 個\n答錯嘗試：${wrongTries} 次${detailText}\n\n${passed ? '跳過的單字不算學會，之後可以再挑戰。' : '太棒了！本輪所有單字都已答對。'}`;
             }
             switchView('view-victory');
             return;
@@ -4703,7 +4692,14 @@ const storyWordGloss = {
     }
     function switchView(id) {
       if(!document.getElementById(id)) return;
-      if(id==='view-main')syncErrorBankCount();
+      if(id==='view-main') {
+        syncErrorBankCount();
+        // 從家長／設定頁返回時，確保首頁課程選擇區仍顯示且選項依目前題庫重建。
+        const unitCard = document.querySelector('#view-main .unit-card');
+        if (unitCard) unitCard.style.display = '';
+        refreshUnitSelectors();
+        renderUserSelector();
+      }
       document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
       document.getElementById(id).style.display = 'flex';
       const home=document.getElementById('global-home-button');
@@ -5249,8 +5245,7 @@ const storyWordGloss = {
     line-height:1.45 !important;
   }
   #spelling-feedback b { color:#ff858b !important; }
-  /* 一般答錯不再顯示第二句重複提醒；正確回饋仍可使用 child-answer-feedback */
-  #child-answer-feedback.try { display:none !important; }
+  /* 答錯時保留明確回饋，避免孩子只看到紅框卻不知道是否已提交。 */
   /* PASS 是清楚可辨識的操作按鈕，文字水平、垂直置中 */
   #btn-game-pass.game-pass-after-context {
     display:flex !important;
