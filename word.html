@@ -4226,6 +4226,11 @@ const storyWordGloss = {
             inp.maxLength = 1;
             inp.dataset.idx = inputIdx;
             inp.spellcheck = false;
+            // 魔王輔助練習：保留上一輪已經填對位置的字母，只清空錯誤位置。
+            if (state.mode === 'quiz' && state.tempPractice && state.supportPrefillByIdx && state.supportPrefillByIdx[inputIdx]) {
+                inp.value = String(char).toLowerCase();
+                inp.classList.add('correct-place');
+            }
 
             inp.onkeydown = (e) => {
                 const idx = parseInt(e.target.dataset.idx, 10);
@@ -4593,6 +4598,15 @@ const storyWordGloss = {
     }
     function startInGamePractice() {
         const word = state.currentList && state.currentList[state.index];
+        // 以孩子目前答案對照標準答案，只記住「位置正確」的字母。
+        const answer = Array.from(String(word && word.en || '').replace(/[ \/-]/g, '').toLowerCase());
+        const currentBoxes = [...document.querySelectorAll('#letter-area .letter-box')];
+        state.supportPrefillByIdx = {};
+        currentBoxes.forEach((box, i) => {
+            if (answer[i] && String(box.value || '').toLowerCase() === answer[i]) {
+                state.supportPrefillByIdx[i] = true;
+            }
+        });
         state.resumeBossAttemptRef = word ? word.ref : '';
         state.resumeBossWrongAttempts = state.wrongAttemptsThisQuestion;
         state.resumeBossQuestionStartedAt = state.questionStartedAt || Date.now();
@@ -4600,6 +4614,18 @@ const storyWordGloss = {
         state.supportAttemptCount = 0;
         state.tempPractice = true;
         loadWord();
+        // 一開始就給清楚的練習指示，不顯示完整答案或例句。
+        const hint = document.getElementById('spelling-feedback');
+        if (hint) {
+            const kept = Object.keys(state.supportPrefillByIdx).length;
+            const total = answer.length;
+            hint.style.display = 'block';
+            hint.innerHTML = `💡 輔助練習：已保留 <b>${kept}</b> 個位置正確的字母，其餘空格請重新輸入。紅色框是需要修正的位置。`;
+        }
+        setTimeout(() => {
+            const firstEmpty = [...document.querySelectorAll('#letter-area .letter-box')].find(box => !box.value);
+            if (firstEmpty) { firstEmpty.focus(); firstEmpty.select(); }
+        }, 0);
     }
 
     // PASS 代表「先跳過」，不是已學會；保存待複習清單，供之後再次練習。
