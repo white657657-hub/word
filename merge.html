@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero 2B｜兒童拼字學習版 V1556</title>
+    <title>Word Hero 2B｜兒童拼字學習版 V1555</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1498,7 +1498,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
 <div id="global-page-title" class="global-page-title" aria-live="polite"></div>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1556">V1556</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1555">V1555</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -1528,7 +1528,6 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
             <span class="grammar-home-link-arrow" aria-hidden="true">↗</span>
         </a>
 
-        <div id="daily-pokemon-combined" class="daily-pokemon-combined" aria-label="今日任務與寶可夢">
         <section id="daily-quest-card" class="daily-quest-card" aria-labelledby="daily-quest-title">
             <div class="daily-quest-top"><span class="daily-quest-kicker">TODAY'S MINI QUEST</span><span class="daily-quest-time">約 5 分鐘</span></div>
             <h2 id="daily-quest-title">今天的拼字小任務</h2>
@@ -1550,7 +1549,6 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
                 </div>
             </div>
         </section>
-        </div><!-- /daily-pokemon-combined -->
 
         <div class="home-main-actions">
             <button class="home-action challenge" onclick="startSession('quiz')">
@@ -2532,7 +2530,21 @@ function initReport(){
   render()
 }
 initReport();
-<\/script></body></html>`;
+<\/script>
+<style id="wordhero-home-button-readable-only">
+/* 僅放大首頁功能按鈕與其下方說明文字；不變更功能或流程 */
+#view-main .home-action { min-height:118px !important; padding:12px 8px !important; }
+#view-main .home-action > span:not(.home-action-icon) { font-size:1.22rem !important; line-height:1.3 !important; }
+#view-main .home-action small { font-size:.86rem !important; line-height:1.4 !important; opacity:1 !important; }
+#view-main .home-secondary-actions button { font-size:1.08rem !important; line-height:1.35 !important; }
+@media (max-width:600px) {
+  #view-main .home-action { min-height:104px !important; padding:10px 6px !important; }
+  #view-main .home-action > span:not(.home-action-icon) { font-size:1.08rem !important; }
+  #view-main .home-action small { font-size:.80rem !important; line-height:1.35 !important; }
+  #view-main .home-secondary-actions button { font-size:1rem !important; }
+}
+</style>
+</body></html>`;
     }
     function openLearningReportInApp() {
         // 即使尚無紀錄，也開啟報告並呈現空資料說明，避免按鈕看似無反應。
@@ -2881,7 +2893,7 @@ initReport();
             status.hidden = units.length > 0;
             status.textContent = units.length ? '' : (info.loading
                 ? `正在讀取 ${getUserBankFileStem()}.txt，請稍候…`
-                : `目前無法取得 ${getUserBankFileStem()}.txt，因此暫時沒有可選單元。請確認網路後按「重新載入」；題庫載入成功後即可選課。`);
+                : `無法載入 ${getUserBankFileStem()}.txt。請確認網路及 GitHub 題庫網址，然後按「重新載入」。`);
         }
         const retry = document.getElementById('unit-selector-retry');
         if (retry) retry.hidden = units.length > 0 || !!info.loading;
@@ -3751,7 +3763,7 @@ initReport();
         const sessions=saved.date===today?Math.max(0,Number(saved.sessionsCompleted)||0):0;
         const maxSessions=3,done=sessions>=maxSessions;
         if(done){desc.textContent='今天 3 輪小任務都完成了！學習到這裡就好。';status.textContent='今日任務已達上限（每輪 3 個單字，最多 3 輪），可以安心休息。';btn.textContent='今天已完成';btn.disabled=true;bar.style.width='100%';}
-        else {desc.textContent=`第 ${sessions+1}／${maxSessions} 輪：挑戰 3 個單字。想再練時可以自己開始下一輪。`;status.textContent=`今天已完成 ${sessions}／${maxSessions} 輪；每輪結束都會停下來，不會自動接關。`;btn.textContent=sessions?'開始下一輪':'開始任務';btn.disabled=false;bar.style.width=`${sessions/maxSessions*100}%`; }
+        else {desc.textContent=`第 ${sessions+1}／${maxSessions} 輪：挑戰 3 個單字。`;status.textContent=`今天已完成 ${sessions}／${maxSessions} 輪。`;btn.textContent=sessions?'開始下一輪':'開始任務';btn.disabled=false;bar.style.width=`${sessions/maxSessions*100}%`; }
     }
     function startDailyTask() {
         const saved=getDailyTaskState(),today=getLocalDayKey();
@@ -5770,19 +5782,19 @@ const storyWordGloss = {
 .unit-selector-status{grid-column:1/-1;margin:0!important;padding:6px 9px;border-radius:8px;background:#412b20;color:#ffd7a8;font-size:.84rem;line-height:1.45}
 #view-main .grammar-home-link{margin:0!important;min-height:54px!important;padding:8px 13px!important;border-radius:12px!important}
 #view-main .grammar-home-link-icon{width:34px;height:34px;flex-basis:34px}
-#view-main .daily-quest-card{margin:0!important;min-width:0;border-radius:16px!important;padding:16px 18px!important}
+#view-main .daily-quest-card{margin:0!important;min-width:0;width:100%;height:100%;align-self:stretch;display:flex;flex-direction:column;border-radius:16px!important;padding:16px 18px!important}
 #view-main #daily-quest-title{font-size:clamp(1.2rem,2vw,1.55rem)!important;line-height:1.25!important;margin:6px 0!important}
 #view-main #daily-quest-description{line-height:1.5!important;margin:8px 0 12px!important}
-#view-main .home-active-pokemon{margin:0!important;min-width:0;border-radius:16px!important;overflow:hidden}
+#view-main .home-active-pokemon{margin:0!important;min-width:0;width:100%;height:100%;align-self:stretch;border-radius:16px!important;overflow:hidden}
 #view-main .home-main-actions{gap:10px!important;margin:0!important}
 #view-main .home-action{min-height:92px!important;padding:10px!important;border-radius:14px!important}
 #view-main .home-action span{line-height:1.3}
 #view-main .home-action small{font-size:.8rem!important}
 @media(min-width:850px){
- #view-main:not([style*="display: none"]){display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);grid-auto-flow:row;align-content:start;align-items:stretch}
+ #view-main:not([style*="display: none"]){display:grid!important;grid-template-columns:minmax(0,1.8fr) minmax(280px,.8fr);grid-auto-flow:row;align-content:start;align-items:stretch}
  #view-main>.home-header,#view-main>.unit-card,#view-main>.grammar-home-link{grid-column:1/-1}
- #view-main>#daily-quest-card{grid-column:1;grid-row:auto;align-self:stretch;min-height:210px}
- #view-main>#home-active-pokemon{grid-column:2;grid-row:auto;align-self:stretch}
+ #view-main>#daily-quest-card{grid-column:1;grid-row:auto;align-self:stretch;min-height:210px;height:100%}
+ #view-main>#home-active-pokemon{grid-column:2;grid-row:auto;align-self:stretch;height:100%}
  #view-main>.home-main-actions{grid-column:1/-1}
  #view-main>.home-adventure-title,#view-main>.home-secondary-actions,#view-main>.more-toggle,#view-main>.more-tools{grid-column:1/-1}
 }
@@ -5804,37 +5816,6 @@ const storyWordGloss = {
 }
 </style>
 
-
-<style id="wordhero-v1556-home-layout-and-unit-fix">
-/* V1556: task and active Pokémon share one visual card; retain their existing IDs/logic. */
-#view-main #daily-pokemon-combined{
-  display:grid;grid-template-columns:minmax(0,1.45fr) minmax(250px,.9fr);gap:12px;
-  min-width:0;padding:12px;border:1px solid #365b7a;border-radius:18px;
-  background:linear-gradient(135deg,rgba(16,43,69,.96),rgba(15,23,42,.98) 78%);
-  box-shadow:0 8px 24px rgba(0,0,0,.2);box-sizing:border-box;
-}
-#view-main #daily-pokemon-combined #daily-quest-card,
-#view-main #daily-pokemon-combined #home-active-pokemon{
-  min-width:0;width:100%;height:100%;margin:0!important;box-sizing:border-box;
-  border-radius:13px!important;box-shadow:none!important;
-}
-#view-main #daily-pokemon-combined #daily-quest-card{padding:12px 14px!important;background:rgba(8,25,43,.5)!important;border-color:#28516e!important}
-#view-main #daily-pokemon-combined #home-active-pokemon{padding:12px!important;background:rgba(8,25,43,.38)!important;border-color:#28516e!important}
-#view-main #daily-pokemon-combined .home-active-pokemon-body{align-items:center;min-height:120px}
-#view-main #unit-selector:disabled{cursor:not-allowed!important;opacity:.85}
-#view-main #unit-selector:not(:disabled){cursor:pointer!important}
-#view-main #unit-selector-status:not([hidden]){display:block}
-@media(max-width:849px){
- #view-main #daily-pokemon-combined{grid-template-columns:minmax(0,1fr);gap:9px;padding:9px}
- #view-main #daily-pokemon-combined #daily-quest-card{min-height:0}
- #view-main #daily-pokemon-combined #home-active-pokemon{min-height:0}
-}
-@media(max-width:480px){
- #view-main #daily-pokemon-combined{padding:7px;gap:7px;border-radius:15px}
- #view-main #daily-pokemon-combined #daily-quest-card{padding:11px!important}
- #view-main #daily-pokemon-combined #home-active-pokemon{padding:10px!important}
-}
-</style>
 </body>
 </html>
 
