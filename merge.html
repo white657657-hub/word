@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Hero 2B｜兒童拼字學習版 V1555</title>
+    <title>Word Hero 2B｜兒童拼字學習版 V1558</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1498,7 +1498,7 @@ body:has(#global-home-button[style*="inline-flex"]) .global-page-title{display:f
 <div id="global-page-title" class="global-page-title" aria-live="polite"></div>
     <div id="view-main" class="view-section" style="display:flex;">
         <div class="home-header">
-            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1555">V1555</span></div>
+            <div class="home-title">WORD HERO <span class="wh-version-badge" aria-label="版本 V1558">V1558</span></div>
             <div class="home-user-control">
                 <span class="home-user-icon" aria-hidden="true">使用者</span>
                 <div class="home-user-picker">
@@ -2530,21 +2530,7 @@ function initReport(){
   render()
 }
 initReport();
-<\/script>
-<style id="wordhero-home-button-readable-only">
-/* 僅放大首頁功能按鈕與其下方說明文字；不變更功能或流程 */
-#view-main .home-action { min-height:118px !important; padding:12px 8px !important; }
-#view-main .home-action > span:not(.home-action-icon) { font-size:1.22rem !important; line-height:1.3 !important; }
-#view-main .home-action small { font-size:.86rem !important; line-height:1.4 !important; opacity:1 !important; }
-#view-main .home-secondary-actions button { font-size:1.08rem !important; line-height:1.35 !important; }
-@media (max-width:600px) {
-  #view-main .home-action { min-height:104px !important; padding:10px 6px !important; }
-  #view-main .home-action > span:not(.home-action-icon) { font-size:1.08rem !important; }
-  #view-main .home-action small { font-size:.80rem !important; line-height:1.35 !important; }
-  #view-main .home-secondary-actions button { font-size:1rem !important; }
-}
-</style>
-</body></html>`;
+<\/script></body></html>`;
     }
     function openLearningReportInApp() {
         // 即使尚無紀錄，也開啟報告並呈現空資料說明，避免按鈕看似無反應。
@@ -3763,34 +3749,34 @@ initReport();
         const sessions=saved.date===today?Math.max(0,Number(saved.sessionsCompleted)||0):0;
         const maxSessions=3,done=sessions>=maxSessions;
         if(done){desc.textContent='今天 3 輪小任務都完成了！學習到這裡就好。';status.textContent='今日任務已達上限（每輪 3 個單字，最多 3 輪），可以安心休息。';btn.textContent='今天已完成';btn.disabled=true;bar.style.width='100%';}
-        else {desc.textContent=`第 ${sessions+1}／${maxSessions} 輪：挑戰 3 個單字。`;status.textContent=`今天已完成 ${sessions}／${maxSessions} 輪。`;btn.textContent=sessions?'開始下一輪':'開始任務';btn.disabled=false;bar.style.width=`${sessions/maxSessions*100}%`; }
+        else {desc.textContent=`第 ${sessions+1}／${maxSessions} 輪：挑戰 3 個單字。想再練時可以自己開始下一輪。`;status.textContent=`今天已完成 ${sessions}／${maxSessions} 輪；每輪結束都會停下來，不會自動接關。`;btn.textContent=sessions?'開始下一輪':'開始任務';btn.disabled=false;bar.style.width=`${sessions/maxSessions*100}%`; }
     }
     function startDailyTask() {
         const saved=getDailyTaskState(),today=getLocalDayKey();
         const sessions=saved.date===today?Math.max(0,Number(saved.sessionsCompleted)||0):0;
         if(sessions>=3){refreshDailyTaskCard();return;}
-        const unit=document.getElementById('unit-selector').value;
-        const bank=(state.banks[unit]||[]).filter(w=>w&&String(w.en||'').trim());
+        const unitSelector=document.getElementById('unit-selector');
+        const unit=unitSelector ? unitSelector.value : '';
+        // 今日任務只從目前選定單元取題，並依英文單字去重。
+        // Anson.txt 若有同一單字重複列，不能讓同一輪出現兩次甚至三次相同題目。
+        const rawBank=(state.banks[unit]||[]).filter(w=>w&&String(w.en||'').trim());
+        const seenWords=new Set();
+        const bank=rawBank.filter(w=>{
+            const key=String(w.en||'').trim().toLocaleLowerCase().replace(/[\s\/-]+/g,'');
+            if(!key||seenWords.has(key))return false;
+            seenWords.add(key);return true;
+        });
         if(!bank.length){alert('這個單元目前沒有可用單字，請先確認 GitHub Anson.txt 題庫是否載入。');return;}
-        const wrongRows=getErrorLog().filter(r=>String(r.unit||'')===String(unit));
-        const wrongCounts={};wrongRows.forEach(r=>{const k=String(r.correct||'').trim().toLowerCase();if(k)wrongCounts[k]=(wrongCounts[k]||0)+1;});
-        const priorityRefs=JSON.parse(getHeroData('hero_priority')||'[]');
-        const reviewRows=JSON.parse(getHeroData('hero_word_review_queue')||'[]');
-        const reviewRefs=Array.isArray(reviewRows)?reviewRows.map(r=>r&&r.ref).filter(Boolean):[];
-        const schedule=getSpacedReviewSchedule(),now=Date.now();
-        const recentWordSet=new Set(getLearningLog().filter(r=>r&&r.type==='word_answer'&&String(r.unit||'')===String(unit)&&now-(Number(r.timestampMs)||Date.parse(r.at)||0)<7*86400000).map(r=>String(r.word||'').trim().toLowerCase()));
-        const rank=w=>{
-            const k=String(w.en||'').trim().toLowerCase(),entry=schedule[w.ref||k];
-            if(entry&&Number(entry.dueAt||0)<=now)return 0; // 到期複習優先
-            if((wrongCounts[k]||0)>0)return 1;
-            if(reviewRefs.includes(w.ref))return 2;
-            if(priorityRefs.includes(w.ref))return 3;
-            if(!recentWordSet.has(k))return 4; // 優先選最近一週沒練過的字
-            return 5;
-        };
-        // 先打散同優先級的單字，避免沒有錯題時每天都只出題庫最前面的三個字。
-        const pool=bank.slice().sort(()=>Math.random()-.5).sort((a,b)=>rank(a)-rank(b)||(wrongCounts[String(b.en||'').toLowerCase()]||0)-(wrongCounts[String(a.en||'').toLowerCase()]||0));
-        const selected=pool.slice(0,Math.min(3,pool.length));
+        if(bank.length<3){alert(`這個單元目前只有 ${bank.length} 個不重複單字；拼字小任務每輪固定 3 題，請選擇至少有 3 個不重複單字的單元。`);return;}
+        // 每輪都從目前單元的完整不重複題庫均勻隨機抽 3 題；不因錯題、星號或近期練習紀錄改變抽題機率。
+        const shuffled=bank.slice();
+        for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+        const selected=shuffled.slice(0,3);
+        const selectedKeys=selected.map(w=>String(w.en||'').trim().toLocaleLowerCase().replace(/[\s\/-]+/g,''));
+        if(selected.length!==3||new Set(selectedKeys).size!==3){
+            console.error('[WordHero] 今日小任務無法取得 3 個不同單字。',selectedKeys);
+            alert('今日小任務無法取得 3 個不同單字，請確認題庫後再試。');return;
+        }
         if(!selected.length)return;
         dailyTaskActive=true;state.unit=unit;state.currentList=selected.map(w=>({...w}));state.mode='quiz';state.tempPractice=false;state.index=0;state.sentenceEnabled=false;state.quizCompleted=0;state.quizPassedCount=0;state.quizTotalCount=state.currentList.length;state.quizResultRows=state.currentList.map(item=>({ref:item.ref||String(item.en||'').trim().toLowerCase(),en:String(item.en||''),cn:String(item.cn||''),result:'pending',wrongAttempts:0}));state.sessionStats={correct:0,incorrect:0,passes:0};state.playerHP=0;state.oppHP=0;state.playerMaxHP=6;state.oppMaxHP=6;
         addLearningLog({type:'daily_task_started',mode:'daily_task',unit,wordCount:selected.length,words:selected.map(w=>w.en),taskDate:today});
@@ -4548,7 +4534,12 @@ const storyWordGloss = {
         if(state.index >= state.currentList.length) { handleVictory(); return; }
         let word = state.currentList[state.index];
         // 題庫是標準答案來源。若練習中的物件被其他流程意外改寫，依 ref 從原始題庫還原。
-        const canonicalWord = Object.values(state.banks || {}).flat().find(item => item && item.ref === word.ref);
+        const allBankWords = Object.values(state.banks || {}).flat().filter(item => item && String(item.en || '').trim());
+        // ref 並非保證全域唯一（不同單字可能共用 ref）；先以 ref + 英文單字雙重比對，
+        // 再以英文單字回找，避免每日任務把不同題目錯誤還原成同一個單字。
+        const wordKey = String(word.en || '').trim().toLocaleLowerCase().replace(/[\s\/-]+/g, '');
+        const canonicalWord = allBankWords.find(item => item.ref === word.ref && String(item.en || '').trim().toLocaleLowerCase().replace(/[\s\/-]+/g, '') === wordKey)
+            || allBankWords.find(item => String(item.en || '').trim().toLocaleLowerCase().replace(/[\s\/-]+/g, '') === wordKey);
         state.currentQuestionUnit = getUnitForWord(canonicalWord || word);
         if (canonicalWord && String(word.en || '') !== String(canonicalWord.en || '')) {
             console.warn('[WordHero] 練習單字與題庫不一致，已還原標準答案', {
@@ -5782,19 +5773,19 @@ const storyWordGloss = {
 .unit-selector-status{grid-column:1/-1;margin:0!important;padding:6px 9px;border-radius:8px;background:#412b20;color:#ffd7a8;font-size:.84rem;line-height:1.45}
 #view-main .grammar-home-link{margin:0!important;min-height:54px!important;padding:8px 13px!important;border-radius:12px!important}
 #view-main .grammar-home-link-icon{width:34px;height:34px;flex-basis:34px}
-#view-main .daily-quest-card{margin:0!important;min-width:0;width:100%;height:100%;align-self:stretch;display:flex;flex-direction:column;border-radius:16px!important;padding:16px 18px!important}
+#view-main .daily-quest-card{margin:0!important;min-width:0;border-radius:16px!important;padding:16px 18px!important}
 #view-main #daily-quest-title{font-size:clamp(1.2rem,2vw,1.55rem)!important;line-height:1.25!important;margin:6px 0!important}
 #view-main #daily-quest-description{line-height:1.5!important;margin:8px 0 12px!important}
-#view-main .home-active-pokemon{margin:0!important;min-width:0;width:100%;height:100%;align-self:stretch;border-radius:16px!important;overflow:hidden}
+#view-main .home-active-pokemon{margin:0!important;min-width:0;border-radius:16px!important;overflow:hidden}
 #view-main .home-main-actions{gap:10px!important;margin:0!important}
 #view-main .home-action{min-height:92px!important;padding:10px!important;border-radius:14px!important}
 #view-main .home-action span{line-height:1.3}
 #view-main .home-action small{font-size:.8rem!important}
 @media(min-width:850px){
- #view-main:not([style*="display: none"]){display:grid!important;grid-template-columns:minmax(0,1.8fr) minmax(280px,.8fr);grid-auto-flow:row;align-content:start;align-items:stretch}
+ #view-main:not([style*="display: none"]){display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);grid-auto-flow:row;align-content:start;align-items:stretch}
  #view-main>.home-header,#view-main>.unit-card,#view-main>.grammar-home-link{grid-column:1/-1}
- #view-main>#daily-quest-card{grid-column:1;grid-row:auto;align-self:stretch;min-height:210px;height:100%}
- #view-main>#home-active-pokemon{grid-column:2;grid-row:auto;align-self:stretch;height:100%}
+ #view-main>#daily-quest-card{grid-column:1;grid-row:auto;align-self:stretch;min-height:210px}
+ #view-main>#home-active-pokemon{grid-column:2;grid-row:auto;align-self:stretch}
  #view-main>.home-main-actions{grid-column:1/-1}
  #view-main>.home-adventure-title,#view-main>.home-secondary-actions,#view-main>.more-toggle,#view-main>.more-tools{grid-column:1/-1}
 }
@@ -5984,7 +5975,7 @@ const storyWordGloss = {
 </script>
 
 <style id="wordhero-v1555-review-polish">
-/* V1555：讓答錯回饋明確但不責備，並確保小螢幕不產生水平溢位 */
+/* V1556：讓答錯回饋明確但不責備，並確保小螢幕不產生水平溢位 */
 #spelling-feedback { overflow-wrap:anywhere; }
 #global-home-button:focus-visible, .home-action:focus-visible, #unit-selector:focus-visible { outline:3px solid #facc15; outline-offset:3px; }
 @media (max-width:600px) { .container { min-width:0; } .view-section { min-width:0; } .unit-selector-row { min-width:0; } #unit-selector { min-width:0; } }
