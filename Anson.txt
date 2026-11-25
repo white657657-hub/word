@@ -204,7 +204,28 @@ grab,抓住；拿起
 bite,咬；一口
 often,經常；常常
 
+[W19]
+burn,燃燒
+buckle,扣環；皮帶扣
+package,包裹；包裝
+straight,直的；筆直地
+stare,盯著看
+feast,盛宴；大餐
+road,道路
+hen,母雞
+swing,鞦韆；搖擺
 
+[W20]
+gray,灰色
+ladybug,瓢蟲
+worm,蠕蟲；蚯蚓
+turtle,烏龜
+noisy,吵鬧的
+dirty,骯髒的
+strong,強壯的；強大的
+person,人
+sky,天空
+spend,花費；度過
 # 可繼續增加：
 # [W5]
 # volcano,火山
